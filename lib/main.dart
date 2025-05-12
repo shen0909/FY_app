@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:safe_app/pages/home/home_view.dart';
+import 'package:safe_app/pages/login/login_view.dart';
+import 'package:safe_app/routers/routers.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      home: HomePage(),
+      getPages: Routers.pages,
+      debugShowCheckedModeBanner: true,
+      home: LoginPage(),
     );
   }
 }
