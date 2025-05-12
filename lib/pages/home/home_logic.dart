@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:safe_app/routers/routers.dart';
 
 import 'home_state.dart';
 
@@ -15,5 +16,10 @@ class HomeLogic extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
+  }
+
+  // 去风险预警页
+  void goRisk(){
+    Get.toNamed(Routers.risk);
   }
 }

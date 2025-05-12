@@ -100,82 +100,85 @@ class HomePage extends StatelessWidget {
 
   // 风险预警卡片
   Widget _buildRiskWarning() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(15, 15, 15, 5),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          badges.Badge(
-            badgeContent: Text(
-              state.notificationCount.toString(),
-              style: const TextStyle(color: Colors.white, fontSize: 12),
+    return GestureDetector(
+      onTap: () => logic.goRisk(),
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(15, 15, 15, 5),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 5,
             ),
-            badgeStyle: const badges.BadgeStyle(
-              badgeColor: Colors.red,
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4178D3),
-                borderRadius: BorderRadius.circular(8),
+          ],
+        ),
+        child: Row(
+          children: [
+            badges.Badge(
+              badgeContent: Text(
+                state.notificationCount.toString(),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
-              child: const Icon(
-                Icons.shield_outlined,
-                color: Colors.white,
-                size: 24,
+              badgeStyle: const badges.BadgeStyle(
+                badgeColor: Colors.red,
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4178D3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.shield_outlined,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Row(
-                  children: [
-                     Text(
-                      "风险预警",
-                      style: TextStyle(
-                        color: Color(0xFF4178D3),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                       Text(
+                        "风险预警",
+                        style: TextStyle(
+                          color: Color(0xFF4178D3),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-            
-                  ],
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "实时监控风险，智能预警推送",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
+
+                    ],
                   ),
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildRiskItem("高风险", state.highRiskCount, Colors.red.shade100, Colors.red),
-                    _buildRiskItem("中风险", state.mediumRiskCount, Colors.orange.shade100, Colors.orange),
-                    _buildRiskItem("低风险", state.lowRiskCount, Colors.green.shade100, Colors.green),
-                  ],
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  const Text(
+                    "实时监控风险，智能预警推送",
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildRiskItem("高风险", state.highRiskCount, Colors.red.shade100, Colors.red),
+                      _buildRiskItem("中风险", state.mediumRiskCount, Colors.orange.shade100, Colors.orange),
+                      _buildRiskItem("低风险", state.lowRiskCount, Colors.green.shade100, Colors.green),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
