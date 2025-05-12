@@ -228,6 +228,7 @@ class HomePage extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildMenuItem(
+                  onTap: () => logic.goHotPot(),
                   title: "热点",
                   icon: Icons.trending_up,
                   bgColor: Colors.red.shade400,
@@ -273,32 +274,36 @@ class HomePage extends StatelessWidget {
     required String title,
     required IconData icon,
     required Color bgColor,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 28,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
                 color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+                size: 28,
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: Routers.pages,
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );
   }

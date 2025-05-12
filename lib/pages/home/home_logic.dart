@@ -22,4 +22,9 @@ class HomeLogic extends GetxController {
   void goRisk(){
     Get.toNamed(Routers.risk);
   }
+
+  // 去热点页
+  goHotPot() {
+    Get.toNamed(Routers.hotPot);
+  }
 }
