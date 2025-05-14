@@ -24,7 +24,22 @@ class HomeLogic extends GetxController {
   }
 
   // 去热点页
-  goHotPot() {
+  void goHotPot() {
     Get.toNamed(Routers.hotPot);
+  }
+
+  // 导航到AI问答页面
+  void goAiQus() {
+    Get.toNamed(Routers.aiQus);
+  }
+  
+  // 导航到订阅管理页面
+  void goOrder() {
+    Get.toNamed(Routers.order);
+  }
+
+  // 导航到系统设置页面
+  void goSetting() {
+    Get.toNamed(Routers.setting);
   }
 }
