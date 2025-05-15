@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/pages/login/login_view.dart';
 import 'package:safe_app/routers/routers.dart';
 
@@ -12,10 +13,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      getPages: Routers.pages,
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GetMaterialApp(
+          getPages: Routers.pages,
+          debugShowCheckedModeBanner: false,
+          home: LoginPage(),
+        );
+      }
     );
   }
 }

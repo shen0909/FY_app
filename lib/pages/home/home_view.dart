@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:badges/badges.dart' as badges;
-
+import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/styles/text_styles.dart';
 import 'home_logic.dart';
 import 'home_state.dart';
 
@@ -14,16 +17,37 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("首页"),
-      ),
-      body: Column(
-        children: [
-          _buildHeader(),
-          _buildRiskWarning(),
-          _buildQuickMenu(),
-          _buildListUpdate(),
-        ],
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.w),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    FYImages.appIcon_32,
+                    width: 32.w,
+                    height: 32.w,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    'FY APP',
+                    style: FYTextStyles.getAppTitle(),
+                  )
+                ],
+              ),
+              SizedBox(height: 16.w),
+              _buildHeader(),
+              SizedBox(height: 16.w),
+              _buildRiskWarning(),
+              SizedBox(height: 16.w),
+              _buildQuickMenu(),
+              SizedBox(height: 16.w),
+              _buildListUpdate(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -32,67 +56,45 @@ class HomePage extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF3079DE), Color(0xFF296BD8)],
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+      height: 172.w,
+      decoration: BoxDecoration(
+        image: const DecorationImage(image: AssetImage(FYImages.image_1), fit: BoxFit.contain),
+        borderRadius: BorderRadius.all(Radius.circular(20.w)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          const Text(
-            "观察：",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+          Positioned(
+            bottom: 10.w,
+            right: 16.w,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                ),
+                SizedBox(width: 5.w),
+                Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: const BoxDecoration(
+                    color: Colors.white54,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                SizedBox(width: 5.w),
+                Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: const BoxDecoration(
+                    color: Colors.white54,
+                    shape: BoxShape.circle
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            "措施 (${state.observationDate})",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 15),
-          // 底部小圆点指示器
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 5),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.white54,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 5),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.white54,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ],
-          ),
+          )
         ],
       ),
     );
@@ -103,80 +105,56 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => logic.goRisk(),
       child: Container(
-        margin: const EdgeInsets.fromLTRB(15, 15, 15, 5),
-        padding: const EdgeInsets.all(15),
+        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 22.w, bottom: 20.w),
+        height: 174.w,
         decoration: BoxDecoration(
+          image: const DecorationImage(
+              image: AssetImage(FYImages.riskyBg), fit: BoxFit.cover),
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              spreadRadius: 1,
-              blurRadius: 5,
-            ),
-          ],
+          borderRadius: BorderRadius.circular(15.w),
         ),
-        child: Row(
+        child: Column(
           children: [
-            badges.Badge(
-              badgeContent: Text(
-                state.notificationCount.toString(),
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-              badgeStyle: const badges.BadgeStyle(
-                badgeColor: Colors.red,
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4178D3),
-                  borderRadius: BorderRadius.circular(8),
+            Row(
+              children: [
+                badges.Badge(
+                  badgeContent: Text(
+                    state.notificationCount.toString(),
+                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                  ),
+                  badgeStyle: const badges.BadgeStyle(badgeColor: Colors.red),
+                  child: Image.asset(FYImages.riskIcon),
                 ),
-                child: const Icon(
-                  Icons.shield_outlined,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                       Text(
-                        "风险预警",
-                        style: TextStyle(
-                          color: Color(0xFF4178D3),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                SizedBox(width: 16.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "风险预警",
+                      style: TextStyle(
+                        color: Color(0xFF4178D3),
+                        fontSize: 18.w,
+                        fontWeight: FontWeight.bold,
                       ),
-
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "实时监控风险，智能预警推送",
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 14,
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildRiskItem("高风险", state.highRiskCount, Colors.red.shade100, Colors.red),
-                      _buildRiskItem("中风险", state.mediumRiskCount, Colors.orange.shade100, Colors.orange),
-                      _buildRiskItem("低风险", state.lowRiskCount, Colors.green.shade100, Colors.green),
-                    ],
-                  ),
-                ],
-              ),
+                    Text(
+                      "实时监控风险，智能预警推送",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14.w,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
+            SizedBox(height: 16.w),
+            Wrap(
+              spacing: 8.w,
+              children: state.riskType
+                  .map((element) => _buildRiskItem(element))
+                  .toList(),
+            )
           ],
         ),
       ),
@@ -184,33 +162,38 @@ class HomePage extends StatelessWidget {
   }
 
   // 风险类型项
-  Widget _buildRiskItem(String title, int count, Color bgColor, Color textColor) {
+  Widget _buildRiskItem(Map<String, dynamic> item) {
     return Container(
-      // width: 90,
-      // height: 70,
-      padding: const EdgeInsets.all(10),
+      width: 101.w,
+      height: 60.w,
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
+          color: item['bgColor'],
+          borderRadius: BorderRadius.circular(10.w),
+          border: Border.all(width: 1.w, color: item['borderColor'])),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            title,
+            item['title'],
             style: TextStyle(
-              color: textColor,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              color: item['borderColor'],
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.04 * 16.sp,
+              height: 0.8,
+              leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 7.55.w,),
           Text(
-            "$count家",
+            "${item['count']}家",
             style: TextStyle(
-              color: textColor,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              color: item['borderColor'],
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.04 * 14.sp,
+              height: 0.94,
+              leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
         ],
@@ -220,93 +203,43 @@ class HomePage extends StatelessWidget {
 
   // 底部快捷菜单
   Widget _buildQuickMenu() {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _buildMenuItem(
-                  onTap: () => logic.goHotPot(),
-                  title: "热点",
-                  icon: Icons.trending_up,
-                  bgColor: Colors.red.shade400,
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: _buildMenuItem(
-                  title: "AI问答",
-                  icon: Icons.smart_toy_outlined,
-                  bgColor: Colors.blue.shade400,
-                  onTap: () => logic.goAiQus(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: _buildMenuItem(
-                  title: "我的订阅",
-                  icon: Icons.notifications_outlined,
-                  bgColor: Colors.orange,
-                  onTap: () => logic.goOrder(),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: _buildMenuItem(
-                  title: "系统设置",
-                  icon: Icons.settings,
-                  bgColor: Colors.green,
-                  onTap: () => logic.goSetting(),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return Wrap(
+      spacing: 11.w,
+      runSpacing: 10.w,
+      children:
+          state.homeItemList.map((element) => _buildMenuItem(element)).toList(),
     );
   }
 
   // 菜单项
-  Widget _buildMenuItem({
-    required String title,
-    required IconData icon,
-    required Color bgColor,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                color: Colors.white,
-                size: 28,
+  Widget _buildMenuItem(Map<String, dynamic> item) {
+    return Container(
+      width: 170.w,
+      height: 80.w,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: item['bgColor']),
+        borderRadius: BorderRadius.circular(15.w),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(item['image'], width: 32.w, height: 32.w),
+            SizedBox(height: 8.w),
+            Text(
+              item['title'],
+              style: TextStyle(
+                color: FYColors.color_000000,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                height: 0.8,
+                leadingDistribution: TextLeadingDistribution.even,
               ),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -315,49 +248,44 @@ class HomePage extends StatelessWidget {
   // 清单更新信息
   Widget _buildListUpdate() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(15, 5, 15, 15),
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.only(top: 17.w, left: 16.w, bottom: 16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(15.w),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 5,
+            spreadRadius: 1.w,
+            blurRadius: 5.w,
           ),
         ],
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.purple.shade400,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.assignment_outlined,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 15),
+          Image.asset(FYImages.detailList,width: 44.w,height: 44.w,fit: BoxFit.contain,),
+          SizedBox(width: 15.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "清单",
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF222222),
+                  height: 0.8.w,
+                  leadingDistribution: TextLeadingDistribution.even,
                 ),
               ),
+              SizedBox(height: 14.w),
               Text(
                 "${state.listUpdateTime}更新",
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
+                style: TextStyle(
+                  color: Color(0xFF333333),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
+                  height: 0.8,
+                  leadingDistribution: TextLeadingDistribution.even,
                 ),
               ),
             ],
