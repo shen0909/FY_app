@@ -17,6 +17,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: FYColors.whiteColor,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.w),
@@ -212,36 +213,59 @@ class HomePage extends StatelessWidget {
 
   // 菜单项
   Widget _buildMenuItem(Map<String, dynamic> item) {
-    return Container(
-      width: 170.w,
-      height: 80.w,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: item['bgColor']),
-        borderRadius: BorderRadius.circular(15.w),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(item['image'], width: 32.w, height: 32.w),
-            SizedBox(height: 8.w),
-            Text(
-              item['title'],
-              style: TextStyle(
-                color: FYColors.color_000000,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                height: 0.8,
-                leadingDistribution: TextLeadingDistribution.even,
+    return GestureDetector(
+      onTap: () => _handleMenuItemClick(item['title']),
+      child: Container(
+        width: 170.w,
+        height: 80.w,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: item['bgColor']),
+          borderRadius: BorderRadius.circular(15.w),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(item['image'], width: 32.w, height: 32.w),
+              SizedBox(height: 8.w),
+              Text(
+                item['title'],
+                style: TextStyle(
+                  color: FYColors.color_000000,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  height: 0.8,
+                  leadingDistribution: TextLeadingDistribution.even,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  // 处理菜单项点击
+  void _handleMenuItemClick(String title) {
+    switch (title) {
+      case '热点':
+        logic.goHotPot();
+        break;
+      case 'AI问答':
+        logic.goAiQus();
+        break;
+      case '我的订阅':
+        logic.goOrder();
+        break;
+      case '系统设置':
+        logic.goSetting();
+        break;
+      default:
+        break;
+    }
   }
 
   // 清单更新信息

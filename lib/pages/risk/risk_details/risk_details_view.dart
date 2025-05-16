@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/styles/text_styles.dart';
 
 import 'risk_details_logic.dart';
 import 'risk_details_state.dart';
 
 class RiskDetailsPage extends StatelessWidget {
-  RiskDetailsPage({Key? key}) : super(key: key);
+  RiskDetailsPage({super.key});
 
   final RiskDetailsLogic logic = Get.put(RiskDetailsLogic());
   final RiskDetailsState state = Get.find<RiskDetailsLogic>().state;
@@ -13,7 +17,7 @@ class RiskDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: FYColors.whiteColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -36,18 +40,24 @@ class RiskDetailsPage extends StatelessWidget {
             child: GestureDetector(
               onTap: () => logic.showRiskScoreDetails(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.w),
                 decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
+                  // 渐变色背景，从左下到右上
+                  gradient: const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
+                    stops: [0.0, 1.0],
+                  ),
+                  borderRadius: BorderRadius.circular(8.w),
                 ),
                 child: Text(
-                  '${state.companyInfo['score']}分',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  '78分',
+                  style: TextStyle(
+                      color: FYColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      height: 0.6,
+                      fontSize: 18.sp),
                 ),
               ),
             ),
@@ -70,8 +80,11 @@ class RiskDetailsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCompanyHeader(),
+          SizedBox(height: 24.w),
           _buildTimelineSection(),
+          SizedBox(height: 24.w),
           _buildRiskFactorsSection(),
+          SizedBox(height: 24.w),
           _buildCaseHistorySection(),
         ],
       ),
@@ -82,24 +95,33 @@ class RiskDetailsPage extends StatelessWidget {
   Widget _buildCompanyHeader() {
     return Container(
       width: double.infinity,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      color: FYColors.whiteColor,
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 13.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            state.companyInfo['name'],
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Text(
+                '中船黄埔文冲船舶有限公司',
+                style: FYTextStyles.riskLocationTitleStyle()
+                    .copyWith(fontSize: 20.sp),
+              ),
+              SizedBox(width: 8.w),
+              Image.asset(
+                FYImages.tip_icon,
+                width: 24.w,
+                height: 24.w,
+              ),
+            ],
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 8.w),
           Text(
-            state.companyInfo['englishName'],
+            'CSSC Huangpu Wenchong Shipbuilding Company Limited',
             style: TextStyle(
-              fontSize: 14,
-              color: Colors.blue.shade700,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF345DFF),
             ),
           ),
         ],
@@ -110,108 +132,108 @@ class RiskDetailsPage extends StatelessWidget {
   // 时间线部分
   Widget _buildTimelineSection() {
     return Container(
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(15),
-      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '时序跟踪',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.companyInfo['timeline'].length,
-            itemBuilder: (context, index) {
-              final item = state.companyInfo['timeline'][index];
-              return _buildTimelineItem(item);
-            },
-          ),
-          const SizedBox(height: 10),
-          InkWell(
-            onTap: () => logic.showMoreTimeline(),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '显示更多',
-                      style: TextStyle(
-                        color: Colors.blue.shade700,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.blue.shade700,
-                      size: 16,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          Text('时序跟踪', style: FYTextStyles.mediumBodyTextStyle()),
+          SizedBox(height: 10.w),
+          Container(
+            decoration: BoxDecoration(
+                color: FYColors.color_F9F9F9,
+                borderRadius: BorderRadius.all(Radius.circular(8.w))),
+            padding: EdgeInsets.symmetric(vertical: 16.w),
+            child: Column(children: _buildTimelineItems()),
           ),
         ],
       ),
     );
   }
 
-  // 时间线项
-  Widget _buildTimelineItem(Map<String, dynamic> item) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 5),
-            child: Column(
+  // 构建时间线项目列表
+  List<Widget> _buildTimelineItems() {
+    // 模拟数据，实际应从state中获取
+    final timelineItems = [
+      {'date': '2025-04-15', 'content': '与美国某化工企业的专利纠纷案开庭审理\n涉及高性能聚合物技术'},
+      {'date': '2025-04-15', 'content': '广州工厂因环保问题被当地环保部门责令整改，限期30天'},
+      {'date': '2025-04-15', 'content': '在东南亚地区的合资工厂投产，但当地政策存在不确定性'},
+      {'date': '2025-04-15', 'content': '被列入美国商务部实体清单观察名单，部分产品出口受限'},
+    ];
+
+    List<Widget> items = [];
+    for (int i = 0; i < timelineItems.length; i++) {
+      items.add(_buildTimelineItem(timelineItems[i], i == timelineItems.length - 1));
+    }
+
+    // 添加显示更多/收起按钮
+    items.add(Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.w),
+      child: InkWell(
+        onTap: () => logic.showMoreTimeline(),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 10.w),
+          decoration: BoxDecoration(
+            color: FYColors.whiteColor,
+            borderRadius: BorderRadius.circular(8.w),
+          ),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade500,
-                    shape: BoxShape.circle,
-                  ),
+                Text(
+                  '收起',
+                  style: FYTextStyles.riskUnitTypeUnselectedStyle(),
                 ),
-                Container(
-                  width: 1,
-                  height: 60,
-                  color: Colors.blue.shade200,
+                const SizedBox(width: 5),
+                Icon(
+                  Icons.keyboard_arrow_up,
+                  color: FYColors.color_3361FE,
+                  size: 16,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 15),
+        ),
+      ),
+    ));
+
+    return items;
+  }
+
+  // 时间线项
+  Widget _buildTimelineItem(Map<String, dynamic> item, bool isLast) {
+    return Container(
+      padding: EdgeInsets.only(left: 16.w, right: 16.w),
+      height: 78.w,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 8.w,
+                height: 8.w,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                  ),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(
+                width: 1,
+                height: 68.w,
+                // 使用虚线效果
+                child: CustomPaint(
+                  painter: DashedLinePainter(color: const Color(0xFF326FFC)),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(width: 15.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,19 +241,19 @@ class RiskDetailsPage extends StatelessWidget {
                 Text(
                   item['date'],
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
+                    fontSize: 14.sp,
+                    color: const Color(0xFF326FFC),
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 5),
+                SizedBox(height: 5.w),
                 Text(
                   item['content'],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: FYColors.color_A6A6A6,
+                    height: 1.4,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -243,72 +265,48 @@ class RiskDetailsPage extends StatelessWidget {
 
   // 风险因素部分
   Widget _buildRiskFactorsSection() {
+    // 风险因素标签列表
+    final riskTags = [
+      '知识产权争议',
+      '环保合规风险',
+      '海外投资风险',
+      '贸易摩擦影响',
+      '原材料依赖',
+      '技术安全隐患',
+    ];
+
     return Container(
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(15),
-      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      color: FYColors.whiteColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '风险因素',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
+          Text('风险因素', style: FYTextStyles.mediumBodyTextStyle()),
+          SizedBox(height: 10.w),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.only(left:12.w,top: 12.w,bottom: 11.w,right: 9.w),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(8),
-            ),
+                color: FYColors.color_F9F9F9,
+                borderRadius: BorderRadius.circular(8.w)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   '根据最新风险评估，该企业存在以下主要风险因素：',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
+                    fontSize: 14.sp,
+                    color: FYColors.color_A6A6A6,
                   ),
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.w),
                 Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: state.riskFactors.map((factor) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        factor['name'],
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                  spacing: 8.w,
+                  runSpacing: 10.w,
+                  children: List.generate(
+                    riskTags.length,
+                    (index) => _buildRiskTag(riskTags[index]),
+                  ),
                 ),
               ],
             ),
@@ -318,54 +316,97 @@ class RiskDetailsPage extends StatelessWidget {
     );
   }
 
+  // 风险标签
+  Widget _buildRiskTag(String tagName) {
+    return Container(
+      width: 102.w,
+      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 11.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F5FF),
+        borderRadius: BorderRadius.circular(8.w),
+      ),
+      child: Text(
+        tagName,
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: FYColors.color_3361FE,
+        ),
+      ),
+    );
+  }
+
   // 过往判例依据部分
   Widget _buildCaseHistorySection() {
     return Container(
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(15),
-      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      color: FYColors.whiteColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '过往判例依据',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
+          Text('过往判例依据', style: FYTextStyles.mediumBodyTextStyle()),
+          SizedBox(height: 10.w),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(15.w),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(8),
+              color: FYColors.color_F9F9F9,
+              borderRadius: BorderRadius.circular(8.w),
             ),
-            child: const Text(
-              '相关判例显示，类似企业在以下情况下存在法律风险：',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '相关判例显示，类似企业在以下情况下存在法律风险：',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: FYColors.color_A6A6A6,
+                  ),
+                ),
+                SizedBox(height: 15.w),
+                _buildCaseItem('2024年某化工企业因环境污染被处罚2000万元案例'),
+                SizedBox(height: 8.w),
+                _buildCaseItem('2023年化工行业知识产权纠纷典型案例3起'),
+                SizedBox(height: 8.w),
+                _buildCaseItem('2022年出口管制违规处罚案例5起'),
+                SizedBox(height: 15.w),
+                Text(
+                  '建议企业加强合规管理，特别关注知识产权保护和环保合规问题。',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: FYColors.color_A6A6A6,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // 案例项
+  Widget _buildCaseItem(String content) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '•',
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: FYColors.color_A6A6A6,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Text(
+            content,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_A6A6A6,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -383,7 +424,7 @@ class RiskDetailsPage extends StatelessWidget {
           child: Container(
             width: Get.width * 0.9,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: FYColors.whiteColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -406,11 +447,8 @@ class RiskDetailsPage extends StatelessWidget {
                         right: 15,
                         child: GestureDetector(
                           onTap: () => logic.closeRiskScoreDetails(),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.black54,
-                            size: 24,
-                          ),
+                          child: const Icon(Icons.close,
+                              color: Colors.black54, size: 24),
                         ),
                       ),
                     ],
@@ -424,7 +462,8 @@ class RiskDetailsPage extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        ...state.riskScores.map((score) => _buildRiskScoreItem(score)),
+                        ...state.riskScores
+                            .map((score) => _buildRiskScoreItem(score)),
                         const SizedBox(height: 15),
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -441,7 +480,7 @@ class RiskDetailsPage extends StatelessWidget {
                           height: 100,
                           margin: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
+                            color: FYColors.color_F9F9F9,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Center(
@@ -504,4 +543,35 @@ class RiskDetailsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+// 虚线绘制
+class DashedLinePainter extends CustomPainter {
+  final Color color;
+
+  DashedLinePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    const dashWidth = 1.0;
+    const dashSpace = 3.0;
+    double startY = 0.0;
+
+    while (startY < size.height) {
+      canvas.drawLine(
+        Offset(0, startY),
+        Offset(0, startY + dashWidth),
+        paint,
+      );
+      startY += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

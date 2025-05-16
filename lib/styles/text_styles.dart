@@ -116,18 +116,29 @@ class FYTextStyles {
       fontSize: 16.sp,
       fontWeight: FontWeight.w500,
       fontFamily: 'Alibaba PuHuiTi 3.0',
-      height: 0.8, // 16sp - 3.2sp 行高约等于 12.8sp/16sp ≈ 0.8
+      height: 1, // 16sp - 3.2sp 行高约等于 12.8sp/16sp ≈ 0.8
       leadingDistribution: TextLeadingDistribution.even,
     );
   }
 
-  // 企业列表副标题/描述
-  static TextStyle riskCompanyDescStyle({Color color = const Color(0xFF1A1A1A)}) {
+  // 正文字体
+  static TextStyle commonTextStyle({Color color = const Color(0xFF1A1A1A)}) {
     return TextStyle(
       color: color,
       fontSize: 12.sp,
       fontWeight: FontWeight.w400,
       fontFamily: 'Alibaba PuHuiTi 3.0',
+      leadingDistribution: TextLeadingDistribution.even,
+    );
+  }
+
+  static TextStyle mediumBodyTextStyle({Color color = FYColors.color_1A1A1A}) {
+    return TextStyle(
+      color: color,
+      fontSize: 18.sp,
+      fontWeight: FontWeight.w500,
+      fontFamily: 'Alibaba PuHuiTi 3.0',
+      height: 0.7,
       leadingDistribution: TextLeadingDistribution.even,
     );
   }

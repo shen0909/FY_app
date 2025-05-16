@@ -13,11 +13,14 @@ class FYColors {
   static const Color highRiskBg = Color(0XFFFFE5E5);
   static const Color middleRiskBg = Color(0XFFFFF5E5);
   static const Color lowRiskBg = Color(0XFFD6FFF0);
+  static const Color color_F9F9F9 = Color(0XFFF9F9F9);
 
   /// 边框颜色
   static const Color highRiskBorder = Color(0XFFFF1919);
   static const Color middleRiskBorder = Color(0XFFFF9719);
   static const Color lowRiskBorder = Color(0XFF1BC487);
+  static const Color color_FF6850 = Color(0XFFFF6850);
+  static const Color color_07CC89 = Color(0XFF07CC89);
 
   /// 线性颜色
   static const List<Color> hotBgGridle = [Color(0XFFFF8C8C), Color(0XFFFFF0F0)];
