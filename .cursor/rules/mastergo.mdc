@@ -1,0 +1,9 @@
+---
+description: 
+globs: master go,mastergo
+alwaysApply: false
+---
+这里是项目中的资源文件设置，包括：颜色、字体样式、图片资源，如果有相同的部分，你可以直接复用
+[colors.dart](mdc:safe_app/lib/styles/colors.dart) [text_styles.dart](mdc:safe_app/lib/styles/text_styles.dart) [image_resource.dart](mdc:safe_app/lib/styles/image_resource.dart)
+你在构建页面的时候如果遇到不能下载的图片，我希望你能先复用现有图片，然后添加一个todo备注；
+实现功能的时候注意与项目中的布局样式一样

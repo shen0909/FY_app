@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/styles/colors.dart';
 
 import 'risk_logic.dart';
 import 'risk_state.dart';
+import 'package:safe_app/styles/text_styles.dart';
 
 class RiskPage extends StatelessWidget {
   RiskPage({Key? key}) : super(key: key);
@@ -61,10 +64,7 @@ class RiskPage extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             state.location,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-            ),
+            style: FYTextStyles.riskLocationTitleStyle(),
           ),
         ],
       ),
@@ -76,13 +76,18 @@ class RiskPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
             child: _buildUnitTypeButton('一类单位', 0),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 9.w),
           Expanded(
             child: _buildUnitTypeButton('二类单位', 1),
+          ),
+          SizedBox(width: 9.w),
+          Expanded(
+            child: _buildUnitTypeButton('星云', 1),
           ),
         ],
       ),
@@ -96,22 +101,21 @@ class RiskPage extends StatelessWidget {
       return GestureDetector(
         onTap: () => logic.changeUnit(index),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          height: 36.w,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.blue.shade50 : Colors.white,
+            gradient: isSelected
+                ? const LinearGradient(colors: [Color(0xFF345DFF), Color(0xFF2F89F8)])
+                : null,
+            color: isSelected ? null : const Color(0xFFF0F5FF),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? Colors.blue : Colors.grey.shade300,
-              width: isSelected ? 1.5 : 1,
-            ),
           ),
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isSelected ? Colors.blue : Colors.grey.shade700,
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          child: Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: isSelected
+                  ? FYTextStyles.riskUnitTypeSelectedStyle()
+                  : FYTextStyles.riskUnitTypeUnselectedStyle(),
             ),
           ),
         ),
@@ -141,7 +145,7 @@ class RiskPage extends StatelessWidget {
                 ),
               );
             }),
-            
+
             // 总数卡片单独处理
             SizedBox(
               width: MediaQuery.of(Get.context!).size.width / 2 - 16,
@@ -166,11 +170,10 @@ class RiskPage extends StatelessWidget {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      color: const Color(0xffF4F4F4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -179,30 +182,43 @@ class RiskPage extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: FYTextStyles.riskStatHighRiskStyle(),
                 ),
-                Text(
-                  '$count家',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      '$count',
+                      style: FYTextStyles.riskStatHighRiskStyle().copyWith(
+                        color: FYColors.color_1A1A1A,
+                        fontSize: 28.sp
+                      ),
+                    ),
+                    Text(
+                      '家',
+                      style: FYTextStyles.riskStatHighRiskStyle().copyWith(color: FYColors.color_1A1A1A)
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '较昨日调整了$change家',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 12,
-              ),
-            ),
+            SizedBox(height: 4.w),
+            RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                      color: FYColors.color_A6A6A6,
+                      fontSize: 12
+                  ),
+                  children:[
+                    TextSpan(text: '较昨日调整了'),
+                    TextSpan(text: '$change',
+                        style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 12.sp
+                    ),
+                    ),
+                    TextSpan(text: '家'),
+                ]
+                ))
           ],
         ),
       ),
@@ -212,14 +228,13 @@ class RiskPage extends StatelessWidget {
   // 总数统计卡片
   Widget _buildTotalStatCard({
     required int total,
-    required Color color,
+    required Color color
   }) {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      color: const Color(0xffF4F4F4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -228,25 +243,27 @@ class RiskPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '总数',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
                 Text(
-                  '$total家',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  '总数',
+                  style: FYTextStyles.riskStatHighRiskStyle(),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      '$total',
+                      style: FYTextStyles.riskStatHighRiskStyle().copyWith(
+                          color: FYColors.color_1A1A1A,
+                          fontSize: 28.sp
+                      ),
+                    ),
+                    Text(
+                        '家',
+                        style: FYTextStyles.riskStatHighRiskStyle().copyWith(color: FYColors.color_1A1A1A)
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 19), // 占位，使高度与其他卡片一致
           ],
         ),
       ),
@@ -276,7 +293,7 @@ class RiskPage extends StatelessWidget {
     final bool isHighRisk = item['riskLevel'] == '高风险';
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
-    
+
     return GestureDetector(
       onTap: () => Get.toNamed('/risk/details', arguments: item),
       child: Card(
@@ -301,10 +318,7 @@ class RiskPage extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item['name'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: FYTextStyles.riskCompanyTitleStyle(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -336,10 +350,7 @@ class RiskPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 item['description'],
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
+                style: FYTextStyles.riskCompanyDescStyle(),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -381,12 +392,12 @@ class RiskPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // 二类单位风险项
   Widget _buildRiskItem2(Map<String, dynamic> item) {
     final Color bgColor = Color(item['bgColor']);
     final int unreadCount = item['unreadCount'];
-    
+
     return GestureDetector(
       onTap: () => Get.toNamed('/risk/details', arguments: item),
       child: Card(
@@ -407,10 +418,7 @@ class RiskPage extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item['name'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: FYTextStyles.riskCompanyTitleStyle(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -442,10 +450,7 @@ class RiskPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 item['description'],
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
+                style: FYTextStyles.riskCompanyDescStyle(),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

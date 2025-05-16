@@ -25,4 +25,7 @@ class FYColors {
   static const List<Color> orderBgGridle = [Color(0XFFFBE690), Color(0XFFFFF0DF)];
   static const List<Color> settingBgGridle = [Color(0XFFE4E4E4), Color(0XFFF0F0F0)];
   static const List<Color> loginBtn = [Color(0XFF345DFF), Color(0XFF2F89F8)];
+
+  static const Color color_3361FE = Color(0xFF3361FE); // 单位类别未选中蓝色
+  static const Color color_1D4293 = Color(0xFF1D4293); // 高风险卡片字体色深蓝
 }

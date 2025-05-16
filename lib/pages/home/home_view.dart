@@ -165,7 +165,6 @@ class HomePage extends StatelessWidget {
   Widget _buildRiskItem(Map<String, dynamic> item) {
     return Container(
       width: 101.w,
-      height: 60.w,
       decoration: BoxDecoration(
           color: item['bgColor'],
           borderRadius: BorderRadius.circular(10.w),
@@ -179,9 +178,9 @@ class HomePage extends StatelessWidget {
               color: item['borderColor'],
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              letterSpacing: 0.04 * 16.sp,
-              height: 0.8,
-              leadingDistribution: TextLeadingDistribution.even,
+              // letterSpacing: 0.04 * 16.sp,
+              // height: 0.8,
+              // leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
           SizedBox(height: 7.55.w,),
@@ -191,9 +190,9 @@ class HomePage extends StatelessWidget {
               color: item['borderColor'],
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
-              letterSpacing: 0.04 * 14.sp,
-              height: 0.94,
-              leadingDistribution: TextLeadingDistribution.even,
+              // letterSpacing: 0.04 * 14.sp,
+              // height: 0.94,
+              // leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
         ],
