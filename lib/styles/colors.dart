@@ -8,12 +8,17 @@ class FYColors {
   static const Color color_000000 = Color(0XFF000000);
   static const Color whiteColor = Color(0XFFFFFFFF);
   static const Color text1Color = Color(0XFF2E90E7);
+  static const Color color_101148 = Color(0XFF101148); // AI智能问答标题颜色 
+  static const Color color_666666 = Color(0XFF666666); // 次要文字颜色
 
   /// 背景色
   static const Color highRiskBg = Color(0XFFFFE5E5);
   static const Color middleRiskBg = Color(0XFFFFF5E5);
   static const Color lowRiskBg = Color(0XFFD6FFF0);
   static const Color color_F9F9F9 = Color(0XFFF9F9F9);
+  static const Color color_F5F5F5 = Color(0XFFF5F5F5); // Perplexity按钮背景色
+  static const Color color_F0F5FF = Color(0XFFF0F5FF); // 批量选择按钮背景色
+  static const Color color_EFEFEF = Color(0XFFEFEFEF); // 批量选择按钮边框色
 
   /// 边框颜色
   static const Color highRiskBorder = Color(0XFFFF1919);
@@ -21,6 +26,7 @@ class FYColors {
   static const Color lowRiskBorder = Color(0XFF1BC487);
   static const Color color_FF6850 = Color(0XFFFF6850);
   static const Color color_07CC89 = Color(0XFF07CC89);
+  static const Color color_D8D8D8 = Color(0XFFD8D8D8); // 未选中的复选框颜色
 
   /// 线性颜色
   static const List<Color> hotBgGridle = [Color(0XFFFF8C8C), Color(0XFFFFF0F0)];

@@ -9,16 +9,26 @@ class FYTextStyles {
       color: color,
       fontSize: 18.sp,
       fontWeight: FontWeight.bold,
+      fontFamily: 'AlibabaPuHuiTi',
     );
   }
 
   // 普通文字1
   static TextStyle getText1({Color color = FYColors.color_1A1A1A}) {
-    return TextStyle(color: color, fontSize: 18.sp);
+    return TextStyle(
+      color: color, 
+      fontSize: 18.sp,
+      fontFamily: 'AlibabaPuHuiTi',
+    );
   }
 
   static TextStyle loginTitleStyle({Color color = FYColors.color_1A1A1A}) {
-    return TextStyle(color: color, fontSize: 32.sp,fontWeight: FontWeight.w700);
+    return TextStyle(
+      color: color, 
+      fontSize: 32.sp,
+      fontWeight: FontWeight.w700,
+      fontFamily: 'AlibabaPuHuiTi',
+    );
   }
 
   static TextStyle loginTipStyle({Color color = FYColors.color_1A1A1A}) {
@@ -26,7 +36,7 @@ class FYTextStyles {
       color: color, 
       fontSize: 14.sp,
       fontWeight: FontWeight.w400,
-      // fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 0.66,
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -36,7 +46,7 @@ class FYTextStyles {
       color: color,
       fontSize: 16.sp,
       fontWeight: FontWeight.w700,
-      // fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 0.8, // 通过降低height来模拟lineSpacingExtra="-3.2sp"
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -46,6 +56,7 @@ class FYTextStyles {
       color: color, 
       fontSize: 16.sp,
       fontWeight: FontWeight.w600,
+      fontFamily: 'AlibabaPuHuiTi',
       height: 0.8,
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -56,7 +67,7 @@ class FYTextStyles {
       color: color,
       fontSize: 16.sp,
       fontWeight: FontWeight.w400,
-      // height: 0.8,
+      fontFamily: 'AlibabaPuHuiTi',
       leadingDistribution: TextLeadingDistribution.even,
     );
   }
@@ -67,7 +78,7 @@ class FYTextStyles {
       color: color,
       fontSize: 16.sp,
       fontWeight: FontWeight.w700,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 1.3, // 16sp + 4.8sp 行高约等于 20.8sp/16sp ≈ 1.3
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -79,7 +90,7 @@ class FYTextStyles {
       color: color,
       fontSize: 14.sp,
       fontWeight: FontWeight.w400,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 0.8, // 14sp - 2.8sp 行高约等于 11.2sp/14sp ≈ 0.8
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -91,7 +102,7 @@ class FYTextStyles {
       color: color,
       fontSize: 14.sp,
       fontWeight: FontWeight.w400,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 0.8,
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -103,7 +114,7 @@ class FYTextStyles {
       color: color,
       fontSize: 16.sp,
       fontWeight: FontWeight.w700,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 1.3,
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -115,7 +126,7 @@ class FYTextStyles {
       color: color,
       fontSize: 16.sp,
       fontWeight: FontWeight.w500,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 1, // 16sp - 3.2sp 行高约等于 12.8sp/16sp ≈ 0.8
       leadingDistribution: TextLeadingDistribution.even,
     );
@@ -127,7 +138,7 @@ class FYTextStyles {
       color: color,
       fontSize: 12.sp,
       fontWeight: FontWeight.w400,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       leadingDistribution: TextLeadingDistribution.even,
     );
   }
@@ -137,7 +148,7 @@ class FYTextStyles {
       color: color,
       fontSize: 18.sp,
       fontWeight: FontWeight.w500,
-      fontFamily: 'Alibaba PuHuiTi 3.0',
+      fontFamily: 'AlibabaPuHuiTi',
       height: 0.7,
       leadingDistribution: TextLeadingDistribution.even,
     );

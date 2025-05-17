@@ -21,6 +21,9 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           getPages: Routers.pages,
           debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: 'AlibabaPuHuiTi',
+          ),
           home: LoginPage(),
         );
       }
