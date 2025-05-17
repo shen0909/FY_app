@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_logic.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
+
+import '../../../widgets/custom_app_bar.dart';
 
 class HotDetailsView extends StatelessWidget {
   HotDetailsView({Key? key}) : super(key: key);
@@ -13,7 +18,38 @@ class HotDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: _buildAppBar(),
+      appBar: FYAppBar(
+        title: '热点详情',
+        actions: [
+          GestureDetector(
+            onTap: () => logic.downloadFile(),
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              width: 72.w,
+              height: 32.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: FYColors.color_F5F5F5
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(FYImages.download_icon,width: 16.w,height: 16.w),
+                  SizedBox(width: 4.w),
+                  Text(
+                    '下载',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                      fontWeight: FontWeight.w400
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           _buildHeader(),
@@ -26,62 +62,7 @@ class HotDetailsView extends StatelessWidget {
     );
   }
 
-  // 构建顶部导航栏
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.black87, size: 20),
-        onPressed: () => Get.back(),
-      ),
-      title: const Text(
-        '热点详情',
-        style: TextStyle(
-          color: Color(0xFF101148),
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      centerTitle: true,
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          child: ElevatedButton(
-            onPressed: () => logic.downloadFile(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF5F5F5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              elevation: 0,
-            ),
-            child: Row(
-              children: [
-                Transform.rotate(
-                  angle: -90 * 3.14159 / 180,
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.black,
-                    size: 16,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Text(
-                  '下载',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // 已迁移至FYAppBar
 
   // 构建头部信息
   Widget _buildHeader() {

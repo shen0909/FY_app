@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
+import 'package:safe_app/widgets/widgets.dart';
 
+import '../../../widgets/custom_app_bar.dart';
 import 'risk_details_logic.dart';
 import 'risk_details_state.dart';
 
@@ -18,22 +20,11 @@ class RiskDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FYColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          '单位详情',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () => Get.back(),
-        ),
+      appBar: FYAppBar(
+        title: '单位详情',
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        titleColor: Colors.black,
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),

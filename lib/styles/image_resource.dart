@@ -3,7 +3,7 @@ class FYImages {
   static const String appIcon_32 = 'assets/images/appIcon_32.png';
   static const String riskyBg = 'assets/images/risky_bg.png';
   static const String riskIcon = 'assets/images/risky_icon.png';
-  static const String hotIcon = 'assets/images/hot_icon1.png';
+  static const String hotIcon = 'assets/images/hot_icon.png';
   static const String aiIcon = 'assets/images/ai_icon.png';
   static const String orderIcon = 'assets/images/order_icon.png';
   static const String settingIcon = 'assets/images/setting_icon.png';
@@ -15,4 +15,7 @@ class FYImages {
   static const String image_1 = 'assets/images/image_1.png';
   static const String tip_icon = 'assets/images/tip.png';
   static const String icon_back = 'assets/images/icon_back.png';
+  static const String download_icon = 'assets/images/download_icon.png';
+  static const String history_icon = 'assets/images/history.png';
+  static const String addAI = 'assets/images/add_ai.png';
 }

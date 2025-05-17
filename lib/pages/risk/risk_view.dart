@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/widgets/widgets.dart';
 
+import '../../widgets/custom_app_bar.dart';
 import 'risk_logic.dart';
 import 'risk_state.dart';
 import 'package:safe_app/styles/text_styles.dart';
@@ -18,22 +20,8 @@ class RiskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FYColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          '风险预警',
-          style: TextStyle(
-            color: FYColors.color_101148,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 24),
-          onPressed: () => Get.back(),
-        ),
+      appBar: FYAppBar(
+        title: '风险预警',
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

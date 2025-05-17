@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/main.dart';
+import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/widgets/widgets.dart';
 
+import '../../widgets/custom_app_bar.dart';
 import 'ai_qus_logic.dart';
 import 'ai_qus_state.dart';
 
@@ -13,22 +18,17 @@ class AiQusPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AI智能问答'),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
+      appBar: FYAppBar(
+        title: 'AI智能问答',
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => logic.createNewConversation(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () => logic.showChatHistory(),
-          ),
+          GestureDetector(
+              onTap: () => logic.showChatHistory(),
+              child: Image.asset(FYImages.addAI,width: 24.w,height: 24.w,fit: BoxFit.contain)),
+          SizedBox(width: 16.w),
+          GestureDetector(
+              onTap: () => logic.showChatHistory(),
+              child: Image.asset(FYImages.history_icon,width: 24.w,height: 24.w,fit: BoxFit.contain)),
+          SizedBox(width: 16.w),
         ],
       ),
       body: Column(

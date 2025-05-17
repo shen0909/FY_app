@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../widgets/custom_app_bar.dart';
 import 'order_logic.dart';
 import 'order_state.dart';
 
@@ -13,12 +14,8 @@ class OrderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-        title: const Text('我的订阅'),
+      appBar: FYAppBar(
+        title: '我的订阅',
         centerTitle: false,
         actions: [
           TextButton.icon(

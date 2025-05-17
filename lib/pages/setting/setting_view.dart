@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../widgets/custom_app_bar.dart';
 import 'setting_logic.dart';
 import 'setting_state.dart';
 
@@ -13,13 +14,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('系统设置'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-      ),
+      appBar: FYAppBar(title: '系统设置'),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +30,7 @@ class SettingPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildUserInfoCard() {
     return Card(
       margin: const EdgeInsets.all(16),
@@ -97,16 +92,16 @@ class SettingPage extends StatelessWidget {
             ListTile(
               title: const Text('设置划线解锁'),
               trailing: Obx(() => Switch(
-                value: state.isLockEnabled.value,
-                onChanged: logic.toggleLockScreen,
-              )),
+                    value: state.isLockEnabled.value,
+                    onChanged: logic.toggleLockScreen,
+                  )),
             ),
             ListTile(
               title: const Text('指纹解锁'),
               trailing: Obx(() => Switch(
-                value: state.isFingerprintEnabled.value,
-                onChanged: logic.toggleFingerprint,
-              )),
+                    value: state.isFingerprintEnabled.value,
+                    onChanged: logic.toggleFingerprint,
+                  )),
             ),
             ListTile(
               title: const Text('用户日志'),
@@ -119,7 +114,7 @@ class SettingPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildNotificationSection() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -145,24 +140,24 @@ class SettingPage extends StatelessWidget {
               leading: Icon(Icons.warning, color: Colors.red.shade400),
               title: const Text('风险预警信息'),
               trailing: Obx(() => Switch(
-                value: state.isRiskAlertEnabled.value,
-                onChanged: logic.toggleRiskAlert,
-              )),
+                    value: state.isRiskAlertEnabled.value,
+                    onChanged: logic.toggleRiskAlert,
+                  )),
             ),
             ListTile(
               leading: Icon(Icons.star, color: Colors.blue.shade400),
               title: const Text('订阅信息'),
               trailing: Obx(() => Switch(
-                value: state.isSubscriptionEnabled.value,
-                onChanged: logic.toggleSubscriptionNotification,
-              )),
+                    value: state.isSubscriptionEnabled.value,
+                    onChanged: logic.toggleSubscriptionNotification,
+                  )),
             ),
           ],
         ),
       ),
     );
   }
-  
+
   Widget _buildDataSection() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -195,7 +190,7 @@ class SettingPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildPermissionSection() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -297,15 +292,17 @@ class SettingPage extends StatelessWidget {
                   const Text('权限申请审核'),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Obx(() => Text(
-                      '${state.permissionRequestCount}',
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                    )),
+                          '${state.permissionRequestCount}',
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12),
+                        )),
                   ),
                 ],
               ),
@@ -317,7 +314,7 @@ class SettingPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildStatisticsSection() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -365,14 +362,16 @@ class SettingPage extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.arrow_upward, size: 12, color: Colors.green),
+                                const Icon(Icons.arrow_upward,
+                                    size: 12, color: Colors.green),
                                 Text(
                                   '${state.statistics['visitTrend']}%',
                                   style: const TextStyle(
@@ -405,14 +404,16 @@ class SettingPage extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.red.shade100,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.arrow_downward, size: 12, color: Colors.red),
+                                const Icon(Icons.arrow_downward,
+                                    size: 12, color: Colors.red),
                                 Text(
                                   '${state.statistics['predictionTrend'].abs()}%',
                                   style: const TextStyle(
@@ -450,14 +451,16 @@ class SettingPage extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.arrow_upward, size: 12, color: Colors.green),
+                                const Icon(Icons.arrow_upward,
+                                    size: 12, color: Colors.green),
                                 Text(
                                   '${state.statistics['subscriptionTrend']}%',
                                   style: const TextStyle(
