@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:safe_app/main.dart';
+import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/styles/text_styles.dart';
 import 'package:safe_app/widgets/widgets.dart';
 
 import '../../widgets/custom_app_bar.dart';
@@ -17,92 +18,100 @@ class AiQusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: FYAppBar(
-        title: 'AI智能问答',
-        actions: [
-          GestureDetector(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: FYColors.whiteColor,
+        appBar: FYAppBar(
+          title: 'AI智能问答',
+          actions: [
+            GestureDetector(
+              onTap: () => logic.createNewConversation(),
+              child: Container(
+                margin: EdgeInsets.only(right: 8.w),
+                child: Image.asset(FYImages.addAI,
+                    width: 24.w, height: 24.w, fit: BoxFit.contain),
+              ),
+            ),
+            GestureDetector(
               onTap: () => logic.showChatHistory(),
-              child: Image.asset(FYImages.addAI,width: 24.w,height: 24.w,fit: BoxFit.contain)),
-          SizedBox(width: 16.w),
-          GestureDetector(
-              onTap: () => logic.showChatHistory(),
-              child: Image.asset(FYImages.history_icon,width: 24.w,height: 24.w,fit: BoxFit.contain)),
-          SizedBox(width: 16.w),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(() => ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.messages.length,
-              itemBuilder: (context, index) {
-                final message = state.messages[index];
-                return _buildMessageItem(message);
-              },
-            )),
+              child: Container(
+                margin: EdgeInsets.only(right: 16.w),
+                child: Image.asset(FYImages.history_icon,
+                    width: 24.w, height: 24.w, fit: BoxFit.contain),
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // 新增的顶部操作区域
+            _buildTopActionBar(),
+            // 提示信息区域
+            _buildNotificationBar(),
+            SizedBox(height: 10.w),
+            // 聊天内容区域
+            Expanded(
+              child: Obx(() => ListView.builder(
+                    itemCount: state.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = state.messages[index];
+                      return _buildMessageItem(message);
+                    },
+                  )),
+            ),
+            _buildInputArea(),
+          ],
+        ),
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: 80.w, right: 16.w),
+          width: 48.w,
+          height: 48.w,
+          child: FloatingActionButton(
+            onPressed: () => logic.showAIAssistant(),
+            child: Image.asset(
+              FYImages.addTip,
+              width: 57.w,
+              height: 57.w,
+              fit: BoxFit.contain,
+            ),
           ),
-          _buildInputArea(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => logic.showAIAssistant(),
-        child: const Icon(Icons.lightbulb_outline),
-        backgroundColor: Colors.blue,
+        ),
       ),
     );
   }
 
   Widget _buildMessageItem(Map<String, dynamic> message) {
     final bool isUser = message['isUser'] ?? false;
-    
+
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: EdgeInsets.only(bottom: 16.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isUser) 
-            CircleAvatar(
-              backgroundColor: Colors.blue.shade100,
-              child: const Icon(Icons.smart_toy, color: Colors.blue),
-            ),
-          const SizedBox(width: 8),
           Flexible(
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.w),
+              margin: EdgeInsets.only(
+                  right: isUser ? 17.w : 57.w, left: !isUser ? 17.w : 57.w),
               decoration: BoxDecoration(
-                color: isUser ? Colors.blue.shade100 : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
+                gradient: !isUser
+                    ? null
+                    : const LinearGradient(colors: FYColors.loginBtn),
+                color: isUser ? null : FYColors.color_F9F9F9,
+                borderRadius: BorderRadius.circular(8.w),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!isUser && message['title'] != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        message['title'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  Text(
-                    message['content'],
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ],
+              child: Text(
+                message['content'],
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: isUser ? FYColors.whiteColor : FYColors.color_1A1A1A,
+                    fontWeight: FontWeight.w400),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          if (isUser) 
-            const CircleAvatar(
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.person, color: Colors.white),
-            ),
+          )
         ],
       ),
     );
@@ -110,40 +119,230 @@ class AiQusPage extends StatelessWidget {
 
   Widget _buildInputArea() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, -1),
-          ),
-        ],
+        color: FYColors.whiteColor,
+        border: Border(
+          top: BorderSide(color: FYColors.color_E6E6E6, width: 1.w),
+        ),
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.more_horiz),
-            onPressed: () => logic.showPromptTemplates(),
-          ),
           Expanded(
-            child: TextField(
-              controller: state.messageController,
-              decoration: const InputDecoration(
-                hintText: '输入您的问题...',
-                border: InputBorder.none,
+            child: Container(
+              constraints: BoxConstraints(minHeight: 36.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+              decoration: BoxDecoration(
+                color: FYColors.color_F5F5F5,
+                borderRadius: BorderRadius.circular(4.w),
               ),
-              maxLines: null,
+              alignment: Alignment.center,
+              child: TextField(
+                controller: state.messageController,
+                decoration: InputDecoration.collapsed(
+                  hintText: '输入您的问题...',
+                  hintStyle: TextStyle(
+                    fontSize: 14.sp,
+                    color: FYColors.color_A6A6A6,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: FYColors.color_1A1A1A,
+                ),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+              ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.send, color: Colors.blue),
-            onPressed: () => logic.sendMessage(),
+          SizedBox(width: 16.w),
+          GestureDetector(
+              onTap: () => logic.sendMessage(),
+              child: Image.asset(FYImages.sendIcon,
+                  width: 36.w, height: 36.w, fit: BoxFit.contain)),
+        ],
+      ),
+    );
+  }
+
+  // 顶部操作区域
+  Widget _buildTopActionBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
+      decoration: BoxDecoration(
+        color: FYColors.whiteColor,
+        border: Border(
+          bottom: BorderSide(
+            color: FYColors.color_E6E6E6,
+            width: 1.w,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          // 新的对话文本
+          Text(
+            '新的对话',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: FYColors.color_1A1A1A,
+            ),
+          ),
+          const Spacer(),
+          // 右侧操作按钮组
+          Row(
+            children: [
+              // 批量选择按钮
+              batchCheckWidget(),
+              SizedBox(width: 10.w),
+              // Perplexity下拉选择器
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 9.w),
+                  decoration: BoxDecoration(
+                    color: FYColors.color_F5F5F5,
+                    borderRadius: BorderRadius.circular(20.w),
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        FYImages.robot,
+                        width: 16.w,
+                        height: 16.w,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        'Perplexity',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Image.asset(
+                        FYImages.down_icon,
+                        height: 10.w,
+                        width: 5.w,
+                        fit: BoxFit.contain,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              // 删除按钮
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: 24.w,
+                  height: 24.w,
+                  child: Image.asset(
+                    FYImages.cancle_cion,
+                    width: 24.w,
+                    height: 24.w,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  // 提示信息区域
+  Widget _buildNotificationBar() {
+    return Container(
+      width: double.infinity,
+      height: 32.w,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      color: const Color(0xFFEAF1FF),
+      child: Row(
+        children: [
+          Image.asset(
+            FYImages.aiTip,
+            width: 20.w,
+            height: 20.w,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            '提示：聊天记录保留7天时间',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: FYColors.color_3361FE,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget batchCheckWidget() {
+    return Obx(() {
+      return state.isBatchCheck.value
+          ? GestureDetector(
+              onTap: () => logic.batchCheck(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 8.w),
+                decoration: BoxDecoration(
+                    color: FYColors.color_F0F5FF,
+                    borderRadius: BorderRadius.circular(20.w),
+                    border: Border.all(color: FYColors.color_F0F5FF, width: 1.w)),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      FYImages.choose_icon,
+                      width: 16.w,
+                      height: 16.w,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      '批量选择',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : GestureDetector(
+              onTap: () => logic.batchCheck(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 8.w),
+                decoration: BoxDecoration(
+                    color: FYColors.whiteColor,
+                    borderRadius: BorderRadius.circular(20.w),
+                    border:
+                        Border.all(color: FYColors.color_EFEFEF, width: 1.w)),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      FYImages.unchoose_icon,
+                      width: 16.w,
+                      height: 16.w,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      '批量选择',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_666666,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
   }
 }

@@ -18,4 +18,12 @@ class FYImages {
   static const String download_icon = 'assets/images/download_icon.png';
   static const String history_icon = 'assets/images/history.png';
   static const String addAI = 'assets/images/add_ai.png';
+  static const String addTip = 'assets/images/add_tip.png';
+  static const String sendIcon = 'assets/images/send_icon.png';
+  static const String aiTip = 'assets/images/ai_tip.png';
+  static const String robot = 'assets/images/robot.png';
+  static const String down_icon = 'assets/images/down_icon.png';
+  static const String cancle_cion = 'assets/images/cancle_cion.png';
+  static const String choose_icon = 'assets/images/choose_icon.png';
+  static const String unchoose_icon = 'assets/images/unchoose_icon.png';
 }

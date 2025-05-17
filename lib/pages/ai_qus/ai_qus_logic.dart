@@ -406,4 +406,9 @@ class AiQusLogic extends GetxController {
       ),
     );
   }
+
+  /// 批量选择
+  batchCheck() {
+    state.isBatchCheck.value = !state.isBatchCheck.value;
+  }
 }

@@ -23,6 +23,8 @@ class AiQusState {
   // 当前选择的模型
   final RxString selectedModel = "DeepSeek".obs;
 
+  final RxBool isBatchCheck = false.obs;
+
   AiQusState() {
     ///Initialize variables
     _initDemoData();
