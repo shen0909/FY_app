@@ -63,7 +63,7 @@ The investigation will examine China's acts, policies, and practices related to 
     {'date': '2025.02.18', 'event': '中国新能源汽车出口量创历史新高，美欧市场份额大幅提升'},
   ];
 
-  HotPotState() {
+  HotDetailsState() {
     ///Initialize variables
   }
 

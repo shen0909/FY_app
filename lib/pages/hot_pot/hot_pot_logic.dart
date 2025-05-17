@@ -117,4 +117,13 @@ class HotPotLogic extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
     );
   }
+  
+  // 导航到热点详情页面
+  void navigateToDetails(int index) {
+    // 这里可以根据索引获取对应的热点新闻数据，并导航到详情页
+    Get.toNamed('/hot_details', arguments: {
+      'index': index,
+      // 在实际应用中，可能还需要传递更多的数据或者ID
+    });
+  }
 }
