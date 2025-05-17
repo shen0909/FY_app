@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
 
 import 'risk_logic.dart';
 import 'risk_state.dart';
@@ -20,17 +21,17 @@ class RiskPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '风险预警',
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+            color: FYColors.color_101148,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 24),
           onPressed: () => Get.back(),
         ),
       ),
@@ -193,18 +194,16 @@ class RiskPage extends StatelessWidget {
                     '$count',
                     style: TextStyle(
                       color: FYColors.color_1A1A1A,
-                      fontSize: 28.sp,
-                      fontFamily: 'Alimama ShuHeiTi',
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
-                      height: 1.0,
-                      // 模拟lineSpacingExtra="-5.6sp"
+                      height: 1.5,
                       leadingDistribution: TextLeadingDistribution.even,
                     ),
                     textAlign: TextAlign.left,
                   ),
                   Text('家',
                       style: FYTextStyles.riskStatHighRiskStyle()
-                          .copyWith(color: FYColors.color_1A1A1A)),
+                          .copyWith(color: FYColors.color_1A1A1A,fontWeight: FontWeight.w400,fontSize: 12.sp)),
                 ],
               ),
             ],
@@ -215,7 +214,6 @@ class RiskPage extends StatelessWidget {
                   style: TextStyle(
                     color: FYColors.color_A6A6A6,
                     fontSize: 12.sp,
-                    fontFamily: 'Alibaba PuHuiTi 3.0',
                     fontWeight: FontWeight.w400,
                     height: 0.8,
                     leadingDistribution: TextLeadingDistribution.even,
@@ -257,12 +255,17 @@ class RiskPage extends StatelessWidget {
               children: [
                 Text(
                   '$total',
-                  style: FYTextStyles.riskStatHighRiskStyle()
-                      .copyWith(color: FYColors.color_1A1A1A, fontSize: 28.sp),
+                  style: TextStyle(
+                    color: FYColors.color_1A1A1A,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    height: 1.5,
+                    leadingDistribution: TextLeadingDistribution.even,
+                  ),
                 ),
                 Text('家',
                     style: FYTextStyles.riskStatHighRiskStyle()
-                        .copyWith(color: FYColors.color_1A1A1A)),
+                        .copyWith(color: FYColors.color_1A1A1A,fontWeight: FontWeight.w400,fontSize: 12.sp)),
               ],
             ),
           ],
@@ -398,7 +401,6 @@ class RiskPage extends StatelessWidget {
     );
   }
 
-
   // 二类单位风险项
   Widget _buildRiskItem2(Map<String, dynamic> item) {
     final bool isHighRisk = item['riskLevel'] == '高风险';
@@ -431,11 +433,9 @@ class RiskPage extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color:
-                      isRead ? Colors.green.shade100 : Colors.transparent,
+                      color: isRead ? Colors.green.shade100 : Colors.transparent,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -481,8 +481,7 @@ class RiskPage extends StatelessWidget {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(12.w)),
+                            borderRadius: BorderRadius.all(Radius.circular(12.w)),
                             color: FYColors.whiteColor),
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 6.w),

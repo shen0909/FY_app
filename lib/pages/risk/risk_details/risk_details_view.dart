@@ -42,7 +42,6 @@ class RiskDetailsPage extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.w),
                 decoration: BoxDecoration(
-                  // 渐变色背景，从左下到右上
                   gradient: const LinearGradient(
                     begin: Alignment.bottomLeft,
                     end: Alignment.topRight,
@@ -64,29 +63,19 @@ class RiskDetailsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          _buildMainContent(),
-          _buildRiskScoreDialog(),
-        ],
-      ),
-    );
-  }
-
-  // 主内容区域
-  Widget _buildMainContent() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCompanyHeader(),
-          SizedBox(height: 24.w),
-          _buildTimelineSection(),
-          SizedBox(height: 24.w),
-          _buildRiskFactorsSection(),
-          SizedBox(height: 24.w),
-          _buildCaseHistorySection(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCompanyHeader(),
+            SizedBox(height: 24.w),
+            _buildTimelineSection(),
+            SizedBox(height: 24.w),
+            _buildRiskFactorsSection(),
+            SizedBox(height: 24.w),
+            _buildCaseHistorySection(),
+          ],
+        ),
       ),
     );
   }
@@ -96,7 +85,7 @@ class RiskDetailsPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: FYColors.whiteColor,
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 13.w),
+      padding: EdgeInsets.only(left: 16.w,top: 13.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -104,14 +93,16 @@ class RiskDetailsPage extends StatelessWidget {
             children: [
               Text(
                 '中船黄埔文冲船舶有限公司',
-                style: FYTextStyles.riskLocationTitleStyle()
-                    .copyWith(fontSize: 20.sp),
+                style: FYTextStyles.riskLocationTitleStyle().copyWith(fontSize: 20.sp),
               ),
               SizedBox(width: 8.w),
-              Image.asset(
-                FYImages.tip_icon,
-                width: 24.w,
-                height: 24.w,
+              GestureDetector(
+                onTap: () => logic.companyDetail(),
+                child: Image.asset(
+                  FYImages.tip_icon,
+                  width: 24.w,
+                  height: 24.w,
+                ),
               ),
             ],
           ),
@@ -120,7 +111,7 @@ class RiskDetailsPage extends StatelessWidget {
             'CSSC Huangpu Wenchong Shipbuilding Company Limited',
             style: TextStyle(
               fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w700,
               color: const Color(0xFF345DFF),
             ),
           ),
@@ -143,7 +134,9 @@ class RiskDetailsPage extends StatelessWidget {
                 color: FYColors.color_F9F9F9,
                 borderRadius: BorderRadius.all(Radius.circular(8.w))),
             padding: EdgeInsets.symmetric(vertical: 16.w),
-            child: Column(children: _buildTimelineItems()),
+            child: Obx(() {
+              return Column(children: _buildTimelineItems());
+            }),
           ),
         ],
       ),
@@ -152,47 +145,51 @@ class RiskDetailsPage extends StatelessWidget {
 
   // 构建时间线项目列表
   List<Widget> _buildTimelineItems() {
-    // 模拟数据，实际应从state中获取
     final timelineItems = [
       {'date': '2025-04-15', 'content': '与美国某化工企业的专利纠纷案开庭审理\n涉及高性能聚合物技术'},
       {'date': '2025-04-15', 'content': '广州工厂因环保问题被当地环保部门责令整改，限期30天'},
       {'date': '2025-04-15', 'content': '在东南亚地区的合资工厂投产，但当地政策存在不确定性'},
       {'date': '2025-04-15', 'content': '被列入美国商务部实体清单观察名单，部分产品出口受限'},
+      {'date': '2025-04-15', 'content': '被列入美国商务部实体清单观察名单，部分产品出口受限'},
+      {'date': '2025-04-15', 'content': '被列入美国商务部实体清单观察名单，部分产品出口受限'},
     ];
 
     List<Widget> items = [];
-    for (int i = 0; i < timelineItems.length; i++) {
-      items.add(_buildTimelineItem(timelineItems[i], i == timelineItems.length - 1));
+
+    // 判断是否展开，如果未展开，只显示第一项
+    int itemsToShow = state.isExpandTimeLine.value ? timelineItems.length : 1;
+
+    for (int i = 0; i < itemsToShow; i++) {
+      bool isLastItem = i == itemsToShow - 1;
+      items.add(_buildTimelineItem(timelineItems[i], isLastItem));
     }
 
-    // 添加显示更多/收起按钮
-    items.add(Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.w),
-      child: InkWell(
-        onTap: () => logic.showMoreTimeline(),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 10.w),
-          decoration: BoxDecoration(
-            color: FYColors.whiteColor,
-            borderRadius: BorderRadius.circular(8.w),
-          ),
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '收起',
-                  style: FYTextStyles.riskUnitTypeUnselectedStyle(),
-                ),
-                const SizedBox(width: 5),
-                Icon(
-                  Icons.keyboard_arrow_up,
-                  color: FYColors.color_3361FE,
-                  size: 16,
-                ),
-              ],
-            ),
+    items.add(InkWell(
+      onTap: () => logic.showMoreTimeline(),
+      child: Container(
+        width: 297.w,
+        height: 36.w,
+        padding: EdgeInsets.symmetric(vertical: 10.w),
+        decoration: BoxDecoration(
+          color: FYColors.whiteColor,
+          borderRadius: BorderRadius.circular(8.w),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                state.isExpandTimeLine.value ? '收起' : '展开更多',
+                style: FYTextStyles.riskUnitTypeUnselectedStyle(),
+              ),
+              SizedBox(width: 5.w),
+              Icon(
+                state.isExpandTimeLine.value ? Icons.keyboard_arrow_up : Icons
+                    .keyboard_arrow_down,
+                color: FYColors.color_3361FE,
+                size: 16,
+              ),
+            ],
           ),
         ),
       ),
@@ -285,7 +282,7 @@ class RiskDetailsPage extends StatelessWidget {
           SizedBox(height: 10.w),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.only(left:12.w,top: 12.w,bottom: 11.w,right: 9.w),
+            padding: EdgeInsets.only(left: 12.w, top: 12.w, bottom: 11.w),
             decoration: BoxDecoration(
                 color: FYColors.color_F9F9F9,
                 borderRadius: BorderRadius.circular(8.w)),
@@ -305,7 +302,7 @@ class RiskDetailsPage extends StatelessWidget {
                   runSpacing: 10.w,
                   children: List.generate(
                     riskTags.length,
-                    (index) => _buildRiskTag(riskTags[index]),
+                        (index) => _buildRiskTag(riskTags[index]),
                   ),
                 ),
               ],
@@ -320,16 +317,18 @@ class RiskDetailsPage extends StatelessWidget {
   Widget _buildRiskTag(String tagName) {
     return Container(
       width: 102.w,
-      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 11.w),
+      height: 36.w,
       decoration: BoxDecoration(
         color: const Color(0xFFF0F5FF),
         borderRadius: BorderRadius.circular(8.w),
       ),
-      child: Text(
-        tagName,
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: FYColors.color_3361FE,
+      child: Center(
+        child: Text(
+          tagName,
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: FYColors.color_3361FE,
+          ),
         ),
       ),
     );
@@ -410,139 +409,57 @@ class RiskDetailsPage extends StatelessWidget {
     );
   }
 
-  // 风险评分详情对话框
-  Widget _buildRiskScoreDialog() {
-    return Obx(() {
-      if (!state.showRiskScoreDialog.value) {
-        return const SizedBox.shrink();
-      }
-      return Container(
+  Widget dialogWidget(Widget content,String title){
+    return Container(
         width: double.infinity,
-        height: double.infinity,
-        color: Colors.black.withOpacity(0.5),
-        child: Center(
-          child: Container(
-            width: Get.width * 0.9,
-            decoration: BoxDecoration(
-              color: FYColors.whiteColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Stack(
-                    children: [
-                      const Center(
-                        child: Text(
-                          '风险评分详情',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 15,
-                        child: GestureDetector(
-                          onTap: () => logic.closeRiskScoreDetails(),
-                          child: const Icon(Icons.close,
-                              color: Colors.black54, size: 24),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1),
-                Container(
-                  constraints: BoxConstraints(
-                    maxHeight: Get.height * 0.6,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ...state.riskScores
-                            .map((score) => _buildRiskScoreItem(score)),
-                        const SizedBox(height: 15),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            '风险分数趋势图',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          height: 100,
-                          margin: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: FYColors.color_F9F9F9,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '此处显示趋势图',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        decoration: BoxDecoration(
+          color: FYColors.whiteColor,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 顶部标题区域
+            dialogTitle(title),
+            content
+          ],
         ),
       );
-    });
   }
 
-  // 风险评分项目
-  Widget _buildRiskScoreItem(Map<String, dynamic> score) {
+  Widget dialogTitle(String title){
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-      ),
+      padding: EdgeInsets.only(top: 17.w, left: 16.w, right: 16.w, bottom: 13.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            score['name'],
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
+            title,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF333333),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Color(score['color']).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '${score['score']}',
-              style: TextStyle(
-                color: Color(score['color']),
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
+          GestureDetector(
+            onTap: () => Get.back(),
+            child: Container(
+              width: 24.w,
+              height: 24.w,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFFF0F0F0),
               ),
+              child: Icon(Icons.close,
+                  color: const Color(0xFF666666), size: 16.w),
             ),
           ),
         ],
       ),
     );
+
   }
+
 }
 
 // 虚线绘制

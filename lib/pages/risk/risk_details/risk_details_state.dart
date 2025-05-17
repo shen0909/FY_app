@@ -16,7 +16,8 @@ class RiskDetailsState {
   
   // 是否显示风险评分详情对话框
   final RxBool showRiskScoreDialog = false.obs;
-  
+  final RxBool isExpandTimeLine = false.obs; // 是否展开时序跟踪
+
   // 风险因素列表
   final List<Map<String, dynamic>> riskFactors = [
     {'name': '知识产权纠纷', 'type': 'tag'},
@@ -40,10 +41,5 @@ class RiskDetailsState {
   
   RiskDetailsState() {
     ///Initialize variables
-  }
-  
-  // 切换风险评分详情对话框显示状态
-  void toggleRiskScoreDialog() {
-    showRiskScoreDialog.value = !showRiskScoreDialog.value;
   }
 }

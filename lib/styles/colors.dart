@@ -10,7 +10,6 @@ class FYColors {
   static const Color text1Color = Color(0XFF2E90E7);
   static const Color color_101148 = Color(0XFF101148); // AI智能问答标题颜色 
   static const Color color_666666 = Color(0XFF666666); // 次要文字颜色
-
   /// 背景色
   static const Color highRiskBg = Color(0XFFFFE5E5);
   static const Color middleRiskBg = Color(0XFFFFF5E5);
@@ -18,7 +17,10 @@ class FYColors {
   static const Color color_F9F9F9 = Color(0XFFF9F9F9);
   static const Color color_F5F5F5 = Color(0XFFF5F5F5); // Perplexity按钮背景色
   static const Color color_F0F5FF = Color(0XFFF0F5FF); // 批量选择按钮背景色
-  static const Color color_EFEFEF = Color(0XFFEFEFEF); // 批量选择按钮边框色
+  static const Color color_EFEFEF = Color(0XFFEFEFEF);
+  static const Color color_E6E6E6 = Color(0XFFE6E6E6);
+  static const Color color_F9FBFF = Color(0XFFF9FBFF);
+  static const Color color_F6F8FC = Color(0XFFF6F8FC);
 
   /// 边框颜色
   static const Color highRiskBorder = Color(0XFFFF1919);

@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FYColors.whiteColor,
+      backgroundColor: FYColors.color_F6F8FC,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.w),
@@ -109,9 +109,7 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 22.w, bottom: 20.w),
         height: 174.w,
         decoration: BoxDecoration(
-          image: const DecorationImage(
-              image: AssetImage(FYImages.riskyBg), fit: BoxFit.cover),
-          color: Colors.white,
+          image: const DecorationImage(image: AssetImage(FYImages.riskyBg), fit: BoxFit.cover),
           borderRadius: BorderRadius.circular(15.w),
         ),
         child: Column(
@@ -133,16 +131,18 @@ class HomePage extends StatelessWidget {
                     Text(
                       "风险预警",
                       style: TextStyle(
-                        color: Color(0xFF4178D3),
-                        fontSize: 18.w,
-                        fontWeight: FontWeight.bold,
+                        color: FYColors.color_1D4293,
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
                       "实时监控风险，智能预警推送",
                       style: TextStyle(
                         color: Colors.black54,
-                        fontSize: 14.w,
+                        height: 1,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -166,6 +166,7 @@ class HomePage extends StatelessWidget {
   Widget _buildRiskItem(Map<String, dynamic> item) {
     return Container(
       width: 101.w,
+      height: 60.w,
       decoration: BoxDecoration(
           color: item['bgColor'],
           borderRadius: BorderRadius.circular(10.w),
@@ -180,8 +181,8 @@ class HomePage extends StatelessWidget {
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
               // letterSpacing: 0.04 * 16.sp,
-              // height: 0.8,
-              // leadingDistribution: TextLeadingDistribution.even,
+              height: 1,
+              leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
           SizedBox(height: 7.55.w,),
@@ -192,7 +193,7 @@ class HomePage extends StatelessWidget {
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
               // letterSpacing: 0.04 * 14.sp,
-              // height: 0.94,
+              height: 1.2,
               // leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
