@@ -8,6 +8,7 @@ import 'package:safe_app/pages/risk/risk_view.dart';
 import 'package:safe_app/pages/ai_qus/ai_qus_view.dart';
 import 'package:safe_app/pages/order/order_view.dart';
 import 'package:safe_app/pages/order/order_event_detial/order_event_detial_view.dart';
+import 'package:safe_app/pages/setting/feed_back/feed_back_view.dart';
 import 'package:safe_app/pages/setting/setting_view.dart';
 import 'package:safe_app/pages/setting/use_tutorial/use_tutorial_view.dart';
 import 'package:safe_app/pages/setting/user_login_data/user_login_data_view.dart';
@@ -46,5 +47,6 @@ class Routers {
     GetPage(name: userLoginData, page: () => UserLoginDataPage()),
     GetPage(name: useTutorial, page: () => UseTutorialPage()),
     GetPage(name: privacySafe, page: () => PrivacySafePage()),
+    GetPage(name: feedback, page: () => FeedBackPage()),
   ];
 }

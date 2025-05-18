@@ -63,8 +63,7 @@ class RiskDetailsLogic extends GetxController {
         width: double.infinity,
         decoration: BoxDecoration(
           color: FYColors.whiteColor,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

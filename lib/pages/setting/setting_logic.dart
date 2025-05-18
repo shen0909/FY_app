@@ -81,7 +81,7 @@ class SettingLogic extends GetxController {
   
   // 前往用户反馈页面
   void goToFeedback() {
-    Get.toNamed('/feedback');
+    Get.toNamed(Routers.feedback);
   }
   
   // 前往用户行为分析页面
