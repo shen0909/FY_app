@@ -39,22 +39,22 @@ class OrderState {
         'isFavorite': true
       },
       {
-        'title': '海关新规',
+        'title': '海外利益保护',
         'description': '相关资讯 8 条',
         'updateTime': '更新: 2025-04-25 15:30',
-        'isFavorite': false
+        'isFavorite': true
       },
       {
-        'title': '地区政策',
+        'title': '地区冲突',
         'description': '相关资讯 5 条',
         'updateTime': '更新: 2025-04-24 09:20',
         'isFavorite': false
       },
       {
-        'title': '岛屿争端',
+        'title': '岛礁争端',
         'description': '相关资讯 3 条',
         'updateTime': '更新: 2025-04-23 11:45',
-        'isFavorite': false
+        'isFavorite': true
       }
     ]);
     
@@ -125,6 +125,16 @@ class OrderState {
     // 添加我的关注列表示例数据
     myFavorites.add({
       'title': '贸易战',
+      'isFavorite': true
+    });
+    
+    myFavorites.add({
+      'title': '海外利益保护',
+      'isFavorite': true
+    });
+    
+    myFavorites.add({
+      'title': '岛礁争端',
       'isFavorite': true
     });
     

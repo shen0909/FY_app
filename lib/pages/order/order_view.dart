@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
 
 import '../../widgets/custom_app_bar.dart';
 import 'order_logic.dart';
@@ -14,15 +17,23 @@ class OrderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: FYColors.whiteColor,
       appBar: FYAppBar(
         title: '我的订阅',
-        centerTitle: false,
         actions: [
           TextButton.icon(
             onPressed: () => logic.showSubscriptionManage(),
-            icon: const Icon(Icons.settings_outlined),
-            label: const Text('订阅管理'),
-            style: TextButton.styleFrom(foregroundColor: Colors.black54),
+            icon: Image.asset(FYImages.oder_share, width: 20.w,
+              height: 20.w,
+              fit: BoxFit.contain,),
+            label: Text(
+              '订阅管理',
+              style: TextStyle(
+                  color: FYColors.color_1A1A1A,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400
+              ),
+            ),
           )
         ],
       ),
@@ -62,26 +73,35 @@ class OrderPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.local_fire_department, color: Colors.red),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '热门事件',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    ' 共 ${state.hotEvents.length} 条',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
+              Text(
+                '热门事件',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w400,
+                  color: FYColors.color_1A1A1A,
+                ),
               ),
+              RichText(
+                  text: TextSpan(
+                      style: TextStyle(
+                        color: FYColors.color_A6A6A6,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        height: 0.8,
+                        leadingDistribution: TextLeadingDistribution.even,
+                      ),
+                      children: [
+                        const TextSpan(text: '共 '),
+                        TextSpan(
+                          text: '${state.hotEvents.length}',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w700,
+                            color: FYColors.color_3361FE,
+                          ),
+                        ),
+                        const TextSpan(text: ' 条'),
+                      ]))
             ],
           ),
         ),
@@ -107,27 +127,12 @@ class OrderPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 '自定义事件',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => logic.showEventManage(),
-                child: Row(
-                  children: const [
-                    Icon(Icons.edit, size: 16, color: Colors.blue),
-                    SizedBox(width: 4),
-                    Text(
-                      '添加自定义事件',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ],
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1A1A1A),
                 ),
               ),
             ],
@@ -156,61 +161,79 @@ class OrderPage extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildEventItem(Map<String, dynamic> event) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+    final bool isFollowed = event['isFavorite'] == true;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Color(0xFFF9F9F9),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: InkWell(
         onTap: () => logic.getNewsListByEvent(event['title']),
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: const EdgeInsets.all(12),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event['title'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    event['title'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF1A1A1A),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => logic.toggleEventFavorite(event),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isFollowed
+                            ? Color(0x333361FE)
+                            : Color(0xFF3361FE),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        isFollowed ? '已关注' : '加关注',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isFollowed ? Color(0xFF3361FE) : Colors.white,
+                        ),
                       ),
                     ),
-                    if (event['description'] != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          event['description'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    if (event['updateTime'] != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          event['updateTime'],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: Icon(
-                  event['isFavorite'] ? Icons.star : Icons.star_border,
-                  color: event['isFavorite'] ? Colors.amber : Colors.grey,
-                ),
-                onPressed: () => logic.toggleEventFavorite(event),
+              SizedBox(height: 8.w),
+              // if (event['description'] != null)
+              Row(
+                children: [
+                  Text(
+                    event['description'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFA6A6A6),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    event['updateTime'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFA6A6A6),
+                    ),
+                  )
+                ],
               ),
-              const Icon(Icons.chevron_right),
+              // if (event['updateTime'] != null)
             ],
           ),
         ),
@@ -228,13 +251,14 @@ class OrderPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16),
             child: Row(
               children: [
-                const Icon(Icons.collections_bookmark, color: Colors.blue),
+                Icon(Icons.collections_bookmark, color: Color(0xFF3361FE)),
                 const SizedBox(width: 8),
                 const Text(
                   '专题列表',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
                   ),
                 ),
               ],
@@ -253,10 +277,14 @@ class OrderPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildTopicItem(Map<String, dynamic> topic) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      color: Color(0xFFF9F9F9),
       child: InkWell(
         onTap: () {},
         child: Padding(
@@ -272,7 +300,8 @@ class OrderPage extends StatelessWidget {
                       topic['title'],
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF1A1A1A),
                       ),
                     ),
                     Padding(
@@ -280,8 +309,8 @@ class OrderPage extends StatelessWidget {
                       child: Text(
                         '相关事件: ${topic['count']}个',
                         style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
+                          fontSize: 12,
+                          color: Color(0xFFA6A6A6),
                         ),
                       ),
                     ),
@@ -291,14 +320,15 @@ class OrderPage extends StatelessWidget {
                         spacing: 8,
                         children: List.generate(
                           topic['tags'].length,
-                          (tagIndex) => Chip(
-                            label: Text(
-                              topic['tags'][tagIndex],
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            backgroundColor: Colors.grey.shade200,
-                            padding: const EdgeInsets.all(4),
-                          ),
+                              (tagIndex) =>
+                              Chip(
+                                label: Text(
+                                  topic['tags'][tagIndex],
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                backgroundColor: Colors.grey.shade200,
+                                padding: const EdgeInsets.all(4),
+                              ),
                         ),
                       ),
                     ),
@@ -329,22 +359,23 @@ class OrderPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16),
             child: Row(
               children: [
-                const Icon(Icons.event_note, color: Colors.amber),
+                Icon(Icons.event_note, color: Colors.amber),
                 const SizedBox(width: 8),
                 const Text(
                   '关注的事件',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
                   ),
                 ),
               ],
             ),
           ),
           Obx(() {
-            final favoriteEvents = state.myFavorites.where((e) => 
-              !state.topicList.any((t) => t['title'] == e['title'])).toList();
-            
+            final favoriteEvents = state.myFavorites.where((e) =>
+            !state.topicList.any((t) => t['title'] == e['title'])).toList();
+
             if (favoriteEvents.isEmpty) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
@@ -356,7 +387,7 @@ class OrderPage extends StatelessWidget {
                 ),
               );
             }
-            
+
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -365,8 +396,19 @@ class OrderPage extends StatelessWidget {
                 final event = favoriteEvents[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  color: Color(0xFFF9F9F9),
                   child: ListTile(
-                    title: Text(event['title']),
+                    title: Text(
+                      event['title'],
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
@@ -384,13 +426,14 @@ class OrderPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16),
             child: Row(
               children: [
-                const Icon(Icons.collections_bookmark, color: Colors.blue),
+                Icon(Icons.collections_bookmark, color: Color(0xFF3361FE)),
                 const SizedBox(width: 8),
                 const Text(
                   '关注的专题',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
                   ),
                 ),
               ],
@@ -398,8 +441,9 @@ class OrderPage extends StatelessWidget {
           ),
           Expanded(
             child: Obx(() {
-              final favoriteTopics = state.topicList.where((t) => t['isFavorite'] == true).toList();
-              
+              final favoriteTopics = state.topicList.where((
+                  t) => t['isFavorite'] == true).toList();
+
               if (favoriteTopics.isEmpty) {
                 return const Center(
                   child: Text(
@@ -424,23 +468,43 @@ class OrderPage extends StatelessWidget {
   }
   
   Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: state.currentTabIndex.value,
-      onTap: (index) => logic.switchTab(index),
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.event_note),
-          label: '事件订阅',
+    return Obx(() {
+      return Theme(
+        data: ThemeData(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.collections_bookmark),
-          label: '专题订阅',
+        child: BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: FYColors.whiteColor,
+          currentIndex: state.currentTabIndex.value,
+          onTap: (index) => logic.switchTab(index),
+          selectedItemColor: Color(0xFF3361FE),
+          type: BottomNavigationBarType.fixed,
+          selectedFontSize: 12.sp,
+          unselectedFontSize: 12.sp,
+          iconSize: 24,
+          selectedIconTheme: IconThemeData(size: 24),
+          unselectedIconTheme: IconThemeData(size: 24),
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset(FYImages.calendar_unchoose, width: 24, height: 24),
+              activeIcon: Image.asset(FYImages.calendar, width: 24, height: 24),
+              label: '事件订阅',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(FYImages.zhuanti_unchoose, width: 24, height: 24),
+              activeIcon: Image.asset(FYImages.zhuanti_choose, width: 24, height: 24),
+              label: '专题订阅',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(FYImages.attention_unchoose, width: 24, height: 24),
+              activeIcon: Image.asset(FYImages.attention_choose, width: 24, height: 24),
+              label: '我的关注',
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.star),
-          label: '我的关注',
-        ),
-      ],
-    );
+      );
+    });
   }
 }

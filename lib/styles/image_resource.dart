@@ -26,4 +26,11 @@ class FYImages {
   static const String cancle_cion = 'assets/images/cancle_cion.png';
   static const String choose_icon = 'assets/images/choose_icon.png';
   static const String unchoose_icon = 'assets/images/unchoose_icon.png';
+  static const String oder_share = 'assets/images/oder_share.png';
+  static const String calendar = 'assets/images/calendar.png';
+  static const String calendar_unchoose = 'assets/images/calendar_unchoose.png';
+  static const String zhuanti_choose = 'assets/images/zhuanti_choose.png';
+  static const String zhuanti_unchoose = 'assets/images/zhuanti_unchoose.png';
+  static const String attention_unchoose = 'assets/images/attention_unchoose.png';
+  static const String attention_choose = 'assets/images/attention_choose.png';
 }

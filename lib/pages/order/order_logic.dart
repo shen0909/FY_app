@@ -36,12 +36,22 @@ class OrderLogic extends GetxController {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('订阅管理'),
+            const Text(
+              '订阅管理',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Get.back(),
             ),
           ],
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
         content: Container(
           width: double.maxFinite,
@@ -49,10 +59,24 @@ class OrderLogic extends GetxController {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('我的订阅', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                '我的订阅', 
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
               _buildSubscriptionList(isMySubscription: true),
               const SizedBox(height: 20),
-              const Text('全部订阅', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                '全部订阅', 
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
               _buildSubscriptionList(isMySubscription: false),
             ],
           ),
@@ -89,7 +113,7 @@ class OrderLogic extends GetxController {
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: item['isSubscribed'] ? Colors.blue : Colors.grey.shade300,
+                  color: item['isSubscribed'] ? Color(0xFF3361FE) : Colors.grey.shade300,
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -102,7 +126,7 @@ class OrderLogic extends GetxController {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
-                        color: item['isSubscribed'] ? Colors.blue : Colors.black87,
+                        color: item['isSubscribed'] ? Color(0xFF3361FE) : Colors.black87,
                       ),
                     ),
                   ),
@@ -110,7 +134,7 @@ class OrderLogic extends GetxController {
                     Icon(
                       item['isSubscribed'] ? Icons.check : Icons.add,
                       size: 16,
-                      color: item['isSubscribed'] ? Colors.blue : Colors.grey,
+                      color: item['isSubscribed'] ? Color(0xFF3361FE) : Colors.grey,
                     ),
                 ],
               ),
@@ -141,12 +165,22 @@ class OrderLogic extends GetxController {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('事件订阅管理'),
+            const Text(
+              '事件订阅管理',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Get.back(),
             ),
           ],
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
         content: Container(
           width: double.maxFinite,
@@ -154,35 +188,127 @@ class OrderLogic extends GetxController {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('热门事件', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                '热门事件', 
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: state.hotEvents.length,
                   itemBuilder: (context, index) {
                     final event = state.hotEvents[index];
                     return ListTile(
-                      title: Text(event['title'], 
-                        style: const TextStyle(fontSize: 16)),
-                      onTap: () => toggleEventFavorite(event),
+                      title: Text(
+                        event['title'], 
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF1A1A1A),
+                        ),
+                      ),
+                      trailing: GestureDetector(
+                        onTap: () => toggleEventFavorite(event),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: event['isFavorite'] 
+                                ? Color(0x333361FE) 
+                                : Color(0xFF3361FE),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            event['isFavorite'] ? '已关注' : '加关注',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: event['isFavorite'] ? Color(0xFF3361FE) : Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
               ),
               const Divider(),
-              const Text('自定义事件', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                '自定义事件', 
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: GestureDetector(
                   onTap: () => addCustomEvent(),
                   child: Row(
                     children: const [
-                      Icon(Icons.add, color: Colors.blue),
+                      Icon(Icons.add_circle_outline, color: Color(0xFF3361FE)),
                       SizedBox(width: 5),
-                      Text('添加自定义事件', style: TextStyle(color: Colors.blue)),
+                      Text(
+                        '添加自定义事件', 
+                        style: TextStyle(
+                          color: Color(0xFF3361FE),
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
+              if (state.customEvents.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: state.customEvents.length,
+                    itemBuilder: (context, index) {
+                      final event = state.customEvents[index];
+                      return ListTile(
+                        title: Text(
+                          event['title'], 
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () => toggleEventFavorite(event),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: event['isFavorite'] 
+                                      ? Color(0x333361FE) 
+                                      : Color(0xFF3361FE),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Text(
+                                  event['isFavorite'] ? '已关注' : '加关注',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: event['isFavorite'] ? Color(0xFF3361FE) : Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete_outline, color: Colors.grey),
+                              onPressed: () => deleteCustomEvent(index),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
         ),
@@ -211,6 +337,43 @@ class OrderLogic extends GetxController {
       } else {
         state.myFavorites.removeWhere((e) => e['title'] == event['title']);
       }
+    } else {
+      // 检查自定义事件
+      final customIndex = state.customEvents.indexWhere(
+        (e) => e['title'] == event['title']
+      );
+      
+      if (customIndex != -1) {
+        state.customEvents[customIndex]['isFavorite'] = !state.customEvents[customIndex]['isFavorite'];
+        state.customEvents.refresh();
+        
+        // 更新我的关注列表
+        if (state.customEvents[customIndex]['isFavorite']) {
+          if (!state.myFavorites.any((e) => e['title'] == event['title'])) {
+            state.myFavorites.add({
+              'title': event['title'],
+              'isFavorite': true
+            });
+          }
+        } else {
+          state.myFavorites.removeWhere((e) => e['title'] == event['title']);
+        }
+      }
+    }
+    
+    // 刷新列表
+    state.myFavorites.refresh();
+  }
+  
+  // 删除自定义事件
+  void deleteCustomEvent(int index) {
+    if (index >= 0 && index < state.customEvents.length) {
+      final eventTitle = state.customEvents[index]['title'];
+      state.customEvents.removeAt(index);
+      state.myFavorites.removeWhere((e) => e['title'] == eventTitle);
+      
+      state.customEvents.refresh();
+      state.myFavorites.refresh();
     }
   }
   
@@ -220,7 +383,17 @@ class OrderLogic extends GetxController {
     
     Get.dialog(
       AlertDialog(
-        title: const Text('添加自定义事件'),
+        title: const Text(
+          '添加自定义事件',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
@@ -231,13 +404,20 @@ class OrderLogic extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('取消'),
+            child: const Text(
+              '取消',
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
                 state.customEvents.add({
                   'title': controller.text,
+                  'description': '暂无相关资讯',
+                  'updateTime': '更新: ${DateTime.now().toString().substring(0, 16)}',
                   'isFavorite': true
                 });
                 
@@ -249,7 +429,12 @@ class OrderLogic extends GetxController {
                 Get.back();
               }
             },
-            child: const Text('确定'),
+            child: const Text(
+              '确定',
+              style: TextStyle(
+                color: Color(0xFF3361FE),
+              ),
+            ),
           ),
         ],
       ),
@@ -259,6 +444,12 @@ class OrderLogic extends GetxController {
   // 获取资讯列表
   void getNewsListByEvent(String title) {
     // 模拟进入资讯列表页面
-    Get.snackbar('提示', '正在查看 $title 相关资讯');
+    Get.snackbar(
+      '提示', 
+      '正在查看 $title 相关资讯',
+      backgroundColor: Colors.white,
+      colorText: Color(0xFF1A1A1A),
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 }
