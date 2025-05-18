@@ -21,6 +21,7 @@ class FYColors {
   static const Color color_E6E6E6 = Color(0XFFE6E6E6);
   static const Color color_F9FBFF = Color(0XFFF9FBFF);
   static const Color color_F6F8FC = Color(0XFFF6F8FC);
+  static const Color color_E7E7E7 = Color(0XFFE7E7E7);
 
   /// 边框颜色
   static const Color highRiskBorder = Color(0XFFFF1919);

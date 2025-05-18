@@ -452,4 +452,31 @@ class OrderLogic extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
     );
   }
+
+  // 切换专题收藏状态
+  void toggleTopicFavorite(Map<String, dynamic> topic) {
+    final index = state.topicList.indexWhere(
+      (t) => t['title'] == topic['title']
+    );
+    
+    if (index != -1) {
+      state.topicList[index]['isFavorite'] = !state.topicList[index]['isFavorite'];
+      state.topicList.refresh();
+      
+      // 更新我的关注列表
+      if (state.topicList[index]['isFavorite']) {
+        if (!state.myFavorites.any((e) => e['title'] == topic['title'])) {
+          state.myFavorites.add({
+            'title': topic['title'],
+            'isFavorite': true
+          });
+        }
+      } else {
+        state.myFavorites.removeWhere((e) => e['title'] == topic['title']);
+      }
+      
+      // 刷新列表
+      state.myFavorites.refresh();
+    }
+  }
 }

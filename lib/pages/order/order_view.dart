@@ -243,22 +243,22 @@ class OrderPage extends StatelessWidget {
   
   Widget _buildTopicSubscriptions() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: EdgeInsets.only(top: 16.w, bottom: 10.w),
             child: Row(
               children: [
-                Icon(Icons.collections_bookmark, color: Color(0xFF3361FE)),
-                const SizedBox(width: 8),
-                const Text(
+                Image.asset(FYImages.zhuanti_choose, width: 24.w, height: 24.w),
+                SizedBox(width: 8.w),
+                Text(
                   '专题列表',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF1A1A1A),
+                    color: FYColors.color_1A1A1A,
                   ),
                 ),
               ],
@@ -279,68 +279,82 @@ class OrderPage extends StatelessWidget {
   }
 
   Widget _buildTopicItem(Map<String, dynamic> topic) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+    final bool isFollowed = topic['isFavorite'] == true;
+    
+    return Container(
+      margin: EdgeInsets.only(bottom: 10.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.r),
+        color: FYColors.color_F9F9F9,
       ),
-      color: Color(0xFFF9F9F9),
       child: InkWell(
         onTap: () {},
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: EdgeInsets.all(12.w),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      topic['title'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF1A1A1A),
-                      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    topic['title'],
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: FYColors.color_1A1A1A,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                  ),
+                  GestureDetector(
+                    onTap: () => logic.toggleTopicFavorite(topic),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
+                      decoration: BoxDecoration(
+                        color: isFollowed
+                            ? Color(0x333361FE)
+                            : FYColors.color_3361FE,
+                        borderRadius: BorderRadius.circular(14.w),
+                      ),
                       child: Text(
-                        '相关事件: ${topic['count']}个',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFFA6A6A6),
+                        isFollowed ? '已关注' : '加关注',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: isFollowed ? FYColors.color_3361FE : FYColors.whiteColor,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Wrap(
-                        spacing: 8,
-                        children: List.generate(
-                          topic['tags'].length,
-                              (tagIndex) =>
-                              Chip(
-                                label: Text(
-                                  topic['tags'][tagIndex],
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                backgroundColor: Colors.grey.shade200,
-                                padding: const EdgeInsets.all(4),
-                              ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.w),
+              Text(
+                '相关事件: ${topic['count']}个',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                  fontWeight: FontWeight.w400
                 ),
               ),
-              IconButton(
-                icon: Icon(
-                  topic['isFavorite'] ? Icons.star : Icons.star_border,
-                  color: topic['isFavorite'] ? Colors.amber : Colors.grey,
+              SizedBox(height: 12.w),
+              Wrap(
+                spacing: 8.w,
+                children: List.generate(
+                  topic['tags'].length,
+                  (tagIndex) => Container(
+                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.w),
+                    decoration: BoxDecoration(
+                      color: FYColors.color_E7E7E7,
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    child: Text(
+                      topic['tags'][tagIndex],
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_1A1A1A,
+                      ),
+                    ),
+                  ),
                 ),
-                onPressed: () {},
               ),
             ],
           ),
