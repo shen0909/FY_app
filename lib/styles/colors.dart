@@ -39,5 +39,7 @@ class FYColors {
   static const List<Color> loginBtn = [Color(0XFF345DFF), Color(0XFF2F89F8)];
 
   static const Color color_3361FE = Color(0xFF3361FE); // 单位类别未选中蓝色
-  static const Color color_1D4293 = Color(0xFF1D4293); // 高风险卡片字体色深蓝
+  static const Color color_1D4293 = Color(0xFF1D4293);
+  static const Color color_555555 = Color(0xFF555555);
+  static const Color color_3A3A3A = Color(0xFF3A3A3A);
 }

@@ -107,7 +107,6 @@ class HomePage extends StatelessWidget {
       onTap: () => logic.goRisk(),
       child: Container(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 22.w, bottom: 20.w),
-        height: 174.w,
         decoration: BoxDecoration(
           image: const DecorationImage(image: AssetImage(FYImages.riskyBg), fit: BoxFit.cover),
           borderRadius: BorderRadius.circular(15.w),
@@ -139,8 +138,7 @@ class HomePage extends StatelessWidget {
                     Text(
                       "实时监控风险，智能预警推送",
                       style: TextStyle(
-                        color: Colors.black54,
-                        height: 1,
+                        color: FYColors.color_555555,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w400,
                       ),
@@ -271,50 +269,53 @@ class HomePage extends StatelessWidget {
 
   // 清单更新信息
   Widget _buildListUpdate() {
-    return Container(
-      padding: EdgeInsets.only(top: 17.w, left: 16.w, bottom: 16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15.w),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            spreadRadius: 1.w,
-            blurRadius: 5.w,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Image.asset(FYImages.detailList,width: 44.w,height: 44.w,fit: BoxFit.contain,),
-          SizedBox(width: 15.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "清单",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF222222),
-                  height: 0.8.w,
-                  leadingDistribution: TextLeadingDistribution.even,
+    return GestureDetector(
+      onTap: () => logic.goDetailList(),
+      child: Container(
+        padding: EdgeInsets.only(top: 17.w, left: 16.w, bottom: 16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.w),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              spreadRadius: 1.w,
+              blurRadius: 5.w,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Image.asset(FYImages.detailList,width: 44.w,height: 44.w,fit: BoxFit.contain,),
+            SizedBox(width: 15.w),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "清单",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF222222),
+                    height: 0.8.w,
+                    leadingDistribution: TextLeadingDistribution.even,
+                  ),
                 ),
-              ),
-              SizedBox(height: 14.w),
-              Text(
-                "${state.listUpdateTime}更新",
-                style: TextStyle(
-                  color: Color(0xFF333333),
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  height: 0.8,
-                  leadingDistribution: TextLeadingDistribution.even,
+                SizedBox(height: 14.w),
+                Text(
+                  "${state.listUpdateTime}更新",
+                  style: TextStyle(
+                    color: Color(0xFF333333),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    height: 0.8,
+                    leadingDistribution: TextLeadingDistribution.even,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

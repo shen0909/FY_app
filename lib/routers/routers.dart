@@ -1,4 +1,5 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:safe_app/pages/detail_list/detail_list_view.dart';
 import 'package:safe_app/pages/home/home_view.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_view.dart';
 import 'package:safe_app/pages/hot_pot/hot_pot_view.dart';
@@ -32,6 +33,7 @@ class Routers {
   static const String userLoginData = '/user_login_data';
   static const String useTutorial = '/use_tutorial';
   static const String privacySafe = '/privacy_safe';
+  static const String detailList = '/detail_list';
 
   static final List<GetPage> pages = [
     GetPage(name: login, page: () => LoginPage()),
@@ -48,5 +50,6 @@ class Routers {
     GetPage(name: useTutorial, page: () => UseTutorialPage()),
     GetPage(name: privacySafe, page: () => PrivacySafePage()),
     GetPage(name: feedback, page: () => FeedBackPage()),
+    GetPage(name: detailList, page: () => DetailListPage()),
   ];
 }

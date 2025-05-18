@@ -42,4 +42,8 @@ class HomeLogic extends GetxController {
   void goSetting() {
     Get.toNamed(Routers.setting);
   }
+
+  goDetailList() {
+    Get.toNamed(Routers.detailList);
+  }
 }
