@@ -74,6 +74,11 @@ class SettingLogic extends GetxController {
     Get.toNamed(Routers.useTutorial);
   }
   
+  // 前往隐私保护页面
+  void goToPrivacySafe() {
+    Get.toNamed(Routers.privacySafe);
+  }
+  
   // 前往用户反馈页面
   void goToFeedback() {
     Get.toNamed('/feedback');
