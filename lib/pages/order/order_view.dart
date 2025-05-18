@@ -288,7 +288,7 @@ class OrderPage extends StatelessWidget {
         color: FYColors.color_F9F9F9,
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: () => logic.viewTopicDetail(topic),
         child: Padding(
           padding: EdgeInsets.all(12.w),
           child: Column(
@@ -305,24 +305,41 @@ class OrderPage extends StatelessWidget {
                       color: FYColors.color_1A1A1A,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => logic.toggleTopicFavorite(topic),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
-                      decoration: BoxDecoration(
-                        color: isFollowed
-                            ? Color(0x333361FE)
-                            : FYColors.color_3361FE,
-                        borderRadius: BorderRadius.circular(14.w),
-                      ),
-                      child: Text(
-                        isFollowed ? '已关注' : '加关注',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: isFollowed ? FYColors.color_3361FE : FYColors.whiteColor,
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => logic.toggleTopicFavorite(topic),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
+                          decoration: BoxDecoration(
+                            color: isFollowed
+                                ? Color(0x333361FE)
+                                : FYColors.color_3361FE,
+                            borderRadius: BorderRadius.circular(14.w),
+                          ),
+                          child: Text(
+                            isFollowed ? '已关注' : '加关注',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: isFollowed ? FYColors.color_3361FE : FYColors.whiteColor,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      SizedBox(width: 10.w),
+                      Image.asset(
+                        FYImages.fileEarmarkMedical,
+                        width: 20.w,
+                        height: 20.w,
+                      ),
+                      SizedBox(width: 12.w),
+                      Image.asset(
+                        FYImages.star,
+                        width: 16.w,
+                        height: 16.w,
+                        color: Color(0xFFFF9719),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -363,112 +380,179 @@ class OrderPage extends StatelessWidget {
     );
   }
   
+  Widget _buildFavoriteEventItem(Map<String, dynamic> event) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.w),
+      decoration: BoxDecoration(
+        color: FYColors.color_F9F9F9,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
+        title: Text(
+          event['title'] ?? '未命名事件',
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
+            color: FYColors.color_1A1A1A,
+          ),
+        ),
+        subtitle: event['description'] != null ? Text(
+          event['description'],
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: FYColors.color_A6A6A6,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ) : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              FYImages.star,
+              width: 16.w,
+              height: 16.w,
+              color: Color(0xFFFF9719),
+            ),
+            SizedBox(width: 10.w),
+            const Icon(Icons.chevron_right, color: FYColors.color_A6A6A6),
+          ],
+        ),
+        onTap: () => logic.getNewsListByEvent(event['title']),
+      ),
+    );
+  }
+  
   Widget _buildMyFavorites() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 关注的事件部分
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: EdgeInsets.only(bottom: 16.w),
             child: Row(
               children: [
-                Icon(Icons.event_note, color: Colors.amber),
-                const SizedBox(width: 8),
-                const Text(
+                Image.asset(
+                  FYImages.attention_choose,
+                  width: 24.w,
+                  height: 24.w,
+                ),
+                SizedBox(width: 8.w),
+                Text(
                   '关注的事件',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF1A1A1A),
+                    color: FYColors.color_1A1A1A,
                   ),
                 ),
               ],
             ),
           ),
-          Obx(() {
-            final favoriteEvents = state.myFavorites.where((e) =>
-            !state.topicList.any((t) => t['title'] == e['title'])).toList();
-
-            if (favoriteEvents.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: Text(
-                    '暂无关注的事件',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              );
-            }
-
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: favoriteEvents.length,
-              itemBuilder: (context, index) {
-                final event = favoriteEvents[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  color: Color(0xFFF9F9F9),
-                  child: ListTile(
-                    title: Text(
-                      event['title'],
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF1A1A1A),
+          
+          // 这里使用SizedBox包装ListView，限制高度以解决无限高度问题
+          SizedBox(
+            height: 120.w, // 固定高度，根据实际需求调整
+            child: Obx(() {
+              final favoriteEvents = state.myFavorites.where((e) =>
+              !state.topicList.any((t) => t['title'] == e['title'])).toList();
+  
+              if (favoriteEvents.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        FYImages.attention_unchoose,
+                        width: 60.w,
+                        height: 40.w,
+                        fit: BoxFit.contain,
                       ),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.star, color: Colors.amber),
-                        Icon(Icons.chevron_right),
-                      ],
-                    ),
+                      SizedBox(height: 8.w),
+                      Text(
+                        '暂无收藏的事件',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              },
-            );
-          }),
-          const SizedBox(height: 20),
+              }
+  
+              return ListView.builder(
+                itemCount: favoriteEvents.length,
+                shrinkWrap: true, // 内容大小决定ListView高度
+                physics: AlwaysScrollableScrollPhysics(), // 始终可滚动
+                itemBuilder: (context, index) {
+                  final event = favoriteEvents[index];
+                  return _buildFavoriteEventItem(event);
+                },
+              );
+            }),
+          ),
+          
+          SizedBox(height: 20.w),
+          
+          // 关注的专题部分
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: EdgeInsets.only(bottom: 10.w),
             child: Row(
               children: [
-                Icon(Icons.collections_bookmark, color: Color(0xFF3361FE)),
-                const SizedBox(width: 8),
-                const Text(
+                Image.asset(
+                  FYImages.zhuanti_choose,
+                  width: 24.w,
+                  height: 24.w,
+                ),
+                SizedBox(width: 8.w),
+                Text(
                   '关注的专题',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF1A1A1A),
+                    color: FYColors.color_1A1A1A,
                   ),
                 ),
               ],
             ),
           ),
+          
+          // 使用Expanded确保专题列表填充剩余空间
           Expanded(
             child: Obx(() {
-              final favoriteTopics = state.topicList.where((
-                  t) => t['isFavorite'] == true).toList();
-
+              final favoriteTopics = state.topicList.where((t) => t['isFavorite'] == true).toList();
+  
               if (favoriteTopics.isEmpty) {
-                return const Center(
-                  child: Text(
-                    '暂无关注的专题',
-                    style: TextStyle(color: Colors.grey),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        FYImages.zhuanti_unchoose,
+                        width: 60.w,
+                        height: 40.w,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(height: 8.w),
+                      Text(
+                        '暂无关注的专题',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
               
               return ListView.builder(
                 itemCount: favoriteTopics.length,
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final topic = favoriteTopics[index];
                   return _buildTopicItem(topic);

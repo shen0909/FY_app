@@ -33,4 +33,6 @@ class FYImages {
   static const String zhuanti_unchoose = 'assets/images/zhuanti_unchoose.png';
   static const String attention_unchoose = 'assets/images/attention_unchoose.png';
   static const String attention_choose = 'assets/images/attention_choose.png';
+  static const String fileEarmarkMedical = 'assets/images/file-earmark-medical.png';
+  static const String star = 'assets/images/star.png';
 }

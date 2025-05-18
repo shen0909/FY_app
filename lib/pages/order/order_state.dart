@@ -122,22 +122,32 @@ class OrderState {
       }
     ]);
     
-    // 添加我的关注列表示例数据
-    myFavorites.add({
-      'title': '贸易战',
-      'isFavorite': true
-    });
+    // 添加我的关注列表示例数据，确保包含所有必要字段
+    myFavorites.clear(); // 清空先前的数据
     
-    myFavorites.add({
-      'title': '海外利益保护',
-      'isFavorite': true
-    });
+    // 从热门事件添加完整的关注数据
+    for (var event in hotEvents) {
+      if (event['isFavorite'] == true) {
+        myFavorites.add({
+          'title': event['title'],
+          'description': event['description'] ?? '暂无相关资讯',
+          'updateTime': event['updateTime'] ?? '暂无更新时间',
+          'isFavorite': true
+        });
+      }
+    }
     
-    myFavorites.add({
-      'title': '岛礁争端',
-      'isFavorite': true
-    });
-    
-    myFavorites.addAll(topicList.where((topic) => topic['isFavorite'] == true).toList());
+    // 添加关注的专题
+    for (var topic in topicList) {
+      if (topic['isFavorite'] == true) {
+        myFavorites.add({
+          'title': topic['title'],
+          'count': topic['count'],
+          'tags': topic['tags'],
+          'isFavorite': true,
+          'isTopic': true  // 添加标志以区分专题和事件
+        });
+      }
+    }
   }
 }

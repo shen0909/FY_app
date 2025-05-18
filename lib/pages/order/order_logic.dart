@@ -479,4 +479,16 @@ class OrderLogic extends GetxController {
       state.myFavorites.refresh();
     }
   }
+
+  // 查看专题详情
+  void viewTopicDetail(Map<String, dynamic> topic) {
+    // 模拟进入专题详情页面
+    Get.snackbar(
+      '提示', 
+      '正在查看 ${topic['title']} 专题详情',
+      backgroundColor: Colors.white,
+      colorText: Color(0xFF1A1A1A),
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
 }
