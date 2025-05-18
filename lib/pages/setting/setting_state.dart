@@ -33,18 +33,20 @@ class SettingState {
   void _initDemoData() {
     userInfo.addAll({
       'username': 'ZQP001',
+      'name': '刘晓龙',
       'role': '管理员',
       'version': 'v2.5.1',
-      'department': '广东省深圳市'
+      'department': '广东省深圳市',
+      'avatar': 'assets/images/default_avatar.png'
     });
     
     statistics.addAll({
-      'todayVisits': 1234,
+      'todayVisits': 1156,
       'visitTrend': 12,
       'predictionCount': 56,
       'predictionTrend': -8,
-      'subscriptionCount': 89,
-      'subscriptionTrend': 5,
+      'subscriptionCount': 1156,
+      'subscriptionTrend': 12,
       'region': '广东省'
     });
     

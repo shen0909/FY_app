@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/widgets/custom_app_bar.dart';
 
-import '../../widgets/custom_app_bar.dart';
 import 'setting_logic.dart';
 import 'setting_state.dart';
 
@@ -14,17 +17,32 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: FYColors.whiteColor,
       appBar: FYAppBar(title: '系统设置'),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildUserInfoCard(),
+            _buildDivider(),
+            _buildTitleSection('账户与安全', FYImages.setting_person),
             _buildSecuritySection(),
+            _buildDivider(),
+            _buildTitleSection('系统设置', FYImages.setting_phone),
+            _buildSystemSettingSection(),
+            _buildDivider(),
+            _buildTitleSection('消息推送设置',  FYImages.setting_message),
             _buildNotificationSection(),
+            _buildDivider(),
+            _buildTitleSection('数据管理',  FYImages.setting_data),
             _buildDataSection(),
-            _buildPermissionSection(),
+            _buildDivider(),
+            _buildTitleSection('权限管理',  FYImages.setting_permission),
+            _buildPermissionCard(),
+            _buildDivider(),
+            _buildTitleSection('统计信息', FYImages.setting_tongji),
             _buildStatisticsSection(),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
@@ -32,158 +50,228 @@ class SettingPage extends StatelessWidget {
   }
 
   Widget _buildUserInfoCard() {
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '管理员',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+    return Container(
+      width: double.infinity,
+      height: 110.h,
+      color: FYColors.whiteColor,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Row(
+        children: [
+          Image.asset(
+            state.userInfo['avatar'] ?? FYImages.default_avatar,
+            width: 48.w,
+            height: 48.w,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 30.w,
+                ),
+              );
+            },
+          ),
+          SizedBox(width: 16.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                state.userInfo['name'] ?? '',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: FYColors.color_1A1A1A,
+                ),
               ),
+              SizedBox(height: 8.h),
+              Text(
+                '用户名：${state.userInfo['username']}',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: FYColors.color_1A1A1A,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: FYColors.color_F0F5FF,
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Text(
+                  state.userInfo['department'] ?? '',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_3361FE,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          Text(
+            '版本号：${state.userInfo['version']}',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_666666,
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Text('用户名: '),
-                Text(state.userInfo['username'] ?? ''),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Text('版本号: '),
-                Text(state.userInfo['version'] ?? ''),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(state.userInfo['department'] ?? ''),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    return Container(
+      width: 48.w,
+      height: 48.w,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        gradient: LinearGradient(
+          colors: FYColors.loginBtn,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24.r),
+        child: Image.asset(
+          state.userInfo['avatar'] ?? 'assets/images/default_avatar.png',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
+              child: Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 30.w,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      height: 8.h,
+      color: FYColors.color_F5F5F5,
+    );
+  }
+
+  Widget _buildTitleSection(String title, String imageUrl) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+      child: Row(
+        children: [
+          Image.asset(imageUrl,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+          SizedBox(width: 8.w),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: FYColors.color_1A1A1A,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSecuritySection() {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.security, color: Colors.blue.shade600),
-                const SizedBox(width: 8),
-                const Text(
-                  '账户与安全',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            ListTile(
-              title: const Text('设置划线解锁'),
-              trailing: Obx(() => Switch(
-                    value: state.isLockEnabled.value,
-                    onChanged: logic.toggleLockScreen,
-                  )),
-            ),
-            ListTile(
-              title: const Text('指纹解锁'),
-              trailing: Obx(() => Switch(
-                    value: state.isFingerprintEnabled.value,
-                    onChanged: logic.toggleFingerprint,
-                  )),
-            ),
-            ListTile(
-              title: const Text('用户日志'),
-              subtitle: const Text('查看您的操作记录'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+    return Column(
+      children: [
+        _buildSwitchItem('设置划线解锁', state.isLockEnabled, logic.toggleLockScreen),
+        _buildSwitchItem('指纹解锁', state.isFingerprintEnabled, logic.toggleFingerprint),
+        _buildNavigationItem('用户日志', '查看您的登录日志', () {}),
+      ],
+    );
+  }
+
+  Widget _buildSystemSettingSection() {
+    return Column(
+      children: [
+        _buildNavigationItem('隐私保护', null, () {}),
+        _buildNavigationItem('使用教程', null, () {}),
+        _buildNavigationItem('用户反馈', '提交问题或建议', logic.goToFeedback),
+      ],
     );
   }
 
   Widget _buildNotificationSection() {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.notifications, color: Colors.blue.shade600),
-                const SizedBox(width: 8),
-                const Text(
-                  '消息推送设置',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            ListTile(
-              leading: Icon(Icons.warning, color: Colors.red.shade400),
-              title: const Text('风险预警信息'),
-              trailing: Obx(() => Switch(
-                    value: state.isRiskAlertEnabled.value,
-                    onChanged: logic.toggleRiskAlert,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.star, color: Colors.blue.shade400),
-              title: const Text('订阅信息'),
-              trailing: Obx(() => Switch(
-                    value: state.isSubscriptionEnabled.value,
-                    onChanged: logic.toggleSubscriptionNotification,
-                  )),
-            ),
-          ],
-        ),
-      ),
+    return Column(
+      children: [
+        _buildSwitchItem('风险预警信息', state.isRiskAlertEnabled, logic.toggleRiskAlert),
+        _buildSwitchItem('订阅信息', state.isSubscriptionEnabled, logic.toggleSubscriptionNotification),
+      ],
     );
   }
 
   Widget _buildDataSection() {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.storage, color: Colors.blue.shade600),
-                const SizedBox(width: 8),
-                const Text(
-                  '数据管理',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+    return Column(
+      children: [
+        _buildNavigationItem('清除缓存', null, logic.clearCache),
+      ],
+    );
+  }
+
+  Widget _buildSwitchItem(String title, RxBool value, Function(bool) onChanged) {
+    return Container(
+      height: 48.h,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: FYColors.color_1A1A1A,
             ),
-            ListTile(
-              leading: const Icon(Icons.delete_outline),
-              title: const Text('清除缓存'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: logic.clearCache,
+          ),
+          Spacer(),
+          Obx(() => Switch(
+                value: value.value,
+                onChanged: onChanged,
+                activeColor: FYColors.color_3361FE,
+                activeTrackColor: FYColors.color_F0F5FF,
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationItem(String title, String? subtitle, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 48.h,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: FYColors.color_1A1A1A,
+              ),
+            ),
+            const Spacer(),
+            if (subtitle != null)
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: FYColors.color_666666,
+                ),
+              ),
+            SizedBox(width: 8.w),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16.sp,
+              color: FYColors.color_1A1A1A,
             ),
           ],
         ),
@@ -191,336 +279,285 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPermissionSection() {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.admin_panel_settings, color: Colors.blue.shade600),
-                const SizedBox(width: 8),
-                const Text(
-                  '权限管理',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            ListTile(
-              title: const Text('您的角色和权限'),
-              subtitle: Obx(() => Text(state.currentRole.value)),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '角色权限说明:',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('1'),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        '管理员: 拥有助于平台维护和增强用户体验的所有功能',
-                        style: TextStyle(color: Colors.black87),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('2'),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        '审核员: 负责审核管理员的操作，确保系统安全',
-                        style: TextStyle(color: Colors.black87),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('3'),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        '普通用户: 基本浏览和使用权限',
-                        style: TextStyle(color: Colors.black87),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            ListTile(
-              title: const Text('角色管理'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: logic.goToRoleManagement,
-            ),
-            ListTile(
-              title: Row(
+  Widget _buildPermissionCard() {
+    return Column(
+      children: [
+        _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
+        _buildNavigationItem('权限申请审核', null, logic.goToPermissionRequests),
+        Container(
+          margin: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: FYColors.color_F9F9F9,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  const Text('权限申请审核'),
-                  const SizedBox(width: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    width: 32.w,
+                    height: 32.h,
                     decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(16.r),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0x333361FE),
+                          Color(0x332F89F8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                     ),
-                    child: Obx(() => Text(
-                          '${state.permissionRequestCount}',
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 12),
-                        )),
+                    child: Center(
+                      child: Icon(
+                        Icons.person,
+                        color: FYColors.color_3361FE,
+                        size: 20.w,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    '管理员',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: FYColors.color_1A1A1A,
+                    ),
                   ),
                 ],
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: logic.goToPermissionRequests,
-            ),
-          ],
+              SizedBox(height: 8.h),
+              Text(
+                '系统最高权限，操作需审核员审核',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                '角色权限说明：',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                '󰀠 管理员：添加账户等操作需经审核员审核才能生效\n󰀠 审核员：负责审核管理员的操作，确保系统安全\n󰀠 普通用户：基本浏览和使用权限',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildStatisticsSection() {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '统计信息',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '(仅管理员可见)',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('今日访问'),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            '${state.statistics['todayVisits']}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade100,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.arrow_upward,
-                                    size: 12, color: Colors.green),
-                                Text(
-                                  '${state.statistics['visitTrend']}%',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('预警数量'),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            '${state.statistics['predictionCount']}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade100,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.arrow_downward,
-                                    size: 12, color: Colors.red),
-                                Text(
-                                  '${state.statistics['predictionTrend'].abs()}%',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('订阅数量'),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            '${state.statistics['subscriptionCount']}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade100,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.arrow_upward,
-                                    size: 12, color: Colors.green),
-                                Text(
-                                  '${state.statistics['subscriptionTrend']}%',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('区域统计'),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            state.statistics['region'],
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Icon(Icons.arrow_forward, size: 16),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: logic.goToUserAnalysis,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text(
-                  '查看完整用户行为分析 >',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '统计信息',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: FYColors.color_1A1A1A,
                 ),
               ),
+              Text(
+                '(仅管理员可见)',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  '今日访问',
+                  '${state.statistics['todayVisits']}',
+                  state.statistics['visitTrend'],
+                  true,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: _buildStatCard(
+                  '预警数量',
+                  '${state.statistics['predictionCount']}',
+                  state.statistics['predictionTrend'].abs(),
+                  false,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  '订阅数量',
+                  '${state.statistics['subscriptionCount']}',
+                  state.statistics['subscriptionTrend'],
+                  true,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: _buildRegionCard('区域统计', state.statistics['region']),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          GestureDetector(
+            onTap: logic.goToUserAnalysis,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '查看完整用户行为分析',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_3361FE,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 12.sp,
+                    color: FYColors.color_3361FE,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, String value, int trendValue, bool isPositive) {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: FYColors.color_F9F9F9,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: FYColors.color_A6A6A6,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Row(
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: FYColors.color_1A1A1A,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Row(
+                children: [
+                  Text(
+                    '$trendValue%',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                    ),
+                  ),
+                  Icon(
+                    isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+                    size: 12.sp,
+                    color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRegionCard(String title, String region) {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: FYColors.color_F9F9F9,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: FYColors.color_A6A6A6,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Row(
+            children: [
+              Text(
+                region,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: FYColors.color_1A1A1A,
+                ),
+              ),
+              Spacer(),
+              GestureDetector(
+                onTap: () {},
+                child: Row(
+                  children: [
+                    Text(
+                      '查看详情',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12.sp,
+                      color: FYColors.color_3361FE,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
