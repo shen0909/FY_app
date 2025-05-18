@@ -7,6 +7,7 @@ import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/pages/risk/risk_view.dart';
 import 'package:safe_app/pages/ai_qus/ai_qus_view.dart';
 import 'package:safe_app/pages/order/order_view.dart';
+import 'package:safe_app/pages/order/order_event_detial/order_event_detial_view.dart';
 import 'package:safe_app/pages/setting/setting_view.dart';
 
 class Routers {
@@ -17,6 +18,7 @@ class Routers {
   static const String hotPot = '/hot/details';
   static const String aiQus = '/ai/qus';
   static const String order = '/order';
+  static const String orderEventDetail = '/order_event_detail';
   static const String setting = '/setting';
   static const String roleManagement = '/role_management';
   static const String userAnalysis = '/user_analysis';
@@ -32,6 +34,7 @@ class Routers {
     GetPage(name: hotPot, page: () => HotPotPage()),
     GetPage(name: aiQus, page: () => AiQusPage()),
     GetPage(name: order, page: () => OrderPage()),
+    GetPage(name: orderEventDetail, page: () => OrderEventDetialPage()),
     GetPage(name: setting, page: () => SettingPage()),
     GetPage(name: hotDetails, page: () => HotDetailsView()),
   ];

@@ -35,4 +35,6 @@ class FYImages {
   static const String attention_choose = 'assets/images/attention_choose.png';
   static const String fileEarmarkMedical = 'assets/images/file-earmark-medical.png';
   static const String star = 'assets/images/star.png';
+  static const String check_icon = 'assets/images/check_icon.png';
+  static const String uncheck_icon = 'assets/images/uncheck_icon.png';
 }

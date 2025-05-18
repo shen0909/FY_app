@@ -443,14 +443,8 @@ class OrderLogic extends GetxController {
   
   // 获取资讯列表
   void getNewsListByEvent(String title) {
-    // 模拟进入资讯列表页面
-    Get.snackbar(
-      '提示', 
-      '正在查看 $title 相关资讯',
-      backgroundColor: Colors.white,
-      colorText: Color(0xFF1A1A1A),
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    // 导航到事件详情页面
+    Get.toNamed('/order_event_detail', arguments: {'eventTitle': title});
   }
 
   // 切换专题收藏状态
