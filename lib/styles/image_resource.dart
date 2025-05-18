@@ -41,7 +41,8 @@ class FYImages {
   static const String setting_person = 'assets/images/setting_person.png';
   static const String setting_phone = 'assets/images/setting_phone.png';
   static const String setting_message = 'assets/images/setting_message.png';
-  static const String setting_permission = 'assets/images/setting_permission.png';
   static const String setting_data = 'assets/images/setting_data.png';
+  static const String setting_permission = 'assets/images/setting_permisson.png';
   static const String setting_tongji = 'assets/images/setting_tongji.png';
+  static const String user_avatar = 'assets/images/user_avatar.png';
 }

@@ -147,4 +147,9 @@ class SettingLogic extends GetxController {
     // 实际项目中应该进行用户搜索
     Get.snackbar('提示', '正在搜索: $keyword');
   }
+  
+  // 前往用户日志页面
+  void goToUserLogs() {
+    Get.toNamed('/user_login_data');
+  }
 }

@@ -61,16 +61,7 @@ class SettingPage extends StatelessWidget {
             state.userInfo['avatar'] ?? FYImages.default_avatar,
             width: 48.w,
             height: 48.w,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Center(
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 30.w,
-                ),
-              );
-            },
+            fit: BoxFit.cover
           ),
           SizedBox(width: 16.w),
           Column(
@@ -186,7 +177,7 @@ class SettingPage extends StatelessWidget {
       children: [
         _buildSwitchItem('设置划线解锁', state.isLockEnabled, logic.toggleLockScreen),
         _buildSwitchItem('指纹解锁', state.isFingerprintEnabled, logic.toggleFingerprint),
-        _buildNavigationItem('用户日志', '查看您的登录日志', () {}),
+        _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );
   }
