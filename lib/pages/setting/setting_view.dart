@@ -186,7 +186,7 @@ class SettingPage extends StatelessWidget {
     return Column(
       children: [
         _buildNavigationItem('隐私保护', null, () {}),
-        _buildNavigationItem('使用教程', null, () {}),
+        _buildNavigationItem('使用教程', null, logic.goToUseTutorial),
         _buildNavigationItem('用户反馈', '提交问题或建议', logic.goToFeedback),
       ],
     );

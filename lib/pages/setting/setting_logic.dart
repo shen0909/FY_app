@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/routers/routers.dart';
 
 import 'setting_state.dart';
 
@@ -66,6 +67,11 @@ class SettingLogic extends GetxController {
         ],
       ),
     );
+  }
+  
+  // 前往使用教程页面
+  void goToUseTutorial() {
+    Get.toNamed(Routers.useTutorial);
   }
   
   // 前往用户反馈页面
@@ -150,6 +156,6 @@ class SettingLogic extends GetxController {
   
   // 前往用户日志页面
   void goToUserLogs() {
-    Get.toNamed('/user_login_data');
+    Get.toNamed(Routers.userLoginData);
   }
 }

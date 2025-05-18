@@ -9,6 +9,7 @@ import 'package:safe_app/pages/ai_qus/ai_qus_view.dart';
 import 'package:safe_app/pages/order/order_view.dart';
 import 'package:safe_app/pages/order/order_event_detial/order_event_detial_view.dart';
 import 'package:safe_app/pages/setting/setting_view.dart';
+import 'package:safe_app/pages/setting/use_tutorial/use_tutorial_view.dart';
 import 'package:safe_app/pages/setting/user_login_data/user_login_data_view.dart';
 
 class Routers {
@@ -27,6 +28,7 @@ class Routers {
   static const String feedback = '/feedback';
   static const String hotDetails = '/hot_details';
   static const String userLoginData = '/user_login_data';
+  static const String useTutorial = '/use_tutorial';
 
   static final List<GetPage> pages = [
     GetPage(name: login, page: () => LoginPage()),
@@ -40,5 +42,6 @@ class Routers {
     GetPage(name: setting, page: () => SettingPage()),
     GetPage(name: hotDetails, page: () => HotDetailsView()),
     GetPage(name: userLoginData, page: () => UserLoginDataPage()),
+    GetPage(name: useTutorial, page: () => UseTutorialPage()),
   ];
 }
