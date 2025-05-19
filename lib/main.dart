@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:safe_app/pages/login/login_view.dart';
 import 'package:safe_app/routers/routers.dart';
 
 void main() {
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             fontFamily: 'AlibabaPuHuiTi',
           ),
-          home: LoginPage(),
+          initialRoute: Routers.login,
         );
       }
     );

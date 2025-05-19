@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/routers/routers.dart';
-
 import 'login_state.dart';
 
 class LoginLogic extends GetxController {
@@ -13,6 +12,7 @@ class LoginLogic extends GetxController {
     state.nameController = TextEditingController();
     state.pwdController = TextEditingController();
   }
+
   @override
   void onReady() {
     // TODO: implement onReady
@@ -25,9 +25,8 @@ class LoginLogic extends GetxController {
     super.onClose();
   }
 
-
-  submit(){
+  submit() {
     print("提交:${state.nameController.text}----${state.pwdController.text}");
-    Get.toNamed(Routers.home);
+    Get.offAllNamed(Routers.home);
   }
 }
