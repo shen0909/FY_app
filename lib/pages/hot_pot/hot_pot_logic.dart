@@ -1,10 +1,19 @@
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
+import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/models/newslist_data.dart';
 
 import 'hot_pot_state.dart';
 
 class HotPotLogic extends GetxController {
   final HotPotState state = HotPotState();
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    // 获取热点列表
+    await getNewsList();
+  }
 
   @override
   void onReady() {
@@ -110,7 +119,12 @@ class HotPotLogic extends GetxController {
       state.toggleFilterOptions();
     }
     
-    // 实际应用中这里会根据所有筛选条件请求数据
+    // 根据筛选条件获取数据
+    getNewsList(
+      region: state.selectedRegion.value,
+      dateFilter: state.selectedTimeRange.value,
+    );
+    
     Get.snackbar(
       '应用筛选', 
       '区域: ${state.selectedRegion.value}, 时间: ${state.selectedTimeRange.value}',
@@ -125,5 +139,47 @@ class HotPotLogic extends GetxController {
       'index': index,
       // 在实际应用中，可能还需要传递更多的数据或者ID
     });
+  }
+
+  Future<void> getNewsList({
+    int currentPage = 1,
+    int pageSize = 10,
+    String newsType = '全部',
+    String region = '全部',
+    String dateFilter = '全部',
+    String? startDate = '2025-05-01',
+    String? endDate = '2025-05-01',
+    String? search,
+  }) async {
+    state.isLoading.value = true;
+    state.errorMessage.value = '';
+    
+    try {
+      var result = await ApiService().getNewsList(
+        currentPage: currentPage,
+        pageSize: pageSize,
+        newsType: newsType,
+        region: region,
+        dateFilter: dateFilter,
+        startDate: startDate,
+        endDate: endDate,
+        search: search,
+      );
+      
+      if (result != null && result['code'] == 10010 && result['data'] != null) {
+        // 将JSON数据转换为NewsItem列表
+        List<NewsItem> items = (result['data'] as List)
+            .map((item) => NewsItem.fromJson(item))
+            .toList();
+        
+        state.newsList.value = items;
+      } else {
+        state.errorMessage.value = result['msg'] ?? '获取数据失败';
+      }
+    } catch (e) {
+      state.errorMessage.value = e.toString();
+    } finally {
+      state.isLoading.value = false;
+    }
   }
 }

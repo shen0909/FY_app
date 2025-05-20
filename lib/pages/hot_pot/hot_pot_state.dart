@@ -1,6 +1,16 @@
 import 'package:get/get.dart';
+import 'package:safe_app/models/newslist_data.dart';
 
 class HotPotState {
+  // 存储新闻列表数据
+  final RxList<NewsItem> newsList = <NewsItem>[].obs;
+  
+  // 添加加载状态
+  final RxBool isLoading = false.obs;
+  
+  // 添加错误信息
+  final RxString errorMessage = ''.obs;
+
   // 当前活跃标签页索引
   final RxInt activeTabIndex = 0.obs;
   

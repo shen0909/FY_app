@@ -126,6 +126,50 @@ class HttpService {
     }
   }
 
+  /// PUT请求
+  Future put<T>(
+    String path, {
+    Map<String, dynamic>? data,
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('$_tag 发起PUT请求: $path');
+      }
+      
+      Response response = await dio.put(
+        path,
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      
+      if (response.statusCode != 200) {
+        _handleError(errorCallback, '网络请求错误,状态码:${response.statusCode}');
+        return;
+      }
+      
+      if (successCallback != null) {
+        if (response.data != null) {
+          if (kDebugMode) {
+            print('$_tag $path, PUT请求结果: $response');
+          }
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '$path, PUT数据请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('$_tag PUT请求失败: ${formatError(e)}');
+      }
+      _handleError(errorCallback, formatError(e));
+    }
+  }
+
   /// GET请求
   Future get<T>(
     String path, {
