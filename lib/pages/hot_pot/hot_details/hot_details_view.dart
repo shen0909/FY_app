@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/models/news_detail_data.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_logic.dart';
@@ -50,22 +51,58 @@ class HotDetailsView extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          _buildHeader(),
-          _buildTabBar(),
-          Expanded(
-            child: _buildTabContent(),
-          ),
-        ],
-      ),
+      body: Obx(() {
+        // 加载中状态
+        if (state.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        // 错误状态
+        if (state.errorMessage.value.isNotEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('获取数据失败：${state.errorMessage.value}'),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => logic.fetchNewsDetail(),
+                  child: const Text('重试'),
+                ),
+              ],
+            ),
+          );
+        }
+        
+        // 数据为空状态
+        if (state.newsDetail.value.isEmpty) {
+          return const Center(child: Text('暂无详情数据'));
+        }
+        
+        // 显示详情数据
+        return Column(
+          children: [
+            _buildHeader(),
+            _buildTabBar(),
+            Expanded(
+              child: _buildTabContent(),
+            ),
+          ],
+        );
+      }),
     );
   }
 
-  // 已迁移至FYAppBar
-
   // 构建头部信息
   Widget _buildHeader() {
+    // 使用类型化的数据对象
+    final NewsDetail? detail = state.newsDetailData.value;
+    
+    // 如果数据为空，显示空内容
+    if (detail == null) {
+      return const SizedBox.shrink();
+    }
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -77,7 +114,7 @@ class HotDetailsView extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  state.hotNews['title'],
+                  detail.newsTitle,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -89,7 +126,7 @@ class HotDetailsView extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            "${state.hotNews['date']} | ${state.hotNews['source']}",
+            "${detail.publishTime} | ${detail.newsMedium}",
             style: const TextStyle(
               fontSize: 14,
               color: Color(0xFFA6A6A6),
@@ -97,7 +134,7 @@ class HotDetailsView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            state.hotNews['summary'],
+            detail.newsSummary,
             style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF1A1A1A),
@@ -200,581 +237,390 @@ class HotDetailsView extends StatelessWidget {
 
   // 风险分析标签页
   Widget _buildRiskAnalysisTab() {
+    final NewsDetail? detail = state.newsDetailData.value;
+    
+    if (detail == null) {
+      return const SizedBox.shrink();
+    }
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildAIGeneratedBanner(),
-          const SizedBox(height: 16),
-          const Text(
+          // 风险分析内容
+          Text(
             '风险分析',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
+              color: Colors.black,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 8.w),
           Text(
-            state.riskAnalysis['content'],
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF1A1A1A),
+            detail.riskAnalysis,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
-            '风险点分析:',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...List.generate(state.riskAnalysis['keyPoints'].length, (index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '• ',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Color(0xFF3361FE),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      state.riskAnalysis['keyPoints'][index],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF1A1A1A),
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
+          SizedBox(height: 24.w),
+
+          // 风险措施表格（如果有）
+          if (detail.riskMeasure.isNotEmpty) ...[
+            Text(
+              '风险措施',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-            );
-          }),
-          const SizedBox(height: 20),
-          const Text(
-            '影响范围',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
             ),
-          ),
-          const SizedBox(height: 12),
-          _buildImpactScopeCard(),
+            SizedBox(height: 8.w),
+            _buildRiskMeasureTable(detail.riskMeasure),
+          ],
         ],
       ),
     );
   }
 
-  // 构建影响范围卡片
-  Widget _buildImpactScopeCard() {
+  // 构建风险措施表格
+  Widget _buildRiskMeasureTable(List<RiskMeasure> riskMeasures) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F9F9),
+        border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Text(
-                '直接影响行业',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-              Spacer(),
-              Text(
-                '间接影响行业',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _buildIndustryItem('新能源汽车制造', const Color(0xFFFF3B30)),
-              const Spacer(),
-              _buildIndustryItem('矿产资源开发', const Color(0xFFFF3B30)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _buildIndustryItem('汽车零部件制造', const Color(0xFFFF3B30)),
-              const Spacer(),
-              _buildIndustryItem('物流运输', const Color(0xFFFF3B30)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _buildIndustryItem('电池制造', const Color(0xFFFF9719)),
-              const Spacer(),
-              _buildIndustryItem('金融服务', const Color(0xFFFF9719)),
-            ],
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            '受影响企业',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildCompanyList(),
-        ],
-      ),
-    );
-  }
-
-  // 构建行业项
-  Widget _buildIndustryItem(String name, Color color) {
-    return Row(
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          name,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF666666),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // 构建公司列表
-  Widget _buildCompanyList() {
-    final companies = [
-      {'name': '比亚迪汽车', 'logo': 'https://placeholder.com/20'},
-      {'name': '宁德时代', 'logo': 'https://placeholder.com/20'},
-      {'name': '小鹏汽车', 'logo': 'https://placeholder.com/20'},
-      {'name': '蔚来汽车', 'logo': 'https://placeholder.com/20'},
-    ];
-
-    return Wrap(
-      spacing: 16,
-      runSpacing: 12,
-      children: companies.map((company) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              // 在实际应用中，这里应该是企业的logo
-              // child: Image.network(company['logo']!),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              company['name']!,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF666666),
-              ),
-            ),
-          ],
-        );
-      }).toList(),
-    );
-  }
-
-  // 时间序列标签页
-  Widget _buildTimelineTab() {
-    final timelineItems = [
-      {'date': '2025年4月26日', 'event': '美国贸易代表办公室正式宣布对中国新能源汽车产业启动301调查'},
-      {'date': '2025年4月15日', 'event': '美国汽车制造商联盟致信美国贸易代表办公室，要求调查中国新能源汽车产业'},
-      {'date': '2025年3月20日', 'event': '美国商务部发布报告，称中国新能源汽车在美国市场份额快速上升'},
-      {'date': '2025年2月10日', 'event': '美国总统在国情咨文中提及要保护美国汽车产业免受"不公平竞争"'},
-      {'date': '2024年12月5日', 'event': '中国新能源汽车首次在美国车展上亮相，引发美国媒体广泛关注'},
-    ];
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAIGeneratedBanner(),
-          const SizedBox(height: 16),
-          const Text(
-            '事件发展时间线',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTimeline(timelineItems.length),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(timelineItems.length, (index) {
-                    final item = timelineItems[index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: index < timelineItems.length - 1 ? 56 : 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item['date']!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF345DFF),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            item['event']!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFFA6A6A6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
-          const Text(
-            '未来发展预测',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '基于历史数据分析和政策动向，我们预测此次调查将经历以下阶段：',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFFA6A6A6),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTimeline(4),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFutureTimelineItem('2025年5-6月', '调查正式启动，美方可能要求中国企业和相关部门提供补贴、市场准入等方面的详细资料'),
-                    _buildFutureTimelineItem('2025年7-9月', '初步调查结果公布，可能发布临时性措施'),
-                    _buildFutureTimelineItem('2025年10-12月', '最终调查结果出炉，可能实施额外关税'),
-                    _buildFutureTimelineItem('2026年初', '中美可能就相关问题展开谈判，寻求解决方案'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 构建时间线
-  Widget _buildTimeline(int count) {
-    return Column(
-      children: List.generate(count, (index) {
-        return Column(
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
-            if (index < count - 1)
-              Container(
-                width: 1,
-                height: 76,
-                color: const Color(0xFF326FFC),
-                margin: const EdgeInsets.only(top: 2, bottom: 2),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Flex(
-                      direction: Axis.vertical,
-                      mainAxisSize: MainAxisSize.max,
-                      children: List.generate(
-                        (constraints.maxHeight / 2).floor(),
-                        (index) => Container(
-                          height: 1,
-                          width: 1,
-                          color: Colors.white,
-                          margin: const EdgeInsets.only(bottom: 1),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-          ],
-        );
-      }),
-    );
-  }
-
-  // 构建未来时间线项
-  Widget _buildFutureTimelineItem(String date, String event) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 56),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            date,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF345DFF),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            event,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFFA6A6A6),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 决策建议标签页
-  Widget _buildSuggestionsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAIGeneratedBanner(),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
+        children: riskMeasures.map<Widget>((measure) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
             decoration: BoxDecoration(
-              color: const Color(0xFFF0F5FF),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFD4E3FF)),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.grey.shade300,
+                  width: 1,
+                ),
+              ),
             ),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '总体策略',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A1A),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    measure.riskScenario,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  state.suggestions['strategy'],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1A1A1A),
-                    height: 1.5,
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    measure.possibility,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    measure.impactLevel,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    measure.countermeasures,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            '短期措施 (1-3个月)',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...List.generate(state.suggestions['shortTerm'].length, (index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '• ',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Color(0xFF3361FE),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      state.suggestions['shortTerm'][index],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF1A1A1A),
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // 构建时间序列标签页
+  Widget _buildTimelineTab() {
+    final NewsDetail? detail = state.newsDetailData.value;
+    
+    if (detail == null) {
+      return const SizedBox.shrink();
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 相关新闻
+          if (detail.relevantNews.isNotEmpty) ...[
+            Text(
+              '相关新闻',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-            );
-          }),
-          const SizedBox(height: 20),
-          const Text(
-            '中期措施 (3-6个月)',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A1A),
             ),
-          ),
-          const SizedBox(height: 12),
-          ...List.generate(state.suggestions['midTerm'].length, (index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '• ',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Color(0xFF3361FE),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      state.suggestions['midTerm'][index],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF1A1A1A),
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
+            SizedBox(height: 16.w),
+            ...detail.relevantNews.map<Widget>((news) {
+              return _buildTimelineItem(
+                title: news.title,
+                date: news.time,
+                isPast: true,
+              );
+            }).toList(),
+          ],
+
+          // 情势预测
+          if (detail.futureProgression.isNotEmpty) ...[
+            SizedBox(height: 24.w),
+            Text(
+              '情势预测',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-            );
-          }),
+            ),
+            SizedBox(height: 16.w),
+            ...detail.futureProgression.map<Widget>((future) {
+              return _buildTimelineItem(
+                title: future.title,
+                date: future.time,
+                isPast: false,
+              );
+            }).toList(),
+          ],
         ],
       ),
     );
   }
 
-  // 原文与译文标签页
-  Widget _buildOriginalTextTab() {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.grey.shade300,
-                width: 1,
-              ),
+  // 构建单个时间线项目
+  Widget _buildTimelineItem({
+    required String title,
+    required String date,
+    required bool isPast,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.w),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 时间点
+          Container(
+            width: 12.w,
+            height: 12.w,
+            margin: EdgeInsets.only(top: 4.w),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isPast ? Colors.blue : Colors.grey,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildTextTabButton('原文', true),
-              _buildTextTabButton('译文', false),
-            ],
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+          SizedBox(width: 16.w),
+          // 内容
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  state.originalText['content']!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1A1A1A),
-                    height: 1.6,
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: FYColors.color_1A1A1A,
+                  ),
+                ),
+                SizedBox(height: 4.w),
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  // 原文/译文选项按钮
-  Widget _buildTextTabButton(String title, bool isActive) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      decoration: BoxDecoration(
-        color: isActive ? Colors.red : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+  // 构建决策建议标签页
+  Widget _buildSuggestionsTab() {
+    final NewsDetail? detail = state.newsDetailData.value;
+    
+    if (detail == null) {
+      return const SizedBox.shrink();
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 整体策略
+          Text(
+            '整体策略',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
+            detail.decisionSuggestion.overallStrategy,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
+              height: 1.5,
+            ),
+          ),
+          SizedBox(height: 24.w),
+
+          // 短期措施
+          Text(
+            '短期措施',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
+            detail.decisionSuggestion.shortTermMeasures,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
+              height: 1.5,
+            ),
+          ),
+          SizedBox(height: 24.w),
+
+          // 中期措施
+          Text(
+            '中期措施',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
+            detail.decisionSuggestion.midTermMeasures,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
+              height: 1.5,
+            ),
+          ),
+          SizedBox(height: 24.w),
+
+          // 长期措施
+          Text(
+            '长期措施',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
+            detail.decisionSuggestion.longTermMeasures,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isActive ? Colors.white : Colors.black54,
-          fontSize: 14,
-          fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-        ),
+    );
+  }
+
+  // 构建原文与译文标签页
+  Widget _buildOriginalTextTab() {
+    final NewsDetail? detail = state.newsDetailData.value;
+    
+    if (detail == null) {
+      return const SizedBox.shrink();
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 原文
+          Text(
+            '原文',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: FYColors.color_F5F5F5,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Text(
+              detail.originContext,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_1A1A1A,
+                height: 1.5,
+              ),
+            ),
+          ),
+          SizedBox(height: 24.w),
+
+          // 译文
+          Text(
+            '译文',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
+            detail.translatedContext,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
   }
