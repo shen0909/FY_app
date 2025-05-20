@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/routers/routers.dart';
 
 import 'home_state.dart';
@@ -39,8 +41,20 @@ class HomeLogic extends GetxController {
   }
 
   // 导航到系统设置页面
-  void goSetting() {
-    Get.toNamed(Routers.setting);
+  Future<void> goSetting() async {
+    try {
+      final result = await ApiService().getRegion();
+      if (result != null) {
+        print('获取地区参数成功: $result');
+      } else {
+        print('获取地区参数失败: 返回为空');
+      }
+    } catch (e) {
+      print('获取地区参数异常: $e');
+    } finally {
+      // 无论API调用成功还是失败，都跳转到设置页面
+      Get.toNamed(Routers.setting);
+    }
   }
 
   goDetailList() {
