@@ -89,6 +89,16 @@ class SharedPreference {
     return prefs.getInt(USER_ROLE_KEY);
   }
 
+  // 清除登录数据
+  static Future<bool> clearLoginData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(TOKEN_KEY);
+    await prefs.remove(USER_ID_KEY);
+    await prefs.remove(USER_NAME_KEY);
+    await prefs.remove(USER_ROLE_KEY);
+    return prefs.remove(USER_DATA_KEY);
+  }
+
   // 清除所有数据
   static Future<bool> clearAll() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
