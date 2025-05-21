@@ -26,27 +26,8 @@ class HotDetailsView extends StatelessWidget {
             onTap: () => logic.downloadFile(),
             child: Container(
               margin: const EdgeInsets.only(right: 16),
-              width: 72.w,
-              height: 32.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: FYColors.color_F5F5F5
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(FYImages.download_icon,width: 16.w,height: 16.w),
-                  SizedBox(width: 4.w),
-                  Text(
-                    '下载',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: FYColors.color_1A1A1A,
-                      fontWeight: FontWeight.w400
-                    ),
-                  ),
-                ],
-              ),
+              child: Image.asset(FYImages.download_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+
             ),
           ),
         ],

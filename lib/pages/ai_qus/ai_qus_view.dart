@@ -65,15 +65,36 @@ class AiQusPage extends StatelessWidget {
         ),
         floatingActionButton: Container(
           margin: EdgeInsets.only(bottom: 80.w, right: 16.w),
-          width: 48.w,
-          height: 48.w,
-          child: FloatingActionButton(
-            onPressed: () => logic.showAIAssistant(),
-            child: Image.asset(
-              FYImages.addTip,
-              width: 57.w,
-              height: 57.w,
-              fit: BoxFit.contain,
+          width: 57.w,
+          height: 57.w,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(28.5.w),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x683361FE),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(28.5.w),
+              onTap: () => logic.showAIAssistant(),
+              child: Center(
+                child: Image.asset(
+                  FYImages.addTip,
+                  width: 38.w,
+                  height: 38.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
         ),
