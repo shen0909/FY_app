@@ -287,28 +287,7 @@ class SettingPage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 32.w,
-                    height: 32.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0x333361FE),
-                          Color(0x332F89F8),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.person,
-                        color: FYColors.color_3361FE,
-                        size: 20.w,
-                      ),
-                    ),
-                  ),
+                  Image.asset(FYImages.userSetting_icon,width: 32.w,height: 32.w,fit: BoxFit.contain,),
                   SizedBox(width: 8.w),
                   Text(
                     '管理员',
@@ -337,12 +316,65 @@ class SettingPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8.h),
-              Text(
-                '󰀠 管理员：添加账户等操作需经审核员审核才能生效\n󰀠 审核员：负责审核管理员的操作，确保系统安全\n󰀠 普通用户：基本浏览和使用权限',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
+              Row(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xff3361FE),
+                      borderRadius: BorderRadius.all(Radius.circular(50))
+                    ),
+                    width: 6.w,
+                    height: 6.w,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    '管理员：添加账户等操作需经审核员审核才能生效',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_A6A6A6,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xff3361FE),
+                      borderRadius: BorderRadius.all(Radius.circular(50))
+                    ),
+                    width: 6.w,
+                    height: 6.w,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    '审核员：负责审核管理员的操作，确保系统安全',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_A6A6A6,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xff3361FE),
+                      borderRadius: BorderRadius.all(Radius.circular(50))
+                    ),
+                    width: 6.w,
+                    height: 6.w,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    '普通用户：基本浏览和使用权限',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_A6A6A6,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

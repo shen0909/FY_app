@@ -21,17 +21,28 @@ class OrderPage extends StatelessWidget {
       appBar: FYAppBar(
         title: '我的订阅',
         actions: [
-          TextButton.icon(
-            onPressed: () => logic.showSubscriptionManage(),
-            icon: Image.asset(FYImages.oder_share, width: 20.w,
-              height: 20.w,
-              fit: BoxFit.contain,),
-            label: Text(
-              '订阅管理',
-              style: TextStyle(
-                  color: FYColors.color_1A1A1A,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400
+          GestureDetector(
+            onTap: () => logic.showSubscriptionManage(),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: Row(
+                children: [
+                  Image.asset(
+                    FYImages.oder_share, 
+                    width: 20.w,
+                    height: 20.w,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: 4.w),
+                  Text(
+                    '订阅管理',
+                    style: TextStyle(
+                      color: FYColors.color_1A1A1A,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400
+                    ),
+                  ),
+                ],
               ),
             ),
           )

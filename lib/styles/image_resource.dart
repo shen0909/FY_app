@@ -57,4 +57,5 @@ class FYImages {
   static const String my_mock = 'assets/images/my_mock.png';
   static const String messenge_icon = 'assets/images/messenge_icon.png';
   static const String cancel_red = 'assets/images/cancel_red.png';
+  static const String userSetting_icon = 'assets/images/userSetting_icon.png';
 }

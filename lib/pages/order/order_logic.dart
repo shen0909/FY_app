@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safe_app/styles/colors.dart';
 
 import 'order_state.dart';
 
@@ -31,118 +33,230 @@ class OrderLogic extends GetxController {
   
   // 显示订阅管理弹窗
   void showSubscriptionManage() {
-    Get.dialog(
-      AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '订阅管理',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1A1A1A),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Get.back(),
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        content: Container(
-          width: double.maxFinite,
-          height: Get.height * 0.6,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '我的订阅', 
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-              _buildSubscriptionList(isMySubscription: true),
-              const SizedBox(height: 20),
-              const Text(
-                '全部订阅', 
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-              _buildSubscriptionList(isMySubscription: false),
-            ],
+    Get.bottomSheet(
+      Container(
+        height: 500.w,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.r),
+            topRight: Radius.circular(16.r),
           ),
         ),
-      ),
-    );
-  }
-  
-  // 构建订阅列表部件
-  Widget _buildSubscriptionList({required bool isMySubscription}) {
-    return Expanded(
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          childAspectRatio: 2.5,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: isMySubscription 
-            ? state.allSubscriptionCategories.where((e) => e['isSubscribed'] == true).length
-            : state.allSubscriptionCategories.length,
-        itemBuilder: (context, index) {
-          final List<Map<String, dynamic>> data = isMySubscription
-              ? state.allSubscriptionCategories.where((e) => e['isSubscribed'] == true).toList()
-              : state.allSubscriptionCategories;
-          
-          if (index >= data.length) return const SizedBox();
-          
-          final item = data[index];
-          
-          return GestureDetector(
-            onTap: () => toggleSubscription(item),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 顶部标题栏
+            Container(
+              height: 48.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: item['isSubscribed'] ? Color(0xFF3361FE) : Colors.grey.shade300,
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
                 ),
-                borderRadius: BorderRadius.circular(5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Text(
-                      item['title'],
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: item['isSubscribed'] ? Color(0xFF3361FE) : Colors.black87,
-                      ),
+                  Text(
+                    '订阅管理',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: FYColors.color_1A1A1A,
                     ),
                   ),
-                  if (!isMySubscription || index >= 4)
-                    Icon(
-                      item['isSubscribed'] ? Icons.check : Icons.add,
-                      size: 16,
-                      color: item['isSubscribed'] ? Color(0xFF3361FE) : Colors.grey,
-                    ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: FYColors.color_1A1A1A),
+                    onPressed: () => Get.back(),
+                  ),
                 ],
               ),
             ),
-          );
-        },
+            
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 我的订阅部分
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '我的订阅',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: FYColors.color_1A1A1A,
+                            ),
+                          ),
+                          Text(
+                            '点击进入订阅',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: FYColors.color_1A1A1A,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // 我的订阅内容
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Wrap(
+                        spacing: 8.w,
+                        runSpacing: 10.h,
+                        children: _buildMySubscriptionItems(),
+                      ),
+                    ),
+                    
+                    // 全部订阅部分
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 8.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '全部订阅',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: FYColors.color_1A1A1A,
+                            ),
+                          ),
+                          Text(
+                            '点击添加订阅',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: FYColors.color_1A1A1A,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // 全部订阅内容
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 50.h),
+                      child: Wrap(
+                        spacing: 8.w,
+                        runSpacing: 10.h,
+                        children: _buildAllSubscriptionItems(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
+      backgroundColor: Colors.black.withOpacity(0.7),
+      isScrollControlled: true,
+      enableDrag: true,
     );
+  }
+  
+  // 构建我的订阅项目列表
+  List<Widget> _buildMySubscriptionItems() {
+    final List<Map<String, dynamic>> mySubscriptions = state.allSubscriptionCategories
+        .where((item) => item['isSubscribed'] == true)
+        .toList();
+        
+    return mySubscriptions.map((item) {
+      return Container(
+        width: 80.w,
+        height: 46.h,
+        decoration: BoxDecoration(
+          color: FYColors.color_F9F9F9,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          item['title'],
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
+            color: FYColors.color_1A1A1A,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }).toList();
+  }
+  
+  // 构建全部订阅项目列表
+  List<Widget> _buildAllSubscriptionItems() {
+    return state.allSubscriptionCategories.map((item) {
+      final bool isSubscribed = item['isSubscribed'] == true;
+      
+      return Container(
+        width: 80.w,
+        height: 46.h,
+        decoration: BoxDecoration(
+          color: FYColors.color_F9F9F9,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(
+            color: isSubscribed ? FYColors.color_3361FE.withOpacity(0.2) : Colors.transparent,
+            width: isSubscribed ? 1 : 0,
+          ),
+        ),
+        child: Stack(
+          children: [
+            // 标题
+            Center(
+              child: Text(
+                item['title'],
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: FYColors.color_1A1A1A,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            
+            // 关注按钮（只在未订阅时显示）
+            if (!isSubscribed)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: InkWell(
+                  onTap: () => toggleSubscription(item),
+                  child: Container(
+                    width: 45.w,
+                    height: 18.h,
+                    decoration: BoxDecoration(
+                      color: FYColors.color_3361FE,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(8.r),
+                        topRight: Radius.circular(8.r),
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '加关注',
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }).toList();
   }
   
   // 切换订阅状态
