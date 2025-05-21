@@ -183,6 +183,7 @@ class FutureProgression {
   }
 }
 
+/// 决策建议
 class DecisionSuggestion {
   final String overallStrategy;
   final String shortTermMeasures;

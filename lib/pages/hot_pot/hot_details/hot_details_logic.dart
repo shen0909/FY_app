@@ -73,7 +73,8 @@ class HotDetailsLogic extends GetxController {
 
   // 切换标签页
   void changeTab(int index) {
-    state.changeTab(index);
+    state.activeTabIndex.value = index;
+    ;
   }
 
   // 下载相关文件
@@ -114,6 +115,10 @@ class HotDetailsLogic extends GetxController {
       '已添加到收藏',
       snackPosition: SnackPosition.BOTTOM,
     );
+  }
+
+  changeTranslate(int index) {
+    state.activeTranslateIndex.value = index;
   }
 }
 

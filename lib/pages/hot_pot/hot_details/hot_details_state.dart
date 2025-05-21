@@ -13,12 +13,15 @@ class HotDetailsState {
   
   // 详情数据
   final Rx<Map<String, dynamic>> newsDetail = Rx<Map<String, dynamic>>({});
-  
+
+  final List<String> translateTabs = ['原文', '译文'];
+
   // 类型化的详情数据对象
   final Rx<NewsDetail?> newsDetailData = Rx<NewsDetail?>(null);
 
   // 当前活跃标签页索引
   final RxInt activeTabIndex = 0.obs;
+  final RxInt activeTranslateIndex = 0.obs;
 
   // 热点新闻详情
   final Map<String, dynamic> hotNews = {
@@ -85,7 +88,6 @@ The investigation will examine China's acts, policies, and practices related to 
 
   // 切换标签页
   void changeTab(int index) {
-    activeTabIndex.value = index;
   }
 }
 

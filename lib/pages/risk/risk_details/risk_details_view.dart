@@ -214,7 +214,6 @@ class RiskDetailsPage extends StatelessWidget {
               SizedBox(
                 width: 1,
                 height: 68.w,
-                // 使用虚线效果
                 child: CustomPaint(
                   painter: DashedLinePainter(color: const Color(0xFF326FFC)),
                 ),
