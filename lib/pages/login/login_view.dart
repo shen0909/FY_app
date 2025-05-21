@@ -67,81 +67,84 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              image: DecorationImage(image: AssetImage(FYImages.login_bg), fit: BoxFit.fill)),
-          padding: EdgeInsets.only(top: 58.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                FYImages.logo,
-                width: 88.w,
-                height: 88.w,
-                fit: BoxFit.contain,
-              ),
-              SizedBox(height: 16.w),
-              Text(
-                'FY App',
-                style: FYTextStyles.loginTitleStyle(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 8.w, bottom: 40.w),
-                child: Text(
-                  '请登录',
-                  style: FYTextStyles.loginTipStyle(color: FYColors.text1Color),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                image: DecorationImage(image: AssetImage(FYImages.login_bg), fit: BoxFit.fill)),
+            padding: EdgeInsets.only(top: 58.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  FYImages.logo,
+                  width: 88.w,
+                  height: 88.w,
+                  fit: BoxFit.contain,
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 34.w, right: 32.w),
-                child: Column(
-                  children: [
-                    CustomInputField(
-                      controller: state.nameController,
-                      hintText: '用户名',
-                      prefixIconPath: FYImages.login_account,
-                    ),
-                    SizedBox(height: 16.w),
-                    CustomInputField(
-                      controller: state.pwdController,
-                      hintText: '请输入密码',
-                      prefixIconPath: FYImages.login_pwd,
-                      obscureText: false,
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          // todo:隐藏/显示密码
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 16.w),
-                          child: Image.asset(FYImages.pwd_see, width: 24.w, height: 24.w,fit: BoxFit.contain),
+                SizedBox(height: 16.w),
+                Text(
+                  'FY App',
+                  style: FYTextStyles.loginTitleStyle(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 8.w, bottom: 40.w),
+                  child: Text(
+                    '请登录',
+                    style: FYTextStyles.loginTipStyle(color: FYColors.text1Color),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 34.w, right: 32.w),
+                  child: Column(
+                    children: [
+                      CustomInputField(
+                        controller: state.nameController,
+                        hintText: '用户名',
+                        prefixIconPath: FYImages.login_account,
+                      ),
+                      SizedBox(height: 16.w),
+                      CustomInputField(
+                        controller: state.pwdController,
+                        hintText: '请输入密码',
+                        prefixIconPath: FYImages.login_pwd,
+                        obscureText: false,
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            // todo:隐藏/显示密码
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 16.w),
+                            child: Image.asset(FYImages.pwd_see, width: 24.w, height: 24.w,fit: BoxFit.contain),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 40.w),
-                    GestureDetector(
-                      onTap: () => logic.submit(),
-                      child: Container(
-                        width: double.infinity,
-                        height: 48.w,
-                        decoration: BoxDecoration(
-                            gradient:
-                                const LinearGradient(colors: FYColors.loginBtn),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(12.w))),
-                        child: Center(
-                            child: Text('登录',
-                                style: FYTextStyles.loginBtnStyle(color: FYColors.whiteColor))),
-                      ),
-                    )
-                  ],
+                      SizedBox(height: 40.w),
+                      GestureDetector(
+                        onTap: () => logic.submit(),
+                        child: Container(
+                          width: double.infinity,
+                          height: 48.w,
+                          decoration: BoxDecoration(
+                              gradient:
+                                  const LinearGradient(colors: FYColors.loginBtn),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12.w))),
+                          child: Center(
+                              child: Text('登录',
+                                  style: FYTextStyles.loginBtnStyle(color: FYColors.whiteColor))),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

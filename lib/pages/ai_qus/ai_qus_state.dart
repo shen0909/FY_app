@@ -7,7 +7,9 @@ class AiQusState {
   
   // 消息输入控制器
   final TextEditingController messageController = TextEditingController();
-  
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController contentController = TextEditingController();
   // 当前会话ID
   String? currentConversationId;
   
@@ -21,9 +23,12 @@ class AiQusState {
   final RxBool isLoading = false.obs;
   
   // 当前选择的模型
-  final RxString selectedModel = "DeepSeek".obs;
+  final RxString selectedModel = "Perplexity +".obs;
 
   final RxBool isBatchCheck = false.obs;
+  
+  // 批量选择模式下选中的消息索引
+  final RxList<int> selectedMessageIndexes = <int>[].obs;
 
   AiQusState() {
     ///Initialize variables
@@ -45,7 +50,17 @@ class AiQusState {
       {'title': '行业分析报告', 'time': '3天前'},
     ]);
     
-    // 添加示例提示词模板
-    promptTemplates.add({'title': '哈哈哈', 'content': '哈哈哈'});
+    // 添加默认提示词模板
+    promptTemplates.clear(); // 清空旧数据
+    promptTemplates.addAll([
+      {
+        'title': '贸易战',
+        'content': '分析中美贸易战对全球供应链的影响，重点关注高科技产业、农业和制造业受到的冲击，以及企业应对策略和未来趋势预测。'
+      },
+      {
+        'title': '制裁打压',
+        'content': '请分析国际制裁对目标国家经济和产业的影响，包括金融制裁、技术封锁、贸易限制等多种形式，并提供企业在制裁环境下的合规建议和风险规避策略。'
+      }
+    ]);
   }
 }

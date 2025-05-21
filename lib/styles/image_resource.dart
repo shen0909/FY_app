@@ -53,4 +53,8 @@ class FYImages {
   static const String lunbo3 = 'assets/images/lunbo3.jpg';
   static const String report_icon = 'assets/images/report_icon.png';
   static const String blank_page = 'assets/images/blank_page.png';
+  static const String add_tip_mock = 'assets/images/add_tip_mock.png';
+  static const String my_mock = 'assets/images/my_mock.png';
+  static const String messenge_icon = 'assets/images/messenge_icon.png';
+  static const String cancel_red = 'assets/images/cancel_red.png';
 }

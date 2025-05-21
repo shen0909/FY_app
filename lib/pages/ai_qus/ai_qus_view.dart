@@ -43,29 +43,44 @@ class AiQusPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Column(
+        body: Stack(
           children: [
-            // 新增的顶部操作区域
-            _buildTopActionBar(),
-            // 提示信息区域
-            _buildNotificationBar(),
-            SizedBox(height: 10.w),
-            // 聊天内容区域
-            Expanded(
-              child: Obx(() => ListView.builder(
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      final message = state.messages[index];
-                      return _buildMessageItem(message);
-                    },
-                  )),
+            Column(
+              children: [
+                // 新增的顶部操作区域
+                _buildTopActionBar(context),
+                // 提示信息区域
+                _buildNotificationBar(),
+                SizedBox(height: 10.w),
+                // 聊天内容区域
+                Expanded(
+                  child: Obx(() => ListView.builder(
+                        padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 0),
+                        itemCount: state.messages.length,
+                        itemBuilder: (context, index) {
+                          final message = state.messages[index];
+                          return _buildMessageItem(message, index);
+                        },
+                      )),
+                ),
+                Obx(() => state.isBatchCheck.value ? SizedBox() : _buildInputArea()),
+              ],
             ),
-            _buildInputArea(),
+            // 底部操作栏 - 批量选择模式
+            Obx(() => state.isBatchCheck.value 
+                ? Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildBatchSelectionBar(),
+                  )
+                : const SizedBox()),
           ],
         ),
-        floatingActionButton: Container(
+        floatingActionButton: Obx(() => !state.isBatchCheck.value ? Container(
           margin: EdgeInsets.only(bottom: 80.w),
           child: GestureDetector(
+            onTap: () => logic.showTipTemplateDialog(context),
             child: Image.asset(
               FYImages.addTip,
               width: 57.w,
@@ -73,26 +88,43 @@ class AiQusPage extends StatelessWidget {
               fit: BoxFit.contain,
             ),
           ),
-        ),
+        ) : const SizedBox()),
       ),
     );
   }
 
-  Widget _buildMessageItem(Map<String, dynamic> message) {
+  Widget _buildMessageItem(Map<String, dynamic> message, int index) {
     final bool isUser = message['isUser'] ?? false;
 
-    return Container(
+    return Obx(() => Container(
       margin: EdgeInsets.only(bottom: 16.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
+          // 批量选择模式下显示选择框
+          if (state.isBatchCheck.value && !isUser) // 只为AI消息添加选择框
+            GestureDetector(
+              onTap: () => logic.toggleMessageSelection(index),
+              child: Container(
+                margin: EdgeInsets.only(left: 16.w, top: 8.w),
+                child: Image.asset(
+                  state.selectedMessageIndexes.contains(index)
+                    ? FYImages.check_icon
+                    : FYImages.uncheck_icon,
+                  width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
           Flexible(
             child: Container(
               padding: EdgeInsets.all(12.w),
               margin: EdgeInsets.only(
-                  right: isUser ? 17.w : 57.w, left: !isUser ? 17.w : 57.w),
+                  right: isUser ? 17.w : 57.w, 
+                  left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
               decoration: BoxDecoration(
                 gradient: !isUser
                     ? null
@@ -109,6 +141,140 @@ class AiQusPage extends StatelessWidget {
               ),
             ),
           )
+        ],
+      ),
+    ));
+  }
+
+  // 批量选择模式下的底部操作栏
+  Widget _buildBatchSelectionBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 16.w),
+      decoration: BoxDecoration(
+        color: FYColors.whiteColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 选择信息
+          Row(
+            children: [
+              Obx(() => state.selectedMessageIndexes.isNotEmpty
+                  ? Image.asset(
+                      FYImages.check_icon,
+                      width: 24.w,
+                      height: 24.w,
+                      fit: BoxFit.contain,
+                    )
+                  : Image.asset(
+                      FYImages.uncheck_icon,
+                      width: 24.w,
+                      height: 24.w,
+                      fit: BoxFit.contain,
+                    )),
+              SizedBox(width: 8.w),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Obx(() => RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: state.selectedMessageIndexes.length.toString(),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            color: FYColors.color_3361FE,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " 条内容已选择",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: FYColors.color_1A1A1A,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+                  Text(
+                    "可导出问题和回答",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_A6A6A6,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 导出按钮
+                  Obx(() => GestureDetector(
+                    onTap: state.selectedMessageIndexes.isNotEmpty
+                        ? () => logic.exportSelectedMessages()
+                        : null,
+                    child: Container(
+                      width: 96.w,
+                      height: 40.w,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: state.selectedMessageIndexes.isNotEmpty
+                            ? const LinearGradient(
+                          colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                            : null,
+                        color: state.selectedMessageIndexes.isEmpty
+                            ? FYColors.color_EFEFEF
+                            : null,
+                        borderRadius: BorderRadius.circular(8.w),
+                      ),
+                      child: Text(
+                        "导出为文本",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: state.selectedMessageIndexes.isNotEmpty
+                              ? FYColors.whiteColor
+                              : FYColors.color_A6A6A6,
+                        ),
+                      ),
+                    ),
+                  )),
+                  // 取消按钮
+                  GestureDetector(
+                    onTap: () => logic.cancelBatchSelection(),
+                    child: Container(
+                      width: 96.w,
+                      height: 40.w,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: FYColors.color_F9F9F9,
+                        borderRadius: BorderRadius.circular(8.w),
+                      ),
+                      child: Text(
+                        "取消",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+
+            ],
+          ),
         ],
       ),
     );
@@ -164,7 +330,7 @@ class AiQusPage extends StatelessWidget {
   }
 
   // 顶部操作区域
-  Widget _buildTopActionBar() {
+  Widget _buildTopActionBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
@@ -194,9 +360,8 @@ class AiQusPage extends StatelessWidget {
               // 批量选择按钮
               batchCheckWidget(),
               SizedBox(width: 10.w),
-              // Perplexity下拉选择器
               GestureDetector(
-                onTap: () {},
+                onTap: () => logic.showModelSelectionDialog(context),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 9.w),
                   decoration: BoxDecoration(
@@ -212,13 +377,13 @@ class AiQusPage extends StatelessWidget {
                         fit: BoxFit.contain,
                       ),
                       SizedBox(width: 8.w),
-                      Text(
-                        'Perplexity',
+                      Obx(() => Text(
+                        state.selectedModel.value,
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_1A1A1A,
                         ),
-                      ),
+                      )),
                       SizedBox(width: 8.w),
                       Image.asset(
                         FYImages.down_icon,
