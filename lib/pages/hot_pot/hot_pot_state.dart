@@ -15,15 +15,48 @@ class HotPotState {
   final RxInt activeTabIndex = 0.obs;
   
   // 筛选参数
-  final RxString selectedRegion = "北美洲".obs;
+  final RxString selectedRegion = "全部".obs;
+  final RxString selectedNewsType = "全部".obs;
   final RxString selectedTimeRange = "全部".obs;
   final RxBool showFilterOptions = false.obs;
   
-  // 区域选项
-  final List<String> regions = ["全球", "北美洲", "欧洲", "亚洲", "南美洲", "非洲", "大洋洲"];
+  // 搜索关键词
+  final RxString searchKeyword = "".obs;
   
-  // 时间范围选项
-  final List<String> timeRanges = ["全部", "今日", "本周", "本月", "本季度", "本年度"];
+  // 日期范围选择
+  final Rx<DateTime> startDate = DateTime.now().obs;
+  final Rx<DateTime> endDate = DateTime.now().obs;
+  final RxBool useCustomDateRange = false.obs;
+  
+  // 区域选项 - 将从接口获取
+  final RxList<Map<String, dynamic>> regionList = <Map<String, dynamic>>[].obs;
+  
+  // 新闻类型选项 - 根据接口文档固定值
+  final List<String> newsTypes = [
+    "全部",
+    "制裁打压",
+    "起诉调查",
+    "脱钩断链",
+    "外资渗透",
+    "专家人才",
+    "负面舆情"
+  ];
+  
+  // 时间范围选项 - 根据接口文档固定值
+  final List<String> timeRanges = [
+    "全部",
+    "3d",
+    "7d",
+    "30d"
+  ];
+  
+  // 时间范围显示名称
+  final Map<String, String> timeRangeNames = {
+    "全部": "全部",
+    "3d": "近三天",
+    "7d": "近一周",
+    "30d": "近一个月"
+  };
   
   // 热点新闻详情
   final Map<String, dynamic> hotNews = {
@@ -101,6 +134,11 @@ The investigation will examine China's acts, policies, and practices related to 
   // 设置选中的区域
   void setSelectedRegion(String region) {
     selectedRegion.value = region;
+  }
+  
+  // 设置选中的新闻类型
+  void setSelectedNewsType(String newsType) {
+    selectedNewsType.value = newsType;
   }
   
   // 设置选中的时间范围

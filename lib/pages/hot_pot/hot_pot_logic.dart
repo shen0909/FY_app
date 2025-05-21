@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/newslist_data.dart';
 
@@ -11,6 +12,14 @@ class HotPotLogic extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    
+    // 设置默认日期范围为最近30天
+    final now = DateTime.now();
+    state.endDate.value = now;
+    state.startDate.value = now.subtract(Duration(days: 30));
+    
+    // 获取地区列表
+    await getRegionList();
     // 获取热点列表
     await getNewsList();
   }
@@ -83,23 +92,20 @@ class HotPotLogic extends GetxController {
   // 选择区域
   void selectRegion(String region) {
     state.setSelectedRegion(region);
-    // 这里可以添加根据区域筛选数据的逻辑
-    Get.snackbar(
-      '区域筛选', 
-      '已选择区域: $region',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  }
+  
+  // 选择新闻类型
+  void selectNewsType(String newsType) {
+    state.setSelectedNewsType(newsType);
   }
   
   // 选择时间范围
   void selectTimeRange(String timeRange) {
     state.setSelectedTimeRange(timeRange);
-    // 这里可以添加根据时间范围筛选数据的逻辑
-    Get.snackbar(
-      '时间筛选', 
-      '已选择时间范围: $timeRange',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    // 选择预设时间范围时，重置自定义日期范围
+    if (timeRange != "全部") {
+      state.useCustomDateRange.value = false;
+    }
   }
   
   // 自定义时间范围
@@ -112,6 +118,51 @@ class HotPotLogic extends GetxController {
     );
   }
   
+  // 设置搜索关键词
+  void setSearchKeyword(String keyword) {
+    state.searchKeyword.value = keyword;
+  }
+  
+  // 设置起始日期
+  void setStartDate(DateTime date) {
+    // 确保开始日期不晚于结束日期
+    if (date.isAfter(state.endDate.value)) {
+      state.endDate.value = date; // 自动调整结束日期
+    }
+    state.startDate.value = date;
+    state.useCustomDateRange.value = true;
+    state.selectedTimeRange.value = "全部"; // 重置预设时间选择
+  }
+  
+  // 设置结束日期
+  void setEndDate(DateTime date) {
+    // 确保结束日期不早于开始日期
+    if (date.isBefore(state.startDate.value)) {
+      state.startDate.value = date; // 自动调整开始日期
+    }
+    state.endDate.value = date;
+    state.useCustomDateRange.value = true;
+    state.selectedTimeRange.value = "全部"; // 重置预设时间选择
+  }
+  
+  // 选择日期
+  Future<void> selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isStartDate ? state.startDate.value : state.endDate.value,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    
+    if (picked != null) {
+      if (isStartDate) {
+        setStartDate(picked);
+      } else {
+        setEndDate(picked);
+      }
+    }
+  }
+  
   // 应用筛选条件
   void applyFilters() {
     // 关闭筛选选项面板
@@ -119,17 +170,31 @@ class HotPotLogic extends GetxController {
       state.toggleFilterOptions();
     }
     
+    // 准备API参数
+    String? dateFilter = state.useCustomDateRange.value ? null : state.selectedTimeRange.value;
+    String? startDate = state.useCustomDateRange.value ? formatDate(state.startDate.value) : null;
+    String? endDate = state.useCustomDateRange.value ? formatDate(state.endDate.value) : null;
+    
+    // 打印日志，便于调试
+    print('应用筛选: 类型=${state.selectedNewsType.value}, 地区=${state.selectedRegion.value}, ' +
+          '时间=${dateFilter ?? "自定义"}, ' +
+          '开始日期=$startDate, 结束日期=$endDate, ' +
+          '搜索关键词=${state.searchKeyword.value}');
+    
     // 根据筛选条件获取数据
     getNewsList(
+      newsType: state.selectedNewsType.value,
       region: state.selectedRegion.value,
-      dateFilter: state.selectedTimeRange.value,
+      dateFilter: dateFilter!,
+      startDate: startDate,
+      endDate: endDate,
+      search: state.searchKeyword.value.isNotEmpty ? state.searchKeyword.value : null,
     );
-    
-    Get.snackbar(
-      '应用筛选', 
-      '区域: ${state.selectedRegion.value}, 时间: ${state.selectedTimeRange.value}',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  }
+  
+  // 格式化日期为YYYY-MM-DD
+  String formatDate(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
   
   // 导航到热点详情页面
@@ -143,14 +208,37 @@ class HotPotLogic extends GetxController {
     });
   }
 
+  // 获取地区列表
+  Future<void> getRegionList() async {
+    try {
+      var result = await ApiService().getRegion();
+      
+      if (result != null && result['code'] == 10010 && result['data'] != null) {
+        // 将结果转换为地区列表
+        List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(result['data']);
+        
+        // 确保"全部"选项在列表的第一位
+        state.regionList.value = [{"id": "0", "region": "全部"}, ...regions];
+      } else {
+        print('获取地区列表失败: ${result['message'] ?? '未知错误'}');
+        // 添加默认地区，以防API调用失败
+        state.regionList.value = [{"id": "0", "region": "全部"}];
+      }
+    } catch (e) {
+      print('获取地区列表异常: $e');
+      // 添加默认地区，以防API调用失败
+      state.regionList.value = [{"id": "0", "region": "全部"}];
+    }
+  }
+
   Future<void> getNewsList({
     int currentPage = 1,
     int pageSize = 10,
     String newsType = '全部',
     String region = '全部',
     String dateFilter = '全部',
-    String? startDate = '2025-05-01',
-    String? endDate = '2025-05-01',
+    String? startDate,
+    String? endDate,
     String? search,
   }) async {
     state.isLoading.value = true;
@@ -176,7 +264,7 @@ class HotPotLogic extends GetxController {
         
         state.newsList.value = items;
       } else {
-        state.errorMessage.value = result['msg'] ?? '获取数据失败';
+        state.errorMessage.value = result['message'] ?? '获取数据失败';
       }
     } catch (e) {
       state.errorMessage.value = e.toString();
