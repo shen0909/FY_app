@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/routers/routers.dart';
+import 'dart:async';
 
 import 'home_state.dart';
 
 class HomeLogic extends GetxController {
   final HomeState state = HomeState();
+  late PageController pageController;
+  Timer? _autoPlayTimer;
+
+  @override
+  void onInit() {
+    super.onInit();
+    pageController = PageController();
+    // 启动自动轮播
+    _startAutoPlay();
+  }
 
   @override
   void onReady() {
@@ -16,8 +26,49 @@ class HomeLogic extends GetxController {
 
   @override
   void onClose() {
+    pageController.dispose();
+    _stopAutoPlay();
     // TODO: implement onClose
     super.onClose();
+  }
+
+  // 启动自动轮播
+  void _startAutoPlay() {
+    _autoPlayTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+      if (state.currentBannerIndex < state.bannerImages.length - 1) {
+        pageController.nextPage(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+      } else {
+        pageController.animateToPage(
+          0,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+      }
+    });
+  }
+
+  // 停止自动轮播
+  void _stopAutoPlay() {
+    _autoPlayTimer?.cancel();
+    _autoPlayTimer = null;
+  }
+
+  // 更新轮播图当前索引
+  void updateBannerIndex(int index) {
+    state.currentBannerIndex = index;
+    update();
+  }
+
+  // 处理轮播图点击
+  void onBannerTap(int index) {
+    Get.snackbar(
+      '轮播图',
+      '点击了轮播图${index}',
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   // 去风险预警页

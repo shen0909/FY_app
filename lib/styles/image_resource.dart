@@ -48,4 +48,7 @@ class FYImages {
   static const String privacy_safe = 'assets/images/privacy_safe.png';
   static const String search_icon = 'assets/images/search_icon.png';
   static const String calendar_black = 'assets/images/calendar_black.png';
+  static const String lunbo1 = 'assets/images/lunbo1.png';
+  static const String lunbo2 = 'assets/images/lunbo2.png';
+  static const String lunbo3 = 'assets/images/lunbo3.jpg';
 }

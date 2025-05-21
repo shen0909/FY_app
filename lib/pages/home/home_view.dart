@@ -53,50 +53,105 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 顶部蓝色标题区域
+  // 顶部轮播图区域
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
       height: 172.w,
       decoration: BoxDecoration(
-        image: const DecorationImage(image: AssetImage(FYImages.image_1), fit: BoxFit.contain),
-        borderRadius: BorderRadius.all(Radius.circular(20.w)),
+        borderRadius: BorderRadius.all(Radius.circular(12.w)),
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 10.w,
-            right: 16.w,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 8.w,
-                  height: 8.w,
-                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                ),
-                SizedBox(width: 5.w),
-                Container(
-                  width: 8.w,
-                  height: 8.w,
-                  decoration: const BoxDecoration(
-                    color: Colors.white54,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                SizedBox(width: 5.w),
-                Container(
-                  width: 8.w,
-                  height: 8.w,
-                  decoration: const BoxDecoration(
-                    color: Colors.white54,
-                    shape: BoxShape.circle
-                  ),
-                ),
-              ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(20.w)),
+        child: Stack(
+          children: [
+            // 轮播图
+            GetBuilder<HomeLogic>(
+              builder: (controller) {
+                return PageView.builder(
+                  controller: controller.pageController,
+                  itemCount: state.bannerImages.length,
+                  onPageChanged: (index) {
+                    logic.updateBannerIndex(index);
+                  },
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => logic.onBannerTap(index),
+                      child: Container(
+                        width: double.infinity,
+                        child: Stack(
+                          children: [
+                            // 图片
+                            Image.asset(
+                              state.bannerImages[index],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: 172.w,
+                            ),
+                            // 文字遮罩层（渐变背景）
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(15.w, 30.w, 15.w, 15.w),
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.topRight,
+                                    colors: [
+                                      Color(0xff85000000),
+                                      Color(0xff00000000),
+                                    ],
+                                  ),
+                                ),
+                                child: Text(
+                                  state.bannerTitles[index],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
             ),
-          )
-        ],
+            // 轮播图指示器
+            Positioned(
+              bottom: 10.w,
+              right: 16.w,
+              child: GetBuilder<HomeLogic>(
+                builder: (controller) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: state.bannerImages.asMap().entries.map((entry) {
+                      return Container(
+                        width: 8.w,
+                        height: 8.w,
+                        margin: EdgeInsets.symmetric(horizontal: 2.5.w),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: state.currentBannerIndex == entry.key
+                              ? Colors.white
+                              : Colors.white54,
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -250,7 +305,7 @@ class HomePage extends StatelessWidget {
   // 处理菜单项点击
   void _handleMenuItemClick(String title) {
     switch (title) {
-      case '热点':
+      case '舆情热点':
         logic.goHotPot();
         break;
       case 'AI问答':
@@ -276,13 +331,6 @@ class HomePage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.w),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              spreadRadius: 1.w,
-              blurRadius: 5.w,
-            ),
-          ],
         ),
         child: Row(
           children: [
