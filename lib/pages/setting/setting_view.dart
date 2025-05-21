@@ -31,13 +31,13 @@ class SettingPage extends StatelessWidget {
             _buildTitleSection('系统设置', FYImages.setting_phone),
             _buildSystemSettingSection(),
             _buildDivider(),
-            _buildTitleSection('消息推送设置',  FYImages.setting_message),
+            _buildTitleSection('消息推送设置', FYImages.setting_message),
             _buildNotificationSection(),
             _buildDivider(),
-            _buildTitleSection('数据管理',  FYImages.setting_data),
+            _buildTitleSection('数据管理', FYImages.setting_data),
             _buildDataSection(),
             _buildDivider(),
-            _buildTitleSection('权限管理',  FYImages.setting_permission),
+            _buildTitleSection('权限管理', FYImages.setting_permission),
             _buildPermissionCard(),
             _buildDivider(),
             _buildTitleSection('统计信息', FYImages.setting_tongji),
@@ -57,12 +57,8 @@ class SettingPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         children: [
-          Image.asset(
-            state.userInfo['avatar'] ?? FYImages.default_avatar,
-            width: 48.w,
-            height: 48.w,
-            fit: BoxFit.cover
-          ),
+          Image.asset(state.userInfo['avatar'] ?? FYImages.default_avatar,
+              width: 48.w, height: 48.w, fit: BoxFit.cover),
           SizedBox(width: 16.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +153,12 @@ class SettingPage extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
       child: Row(
         children: [
-          Image.asset(imageUrl,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+          Image.asset(
+            imageUrl,
+            width: 24.w,
+            height: 24.w,
+            fit: BoxFit.contain,
+          ),
           SizedBox(width: 8.w),
           Text(
             title,
@@ -176,7 +177,8 @@ class SettingPage extends StatelessWidget {
     return Column(
       children: [
         _buildSwitchItem('设置划线解锁', state.isLockEnabled, logic.toggleLockScreen),
-        _buildSwitchItem('指纹解锁', state.isFingerprintEnabled, logic.toggleFingerprint),
+        _buildSwitchItem(
+            '指纹解锁', state.isFingerprintEnabled, logic.toggleFingerprint),
         _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );
@@ -195,8 +197,10 @@ class SettingPage extends StatelessWidget {
   Widget _buildNotificationSection() {
     return Column(
       children: [
-        _buildSwitchItem('风险预警信息', state.isRiskAlertEnabled, logic.toggleRiskAlert),
-        _buildSwitchItem('订阅信息', state.isSubscriptionEnabled, logic.toggleSubscriptionNotification),
+        _buildSwitchItem(
+            '风险预警信息', state.isRiskAlertEnabled, logic.toggleRiskAlert),
+        _buildSwitchItem('订阅信息', state.isSubscriptionEnabled,
+            logic.toggleSubscriptionNotification),
       ],
     );
   }
@@ -209,7 +213,8 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSwitchItem(String title, RxBool value, Function(bool) onChanged) {
+  Widget _buildSwitchItem(
+      String title, RxBool value, Function(bool) onChanged) {
     return Container(
       height: 48.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -234,7 +239,8 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationItem(String title, String? subtitle, VoidCallback onTap) {
+  Widget _buildNavigationItem(
+      String title, String? subtitle, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -273,10 +279,8 @@ class SettingPage extends StatelessWidget {
   Widget _buildPermissionCard() {
     return Column(
       children: [
-        _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
-        _buildNavigationItem('权限申请审核', null, logic.goToPermissionRequests),
         Container(
-          margin: EdgeInsets.all(16.w),
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             color: FYColors.color_F9F9F9,
@@ -285,29 +289,46 @@ class SettingPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                '您的角色和权限',
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color: FYColors.color_1A1A1A),
+              ),
+              SizedBox(height: 12.h),
               Row(
                 children: [
-                  Image.asset(FYImages.userSetting_icon,width: 32.w,height: 32.w,fit: BoxFit.contain,),
+                  Image.asset(
+                    FYImages.userSetting_icon,
+                    width: 32.w,
+                    height: 32.w,
+                    fit: BoxFit.contain,
+                  ),
                   SizedBox(width: 8.w),
-                  Text(
-                    '管理员',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: FYColors.color_1A1A1A,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '管理员',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                      Text(
+                        '系统最高权限，操作需审核员审核',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: FYColors.color_A6A6A6,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: 8.h),
-              Text(
-                '系统最高权限，操作需审核员审核',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 12.h),
               Text(
                 '角色权限说明：',
                 style: TextStyle(
@@ -320,9 +341,8 @@ class SettingPage extends StatelessWidget {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xff3361FE),
-                      borderRadius: BorderRadius.all(Radius.circular(50))
-                    ),
+                        color: Color(0xff3361FE),
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
                     width: 6.w,
                     height: 6.w,
                   ),
@@ -340,9 +360,8 @@ class SettingPage extends StatelessWidget {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xff3361FE),
-                      borderRadius: BorderRadius.all(Radius.circular(50))
-                    ),
+                        color: Color(0xff3361FE),
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
                     width: 6.w,
                     height: 6.w,
                   ),
@@ -360,9 +379,8 @@ class SettingPage extends StatelessWidget {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xff3361FE),
-                      borderRadius: BorderRadius.all(Radius.circular(50))
-                    ),
+                        color: Color(0xff3361FE),
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
                     width: 6.w,
                     height: 6.w,
                   ),
@@ -379,6 +397,8 @@ class SettingPage extends StatelessWidget {
             ],
           ),
         ),
+        _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
+        _buildNavigationItem('权限申请审核', null, logic.goToPermissionRequests),
       ],
     );
   }
@@ -478,7 +498,8 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, int trendValue, bool isPositive) {
+  Widget _buildStatCard(
+      String title, String value, int trendValue, bool isPositive) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(

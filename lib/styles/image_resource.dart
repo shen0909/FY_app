@@ -58,4 +58,7 @@ class FYImages {
   static const String messenge_icon = 'assets/images/messenge_icon.png';
   static const String cancel_red = 'assets/images/cancel_red.png';
   static const String userSetting_icon = 'assets/images/userSetting_icon.png';
+  static const String refuse_red = 'assets/images/refuse_red.png';
+  static const String check_gree = 'assets/images/check_gree.png';
+  static const String uncheck = 'assets/images/uncheck.png';
 }

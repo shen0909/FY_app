@@ -91,12 +91,12 @@ class SettingLogic extends GetxController {
   
   // 前往角色管理页面
   void goToRoleManagement() {
-    Get.toNamed('/role_management');
+    Get.toNamed(Routers.role_manager);
   }
   
   // 前往权限申请列表页面
   void goToPermissionRequests() {
-    Get.toNamed('/permission_requests');
+    Get.toNamed(Routers.permissionRequest);
   }
   
   // 添加新用户

@@ -15,6 +15,9 @@ import 'package:safe_app/pages/setting/use_tutorial/use_tutorial_view.dart';
 import 'package:safe_app/pages/setting/user_login_data/user_login_data_view.dart';
 import 'package:safe_app/pages/setting/privacy_safe/privacy_safe_view.dart';
 
+import '../pages/setting/permission_request/permission_request_view.dart';
+import '../pages/setting/role_manager/role_manager_view.dart';
+
 class Routers {
   static const String login = '/login';
   static const String home = '/home';
@@ -34,6 +37,8 @@ class Routers {
   static const String useTutorial = '/use_tutorial';
   static const String privacySafe = '/privacy_safe';
   static const String detailList = '/detail_list';
+  static const String role_manager = '/role_manager';
+  static const String permissionRequest = '/permission_request';
 
   static final List<GetPage> pages = [
     GetPage(name: login, page: () => LoginPage()),
@@ -51,5 +56,7 @@ class Routers {
     GetPage(name: privacySafe, page: () => PrivacySafePage()),
     GetPage(name: feedback, page: () => FeedBackPage()),
     GetPage(name: detailList, page: () => DetailListPage()),
+    GetPage(name: role_manager, page: () => RoleManagerPage()),
+    GetPage(name: permissionRequest, page: () => PermissionRequestPage()),
   ];
 }

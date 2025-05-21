@@ -1,0 +1,627 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/widgets/custom_app_bar.dart';
+
+import 'role_manager_logic.dart';
+import 'role_manager_state.dart';
+
+// 添加用户弹窗
+class AddUserDialog extends StatefulWidget {
+  const AddUserDialog({Key? key}) : super(key: key);
+
+  @override
+  State<AddUserDialog> createState() => _AddUserDialogState();
+}
+
+class _AddUserDialogState extends State<AddUserDialog> {
+  late final RoleManagerLogic logic;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController remarkController = TextEditingController();
+  String selectedRole = '普通用户';
+
+  @override
+  void initState() {
+    super.initState();
+    logic = Get.find<RoleManagerLogic>();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    passwordController.dispose();
+    remarkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Get.back(),
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // 弹窗内容
+            Container(
+              width: Get.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 标题栏
+                  Container(
+                    height: 48.h,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: FYColors.color_F9F9F9),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '新增用户',
+                          style: TextStyle(
+                            color: FYColors.color_1A1A1A,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: FYColors.color_1A1A1A),
+                          onPressed: () => Get.back(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // 表单
+                  Padding(
+                    padding: EdgeInsets.all(16.w),
+                    child: Column(
+                      children: [
+                        // 用户名
+                        _buildInputField(
+                          label: '用户名',
+                          controller: nameController,
+                          hintText: '请输入',
+                        ),
+                        SizedBox(height: 16.h),
+
+                        // 角色选择
+                        _buildRoleSelector(),
+                        SizedBox(height: 16.h),
+
+                        // 初始密码
+                        _buildInputField(
+                          label: '初始密码',
+                          controller: passwordController,
+                          hintText: '请输入',
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 16.h),
+
+                        // 备注
+                        _buildInputField(
+                          label: '备注',
+                          controller: remarkController,
+                          hintText: '请输入',
+                          maxLines: 3,
+                        ),
+                        SizedBox(height: 16.h),
+
+                        // 提示信息
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: FYColors.color_A6A6A6,
+                              size: 20.w,
+                            ),
+                            SizedBox(width: 8.w),
+                            Expanded(
+                              child: Text(
+                                '添加管理员或审核员需要经过现有审核员的审核',
+                                style: TextStyle(
+                                  color: FYColors.color_A6A6A6,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // 底部按钮
+                  // const Spacer(),
+                  Container(
+                    height: 72.h,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        top: BorderSide(color: FYColors.color_F9F9F9),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        // 取消按钮
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Get.back(),
+                            child: Container(
+                              height: 48.h,
+                              decoration: BoxDecoration(
+                                color: FYColors.color_F9F9F9,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '取消',
+                                style: TextStyle(
+                                  color: FYColors.color_1A1A1A,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        // 提交审核按钮
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              logic.addUser(
+                                nameController.text,
+                                selectedRole,
+                                passwordController.text,
+                                remarkController.text,
+                              );
+                            },
+                            child: Container(
+                              height: 48.h,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: FYColors.loginBtn,
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '提交审核',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField({
+    required String label,
+    required TextEditingController controller,
+    required String hintText,
+    bool obscureText = false,
+    int maxLines = 1,
+  }) {
+    return Container(
+      height: maxLines > 1 ? 72.h : 48.h,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: BoxDecoration(
+        color: FYColors.color_F9F9F9,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: FYColors.color_666666,
+              fontSize: 14.sp,
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              obscureText: obscureText,
+              maxLines: maxLines,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(
+                  color: FYColors.color_A6A6A6,
+                  fontSize: 14.sp,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoleSelector() {
+    return GestureDetector(
+      onTap: _showRoleSelector,
+      child: Container(
+        height: 48.h,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        decoration: BoxDecoration(
+          color: FYColors.color_F9F9F9,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Row(
+          children: [
+            Text(
+              '角色',
+              style: TextStyle(
+                color: FYColors.color_666666,
+                fontSize: 14.sp,
+              ),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    selectedRole,
+                    style: TextStyle(
+                      color: FYColors.color_1A1A1A,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: FYColors.color_1A1A1A,
+                    size: 16.w,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showRoleSelector() {
+    Get.bottomSheet(
+      Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('管理员', textAlign: TextAlign.center),
+                onTap: () {
+                  setState(() {
+                    selectedRole = '管理员';
+                  });
+                  Get.back();
+                },
+              ),
+              Divider(height: 0),
+              ListTile(
+                title: Text('审核员', textAlign: TextAlign.center),
+                onTap: () {
+                  setState(() {
+                    selectedRole = '审核员';
+                  });
+                  Get.back();
+                },
+              ),
+              Divider(height: 0),
+              ListTile(
+                title: Text('普通用户', textAlign: TextAlign.center),
+                onTap: () {
+                  setState(() {
+                    selectedRole = '普通用户';
+                  });
+                  Get.back();
+                },
+              ),
+              Container(
+                width: double.infinity,
+                color: FYColors.color_F5F5F5,
+                height: 8.h,
+              ),
+              ListTile(
+                title: Text('取消', textAlign: TextAlign.center),
+                onTap: () => Get.back(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RoleManagerPage extends StatelessWidget {
+  RoleManagerPage({Key? key}) : super(key: key);
+
+  final RoleManagerLogic logic = Get.put(RoleManagerLogic());
+  final RoleManagerState state = Get.find<RoleManagerLogic>().state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: FYAppBar(
+        title: '角色管理',
+        actions: [
+          InkWell(
+            onTap: logic.showAddUserDialog,
+            child: Row(
+              children: [
+                Icon(Icons.add, color: FYColors.color_1A1A1A, size: 24.w),
+                SizedBox(width: 4.w),
+                Text(
+                  '添加',
+                  style: TextStyle(
+                    color: FYColors.color_1A1A1A, 
+                    fontSize: 14.sp
+                  ),
+                ),
+                SizedBox(width: 16.w),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 16.w,right: 16.w, top: 16.h, bottom: 16.h),
+            child: Row(
+              children: [
+                Text(
+                  '用户权限管理',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Container(
+                    height: 36.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: FYColors.color_E6E6E6),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 16.w),
+                        Icon(
+                            Icons.search,
+                            color: FYColors.color_3A3A3A,
+                            size: 20.w
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: TextField(
+                            controller: logic.searchController,
+                            onChanged: logic.searchUser,
+                            decoration: InputDecoration(
+                              hintText: '搜索用户名称',
+                              hintStyle: TextStyle(
+                                  color: FYColors.color_A6A6A6,
+                                  fontSize: 14.sp
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 表头
+          Container(
+            height: 28.h,
+            color: FYColors.color_F0F5FF,
+            child: Row(
+              children: [
+                SizedBox(width: 16.w),
+                _buildTableHeader('用户名', flex: 2),
+                _buildTableHeader('角色', flex: 1),
+                _buildTableHeader('状态', flex: 1),
+                _buildTableHeader('最后登录时间', flex: 2),
+                _buildTableHeader('操作', flex: 1),
+              ],
+            ),
+          ),
+          // 用户列表
+          Expanded(
+            child: Obx(() => ListView.builder(
+              itemCount: logic.filteredUserList.length,
+              itemBuilder: (context, index) {
+                final user = logic.filteredUserList[index];
+                return Container(
+                  height: 44.h,
+                  decoration: BoxDecoration(
+                    color: index % 2 == 0 ? Colors.white : FYColors.color_F9F9F9,
+                    border: Border(
+                      bottom: BorderSide(color: FYColors.color_F9F9F9),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 16.w),
+                      _buildTableCell('${user.name} (${user.id})', flex: 2),
+                      Expanded(
+                        child: _buildRoleBadge(user.role),
+                      ),
+                      Expanded(
+                        child: _buildStatusBadge(user.status),
+                      ),
+                      _buildTableCell(user.lastLoginTime, flex: 2),
+                      Expanded(
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit, 
+                            color: FYColors.color_3361FE, 
+                            size: 16.w
+                          ),
+                          onPressed: () => logic.editUser(user),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableHeader(String text, {required int flex}) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: FYColors.color_3361FE,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableCell(String text, {required int flex}) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: FYColors.color_1A1A1A,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w400,
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Widget _buildRoleBadge(String role) {
+    Color bgColor;
+    Color textColor;
+
+    switch (role) {
+      case '管理员':
+        bgColor = const Color(0xFFFFF7E9);
+        textColor = const Color(0xFFFF9719);
+        break;
+      case '审核员':
+        bgColor = const Color(0xFFE7FEF8);
+        textColor = const Color(0xFF07CC89);
+        break;
+      case '普通用户':
+      default:
+        bgColor = const Color(0xFFEDEDED);
+        textColor = FYColors.color_1A1A1A;
+        break;
+    }
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        role,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    Color bgColor;
+    Color textColor;
+
+    switch (status) {
+      case '在线':
+        bgColor = const Color(0xFFE7FEF8);
+        textColor = const Color(0xFF07CC89);
+        break;
+      case '申请中':
+        bgColor = const Color(0xFFFFF7E9);
+        textColor = const Color(0xFFFF9719);
+        break;
+      case '离线':
+      default:
+        bgColor = const Color(0xFFEDEDED);
+        textColor = FYColors.color_1A1A1A;
+        break;
+    }
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        status,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+}
