@@ -242,6 +242,7 @@ class SettingPage extends StatelessWidget {
   Widget _buildNavigationItem(
       String title, String? subtitle, VoidCallback onTap) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
         height: 48.h,
@@ -347,11 +348,14 @@ class SettingPage extends StatelessWidget {
                     height: 6.w,
                   ),
                   SizedBox(width: 8.w),
-                  Text(
-                    '管理员：添加账户等操作需经审核员审核才能生效',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_A6A6A6,
+                  Expanded(
+                    child: Text(
+                      '管理员：添加账户等操作需经审核员审核才能生效',
+                      softWrap: true,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_A6A6A6,
+                      ),
                     ),
                   ),
                 ],
