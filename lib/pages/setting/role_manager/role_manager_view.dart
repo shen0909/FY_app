@@ -457,70 +457,192 @@ class RoleManagerPage extends StatelessWidget {
               ],
             ),
           ),
-          // 表头
-          Container(
-            height: 28.h,
-            color: FYColors.color_F0F5FF,
+          
+          // 新的表格实现
+          Expanded(
             child: Row(
               children: [
-                SizedBox(width: 16.w),
-                _buildTableHeader('用户名', flex: 2),
-                _buildTableHeader('角色', flex: 1),
-                _buildTableHeader('状态', flex: 1),
-                _buildTableHeader('最后登录时间', flex: 2),
-                _buildTableHeader('操作', flex: 1),
-              ],
-            ),
-          ),
-          // 用户列表
-          Expanded(
-            child: Obx(() => ListView.builder(
-              itemCount: logic.filteredUserList.length,
-              itemBuilder: (context, index) {
-                final user = logic.filteredUserList[index];
-                return Container(
-                  height: 44.h,
-                  decoration: BoxDecoration(
-                    color: index % 2 == 0 ? Colors.white : FYColors.color_F9F9F9,
-                    border: Border(
-                      bottom: BorderSide(color: FYColors.color_F9F9F9),
-                    ),
-                  ),
-                  child: Row(
+                // 固定的首列
+                Container(
+                  width: 120.w, // 设置首列宽度
+                  child: Column(
                     children: [
-                      SizedBox(width: 16.w),
-                      _buildTableCell('${user.name} (${user.id})', flex: 2),
-                      Expanded(
-                        child: _buildRoleBadge(user.role),
-                      ),
-                      Expanded(
-                        child: _buildStatusBadge(user.status),
-                      ),
-                      _buildTableCell(user.lastLoginTime, flex: 2),
-                      Expanded(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.edit, 
-                            color: FYColors.color_3361FE, 
-                            size: 16.w
+                      // 首列表头
+                      Container(
+                        height: 28.h,
+                        color: FYColors.color_F0F5FF,
+                        padding: EdgeInsets.only(left: 16.w),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '用户名',
+                          style: TextStyle(
+                            color: FYColors.color_3361FE,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400,
                           ),
-                          onPressed: () => logic.editUser(user),
                         ),
+                      ),
+                      
+                      // 首列数据
+                      Expanded(
+                        child: Obx(() => ListView.builder(
+                          controller: logic.leftVerticalController,
+                          itemCount: logic.filteredUserList.length,
+                          itemBuilder: (context, index) {
+                            final user = logic.filteredUserList[index];
+                            return Container(
+                              height: 44.h,
+                              decoration: BoxDecoration(
+                                color: index % 2 == 0 ? Colors.white : FYColors.color_F9F9F9,
+                                border: Border(
+                                  bottom: BorderSide(color: FYColors.color_F9F9F9),
+                                ),
+                              ),
+                              padding: EdgeInsets.only(left: 16.w),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '${user.name} (${user.id})',
+                                style: TextStyle(
+                                  color: FYColors.color_1A1A1A,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        )),
+                      )
+                    ],
+                  ),
+                ),
+                // 右侧可滚动部分
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // 滚动内容
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: logic.horizontalScrollController,
+                        child: SizedBox(
+                          width: 400.w, // 设置足够的宽度让内容可以滚动
+                          child: Column(
+                            children: [
+                              // 表头行
+                              Container(
+                                height: 28.h,
+                                color: FYColors.color_F0F5FF,
+                                child: Row(
+                                  children: [
+                                    _buildTableHeader('角色', width: 100.w),
+                                    _buildTableHeader('状态', width: 100.w),
+                                    _buildTableHeader('最后登录时间', width: 140.w),
+                                    _buildTableHeader('操作', width: 60.w),
+                                  ],
+                                ),
+                              ),
+                              
+                              // 表格数据行
+                              Expanded(
+                                child: Obx(() => ListView.builder(
+                                  controller: logic.rightVerticalController,
+                                  itemCount: logic.filteredUserList.length,
+                                  itemBuilder: (context, index) {
+                                    final user = logic.filteredUserList[index];
+                                    return Container(
+                                      height: 44.h,
+                                      decoration: BoxDecoration(
+                                        color: index % 2 == 0 ? Colors.white : FYColors.color_F9F9F9,
+                                        border: Border(
+                                          bottom: BorderSide(color: FYColors.color_F9F9F9),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 100.w,
+                                            child: _buildRoleBadge(user.role),
+                                          ),
+                                          Container(
+                                            width: 100.w,
+                                            child: _buildStatusBadge(user.status),
+                                          ),
+                                          Container(
+                                            width: 140.w,
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              user.lastLoginTime,
+                                              style: TextStyle(
+                                                color: FYColors.color_1A1A1A,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 60.w,
+                                            alignment: Alignment.center,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.edit, 
+                                                color: FYColors.color_3361FE, 
+                                                size: 16.w
+                                              ),
+                                              onPressed: () => logic.editUser(user),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // 右侧滑动指示阴影
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        child: Obx(() {
+                          // 当没有数据时不显示指示器
+                          if (logic.filteredUserList.isEmpty) {
+                            return SizedBox();
+                          }
+                          return Container(
+                            width: 16.w,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.1),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),
-                );
-              },
-            )),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTableHeader(String text, {required int flex}) {
-    return Expanded(
-      flex: flex,
+  Widget _buildTableHeader(String text, {required double width}) {
+    return Container(
+      width: width,
+      alignment: Alignment.centerLeft,
       child: Text(
         text,
         style: TextStyle(
@@ -528,21 +650,6 @@ class RoleManagerPage extends StatelessWidget {
           fontSize: 12.sp,
           fontWeight: FontWeight.w400,
         ),
-      ),
-    );
-  }
-
-  Widget _buildTableCell(String text, {required int flex}) {
-    return Expanded(
-      flex: flex,
-      child: Text(
-        text,
-        style: TextStyle(
-          color: FYColors.color_1A1A1A,
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w400,
-        ),
-        overflow: TextOverflow.ellipsis,
       ),
     );
   }

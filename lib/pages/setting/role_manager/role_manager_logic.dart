@@ -8,6 +8,23 @@ class RoleManagerLogic extends GetxController {
   final RoleManagerState state = RoleManagerState();
   final TextEditingController searchController = TextEditingController();
   final RxList<UserRole> filteredUserList = <UserRole>[].obs;
+  
+  // 添加滚动控制器
+  late final ScrollController horizontalScrollController;
+  late final ScrollController leftVerticalController;
+  late final ScrollController rightVerticalController;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // 初始化滚动控制器
+    horizontalScrollController = ScrollController();
+    leftVerticalController = ScrollController();
+    rightVerticalController = ScrollController();
+    
+    // 设置滚动同步
+    setupScrollControllers();
+  }
 
   @override
   void onReady() {
@@ -18,7 +35,31 @@ class RoleManagerLogic extends GetxController {
   @override
   void onClose() {
     searchController.dispose();
+    // 释放滚动控制器资源
+    horizontalScrollController.dispose();
+    leftVerticalController.dispose();
+    rightVerticalController.dispose();
     super.onClose();
+  }
+  
+  // 设置滚动控制器
+  void setupScrollControllers() {
+    leftVerticalController.addListener(syncRightScroll);
+    rightVerticalController.addListener(syncLeftScroll);
+  }
+  
+  // 同步右侧滚动到左侧
+  void syncRightScroll() {
+    if (leftVerticalController.offset != rightVerticalController.offset) {
+      rightVerticalController.jumpTo(leftVerticalController.offset);
+    }
+  }
+  
+  // 同步左侧滚动到右侧
+  void syncLeftScroll() {
+    if (rightVerticalController.offset != leftVerticalController.offset) {
+      leftVerticalController.jumpTo(rightVerticalController.offset);
+    }
   }
 
   // 搜索用户

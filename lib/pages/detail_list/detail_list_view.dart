@@ -28,9 +28,8 @@ class DetailListPage extends StatelessWidget {
           _buildFilterSection(),
           _buildFilterChips(),
           _buildResultCount(),
-          _buildTableHeader(),
           Expanded(
-            child: _buildCompanyList(),
+            child: _buildTable(),
           ),
         ],
       ),
@@ -225,120 +224,206 @@ class DetailListPage extends StatelessWidget {
     );
   }
   
-  // 表格头部
-  Widget _buildTableHeader() {
-    return Container(
-      height: 28,
-      color: Color(0xFFF0F5FF),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 30,
-            child: Text(
-              "序号",
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF3361FE),
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "名称",
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF3361FE),
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 80,
-            child: Text(
-              "制裁类型",
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF3361FE),
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 60,
-            child: Text(
-              "地区",
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF3361FE),
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  // 企业列表
-  Widget _buildCompanyList() {
+  // 表格实现（固定首列且可滑动）
+  Widget _buildTable() {
     return Obx(() {
       if (state.isLoading.value) {
         return Center(child: CircularProgressIndicator());
       }
       
-      return ListView.separated(
-        itemCount: state.companyList.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final item = state.companyList[index];
-          final isOdd = index % 2 == 1;
-          
-          return Container(
-            color: isOdd ? Colors.white : Color(0xFFF9F9F9),
-            height: 44,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+      return Row(
+        children: [
+          // 固定的首列（序号列）
+          Container(
+            width: 50.w,
+            child: Column(
               children: [
-                SizedBox(
-                  width: 30,
+                // 首列表头
+                Container(
+                  height: 28.h,
+                  color: Color(0xFFF0F5FF),
+                  alignment: Alignment.center,
                   child: Text(
-                    "${item.id}",
+                    "序号",
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF1A1A1A),
+                      fontSize: 12.sp,
+                      color: Color(0xFF3361FE),
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                 ),
+                
+                // 首列数据
                 Expanded(
-                  child: Text(
-                    item.name,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF1A1A1A),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                SizedBox(
-                  width: 80,
-                  child: _buildSanctionTypeTag(item.sanctionType),
-                ),
-                SizedBox(
-                  width: 60,
-                  child: Text(
-                    item.region,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF1A1A1A),
-                    ),
+                  child: ListView.builder(
+                    controller: logic.leftVerticalController,
+                    itemCount: state.companyList.length,
+                    itemBuilder: (context, index) {
+                      final isOdd = index % 2 == 1;
+                      return Container(
+                        height: 44.h,
+                        color: isOdd ? Colors.white : Color(0xFFF9F9F9),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "${state.companyList[index].id}",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+          
+          // 右侧可滚动部分
+          Expanded(
+            child: Stack(
+              children: [
+                // 滚动内容
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  controller: logic.horizontalScrollController,
+                  child: SizedBox(
+                    // 设置足够的宽度让内容可以滚动
+                    width: 350.w,
+                    child: Column(
+                      children: [
+                        // 表头行
+                        Container(
+                          height: 28.h,
+                          color: Color(0xFFF0F5FF),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 150.w,
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 8.w),
+                                  child: Text(
+                                    "名称",
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Color(0xFF3361FE),
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 100.w,
+                                child: Text(
+                                  "制裁类型",
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Color(0xFF3361FE),
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 100.w,
+                                child: Text(
+                                  "地区",
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Color(0xFF3361FE),
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        // 表格数据行
+                        Expanded(
+                          child: ListView.builder(
+                            controller: logic.rightVerticalController,
+                            itemCount: state.companyList.length,
+                            itemBuilder: (context, index) {
+                              final item = state.companyList[index];
+                              final isOdd = index % 2 == 1;
+                              
+                              return Container(
+                                height: 44.h,
+                                color: isOdd ? Colors.white : Color(0xFFF9F9F9),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 150.w,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 8.w),
+                                        child: Text(
+                                          item.name,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Color(0xFF1A1A1A),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 100.w,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                        child: _buildSanctionTypeTag(item.sanctionType),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 100.w,
+                                      child: Text(
+                                        item.region,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Color(0xFF1A1A1A),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // 右侧滑动指示阴影
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Obx(() {
+                    // 当没有数据时不显示指示器
+                    if (state.companyList.isEmpty) {
+                      return SizedBox();
+                    }
+                    return Container(
+                      width: 16.w,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.1),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     });
   }
