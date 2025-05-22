@@ -58,6 +58,12 @@ class HotPotState {
     "30d": "近一个月"
   };
   
+  // 分页相关参数
+  final RxInt currentPage = 1.obs; // 当前页码
+  final RxInt pageSize = 10.obs; // 每页条数
+  final RxBool hasMoreData = true.obs; // 是否还有更多数据
+  final RxBool isLoadingMore = false.obs; // 是否正在加载更多
+
   // 热点新闻详情
   final Map<String, dynamic> hotNews = {
     'id': '123456',
@@ -144,5 +150,11 @@ The investigation will examine China's acts, policies, and practices related to 
   // 设置选中的时间范围
   void setSelectedTimeRange(String timeRange) {
     selectedTimeRange.value = timeRange;
+  }
+  
+  // 重置分页状态
+  void resetPagination() {
+    currentPage.value = 1;
+    hasMoreData.value = true;
   }
 }

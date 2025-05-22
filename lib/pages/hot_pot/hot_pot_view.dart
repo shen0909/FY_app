@@ -532,12 +532,42 @@ class HotPotPage extends StatelessWidget {
       }
       
       // 显示列表
-      return ListView.builder(
-        padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
-        itemCount: state.newsList.length,
-        itemBuilder: (context, index) {
-          return _buildNewsCard(state.newsList[index], index);
+      return NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          // 检测是否滚动到底部
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            // 触发加载更多
+            if (state.hasMoreData.value && !state.isLoadingMore.value) {
+              logic.loadMore();
+            }
+          }
+          return true;
         },
+        child: ListView.builder(
+          padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+          itemCount: state.newsList.length + (state.hasMoreData.value ? 1 : 0),
+          itemBuilder: (context, index) {
+            // 如果是最后一项且还有更多数据，显示加载中
+            if (index == state.newsList.length) {
+              return Obx(() => state.isLoadingMore.value
+                ? Container(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(),
+                  )
+                : Container(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    alignment: Alignment.center,
+                    child: Text('上拉加载更多', style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                    )),
+                  )
+              );
+            }
+            return _buildNewsCard(state.newsList[index], index);
+          },
+        ),
       );
     });
   }

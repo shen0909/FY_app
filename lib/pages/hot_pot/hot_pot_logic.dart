@@ -181,8 +181,13 @@ class HotPotLogic extends GetxController {
           '开始日期=$startDate, 结束日期=$endDate, ' +
           '搜索关键词=${state.searchKeyword.value}');
     
+    // 重置分页状态
+    state.resetPagination();
+    
     // 根据筛选条件获取数据
     getNewsList(
+      currentPage: state.currentPage.value,
+      pageSize: state.pageSize.value,
       newsType: state.selectedNewsType.value,
       region: state.selectedRegion.value,
       dateFilter: dateFilter!,
@@ -232,22 +237,33 @@ class HotPotLogic extends GetxController {
   }
 
   Future<void> getNewsList({
-    int currentPage = 1,
-    int pageSize = 10,
+    int? currentPage,
+    int? pageSize,
     String newsType = '全部',
     String region = '全部',
     String dateFilter = '全部',
     String? startDate,
     String? endDate,
     String? search,
+    bool isLoadMore = false,
   }) async {
-    state.isLoading.value = true;
-    state.errorMessage.value = '';
+    // 如果是加载更多，设置isLoadingMore为true
+    // 否则设置isLoading为true
+    if (isLoadMore) {
+      state.isLoadingMore.value = true;
+    } else {
+      state.isLoading.value = true;
+      state.errorMessage.value = '';
+    }
     
     try {
+      // 使用传入的页码或状态中的页码
+      int page = currentPage ?? state.currentPage.value;
+      int size = pageSize ?? state.pageSize.value;
+      
       var result = await ApiService().getNewsList(
-        currentPage: currentPage,
-        pageSize: pageSize,
+        currentPage: page,
+        pageSize: size,
         newsType: newsType,
         region: region,
         dateFilter: dateFilter,
@@ -262,14 +278,81 @@ class HotPotLogic extends GetxController {
             .map((item) => NewsItem.fromJson(item))
             .toList();
         
-        state.newsList.value = items;
+        // 如果是加载更多，则将新数据添加到已有数据后面
+        // 否则替换原有数据
+        if (isLoadMore) {
+          state.newsList.addAll(items);
+        } else {
+          state.newsList.value = items;
+        }
+        
+        // 更新页码
+        state.currentPage.value = page;
+        
+        // 判断是否还有更多数据
+        if (items.isEmpty || items.length < size) {
+          state.hasMoreData.value = false;
+        } else {
+          state.hasMoreData.value = true;
+        }
+      } else if (result != null && result['code'] == 10016) {
+        // 已经是最后一页
+        state.hasMoreData.value = false;
+        
+        if (!isLoadMore) {
+          state.newsList.value = [];
+        }
       } else {
         state.errorMessage.value = result['message'] ?? '获取数据失败';
+        
+        if (isLoadMore) {
+          // 加载更多失败，页码回退
+          state.currentPage.value = page - 1;
+        } else {
+          state.newsList.value = [];
+        }
       }
     } catch (e) {
       state.errorMessage.value = e.toString();
+      
+      if (isLoadMore) {
+        // 加载更多失败，页码回退
+        state.currentPage.value = (currentPage ?? state.currentPage.value) - 1;
+      } else {
+        state.newsList.value = [];
+      }
     } finally {
-      state.isLoading.value = false;
+      if (isLoadMore) {
+        state.isLoadingMore.value = false;
+      } else {
+        state.isLoading.value = false;
+      }
     }
+  }
+  
+  // 加载更多数据
+  Future<void> loadMore() async {
+    // 如果没有更多数据或正在加载，则不执行任何操作
+    if (!state.hasMoreData.value || state.isLoadingMore.value || state.isLoading.value) {
+      return;
+    }
+    
+    // 获取当前的筛选条件
+    String? dateFilter = state.useCustomDateRange.value ? null : state.selectedTimeRange.value;
+    String? startDate = state.useCustomDateRange.value ? formatDate(state.startDate.value) : null;
+    String? endDate = state.useCustomDateRange.value ? formatDate(state.endDate.value) : null;
+    
+    // 请求下一页数据
+    await getNewsList(
+      currentPage: state.currentPage.value + 1,
+      pageSize: state.pageSize.value,
+      newsType: state.selectedNewsType.value,
+      region: state.selectedRegion.value,
+      dateFilter: dateFilter!,
+      startDate: startDate,
+      endDate: endDate,
+      search: state.searchKeyword.value.isNotEmpty ? state.searchKeyword.value : null,
+      isLoadMore: true,
+    );
   }
 }
