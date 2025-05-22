@@ -92,7 +92,10 @@ class HotPotPage extends StatelessWidget {
         ),
         child: TextField(
           onChanged: (value) => logic.setSearchKeyword(value),
-          onSubmitted: (value) => logic.applyFilters(),
+          onSubmitted: (value) {
+            // 当用户按下回车键时应用筛选
+            logic.applyFilters();
+          },
           decoration: InputDecoration(
             hintText: '搜索关键词',
             hintStyle: TextStyle(
@@ -438,11 +441,13 @@ class HotPotPage extends StatelessWidget {
         switch (state.activeTabIndex.value) {
           case 0: // 新闻类型
             logic.selectNewsType(type);
-            // logic.showFilterOptions(); // 选择后自动关闭弹窗
+            logic.showFilterOptions(); // 选择后自动关闭弹窗
+            logic.applyFilters(); // 选择后立即应用筛选
             break;
           case 1: // 地区
             logic.selectRegion(type);
-            // logic.showFilterOptions(); // 选择后自动关闭弹窗
+            logic.showFilterOptions(); // 选择后自动关闭弹窗
+            logic.applyFilters(); // 选择后立即应用筛选
             break;
           case 2: // 时间
             // 对于时间，需要将显示名称转回实际值
@@ -451,7 +456,8 @@ class HotPotPage extends StatelessWidget {
               orElse: () => type
             );
             logic.selectTimeRange(actualTimeValue);
-            // logic.showFilterOptions(); // 选择后自动关闭弹窗
+            logic.showFilterOptions(); // 选择后自动关闭弹窗
+            logic.applyFilters(); // 选择后立即应用筛选
             break;
         }
       },

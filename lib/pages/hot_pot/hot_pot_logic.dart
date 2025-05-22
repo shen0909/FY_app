@@ -160,6 +160,9 @@ class HotPotLogic extends GetxController {
       } else {
         setEndDate(picked);
       }
+      
+      // 日期选择后立即应用筛选
+      applyFilters();
     }
   }
   

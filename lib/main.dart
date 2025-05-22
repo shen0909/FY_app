@@ -22,6 +22,9 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: 'AlibabaPuHuiTi',
+            appBarTheme: AppBarTheme(
+              surfaceTintColor: Colors.transparent,
+            )
           ),
           initialRoute: Routers.login,
         );
