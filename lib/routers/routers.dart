@@ -1,8 +1,10 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:safe_app/pages/detail_list/detail_list_view.dart';
+// import 'package:safe_app/pages/fingerprint_auth/fingerprint_auth_view.dart';
 import 'package:safe_app/pages/home/home_view.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_view.dart';
 import 'package:safe_app/pages/hot_pot/hot_pot_view.dart';
+import 'package:safe_app/pages/lock_method_selection/lock_method_selection_view.dart';
 import 'package:safe_app/pages/login/login_view.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/pages/risk/risk_view.dart';
@@ -14,11 +16,14 @@ import 'package:safe_app/pages/setting/setting_view.dart';
 import 'package:safe_app/pages/setting/use_tutorial/use_tutorial_view.dart';
 import 'package:safe_app/pages/setting/user_login_data/user_login_data_view.dart';
 import 'package:safe_app/pages/setting/privacy_safe/privacy_safe_view.dart';
-
+import 'package:safe_app/pages/setting/pattern_setup/pattern_setup_view.dart';
+import 'package:safe_app/pages/pattern_lock/pattern_lock_view.dart';
+import 'package:safe_app/pages/splash/splash_view.dart';
 import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
 
 class Routers {
+  static const String splash = '/splash';
   static const String login = '/login';
   static const String home = '/home';
   static const String risk = '/risk';
@@ -39,8 +44,13 @@ class Routers {
   static const String detailList = '/detail_list';
   static const String role_manager = '/role_manager';
   static const String permissionRequest = '/permission_request';
+  static const String patternSetup = '/pattern_setup';
+  static const String patternLock = '/pattern_lock';
+  static const String lockMethodSelection = '/lock_method_selection';
+  static const String fingerprintAuth = '/fingerprint_auth';
 
   static final List<GetPage> pages = [
+    GetPage(name: splash, page: () => SplashPage()),
     GetPage(name: login, page: () => LoginPage()),
     GetPage(name: home, page: () => HomePage()),
     GetPage(name: risk, page: () => RiskPage()),
@@ -58,5 +68,9 @@ class Routers {
     GetPage(name: detailList, page: () => DetailListPage()),
     GetPage(name: role_manager, page: () => RoleManagerPage()),
     GetPage(name: permissionRequest, page: () => PermissionRequestPage()),
+    GetPage(name: patternSetup, page: () => PatternSetupPage()),
+    GetPage(name: patternLock, page: () => PatternLockPage()),
+    GetPage(name: lockMethodSelection, page: () => LockMethodSelectionPage()),
+    // GetPage(name: fingerprintAuth, page: () => FingerprintAuthPage()),
   ];
 }

@@ -104,29 +104,48 @@ class LoginPage extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomInputField(
-                        controller: state.nameController,
+                        controller: state.accountController,
                         hintText: '用户名',
                         prefixIconPath: FYImages.login_account,
                       ),
                       SizedBox(height: 16.w),
-                      CustomInputField(
-                        controller: state.pwdController,
+                      Obx(() => CustomInputField(
+                        controller: state.passwordController,
                         hintText: '请输入密码',
                         prefixIconPath: FYImages.login_pwd,
-                        obscureText: false,
+                        obscureText: !state.showPassword.value,
                         suffixIcon: GestureDetector(
                           onTap: () {
-                            // todo:隐藏/显示密码
+                            state.showPassword.value = !state.showPassword.value;
                           },
                           child: Padding(
                             padding: EdgeInsets.only(right: 16.w),
                             child: Image.asset(FYImages.pwd_see, width: 24.w, height: 24.w,fit: BoxFit.contain),
                           ),
                         ),
+                      )),
+                      SizedBox(height: 16.w),
+                      Row(
+                        children: [
+                          Obx(() => Checkbox(
+                            value: state.rememberCredentials.value,
+                            onChanged: (value) {
+                              logic.toggleRememberCredentials(value ?? false);
+                            },
+                            activeColor: FYColors.color_3361FE,
+                          )),
+                          Text(
+                            '记住账号密码',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: FYColors.color_666666,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 40.w),
-                      GestureDetector(
-                        onTap: () => logic.submit(),
+                      SizedBox(height: 24.w),
+                      Obx(() => GestureDetector(
+                        onTap: state.isLogging.value ? null : () => logic.doLogin(),
                         child: Container(
                           width: double.infinity,
                           height: 48.w,
@@ -136,10 +155,20 @@ class LoginPage extends StatelessWidget {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12.w))),
                           child: Center(
-                              child: Text('登录',
-                                  style: FYTextStyles.loginBtnStyle(color: FYColors.whiteColor))),
+                              child: state.isLogging.value 
+                                ? SizedBox(
+                                    width: 24.w,
+                                    height: 24.w,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.w,
+                                    ),
+                                  )
+                                : Text('登录',
+                                    style: FYTextStyles.loginBtnStyle(color: FYColors.whiteColor))
+                          ),
                         ),
-                      )
+                      ))
                     ],
                   ),
                 ),

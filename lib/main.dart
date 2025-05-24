@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/routers/routers.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -22,11 +23,11 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: 'AlibabaPuHuiTi',
-            appBarTheme: AppBarTheme(
+            appBarTheme: const AppBarTheme(
               surfaceTintColor: Colors.transparent,
             )
           ),
-          initialRoute: Routers.login,
+          initialRoute: Routers.splash,
         );
       }
     );

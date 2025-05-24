@@ -41,6 +41,7 @@ dependencies:
   fl_chart: ^0.71.0
   shared_preferences: ^2.5.3
   side_sheet: ^1.0.4
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:

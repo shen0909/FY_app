@@ -176,9 +176,90 @@ class SettingPage extends StatelessWidget {
   Widget _buildSecuritySection() {
     return Column(
       children: [
-        _buildSwitchItem('设置划线解锁', state.isLockEnabled, logic.toggleLockScreen),
-        _buildSwitchItem(
-            '指纹解锁', state.isFingerprintEnabled, logic.toggleFingerprint),
+        Obx(() => Container(
+          height: 48.h,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(
+            color: state.isLockEnabled.value ? FYColors.color_F0F5FF : Colors.transparent,
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: Row(
+            children: [
+              Text(
+                '划线解锁',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: FYColors.color_1A1A1A,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              if (state.isLockEnabled.value)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  decoration: BoxDecoration(
+                    color: FYColors.color_3361FE.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Text(
+                    '已启用',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_3361FE,
+                    ),
+                  ),
+                ),
+              Spacer(),
+              Switch(
+                value: state.isLockEnabled.value,
+                onChanged: logic.toggleLockScreen,
+                activeColor: FYColors.color_3361FE,
+                activeTrackColor: FYColors.color_F0F5FF,
+              ),
+            ],
+          ),
+        )),
+        Obx(() => Container(
+          height: 48.h,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(
+            color: state.isFingerprintEnabled.value ? FYColors.color_F0F5FF : Colors.transparent,
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: Row(
+            children: [
+              Text(
+                '指纹解锁',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: FYColors.color_1A1A1A,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              if (state.isFingerprintEnabled.value)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  decoration: BoxDecoration(
+                    color: FYColors.color_3361FE.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Text(
+                    '已启用',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_3361FE,
+                    ),
+                  ),
+                ),
+              Spacer(),
+              Switch(
+                value: state.isFingerprintEnabled.value,
+                onChanged: logic.toggleFingerprint,
+                activeColor: FYColors.color_3361FE,
+                activeTrackColor: FYColors.color_F0F5FF,
+              ),
+            ],
+          ),
+        )),
         _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );
