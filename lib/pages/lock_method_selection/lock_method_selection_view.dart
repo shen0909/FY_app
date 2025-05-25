@@ -12,7 +12,8 @@ class LockMethodSelectionPage extends StatelessWidget {
   LockMethodSelectionPage({Key? key}) : super(key: key);
 
   final LockMethodSelectionLogic logic = Get.put(LockMethodSelectionLogic());
-  final LockMethodSelectionState state = Get.find<LockMethodSelectionLogic>().state;
+  final LockMethodSelectionState state =
+      Get.find<LockMethodSelectionLogic>().state;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,7 @@ class LockMethodSelectionPage extends StatelessWidget {
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: FYAppBar(
-          title: '设置安全锁屏方式',
-        ),
+        appBar: FYAppBar(title: '设置安全锁屏方式'),
         body: Column(
           children: [
             _buildHeader(),
@@ -45,7 +44,7 @@ class LockMethodSelectionPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
@@ -73,7 +72,7 @@ class LockMethodSelectionPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildLockMethodCard({
     required String title,
     required String desc,
@@ -139,4 +138,4 @@ class LockMethodSelectionPage extends StatelessWidget {
       ),
     );
   }
-} 
+}

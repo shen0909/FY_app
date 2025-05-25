@@ -16,8 +16,14 @@ class PatternSetupState {
   // 错误消息
   final RxString errorMessage = ''.obs;
   
+  // 提示消息
+  final RxString promptMessage = ''.obs;
+  
   // 是否显示错误
   final RxBool isError = false.obs;
+  
+  // 刷新触发器，用于强制重建控件
+  final RxInt refreshTrigger = 0.obs;
   
   PatternSetupState() {
     // 初始化操作

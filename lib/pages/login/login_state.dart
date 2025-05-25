@@ -4,9 +4,6 @@ import 'package:get/get.dart';
 class LoginState {
   final TextEditingController accountController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  // 记住账号密码
-  final RxBool rememberCredentials = false.obs;
   
   // 是否正在登录
   final RxBool isLogging = false.obs;
@@ -16,4 +13,7 @@ class LoginState {
   
   // 是否显示密码
   final RxBool showPassword = false.obs;
+  
+  // 是否正在检查登录状态 (从splash页面迁移)
+  final RxBool isChecking = true.obs;
 }

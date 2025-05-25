@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
               surfaceTintColor: Colors.transparent,
             )
           ),
-          initialRoute: Routers.splash,
+          initialRoute: Routers.login,
         );
       }
     );

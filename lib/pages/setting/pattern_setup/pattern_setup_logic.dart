@@ -10,6 +10,7 @@ class PatternSetupLogic extends GetxController {
   void onReady() {
     super.onReady();
     // 初始化操作
+    resetPattern(showMessage: false);
   }
 
   @override
@@ -20,7 +21,12 @@ class PatternSetupLogic extends GetxController {
   // 设置第一次绘制的图案
   void setPattern(List<int> pattern) {
     if (pattern.length < 4) {
+      state.firstPattern.clear();
       state.errorMessage.value = '图案太简单，请至少连接4个点';
+      
+      // 强制刷新状态，触发重建控件
+      state.refreshTrigger.value = DateTime.now().millisecondsSinceEpoch;
+      
       Future.delayed(const Duration(seconds: 1), () {
         state.errorMessage.value = '';
       });
@@ -29,8 +35,18 @@ class PatternSetupLogic extends GetxController {
     
     state.firstPattern.clear();
     state.firstPattern.addAll(pattern);
-    state.currentStep.value = PatternStep.confirm;
+    
+    // 切换步骤前重置错误状态
+    state.isError.value = false;
     state.errorMessage.value = '';
+    
+    // 使用延迟切换步骤，让用户看清自己绘制的图案
+    Future.delayed(const Duration(milliseconds: 500), () {
+      state.currentStep.value = PatternStep.confirm;
+      
+      // 强制刷新状态，触发确认界面的控件重建
+      state.refreshTrigger.value = DateTime.now().millisecondsSinceEpoch;
+    });
   }
   
   // 确认图案
@@ -46,7 +62,6 @@ class PatternSetupLogic extends GetxController {
         return;
       }
     }
-    
     // 图案匹配，保存图案
     _savePattern();
   }
@@ -56,7 +71,10 @@ class PatternSetupLogic extends GetxController {
     final result = await PatternLockUtil.savePattern(state.firstPattern);
     if (result) {
       await PatternLockUtil.enablePatternLock(true);
-      state.currentStep.value = PatternStep.success;
+      // 使用延迟切换步骤，让用户看清自己绘制的图案
+      Future.delayed(const Duration(milliseconds: 500), () {
+        state.currentStep.value = PatternStep.success;
+      });
     } else {
       _showPatternError('图案保存失败，请重试');
     }
@@ -67,6 +85,9 @@ class PatternSetupLogic extends GetxController {
     state.isError.value = true;
     state.errorMessage.value = message;
     
+    // 强制刷新状态，触发控件重建
+    state.refreshTrigger.value = DateTime.now().millisecondsSinceEpoch;
+    
     Future.delayed(const Duration(seconds: 1), () {
       state.isError.value = false;
       state.errorMessage.value = '';
@@ -74,10 +95,20 @@ class PatternSetupLogic extends GetxController {
   }
   
   // 重置图案设置
-  void resetPattern() {
+  void resetPattern({bool showMessage = true}) {
     state.firstPattern.clear();
     state.errorMessage.value = '';
     state.isError.value = false;
     state.currentStep.value = PatternStep.create;
+    
+    // 强制刷新状态，触发控件重建
+    state.refreshTrigger.value = DateTime.now().millisecondsSinceEpoch;
+    
+    if (showMessage) {
+      state.promptMessage.value = '请重新绘制解锁图案';
+      Future.delayed(const Duration(seconds: 1), () {
+        state.promptMessage.value = '';
+      });
+    }
   }
 } 

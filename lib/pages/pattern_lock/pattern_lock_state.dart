@@ -16,6 +16,12 @@ class PatternLockState {
   // 锁定时间（分钟）
   final RxInt lockTimeMinutes = 0.obs;
   
+  // 用户名
+  final RxString userName = ''.obs;
+  
+  // 问候语
+  final RxString greetingMessage = ''.obs;
+  
   PatternLockState() {
     // 初始化操作
   }

@@ -14,9 +14,7 @@ class PatternLockUtil {
     if (pattern.length < 4) {
       return false; // 图案太短，不安全
     }
-    
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // 转换为JSON字符串保存
     return prefs.setString(PATTERN_KEY, jsonEncode(pattern));
   }
 
@@ -39,7 +37,7 @@ class PatternLockUtil {
     if (patternString == null) {
       return null;
     }
-    
+
     List<dynamic> decoded = jsonDecode(patternString);
     return decoded.map<int>((e) => e as int).toList();
   }
@@ -50,17 +48,17 @@ class PatternLockUtil {
     if (savedPattern == null) {
       return false;
     }
-    
+
     if (savedPattern.length != inputPattern.length) {
       return false;
     }
-    
+
     for (int i = 0; i < savedPattern.length; i++) {
       if (savedPattern[i] != inputPattern[i]) {
         return false;
       }
     }
-    
+
     return true;
   }
 
@@ -70,13 +68,14 @@ class PatternLockUtil {
     int attempts = prefs.getInt(PATTERN_FAILED_ATTEMPTS) ?? 0;
     attempts++;
     await prefs.setInt(PATTERN_FAILED_ATTEMPTS, attempts);
-    
+
     // 如果达到最大尝试次数，设置锁定时间
     if (attempts >= MAX_FAILED_ATTEMPTS) {
-      int lockTime = DateTime.now().millisecondsSinceEpoch + (LOCK_DURATION_MINUTES * 60 * 1000);
+      int lockTime = DateTime.now().millisecondsSinceEpoch +
+          (LOCK_DURATION_MINUTES * 60 * 1000);
       await prefs.setInt(PATTERN_LOCK_TIME, lockTime);
     }
-    
+
     return attempts;
   }
 
@@ -92,7 +91,7 @@ class PatternLockUtil {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? lockTime = prefs.getInt(PATTERN_LOCK_TIME);
     int attempts = prefs.getInt(PATTERN_FAILED_ATTEMPTS) ?? 0;
-    
+
     if (lockTime != null && attempts >= MAX_FAILED_ATTEMPTS) {
       if (DateTime.now().millisecondsSinceEpoch < lockTime) {
         return true;
@@ -102,7 +101,7 @@ class PatternLockUtil {
         return false;
       }
     }
-    
+
     return false;
   }
 
@@ -110,16 +109,16 @@ class PatternLockUtil {
   static Future<int> getRemainingLockTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? lockTime = prefs.getInt(PATTERN_LOCK_TIME);
-    
+
     if (lockTime == null) {
       return 0;
     }
-    
+
     int remainingMs = lockTime - DateTime.now().millisecondsSinceEpoch;
     if (remainingMs <= 0) {
       return 0;
     }
-    
+
     return (remainingMs / (60 * 1000)).ceil(); // 转换为分钟并向上取整
   }
 
@@ -137,4 +136,4 @@ class PatternLockUtil {
     await prefs.remove(PATTERN_ENABLED_KEY);
     await resetFailedAttempts();
   }
-} 
+}

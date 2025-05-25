@@ -15,17 +15,15 @@ import 'login_state.dart';
 class LoginLogic extends GetxController {
   final LoginState state = LoginState();
 
-
   @override
   void onInit() {
     super.onInit();
-
   }
 
   @override
   void onReady() {
     super.onReady();
-    _loadSavedCredentials();
+    _checkAuthAndNavigate();
   }
 
   @override
@@ -35,44 +33,36 @@ class LoginLogic extends GetxController {
     super.onClose();
   }
 
-  // 加载已保存的账号密码
-  Future<void> _loadSavedCredentials() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool rememberCredentials = prefs.getBool('remember_credentials') ?? false;
-    state.rememberCredentials.value = rememberCredentials;
-    
-    if (rememberCredentials) {
-      String? username = prefs.getString('saved_username');
-      String? password = prefs.getString('saved_password');
+  Future<void> _checkAuthAndNavigate() async {
+    state.isChecking.value = true;
+
+    try {
+      // 检查是否有使用密码登录的标记
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool usePasswordLogin = prefs.getBool('use_password_login') ?? false;
       
-      if (username != null && username.isNotEmpty) {
-        state.accountController.text = username;
+      // 如果设置了使用密码登录的标记，清除标记并留在登录页面
+      if (usePasswordLogin) {
+        await prefs.remove('use_password_login');
+        state.isChecking.value = false;
+        return;
       }
       
-      if (password != null && password.isNotEmpty) {
-        state.passwordController.text = password;
+      bool hasPatternLock = await PatternLockUtil.isPatternEnabled();
+      bool hasFingerprintLock = await _isFingerprintEnabled();
+      // 只有启用了生物认证才进行跳转，否则保持在登录页面
+      if (hasPatternLock) {
+        // 有图案锁，进入图案锁验证页面
+        Get.offAllNamed(Routers.patternLock);
+      } else if (hasFingerprintLock) {
+        // 有指纹锁，进入指纹验证页面
+        Get.offAllNamed(Routers.fingerprintAuth);
       }
-    }
-  }
-  
-  // 切换记住账号密码状态
-  void toggleRememberCredentials(bool value) {
-    state.rememberCredentials.value = value;
-  }
-  
-  // 保存账号密码
-  Future<void> _saveCredentials() async {
-    if (state.rememberCredentials.value) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('remember_credentials', true);
-      await prefs.setString('saved_username', state.accountController.text);
-      await prefs.setString('saved_password', state.passwordController.text);
-    } else {
-      // 如果不记住，则清除已保存的账号密码
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('remember_credentials', false);
-      await prefs.remove('saved_username');
-      await prefs.remove('saved_password');
+    } catch (e) {
+      print('检查认证状态错误: $e');
+      // 发生错误时已经在登录页面，无需处理
+    } finally {
+      state.isChecking.value = false;
     }
   }
 
@@ -80,54 +70,34 @@ class LoginLogic extends GetxController {
   void doLogin() async {
     String account = state.accountController.text;
     String password = state.passwordController.text;
-
     if (account.isEmpty) {
       ToastUtil.showError('请输入账号');
       return;
     }
-
     if (password.isEmpty) {
       ToastUtil.showError('请输入密码');
       return;
     }
 
     state.isLogging.value = true;
-    
+
     try {
       // 调用登录API
       LoginData? loginData = await LoginApi.login(account, password);
-      
+
       if (loginData != null) {
         // 登录成功，保存登录数据
         await SharedPreference.saveLoginData(loginData);
-        
-        // 如果选择记住账号密码，保存凭据
-        await _saveCredentials();
-        
         state.isLogging.value = false;
-        
         // 检查是否已设置过锁屏方式
         bool hasSetupLockMethod = await _hasSetupLockMethod();
-        
         if (!hasSetupLockMethod) {
           // 如果是首次登录，强制引导用户设置锁屏方式
           ToastUtil.showShort('首次登录需要设置安全锁屏方式');
           Get.offAllNamed(Routers.lockMethodSelection);
         } else {
-          // 判断使用哪种生物认证方式
-          bool hasPatternLock = await PatternLockUtil.isPatternEnabled();
-          bool hasFingerprintLock = await _isFingerprintEnabled();
-          
-          if (hasPatternLock) {
-            // 使用图案锁
-            Get.offAllNamed(Routers.patternLock);
-          } else if (hasFingerprintLock) {
-            // 使用指纹锁
-            Get.offAllNamed(Routers.fingerprintAuth);
-          } else {
-            // 没有设置生物认证，直接进入主页（理论上不会出现这种情况）
-            Get.offAllNamed(Routers.home);
-          }
+          // 直接进入主页
+          Get.offAllNamed(Routers.home);
         }
       } else {
         state.isLogging.value = false;
@@ -143,10 +113,9 @@ class LoginLogic extends GetxController {
   Future<bool> _hasSetupLockMethod() async {
     bool hasPatternLock = await PatternLockUtil.isPatternEnabled();
     bool hasFingerprintLock = await _isFingerprintEnabled();
-    
     return hasPatternLock || hasFingerprintLock;
   }
-  
+
   // 检查是否启用了指纹锁
   Future<bool> _isFingerprintEnabled() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

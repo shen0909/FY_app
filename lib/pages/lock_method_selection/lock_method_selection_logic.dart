@@ -16,27 +16,11 @@ class LockMethodSelectionLogic extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    // 检查设备是否支持生物识别
-    _checkBiometricSupport();
   }
 
   @override
   void onClose() {
     super.onClose();
-  }
-  
-  // 检查设备是否支持生物识别
-  Future<void> _checkBiometricSupport() async {
-    bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
-    List<BiometricType> availableBiometrics = await _localAuth.getAvailableBiometrics();
-    
-    if (!canCheckBiometrics || availableBiometrics.isEmpty) {
-      // 如果设备不支持生物识别，自动选择划线解锁
-      ToastUtil.showError('您的设备不支持指纹识别，将使用划线解锁');
-      Future.delayed(Duration(seconds: 1), () {
-        selectPatternLock();
-      });
-    }
   }
   
   // 选择划线解锁

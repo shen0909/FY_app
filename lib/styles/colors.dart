@@ -42,4 +42,10 @@ class FYColors {
   static const Color color_1D4293 = Color(0xFF1D4293);
   static const Color color_555555 = Color(0xFF555555);
   static const Color color_3A3A3A = Color(0xFF3A3A3A);
+  
+  /// 划线解锁相关颜色
+  static const Color color_E0E0E0 = Color(0xFFE0E0E0); // 划线解锁选中圆点背景色
+  static const Color color_FF3B30 = Color(0xFFFF3B30); // 划线解锁错误状态颜色
+  static const Color color_FCEAEA = Color(0xFFFCEAEA); // 划线解锁错误状态背景色
+  static const Color color_FFDDDD = Color(0xFFFFDDDD); // 划线解锁错误状态边框色
 }

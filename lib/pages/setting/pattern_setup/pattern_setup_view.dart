@@ -58,17 +58,20 @@ class PatternSetupPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 60.h),
-        Center(
+        Obx(() => Center(
           child: PatternLockWidget(
+            key: ValueKey('create_pattern_${state.refreshTrigger.value}'),
             size: 300.w,
-            dotSize: 70.w,
+            dotSize: 60.w,
             lineWidth: 4.w,
+            selectedColor: FYColors.color_1A1A1A,
             onCompleted: (pattern) {
               logic.setPattern(pattern);
             },
           ),
-        ),
-        SizedBox(height: 60.h),
+        )),
+        SizedBox(height: 30.h),
+        // 错误提示
         Obx(() => Visibility(
           visible: state.errorMessage.isNotEmpty,
           child: Padding(
@@ -78,6 +81,21 @@ class PatternSetupPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 color: Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        )),
+        // 一般提示
+        Obx(() => Visibility(
+          visible: state.promptMessage.isNotEmpty,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Text(
+              state.promptMessage.value,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_666666,
               ),
               textAlign: TextAlign.center,
             ),
@@ -108,18 +126,21 @@ class PatternSetupPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 60.h),
-        Center(
-          child: Obx(() => PatternLockWidget(
+        Obx(() => Center(
+          child: PatternLockWidget(
+            key: ValueKey('confirm_pattern_${state.refreshTrigger.value}'),
             size: 300.w,
-            dotSize: 70.w,
+            dotSize: 60.w,
             lineWidth: 4.w,
+            selectedColor: FYColors.color_1A1A1A,
             isError: state.isError.value,
             onCompleted: (pattern) {
               logic.confirmPattern(pattern);
             },
-          )),
-        ),
-        SizedBox(height: 60.h),
+          ),
+        )),
+        SizedBox(height: 30.h),
+        // 错误提示
         Obx(() => Visibility(
           visible: state.errorMessage.isNotEmpty,
           child: Padding(
@@ -134,6 +155,7 @@ class PatternSetupPage extends StatelessWidget {
             ),
           ),
         )),
+        SizedBox(height: 16.h),
         TextButton(
           onPressed: () {
             logic.resetPattern();
@@ -202,4 +224,4 @@ class PatternSetupPage extends StatelessWidget {
       ],
     );
   }
-} 
+}

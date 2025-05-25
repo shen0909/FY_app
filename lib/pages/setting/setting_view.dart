@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
+import 'package:safe_app/widgets/custom_switch.dart';
 
 import 'setting_logic.dart';
 import 'setting_state.dart';
@@ -177,89 +178,55 @@ class SettingPage extends StatelessWidget {
     return Column(
       children: [
         Obx(() => Container(
-          height: 48.h,
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          decoration: BoxDecoration(
-            color: state.isLockEnabled.value ? FYColors.color_F0F5FF : Colors.transparent,
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          child: Row(
-            children: [
-              Text(
-                '划线解锁',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              if (state.isLockEnabled.value)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                  decoration: BoxDecoration(
-                    color: FYColors.color_3361FE.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: Text(
-                    '已启用',
+              height: 48.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                children: [
+                  Text(
+                    '设置划线解锁',
                     style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_3361FE,
+                      fontSize: 16.sp,
+                      color: FYColors.color_1A1A1A,
                     ),
                   ),
-                ),
-              Spacer(),
-              Switch(
-                value: state.isLockEnabled.value,
-                onChanged: logic.toggleLockScreen,
-                activeColor: FYColors.color_3361FE,
-                activeTrackColor: FYColors.color_F0F5FF,
+                  const Spacer(),
+                  CustomSwitch(
+                    value: state.isLockEnabled.value,
+                    onChanged: logic.toggleLockScreen,
+                    width: 48.w,
+                    height: 28.h,
+                  ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
         Obx(() => Container(
-          height: 48.h,
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          decoration: BoxDecoration(
-            color: state.isFingerprintEnabled.value ? FYColors.color_F0F5FF : Colors.transparent,
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          child: Row(
-            children: [
-              Text(
-                '指纹解锁',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
+              height: 48.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: state.isFingerprintEnabled.value
+                    ? FYColors.color_F0F5FF
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(4.r),
               ),
-              SizedBox(width: 8.w),
-              if (state.isFingerprintEnabled.value)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                  decoration: BoxDecoration(
-                    color: FYColors.color_3361FE.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: Text(
-                    '已启用',
+              child: Row(
+                children: [
+                  Text(
+                    '指纹解锁',
                     style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_3361FE,
+                      fontSize: 16.sp,
+                      color: FYColors.color_1A1A1A,
                     ),
                   ),
-                ),
-              Spacer(),
-              Switch(
-                value: state.isFingerprintEnabled.value,
-                onChanged: logic.toggleFingerprint,
-                activeColor: FYColors.color_3361FE,
-                activeTrackColor: FYColors.color_F0F5FF,
+                  const Spacer(),
+                  CustomSwitch(
+                    value: state.isFingerprintEnabled.value,
+                    onChanged: logic.toggleFingerprint,
+                    width: 48.w,
+                    height: 28.h,
+                  ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
         _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );
@@ -309,11 +276,11 @@ class SettingPage extends StatelessWidget {
             ),
           ),
           Spacer(),
-          Obx(() => Switch(
+          Obx(() => CustomSwitch(
                 value: value.value,
                 onChanged: onChanged,
-                activeColor: FYColors.color_3361FE,
-                activeTrackColor: FYColors.color_F0F5FF,
+                width: 48.w,
+                height: 28.h,
               )),
         ],
       ),

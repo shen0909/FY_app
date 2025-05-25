@@ -72,110 +72,117 @@ class LoginPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Container(
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(image: AssetImage(FYImages.login_bg), fit: BoxFit.fill)),
-            padding: EdgeInsets.only(top: 58.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  FYImages.logo,
-                  width: 88.w,
-                  height: 88.w,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(height: 16.w),
-                Text(
-                  'FY App',
-                  style: FYTextStyles.loginTitleStyle(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 8.w, bottom: 40.w),
-                  child: Text(
-                    '请登录',
-                    style: FYTextStyles.loginTipStyle(color: FYColors.text1Color),
+        body: Obx(() {
+          // 检查状态时显示加载指示器
+          if (state.isChecking.value) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 应用Logo
+                  Image.asset(
+                    FYImages.logo,
+                    width: 88.w,
+                    height: 88.w,
+                    fit: BoxFit.contain,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 34.w, right: 32.w),
-                  child: Column(
-                    children: [
-                      CustomInputField(
-                        controller: state.accountController,
-                        hintText: '用户名',
-                        prefixIconPath: FYImages.login_account,
-                      ),
-                      SizedBox(height: 16.w),
-                      Obx(() => CustomInputField(
-                        controller: state.passwordController,
-                        hintText: '请输入密码',
-                        prefixIconPath: FYImages.login_pwd,
-                        obscureText: !state.showPassword.value,
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            state.showPassword.value = !state.showPassword.value;
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 16.w),
-                            child: Image.asset(FYImages.pwd_see, width: 24.w, height: 24.w,fit: BoxFit.contain),
-                          ),
+                  SizedBox(height: 20.h),
+                  // 加载指示器
+                  CircularProgressIndicator(
+                    color: FYColors.color_3361FE,
+                  ),
+                ],
+              ),
+            );
+          }
+          
+          // 检查完成后显示登录表单
+          return SafeArea(
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(image: AssetImage(FYImages.login_bg), fit: BoxFit.fill)),
+              padding: EdgeInsets.only(top: 58.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    FYImages.logo,
+                    width: 88.w,
+                    height: 88.w,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(height: 16.w),
+                  Text(
+                    'FY App',
+                    style: FYTextStyles.loginTitleStyle(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8.w, bottom: 40.w),
+                    child: Text(
+                      '请登录',
+                      style: FYTextStyles.loginTipStyle(color: FYColors.text1Color),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 34.w, right: 32.w),
+                    child: Column(
+                      children: [
+                        CustomInputField(
+                          controller: state.accountController,
+                          hintText: '用户名',
+                          prefixIconPath: FYImages.login_account,
                         ),
-                      )),
-                      SizedBox(height: 16.w),
-                      Row(
-                        children: [
-                          Obx(() => Checkbox(
-                            value: state.rememberCredentials.value,
-                            onChanged: (value) {
-                              logic.toggleRememberCredentials(value ?? false);
+                        SizedBox(height: 16.w),
+                        Obx(() => CustomInputField(
+                          controller: state.passwordController,
+                          hintText: '请输入密码',
+                          prefixIconPath: FYImages.login_pwd,
+                          obscureText: !state.showPassword.value,
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              state.showPassword.value = !state.showPassword.value;
                             },
-                            activeColor: FYColors.color_3361FE,
-                          )),
-                          Text(
-                            '记住账号密码',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: FYColors.color_666666,
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 16.w),
+                              child: Image.asset(FYImages.pwd_see, width: 24.w, height: 24.w,fit: BoxFit.contain),
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 24.w),
-                      Obx(() => GestureDetector(
-                        onTap: state.isLogging.value ? null : () => logic.doLogin(),
-                        child: Container(
-                          width: double.infinity,
-                          height: 48.w,
-                          decoration: BoxDecoration(
-                              gradient:
-                                  const LinearGradient(colors: FYColors.loginBtn),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12.w))),
-                          child: Center(
-                              child: state.isLogging.value 
-                                ? SizedBox(
-                                    width: 24.w,
-                                    height: 24.w,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2.w,
-                                    ),
-                                  )
-                                : Text('登录',
-                                    style: FYTextStyles.loginBtnStyle(color: FYColors.whiteColor))
+                        )),
+                        SizedBox(height: 40.w),
+                        Obx(() => GestureDetector(
+                          onTap: state.isLogging.value ? null : () => logic.doLogin(),
+                          child: Container(
+                            width: double.infinity,
+                            height: 48.w,
+                            decoration: BoxDecoration(
+                                gradient:
+                                    const LinearGradient(colors: FYColors.loginBtn),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.w))),
+                            child: Center(
+                                child: state.isLogging.value 
+                                  ? SizedBox(
+                                      width: 24.w,
+                                      height: 24.w,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2.w,
+                                      ),
+                                    )
+                                  : Text('登录',
+                                      style: FYTextStyles.loginBtnStyle(color: FYColors.whiteColor))
+                            ),
                           ),
-                        ),
-                      ))
-                    ],
+                        ))
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }

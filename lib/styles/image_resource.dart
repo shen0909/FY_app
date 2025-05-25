@@ -61,4 +61,6 @@ class FYImages {
   static const String refuse_red = 'assets/images/refuse_red.png';
   static const String check_gree = 'assets/images/check_gree.png';
   static const String uncheck = 'assets/images/uncheck.png';
+  static const String open_icon = 'assets/images/open_icon.png';
+  static const String unopen_icon = 'assets/images/unopen_icon.png';
 }

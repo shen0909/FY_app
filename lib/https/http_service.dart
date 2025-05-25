@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:flutter/foundation.dart';
+import 'package:safe_app/https/token_interceptor.dart';
 
 class HttpService {
   static final HttpService _instance = HttpService._internal();
@@ -60,6 +61,10 @@ class HttpService {
         return handler.next(e);
       },
     ));
+    
+    final tokenInterceptor = TokenInterceptor();
+    tokenInterceptor.setDio(dio);
+    dio.interceptors.add(tokenInterceptor);
   }
 
   /// 格式化错误信息

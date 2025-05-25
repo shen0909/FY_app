@@ -7,9 +7,6 @@ class PatternLockWidget extends StatefulWidget {
   final Color selectedColor; // 选中点的颜色
   final Color notSelectedColor; // 未选中点的颜色
   final Color errorColor; // 错误状态下的颜色
-  final Color errorDotColor; // 错误状态下小圆点的颜色
-  final Color selectedBgColor; // 选中状态的背景色
-  final Color selectedBorderColor; // 选中状态的边框色
   final double lineWidth; // 连接线的宽度
   final double dotSize; // 点的大小
   final Function(List<int>) onCompleted; // 完成图案绘制的回调
@@ -22,10 +19,7 @@ class PatternLockWidget extends StatefulWidget {
     this.size = 300,
     this.selectedColor = Colors.blue,
     this.notSelectedColor = Colors.grey,
-    this.errorColor = const Color(0xFFFF3B30),
-    this.errorDotColor = const Color(0xFFFF3B30),
-    this.selectedBgColor = const Color(0xFFFCEAEA),
-    this.selectedBorderColor = const Color(0xFFFFDDDD),
+    this.errorColor = Colors.red,
     this.lineWidth = 5,
     this.dotSize = 60,
     required this.onCompleted,
@@ -69,6 +63,7 @@ class _PatternLockWidgetState extends State<PatternLockWidget> {
         onPanStart: (details) {
           final RenderBox box = context.findRenderObject() as RenderBox;
           final localPosition = box.globalToLocal(details.globalPosition);
+          _pattern = []; // 清空之前的图案
           _checkPoint(localPosition);
         },
         onPanUpdate: (details) {
@@ -100,9 +95,6 @@ class _PatternLockWidgetState extends State<PatternLockWidget> {
             selectedColor: widget.isError ? widget.errorColor : widget.selectedColor,
             notSelectedColor: widget.notSelectedColor,
             errorColor: widget.errorColor,
-            errorDotColor: widget.errorDotColor,
-            selectedBgColor: widget.selectedBgColor,
-            selectedBorderColor: widget.selectedBorderColor,
             isError: widget.isError,
           ),
         ),
@@ -112,7 +104,8 @@ class _PatternLockWidgetState extends State<PatternLockWidget> {
 
   void _checkPoint(Offset localPosition) {
     for (int i = 0; i < _points.length; i++) {
-      if (_pattern.contains(i)) continue;
+      // 移除跳过已选择点的限制，允许连接已经选中的点
+      // if (_pattern.contains(i)) continue;
       
       final point = _points[i];
       final dx = point.dx - localPosition.dx;
@@ -120,10 +113,49 @@ class _PatternLockWidgetState extends State<PatternLockWidget> {
       final distance = dx * dx + dy * dy;
       
       if (distance < (widget.dotSize / 2) * (widget.dotSize / 2)) {
+        // 如果该点已经在图案中，不重复添加
+        if (_pattern.contains(i)) continue;
+        
+        // 如果存在上一个点，检查两点之间是否有需要自动连接的中间点
+        if (_pattern.isNotEmpty) {
+          _connectMiddlePoints(_pattern.last, i);
+        }
+        
         setState(() {
           _pattern.add(i);
         });
         break;
+      }
+    }
+  }
+
+  // 连接两点间的中间点
+  void _connectMiddlePoints(int lastPoint, int currentPoint) {
+    // 获取两点坐标
+    final lastRow = lastPoint ~/ widget.dotCount;
+    final lastCol = lastPoint % widget.dotCount;
+    final currentRow = currentPoint ~/ widget.dotCount;
+    final currentCol = currentPoint % widget.dotCount;
+    
+    // 计算行列差
+    final rowDiff = currentRow - lastRow;
+    final colDiff = currentCol - lastCol;
+    
+    // 检查是否在同一行、同一列或对角线上，且中间有点
+    if ((rowDiff.abs() == 2 && colDiff.abs() == 0) || // 同列，间隔1行
+        (rowDiff.abs() == 0 && colDiff.abs() == 2) || // 同行，间隔1列
+        (rowDiff.abs() == 2 && colDiff.abs() == 2) || // 对角线，间隔都是1
+        (rowDiff.abs() == 1 && colDiff.abs() == 2) || // 棋盘L型
+        (rowDiff.abs() == 2 && colDiff.abs() == 1)) { // 棋盘L型
+      
+      // 计算中间点的索引
+      int middleRow = lastRow + rowDiff ~/ 2;
+      int middleCol = lastCol + colDiff ~/ 2;
+      int middlePoint = middleRow * widget.dotCount + middleCol;
+      
+      // 如果中间点不在图案中，添加到图案
+      if (!_pattern.contains(middlePoint)) {
+        _pattern.add(middlePoint);
       }
     }
   }
@@ -138,9 +170,6 @@ class _PatternPainter extends CustomPainter {
   final Color selectedColor;
   final Color notSelectedColor;
   final Color errorColor;
-  final Color errorDotColor;
-  final Color selectedBgColor;
-  final Color selectedBorderColor;
   final bool isError;
 
   _PatternPainter({
@@ -152,9 +181,6 @@ class _PatternPainter extends CustomPainter {
     required this.selectedColor,
     required this.notSelectedColor,
     required this.errorColor,
-    required this.errorDotColor,
-    required this.selectedBgColor,
-    required this.selectedBorderColor,
     required this.isError,
   });
 
@@ -163,38 +189,45 @@ class _PatternPainter extends CustomPainter {
     // 绘制所有点
     for (int i = 0; i < points.length; i++) {
       final bool isSelected = pattern.contains(i);
+      final Color dotColor = isSelected 
+          ? (isError ? errorColor : selectedColor) 
+          : notSelectedColor;
+      final Color dotFillColor = isSelected && isError
+          ? FYColors.color_FCEAEA // 错误状态下选中点的填充颜色
+          : Colors.white;
+      final Color borderColor = isSelected && isError
+          ? FYColors.color_FFDDDD // 错误状态下选中点的边框颜色
+          : dotColor;
       
-      // 绘制外圈
-      final outlinePaint = Paint()
-        ..color = isSelected 
-          ? (isError ? errorColor : selectedBorderColor)
-          : notSelectedColor.withOpacity(0.3)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
-      
-      // 绘制背景
-      final bgPaint = Paint()
-        ..color = isSelected 
-          ? (isError ? selectedBgColor : selectedBgColor)
-          : Colors.white
+      // 绘制填充
+      final fillPaint = Paint()
+        ..color = dotFillColor
         ..style = PaintingStyle.fill;
       
-      canvas.drawCircle(points[i], dotSize / 2, bgPaint);
+      canvas.drawCircle(points[i], dotSize / 2, fillPaint);
+      
+      // 绘制边框
+      final outlinePaint = Paint()
+        ..color = borderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
+      
       canvas.drawCircle(points[i], dotSize / 2, outlinePaint);
       
-      // 如果是错误状态且被选中，绘制小圆点
-      if (isError && isSelected) {
-        final dotPaint = Paint()
-          ..color = errorDotColor
+      // 如果是选中状态，绘制内部小圆点
+      if (isSelected) {
+        final centerDotPaint = Paint()
+          ..color = isError ? FYColors.color_FF3B30 : selectedColor
           ..style = PaintingStyle.fill;
-        canvas.drawCircle(points[i], dotSize / 6, dotPaint);
+        
+        canvas.drawCircle(points[i], dotSize / 6, centerDotPaint);
       }
     }
     
     // 连接选中的点
     if (pattern.isNotEmpty) {
       final linePaint = Paint()
-        ..color = isError ? errorColor : selectedColor
+        ..color = isError ? FYColors.color_FF3B30 : selectedColor
         ..strokeWidth = lineWidth
         ..strokeCap = StrokeCap.round;
       
