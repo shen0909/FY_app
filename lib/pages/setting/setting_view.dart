@@ -199,15 +199,10 @@ class SettingPage extends StatelessWidget {
                 ],
               ),
             )),
+        SizedBox(height: 8.h),
         Obx(() => Container(
               height: 48.h,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
-              decoration: BoxDecoration(
-                color: state.isFingerprintEnabled.value
-                    ? FYColors.color_F0F5FF
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(4.r),
-              ),
               child: Row(
                 children: [
                   Text(
@@ -227,6 +222,7 @@ class SettingPage extends StatelessWidget {
                 ],
               ),
             )),
+        SizedBox(height: 8.h),
         _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );

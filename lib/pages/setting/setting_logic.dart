@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:safe_app/routers/routers.dart';
+import 'package:safe_app/services/biometric_service.dart';
 import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
@@ -12,7 +12,6 @@ import 'setting_state.dart';
 
 class SettingLogic extends GetxController {
   final SettingState state = SettingState();
-  final LocalAuthentication _localAuth = LocalAuthentication();
 
   @override
   void onReady() {
@@ -30,31 +29,41 @@ class SettingLogic extends GetxController {
   void loadSettingData() async {
     // 加载锁屏设置状态
     bool isPatternEnabled = await PatternLockUtil.isPatternEnabled();
-    state.isLockEnabled.value = isPatternEnabled;
     
     // 加载指纹解锁设置状态
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFingerprintEnabled = prefs.getBool('fingerprint_enabled') ?? false;
+    
+    // 确保两种解锁方式不会同时启用
+    if (isPatternEnabled && isFingerprintEnabled) {
+      // 如果配置出现冲突，优先使用指纹解锁
+      await PatternLockUtil.enablePatternLock(false);
+      isPatternEnabled = false;
+      ToastUtil.showShort('检测到锁屏方式冲突，已禁用划线解锁');
+    }
+    
+    // 更新UI状态
+    state.isLockEnabled.value = isPatternEnabled;
     state.isFingerprintEnabled.value = isFingerprintEnabled;
   }
   
   // 切换锁屏开关
   void toggleLockScreen(bool value) async {
     if (value) {
+      // 如果要开启划线解锁，先关闭指纹解锁
+      if (state.isFingerprintEnabled.value) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('fingerprint_enabled', false);
+        state.isFingerprintEnabled.value = false;
+        ToastUtil.showShort('已关闭指纹解锁');
+      }
+      
       // 检查是否已设置过图案
       List<int>? savedPattern = await PatternLockUtil.getPattern();
       if (savedPattern != null && savedPattern.isNotEmpty) {
         // 已经设置过，直接启用
         await PatternLockUtil.enablePatternLock(true);
         state.isLockEnabled.value = true;
-        
-        // 如果开启划线解锁，则关闭指纹解锁
-        if (state.isFingerprintEnabled.value) {
-          state.isFingerprintEnabled.value = false;
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('fingerprint_enabled', false);
-          ToastUtil.showShort('已关闭指纹解锁，启用划线解锁');
-        }
       } else {
         // 没有设置过，引导用户设置
         _showPatternSetupDialog();
@@ -69,47 +78,47 @@ class SettingLogic extends GetxController {
   // 切换指纹解锁开关
   void toggleFingerprint(bool value) async {
     if (value) {
-      // 检查设备是否支持指纹识别
-      bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
-      List<BiometricType> availableBiometrics = 
-          await _localAuth.getAvailableBiometrics();
-      
-      if (canCheckBiometrics && availableBiometrics.isNotEmpty) {
-        // 验证指纹
-        try {
-          bool authenticated = await _localAuth.authenticate(
-            localizedReason: '请验证指纹以启用指纹解锁功能',
-            options: const AuthenticationOptions(
-              stickyAuth: true,
-              biometricOnly: true,
-            ),
-          );
-          
-          if (authenticated) {
-            // 验证成功，启用指纹解锁
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setBool('fingerprint_enabled', true);
-            state.isFingerprintEnabled.value = true;
-            
-            // 如果开启指纹解锁，则关闭划线解锁
-            if (state.isLockEnabled.value) {
-              state.isLockEnabled.value = false;
-              await PatternLockUtil.enablePatternLock(false);
-              ToastUtil.showShort('已关闭划线解锁，启用指纹解锁');
-            }
-          } else {
-            // 验证失败，不开启指纹解锁
-            state.isFingerprintEnabled.value = false;
-            ToastUtil.showShort('指纹验证失败，未开启指纹解锁');
-          }
-        } on PlatformException catch (e) {
+      try {
+        // 检查设备是否支持指纹识别
+        bool isAvailable = await BiometricService.isBiometricAvailable();
+        if (!isAvailable) {
           state.isFingerprintEnabled.value = false;
-          ToastUtil.showShort('指纹验证出错: ${e.message}');
+          ToastUtil.showError('您的设备不支持指纹登录');
+          return;
         }
-      } else {
-        // 设备不支持指纹识别
+        
+        // 获取可用的生物识别类型
+        List<BiometricType> availableBiometrics = await BiometricService.getAvailableBiometrics();
+        if (availableBiometrics.isEmpty) {
+          state.isFingerprintEnabled.value = false;
+          ToastUtil.showError('未检测到可用的指纹，请先在系统设置中添加指纹');
+          return;
+        }
+        
+        // 如果要开启指纹解锁，先关闭划线解锁
+        if (state.isLockEnabled.value) {
+          await PatternLockUtil.enablePatternLock(false);
+          state.isLockEnabled.value = false;
+          ToastUtil.showShort('已关闭划线解锁');
+        }
+        
+        // 验证指纹
+        bool authenticated = await BiometricService.authenticateWithBiometrics(
+          reason: '请验证指纹以启用指纹解锁功能',
+        );
+        
+        if (authenticated) {
+          // 验证成功，启用指纹解锁
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('fingerprint_enabled', true);
+          state.isFingerprintEnabled.value = true;
+        } else {
+          // 验证失败，不开启指纹解锁
+          state.isFingerprintEnabled.value = false;
+        }
+      } catch (e) {
         state.isFingerprintEnabled.value = false;
-        ToastUtil.showShort('您的设备不支持指纹识别');
+        ToastUtil.showError(e.toString());
       }
     } else {
       // 关闭指纹解锁

@@ -163,7 +163,6 @@ class RiskPage extends StatelessWidget {
       // elevation: 0,
       padding: EdgeInsets.all(10.w),
       // color: Colors.red,
-      height: 64.w,
       width: 168.w,
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Column(
