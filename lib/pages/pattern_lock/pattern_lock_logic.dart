@@ -136,9 +136,11 @@ class PatternLockLogic extends GetxController {
     
     // 如果仍有剩余尝试次数，延迟重置错误状态
     if (state.remainingAttempts.value > 0) {
-      Future.delayed(const Duration(milliseconds: 2000), () {
-        state.isError.value = false;
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        // 仅重置错误消息，保持isError状态，让用户可以看到红色的错误图案
         state.errorMessage.value = '';
+        
+        // 在用户开始下一次划线操作时，PatternLockWidget会自动重置错误状态
       });
     }
   }

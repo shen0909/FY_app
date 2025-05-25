@@ -62,18 +62,22 @@ class PatternLockPage extends StatelessWidget {
                     );
                   }),
                   SizedBox(height: 32.h),
-                  // 错误信息显示
-                  Obx(() => state.errorMessage.isNotEmpty ? Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Text(
-                      state.errorMessage.value,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: FYColors.color_FF3B30,
-                      ),
-                      textAlign: TextAlign.center,
+                  // 错误信息显示 - 固定高度的容器
+                  Container(
+                    height: 20.h, // 固定高度
+                    alignment: Alignment.center,
+                    child: Obx(() => state.errorMessage.isNotEmpty 
+                      ? Text(
+                        state.errorMessage.value,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: FYColors.color_FF3B30,
+                        ),
+                        textAlign: TextAlign.center,
+                      ) 
+                      : Container()
                     ),
-                  ) : Container()),
+                  ),
                   // 图案锁控件
                   Obx(() => PatternLockWidget(
                     size: 300.w,

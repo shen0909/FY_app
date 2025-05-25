@@ -92,10 +92,10 @@ class _PatternLockWidgetState extends State<PatternLockWidget> {
             currentPoint: _currentPoint,
             dotSize: widget.dotSize,
             lineWidth: widget.lineWidth,
-            selectedColor: widget.isError ? widget.errorColor : widget.selectedColor,
+            selectedColor: widget.selectedColor,
             notSelectedColor: widget.notSelectedColor,
             errorColor: widget.errorColor,
-            isError: widget.isError,
+            isError: _pattern.isEmpty && widget.isError,
           ),
         ),
       ),
@@ -192,11 +192,15 @@ class _PatternPainter extends CustomPainter {
       final Color dotColor = isSelected 
           ? (isError ? errorColor : selectedColor) 
           : notSelectedColor;
-      final Color dotFillColor = isSelected && isError
-          ? FYColors.color_FCEAEA // 错误状态下选中点的填充颜色
+      
+      // 使用#D8D8D8作为选中圆圈的背景色
+      final Color dotFillColor = isSelected 
+          ? FYColors.color_D8D8D8
           : Colors.white;
-      final Color borderColor = isSelected && isError
-          ? FYColors.color_FFDDDD // 错误状态下选中点的边框颜色
+      
+      // 使用#E0E0E0作为选中圆圈的边框颜色
+      final Color borderColor = isSelected 
+          ? FYColors.color_E0E0E0
           : dotColor;
       
       // 绘制填充
@@ -217,7 +221,7 @@ class _PatternPainter extends CustomPainter {
       // 如果是选中状态，绘制内部小圆点
       if (isSelected) {
         final centerDotPaint = Paint()
-          ..color = isError ? FYColors.color_FF3B30 : selectedColor
+          ..color = isError ? errorColor : selectedColor
           ..style = PaintingStyle.fill;
         
         canvas.drawCircle(points[i], dotSize / 6, centerDotPaint);
@@ -226,8 +230,9 @@ class _PatternPainter extends CustomPainter {
     
     // 连接选中的点
     if (pattern.isNotEmpty) {
+      // 根据是否为错误状态决定连接线颜色
       final linePaint = Paint()
-        ..color = isError ? FYColors.color_FF3B30 : selectedColor
+        ..color = isError ? errorColor : selectedColor
         ..strokeWidth = lineWidth
         ..strokeCap = StrokeCap.round;
       
