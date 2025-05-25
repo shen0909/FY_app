@@ -39,6 +39,7 @@ class PermissionRequestLogic extends GetxController {
         applyTime: request.applyTime,
         approveTime: DateTime.now().toString().substring(0, 16),
         status: 0,
+        remark: "已批准",
       );
       state.permissionRequests[index] = updatedRequest;
       update();
@@ -55,6 +56,7 @@ class PermissionRequestLogic extends GetxController {
         applyTime: request.applyTime,
         approveTime: DateTime.now().toString().substring(0, 16),
         status: 2,
+        remark: "权限不符合申请条件",
       );
       state.permissionRequests[index] = updatedRequest;
       update();
@@ -92,6 +94,7 @@ class PermissionRequestLogic extends GetxController {
         applyTime: '2024-05-11 09:45',
         approveTime: '2024-05-11 10:15',
         status: 0,
+        remark: '符合申请条件',
       ),
       PermissionRequest(
         userId: 'USER_10087',
@@ -99,6 +102,7 @@ class PermissionRequestLogic extends GetxController {
         applyTime: '2024-05-10 14:30',
         approveTime: '2024-05-10 15:20',
         status: 0,
+        remark: '经理审批通过',
       ),
       // 待审核的申请
       PermissionRequest(
@@ -106,18 +110,21 @@ class PermissionRequestLogic extends GetxController {
         permissionType: '创建普通用户',
         applyTime: '2024-05-11 09:45',
         status: 1,
+        remark: '待处理',
       ),
       PermissionRequest(
         userId: 'USER_10089',
         permissionType: '创建管理员用户',
         applyTime: '2024-05-11 09:45',
         status: 1,
+        remark: '待处理',
       ),
       PermissionRequest(
         userId: 'USER_10090',
         permissionType: '创建管理员用户',
         applyTime: '2024-05-11 09:45',
         status: 1,
+        remark: '待处理',
       ),
       // 已驳回的申请
       PermissionRequest(
@@ -126,6 +133,7 @@ class PermissionRequestLogic extends GetxController {
         applyTime: '2024-05-09 11:20',
         approveTime: '2024-05-09 14:30',
         status: 2,
+        remark: '权限申请不符合规定',
       ),
     ];
     update();

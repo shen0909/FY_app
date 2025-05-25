@@ -24,6 +24,7 @@ class PermissionRequest {
   final String applyTime;
   final String? approveTime;
   final int status; // 0-已批准，1-待审核，2-已驳回
+  final String? remark; // 备注信息
   
   PermissionRequest({
     required this.userId,
@@ -31,5 +32,6 @@ class PermissionRequest {
     required this.applyTime,
     this.approveTime,
     required this.status,
+    this.remark,
   });
 }

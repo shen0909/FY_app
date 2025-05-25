@@ -98,7 +98,6 @@ class PermissionRequestPage extends StatelessWidget {
                 ),
               ),
             ),
-            _buildTableHeader(),
             Expanded(
               child: GetBuilder<PermissionRequestLogic>(
                 builder: (logic) {
@@ -114,14 +113,7 @@ class PermissionRequestPage extends StatelessWidget {
                       ),
                     );
                   }
-                  return ListView.builder(
-                    itemCount: requests.length,
-                    itemBuilder: (context, index) {
-                      final item = requests[index];
-                      final isEven = index % 2 == 0;
-                      return _buildTableRow(item, isEven);
-                    },
-                  );
+                  return _buildScrollableTable(requests);
                 },
               ),
             ),
@@ -191,13 +183,11 @@ class PermissionRequestPage extends StatelessWidget {
         onTap: () => logic.switchTab(index),
         child: Container(
           // height: 56.h,
-          padding: EdgeInsets.only(left: 10.w,right: 4.w,top: 10.w,bottom: 5),
+          width: 106.w,
+          padding: EdgeInsets.only(left: 6.w,right: 4.w,top: 10.w,bottom: 5),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(8.r),
-            // border: isSelected
-            //     ? Border.all(color: const Color(0xFFE6E6E6), width: 2.w)
-            //     : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -232,106 +222,181 @@ class PermissionRequestPage extends StatelessWidget {
     );
   }
 
-  // 表格头部
-  Widget _buildTableHeader() {
-    return Container(
-      height: 28.h,
-      color: const Color(0xFFF0F5FF),
-      child: Row(
-        children: [
-          _buildHeaderCell('账户ID', flex: 2),
-          _buildHeaderCell('申请权限', flex: 3),
-          _buildHeaderCell('申请时间', flex: 3),
-          _buildHeaderCell('批准时间', flex: 3),
-        ],
-      ),
+  // 可滚动表格
+  Widget _buildScrollableTable(List<PermissionRequest> requests) {
+    // 使用两个同步滚动控制器，确保左右两侧列表同步滚动
+    final ScrollController verticalController = ScrollController();
+    
+    return Row(
+      children: [
+        // 固定的第一列（账户ID）
+        Container(
+          width: 90.w,
+          child: Column(
+            children: [
+              // 表头
+              Container(
+                height: 28.h,
+                color: const Color(0xFFF0F5FF),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.only(left: 8.w),
+                child: Text(
+                  '账户ID',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: const Color(0xFF3361FE),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              // 数据行
+              Expanded(
+                child: ListView.builder(
+                  controller: verticalController, // 使用同一个滚动控制器
+                  itemCount: requests.length,
+                  itemBuilder: (context, index) {
+                    final item = requests[index];
+                    final isEven = index % 2 == 0;
+                    return Container(
+                      height: 44.h,
+                      color: isEven ? Colors.white : const Color(0xFFF9F9F9),
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(left: 8.w),
+                      child: Text(
+                        item.userId,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: FYColors.color_1A1A1A,
+                          overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        // 右侧可滚动部分
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              width: 520.w, // 设置一个适当的宽度，确保内容能够滚动
+              child: Column(
+                children: [
+                  // 表头行
+                  Container(
+                    height: 28.h,
+                    color: const Color(0xFFF0F5FF),
+                    child: Row(
+                      children: [
+                        _buildHeaderCell('申请权限', width: 120.w),
+                        _buildHeaderCell('申请时间', width: 120.w),
+                        _buildHeaderCell('批准时间', width: 140.w),
+                        _buildHeaderCell('备注', width: 140.w),
+                      ],
+                    ),
+                  ),
+                  // 数据行
+                  Expanded(
+                    child: ListView.builder(
+                      controller: verticalController, // 使用同一个滚动控制器，保持左右同步
+                      itemCount: requests.length,
+                      itemBuilder: (context, index) {
+                        final item = requests[index];
+                        final isEven = index % 2 == 0;
+                        return Container(
+                          height: 44.h,
+                          color: isEven ? Colors.white : const Color(0xFFF9F9F9),
+                          child: Row(
+                            children: [
+                              _buildDataCell(item.permissionType, width: 120.w),
+                              _buildDataCell(item.applyTime, width: 120.w),
+                              _buildActionOrTimeCell(item, width: 140.w),
+                              _buildDataCell(item.remark ?? '', width: 140.w, color: _getRemarkColor(item.status)),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  // 表头单元格
-  Widget _buildHeaderCell(String title, {int flex = 1}) {
-    return Expanded(
-      flex: flex,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.w),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: const Color(0xFF3361FE),
-            fontWeight: FontWeight.w400,
-          ),
+  // 表头单元格（右侧滚动部分使用）
+  Widget _buildHeaderCell(String title, {required double width}) {
+    return Container(
+      width: width,
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: const Color(0xFF3361FE),
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
   }
 
-  // 表格行
-  Widget _buildTableRow(PermissionRequest item, bool isEven) {
+  // 数据单元格（右侧滚动部分使用）
+  Widget _buildDataCell(String text, {required double width, Color? color}) {
     return Container(
-      height: 44.h,
-      color: isEven ? Colors.white : const Color(0xFFF9F9F9),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Text(
-                item.userId,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Text(
-                item.permissionType,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Text(
-                item.applyTime,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child:
-              // item.status == 1
-              //     ? _buildActionButtons(item)
-              //     :
-              Text(
-                      item.applyTime ?? '',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: FYColors.color_1A1A1A,
-                      ),
-                    ),
-            ),
-          ),
-        ],
+      width: width,
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: color ?? FYColors.color_1A1A1A,
+          overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
+        ),
+        maxLines: 1, // 限制为单行
       ),
     );
+  }
+
+  // 操作按钮或时间单元格（右侧滚动部分使用）
+  Widget _buildActionOrTimeCell(PermissionRequest item, {required double width}) {
+    return Container(
+      width: width,
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      alignment: Alignment.centerLeft,
+      child: item.status == 1
+          ? _buildActionButtons(item)
+          : Text(
+              item.approveTime ?? '',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: FYColors.color_1A1A1A,
+                overflow: TextOverflow.ellipsis,
+              ),
+              maxLines: 1,
+            ),
+    );
+  }
+
+  // 根据状态获取备注文本颜色
+  Color _getRemarkColor(int status) {
+    switch (status) {
+      case 0: // 已批准
+        return const Color(0xFF07CC89);
+      case 1: // 待审核
+        return FYColors.color_1A1A1A;
+      case 2: // 已驳回
+        return const Color(0xFFFF3B30);
+      default:
+        return FYColors.color_1A1A1A;
+    }
   }
 
   // 操作按钮（批准/驳回）
@@ -363,31 +428,31 @@ class PermissionRequestPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 8.w),
-        GestureDetector(
-          onTap: () => logic.rejectRequest(item),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFECE9),
-              borderRadius: BorderRadius.circular(4.r),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.close, color: const Color(0xFFFF3B30), size: 12.w),
-                SizedBox(width: 2.w),
-                Text(
-                  '驳回',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFFFF3B30),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // SizedBox(width: 8.w),
+        // GestureDetector(
+        //   onTap: () => logic.rejectRequest(item),
+        //   child: Container(
+        //     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+        //     decoration: BoxDecoration(
+        //       color: const Color(0xFFFFECE9),
+        //       borderRadius: BorderRadius.circular(4.r),
+        //     ),
+        //     child: Row(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         Icon(Icons.close, color: const Color(0xFFFF3B30), size: 12.w),
+        //         SizedBox(width: 2.w),
+        //         Text(
+        //           '驳回',
+        //           style: TextStyle(
+        //             fontSize: 12.sp,
+        //             color: const Color(0xFFFF3B30),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
