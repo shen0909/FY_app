@@ -48,4 +48,9 @@ class FYColors {
   static const Color color_FF3B30 = Color(0xFFFF3B30); // 划线解锁错误状态颜色
   static const Color color_FCEAEA = Color(0xFFFCEAEA); // 划线解锁错误状态背景色
   static const Color color_FFDDDD = Color(0xFFFFDDDD); // 划线解锁错误状态边框色
+  
+  /// 未读消息相关颜色
+  static const Color color_FFD8D2 = Color(0xFFFFD8D2); // 未读消息标签背景色
+  static const Color color_CEFFEE = Color(0xFFCEFFEE); // 已读消息标签背景色
+  static const Color color_FF2A08 = Color(0xFFFF2A08); // 未读消息标签文字颜色
 }

@@ -189,8 +189,10 @@ class RiskPage extends StatelessWidget {
                     textAlign: TextAlign.left,
                   ),
                   Text('家',
-                      style: FYTextStyles.riskStatHighRiskStyle()
-                          .copyWith(color: FYColors.color_1A1A1A,fontWeight: FontWeight.w400,fontSize: 12.sp)),
+                      style: FYTextStyles.riskStatHighRiskStyle().copyWith(
+                          color: FYColors.color_1A1A1A,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.sp)),
                 ],
               ),
             ],
@@ -251,8 +253,10 @@ class RiskPage extends StatelessWidget {
                   ),
                 ),
                 Text('家',
-                    style: FYTextStyles.riskStatHighRiskStyle()
-                        .copyWith(color: FYColors.color_1A1A1A,fontWeight: FontWeight.w400,fontSize: 12.sp)),
+                    style: FYTextStyles.riskStatHighRiskStyle().copyWith(
+                        color: FYColors.color_1A1A1A,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.sp)),
               ],
             ),
           ],
@@ -294,7 +298,7 @@ class RiskPage extends StatelessWidget {
           width: 343.w,
           padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
           decoration: BoxDecoration(
-              color: isHighRisk ? Colors.red.shade50 : Colors.green.shade50,
+              color: isHighRisk ? Colors.red.shade50 : Color(0xffE7FEF8),
               borderRadius: BorderRadius.all(Radius.circular(8.w)),
               border: Border.all(width: 1.w, color: item['borderColor'])),
           child: Column(
@@ -311,19 +315,25 @@ class RiskPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color:
-                          isRead ? Colors.green.shade100 : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      isRead ? '全部已读' : '',
-                      style: TextStyle(
-                        color: Colors.green.shade700,
-                        fontSize: 12,
+                  GestureDetector(
+                    onTap: isRead ? null : () => logic.showMessageDialog(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isRead
+                            ? FYColors.color_CEFFEE
+                            : FYColors.color_FFD8D2,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        isRead ? '全部已读' : '${item['unreadCount']}条未读',
+                        style: TextStyle(
+                          color: isRead
+                              ? FYColors.color_07CC89
+                              : FYColors.color_FF2A08,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -419,17 +429,24 @@ class RiskPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isRead ? Colors.green.shade100 : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      isRead ? '全部已读' : '',
-                      style: TextStyle(
-                        color: Colors.green.shade700,
-                        fontSize: 12,
+                  GestureDetector(
+                    onTap: isRead ? null : () => logic.showMessageDialog(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color:
+                            isRead ? FYColors.color_CEFFEE : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        isRead ? '全部已读' : '',
+                        style: TextStyle(
+                          color: isRead
+                              ? FYColors.color_07CC89
+                              : Colors.transparent,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -468,7 +485,8 @@ class RiskPage extends StatelessWidget {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(12.w)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12.w)),
                             color: FYColors.whiteColor),
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 6.w),

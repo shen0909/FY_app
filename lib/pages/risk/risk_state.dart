@@ -8,6 +8,28 @@ class RiskState {
   // 地区
   final String location = "广东省广州市";
 
+  // 未读消息列表
+  final RxList<Map<String, dynamic>> unreadMessages = <Map<String, dynamic>>[
+    {
+      'title': '美国商务部将中船黄埔列入出口管制实体清单',
+      'date': '2025-04-15',
+      'company': '中船黄埔文冲船舶有限公司',
+      'isRead': false,
+    },
+    {
+      'title': '中船黄埔签订5艘大型集装箱船订单',
+      'date': '2025-04-15',
+      'company': '中船黄埔文冲船舶有限公司',
+      'isRead': false,
+    },
+    {
+      'title': '欧盟调查中国船厂获政府补贴情况',
+      'date': '2025-04-15',
+      'company': '中船黄埔文冲船舶有限公司',
+      'isRead': false,
+    },
+  ].obs;
+
   // 单位类型分类数据
   final RxMap<String, RxMap<String, dynamic>> unitTypeData = {
     '0': <String, dynamic>{
@@ -41,7 +63,7 @@ class RiskState {
       'riskLevelType': 1,
       'riskColor': 0xFFFF0000,
       'isRead': false,
-      'unreadCount': 0,
+      'unreadCount': 2,
       'borderColor' : FYColors.color_FF6850
     },
     {

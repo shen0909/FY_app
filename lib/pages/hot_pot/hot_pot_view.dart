@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:safe_app/main.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/widgets/widgets.dart';
 import '../../widgets/custom_app_bar.dart';
 import 'hot_pot_logic.dart';
 import 'hot_pot_state.dart';
@@ -534,7 +534,19 @@ class HotPotPage extends StatelessWidget {
       
       // 数据为空
       if (state.newsList.isEmpty) {
-        return const Center(child: Text('暂无数据'));
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              FYImages.blank_page,
+              width: 120.w,
+              height: 120.w,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 16.w),
+            Text('暂无数据'),
+          ],
+        );
       }
       
       // 显示列表

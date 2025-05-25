@@ -26,6 +26,8 @@ class RiskDetailsPage extends StatelessWidget {
         fontSize: 18,
         titleColor: Colors.black,
         actions: [
+          Image.asset(FYImages.download_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+          SizedBox(width: 12.w),
           Container(
             margin: const EdgeInsets.only(right: 16),
             child: GestureDetector(
