@@ -131,16 +131,56 @@ class OrderEventDetialLogic extends GetxController {
         .map((index) => state.latestUpdates[index])
         .toList();
     
+    // 显示生成报告中的弹窗
+    state.isGeneratingReport.value = true;
+    state.reportGenerationStatus.value = ReportGenerationStatus.generating;
+    
+    // 模拟生成报告的过程，实际项目中应该调用API
+    Future.delayed(Duration(seconds: 2), () {
+      // 生成报告完成后更新状态
+      state.reportGenerationStatus.value = ReportGenerationStatus.success;
+      
+      // 设置报告信息
+      state.reportInfo.value = {
+        'title': state.eventTitle.value,
+        'date': state.eventDate.value,
+        'fileType': 'word文档',
+        'size': '4.2 MB',
+        'description': '包含${state.selectedItems.length}个事件的分析、影响评估及未来趋势预测，适合决策参考。'
+      };
+    });
+  }
+  
+  // 关闭生成报告弹窗
+  void closeReportDialog() {
+    state.isGeneratingReport.value = false;
+    state.reportGenerationStatus.value = ReportGenerationStatus.none;
+    // 退出批量选择模式
+    batchCheck();
+  }
+  
+  // 预览报告
+  void previewReport() {
     Get.snackbar(
       '提示', 
-      '正在生成 ${state.selectedItems.length} 条动态的报告',
+      '正在预览报告',
       backgroundColor: Colors.white,
       colorText: Color(0xFF1A1A1A),
       snackPosition: SnackPosition.BOTTOM,
     );
-    
-    // 退出批量选择模式
-    batchCheck();
+    closeReportDialog();
+  }
+  
+  // 下载报告
+  void downloadReport() {
+    Get.snackbar(
+      '提示', 
+      '正在下载报告',
+      backgroundColor: Colors.white,
+      colorText: Color(0xFF1A1A1A),
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    closeReportDialog();
   }
   
   // 取消选择

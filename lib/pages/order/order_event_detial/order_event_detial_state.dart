@@ -1,5 +1,13 @@
 import 'package:get/get.dart';
 
+// 报告生成状态枚举
+enum ReportGenerationStatus {
+  none,        // 未生成
+  generating,  // 生成中
+  success,     // 生成成功
+  failed       // 生成失败
+}
+
 class OrderEventDetialState {
   // 事件标题
   final RxString eventTitle = ''.obs;
@@ -30,6 +38,15 @@ class OrderEventDetialState {
   
   // 已选中的项目数量
   RxInt get selectedCount => selectedItems.length.obs;
+
+  // 是否正在生成报告
+  RxBool isGeneratingReport = false.obs;
+  
+  // 报告生成状态
+  Rx<ReportGenerationStatus> reportGenerationStatus = ReportGenerationStatus.none.obs;
+  
+  // 报告信息
+  RxMap<String, dynamic> reportInfo = <String, dynamic>{}.obs;
 
   OrderEventDetialState() {
     ///初始化变量

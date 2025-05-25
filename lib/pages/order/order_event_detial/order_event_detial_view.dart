@@ -16,29 +16,35 @@ class OrderEventDetialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Scaffold(
-        backgroundColor: FYColors.whiteColor,
-        appBar: FYAppBar(
-          title: '事件详情',
-          actions: [
-            batchCheckWidget()
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildEventHeader(),
-              _buildEventDescription(),
-              _buildTagList(),
-              _buildDivider(),
-              _buildUpdatesList(),
-            ],
+      return Stack(
+        children: [
+          Scaffold(
+            backgroundColor: FYColors.whiteColor,
+            appBar: FYAppBar(
+              title: '事件详情',
+              actions: [
+                batchCheckWidget()
+              ],
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildEventHeader(),
+                  _buildEventDescription(),
+                  _buildTagList(),
+                  _buildDivider(),
+                  _buildUpdatesList(),
+                ],
+              ),
+            ),
+            bottomSheet: state.isBatchCheck.value && state.selectedItems.isNotEmpty
+                ? _buildBottomActionBar()
+                : null,
           ),
-        ),
-        bottomSheet: state.isBatchCheck.value && state.selectedItems.isNotEmpty
-            ? _buildBottomActionBar()
-            : null,
+          // 生成报告弹窗
+          _buildReportDialog(),
+        ],
       );
     });
   }
@@ -504,6 +510,300 @@ class OrderEventDetialPage extends StatelessWidget {
               ),
             ],
           )
+        ],
+      ),
+    );
+  }
+
+  // 生成报告弹窗
+  Widget _buildReportDialog() {
+    return Obx(() {
+      if (!state.isGeneratingReport.value) {
+        return const SizedBox.shrink();
+      }
+
+      return Stack(
+        children: [
+          // 半透明背景
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.7),
+            ),
+          ),
+          // 弹窗内容
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+              ),
+              child: Material(
+                color: FYColors.whiteColor,
+                borderRadius: BorderRadius.only(topRight: Radius.circular(16.r),topLeft: Radius.circular(16.r)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 顶部标题栏
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.1),
+                            width: 1.h,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '生成事件报告',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => logic.closeReportDialog(),
+                            child: Icon(
+                              Icons.close,
+                              size: 24.w,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 根据状态显示不同内容
+                    if (state.reportGenerationStatus.value == ReportGenerationStatus.generating)
+                      _buildGeneratingContent()
+                    else if (state.reportGenerationStatus.value == ReportGenerationStatus.success)
+                      _buildSuccessContent(),
+                    SizedBox(height: MediaQuery.of(Get.context!).padding.bottom),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    });
+  }
+  
+  // 生成中的内容
+  Widget _buildGeneratingContent() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 60.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 加载动画
+          SizedBox(
+            width: 64.w,
+            height: 64.h,
+            child: CircularProgressIndicator(
+              color: Color(0xFF3361FE),
+              strokeWidth: 3.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            '正在生成报告...',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            '正在处理所选事件并整合为分析报告',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Color(0xFF666666),
+            ),
+          ),
+          SizedBox(height: 60.h),
+        ],
+      ),
+    );
+  }
+  
+  // 生成成功的内容
+  Widget _buildSuccessContent() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 成功图标
+          Container(
+            width: 64.w,
+            height: 64.h,
+            decoration: BoxDecoration(
+              color: Color(0xFF3361FE),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 40.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            '报告生成成功',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            '事件分析报告已生成，可立即下载查看',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Color(0xFF666666),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          
+          // 报告信息卡片
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: Color(0xFFF9F9F9),
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.1),
+                width: 1.w,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  state.reportInfo.value['title'] ?? '',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 14.sp,
+                      color: Color(0xFF666666),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      state.reportInfo.value['date'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Icon(
+                      Icons.description,
+                      size: 14.sp,
+                      color: Color(0xFF666666),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      state.reportInfo.value['fileType'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      state.reportInfo.value['size'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  state.reportInfo.value['description'] ?? '',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Color(0xFF666666),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20.h),
+          
+          // 操作按钮
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.previewReport(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: FYColors.loginBtn,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '预览报告',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.downloadReport(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1.w,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '下载报告',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
