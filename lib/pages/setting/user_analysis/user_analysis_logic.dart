@@ -31,133 +31,77 @@ class UserAnalysisLogic extends GetxController {
 
   // 加载模拟数据
   void _loadMockData() {
-    // 初始化城市分布数据
-    state.cityDistribution = {
-      '广州市': {
-        'percentage': 15,
-        'color': const Color(0xFFFF6850),
-        'position': const Offset(50, 70),
-      },
-      '北京市': {
-        'percentage': 22,
-        'color': const Color(0xFFFF6850),
-        'position': const Offset(50, 130),
-      },
-      '上海市': {
-        'percentage': 12,
-        'color': const Color(0xFFFF6850),
-        'position': const Offset(50, 190),
-      },
-      '广西市': {
-        'percentage': 19,
-        'color': const Color(0xFF4646DF),
-        'position': const Offset(280, 70),
-      },
-      '成都市': {
-        'percentage': 27,
-        'color': const Color(0xFF4646DF),
-        'position': const Offset(280, 130),
-      },
-    };
+    // 更新城市分布数据
+    state.cityDistribution.assignAll({
+      '广州市': 19.0,
+      '成都市': 27.0,
+      '北京市': 22.0,
+      '上海市': 12.0,
+      '广西市': 10.0,
+    });
 
-    // 初始化功能使用占比数据
-    state.functionUsage = {
-      '风险预警': {
-        'percentage': 15,
-        'color': const Color(0xFFFF6850),
-        'position': const Offset(50, 70),
-      },
-      '我的订阅': {
-        'percentage': 22,
-        'color': const Color(0xFFFF6850),
-        'position': const Offset(50, 130),
-      },
-      'XX清单': {
-        'percentage': 12,
-        'color': const Color(0xFFFF6850),
-        'position': const Offset(50, 190),
-      },
-      'AI智能问答': {
-        'percentage': 19,
-        'color': const Color(0xFF4646DF),
-        'position': const Offset(280, 70),
-      },
-      '热点': {
-        'percentage': 27,
-        'color': const Color(0xFF4646DF),
-        'position': const Offset(280, 130),
-      },
-    };
+    // 更新功能使用占比数据
+    state.functionUsage.assignAll({
+      '内容浏览': 19.0,
+      'AI聊天': 27.0,
+      '智能分析': 22.0,
+      '文档管理': 12.0,
+      '其他功能': 15.0,
+    });
 
-    // 初始化高频访问内容
-    state.highFrequencyContent = [
+    // 更新高频访问内容
+    state.highFrequencyContent.assignAll([
       {
-        'title': '美国芯片出口管制新政(事件)',
+        'title': '美国芯片出口',
         'visitCount': 89,
         'avgTime': '3:25',
-        'shareRate': 12.5,
-        'followRate': 34.8,
+        'conversionRate': 12.5,
+        'bounceRate': 34.8,
       },
       {
-        'title': '欧盟GDPR合规调查(事件)',
+        'title': '静默GDP增长',
         'visitCount': 72,
         'avgTime': '2:48',
-        'shareRate': 9.7,
-        'followRate': 28.3,
+        'conversionRate': 9.7,
+        'bounceRate': 28.3,
       },
       {
-        'title': '数据安全合规(专题|最近更新)',
+        'title': '各国安全动态',
         'visitCount': 65,
         'avgTime': '4:12',
-        'shareRate': 15.2,
-        'followRate': 42.1,
+        'conversionRate': 15.2,
+        'bounceRate': 42.1,
       },
       {
-        'title': '某企业数据泄露事件(事件)',
+        'title': '黑天鹅事件',
         'visitCount': 58,
-        'avgTime': '2:35',
-        'shareRate': 11.3,
-        'followRate': 25.9,
-      },
-      {
-        'title': '国际贸易摩擦(专题|最近更新)',
-        'visitCount': 54,
         'avgTime': '3:42',
-        'shareRate': 13.8,
-        'followRate': 36.4,
+        'conversionRate': 13.9,
+        'bounceRate': 35.4,
       },
-    ];
+    ]);
 
-    // 初始化用户行为数据
-    state.userBehaviors = [
+    // 更新用户行为数据
+    state.userBehaviors.assignAll([
       {
-        'name': '张三',
-        'department': '研发部',
-        'activity': '浏览事件信息',
+        'department': '研发部门',
+        'user': '张三',
+        'action': '浏览报告',
         'time': '2024-05-11 09:45',
-        'loginCount': 5,
-        'activityCount': 28,
-        'duration': '1小时25分',
+        'duration': '5分钟',
+        'pages': 28,
+        'details': '114页报告',
       },
       {
-        'name': '张三',
-        'department': '研发部',
-        'activity': '使用AI助手',
+        'department': '研发部门',
+        'user': '李四',
+        'action': '导出数据',
         'time': '2024-05-11 09:30',
-        'loginCount': 3,
-        'activityCount': 15,
-        'duration': '48分钟',
+        'duration': '15分钟',
+        'pages': 15,
+        'details': '48份数据',
       },
-      {
-        'name': '张三',
-        'department': '研发部',
-        'activity': '查看统计数据',
-        'time': '2024-05-11 08:55',
-        'loginCount': 4,
-        'activityCount': 22,
-        'duration': '1小时5分',
-      },
-    ];
+    ]);
   }
 
   // 更新时间范围显示

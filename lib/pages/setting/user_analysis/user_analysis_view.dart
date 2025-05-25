@@ -1,11 +1,52 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import 'user_analysis_logic.dart';
 import 'user_analysis_state.dart';
+
+// 自定义画笔，用于绘制指示线
+class LinePainter extends CustomPainter {
+  final double startX;
+  final double startY;
+  final double midX;
+  final double midY;
+  final double endX;
+  final double endY;
+  final Color color;
+
+  LinePainter({
+    required this.startX,
+    required this.startY,
+    required this.midX,
+    required this.midY,
+    required this.endX,
+    required this.endY,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..moveTo(startX, startY)
+      ..lineTo(midX, midY)
+      ..lineTo(endX, endY);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(LinePainter oldDelegate) => false;
+}
 
 class UserAnalysisPage extends StatelessWidget {
   UserAnalysisPage({Key? key}) : super(key: key);
@@ -201,23 +242,107 @@ class UserAnalysisPage extends StatelessWidget {
     );
   }
 
-  // 图表区域
+  // 趋势图表
   Widget _buildChart() {
-    // 实际应用中这里应该使用图表库绘制曲线图
-    // 如FL_Chart、SyncFusion_Flutter_Charts等
-    return Container(
-      decoration: BoxDecoration(
-        color: FYColors.color_F9F9F9,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Center(
-        child: Text(
-          '访问趋势图表',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: FYColors.color_A6A6A6,
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: 20,
+          verticalInterval: 1,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: FYColors.color_F9F9F9,
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: FYColors.color_F9F9F9,
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                return SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  space: 8.0,
+                  child: Text(
+                    state.visitTrendData[value.toInt()].time,
+                    style: TextStyle(
+                      color: FYColors.color_A6A6A6,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 20,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  '${value.toInt()}%',
+                  style: TextStyle(
+                    color: FYColors.color_A6A6A6,
+                    fontSize: 12.sp,
+                  ),
+                );
+              },
+              reservedSize: 42,
+            ),
           ),
         ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(color: FYColors.color_F9F9F9),
+        ),
+        minX: 0,
+        maxX: state.visitTrendData.length - 1.0,
+        minY: 0,
+        maxY: 100,
+        lineBarsData: [
+          LineChartBarData(
+            spots: state.visitTrendData.asMap().entries.map((entry) {
+              return FlSpot(entry.key.toDouble(), entry.value.value);
+            }).toList(),
+            isCurved: true,
+            color: FYColors.color_07CC89,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: FYColors.color_07CC89,
+                  strokeWidth: 2,
+                  strokeColor: FYColors.color_07CC89,
+                );
+              },
+            ),
+            /*belowBarData: BarAreaData(
+              show: true,
+              color: FYColors.color_07CC89.withOpacity(0.1),
+            ),*/
+          ),
+        ],
       ),
     );
   }
@@ -279,6 +404,7 @@ class UserAnalysisPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '用户活跃度分布',
@@ -288,7 +414,6 @@ class UserAnalysisPage extends StatelessWidget {
                   color: FYColors.color_1A1A1A,
                 ),
               ),
-              Spacer(),
               Text(
                 state.distributionDate,
                 style: TextStyle(
@@ -296,16 +421,129 @@ class UserAnalysisPage extends StatelessWidget {
                   color: FYColors.color_A6A6A6,
                 ),
               ),
-              SizedBox(width: 4.w),
-              Icon(
-                Icons.access_time,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
             ],
           ),
           SizedBox(height: 16.h),
-          _buildPieChart(200.h, state.cityDistribution),
+          _buildUserDistributionChart(),
+        ],
+      ),
+    );
+  }
+
+  // 自定义徽章组件（用于显示指示线和文本）
+  Widget _Badge(String title, String value, Color color, int index, int total) {
+    // 计算徽章的位置角度
+    final double angle = 2 * pi * (index / total) - pi / 2;
+    
+    // 根据角度确定文本对齐方式和指示线的方向
+    final bool isRight = angle >= -pi / 2 && angle <= pi / 2;
+    
+    // 计算指示线的起始位置（从饼图边缘开始）
+    final double radius = 80.0;
+    final double lineStartX = cos(angle) * radius;
+    final double lineStartY = sin(angle) * radius;
+    
+    // 计算指示线的弯折点（向外延伸20个单位）
+    final double extendLength = 20.0;
+    final double lineMidX = cos(angle) * (radius + extendLength);
+    final double lineMidY = sin(angle) * (radius + extendLength);
+    
+    // 计算水平延伸线的长度
+    final double horizontalLineLength = 30.0;
+    final double endX = isRight ? lineMidX + horizontalLineLength : lineMidX - horizontalLineLength;
+    
+    return Stack(
+      children: [
+        // 绘制指示线
+        CustomPaint(
+          size: Size(200, 200), // 设置合适的绘制区域大小
+          painter: LinePainter(
+            startX: lineStartX,
+            startY: lineStartY,
+            midX: lineMidX,
+            midY: lineMidY,
+            endX: endX,
+            endY: lineMidY,
+            color: color,
+          ),
+        ),
+        // 绘制文本
+        Positioned(
+          left: isRight ? endX + 8 : endX - 60,
+          top: lineMidY - 10,
+          child: Container(
+            width: 60,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: isRight ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_1A1A1A,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_1A1A1A,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 用户分布饼图
+  Widget _buildUserDistributionChart() {
+    final List<Color> colors = [
+      const Color(0xFF4646DF), // 蓝色
+      const Color(0xFF36CBCB), // 青色
+      const Color(0xFFFF8F1F), // 橙色
+      const Color(0xFF4ECB73), // 绿色
+      const Color(0xFFFF6B6B), // 红色
+    ];
+
+    return Container(
+      height: 280.h,
+      child: Stack(
+        children: [
+          Center(
+            child: SizedBox(
+              width: 240.w,
+              height: 240.w,
+              child: PieChart(
+                PieChartData(
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 50,
+                  sections: state.cityDistribution.entries.toList().asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final data = entry.value;
+                    final color = colors[index % colors.length];
+
+                    return PieChartSectionData(
+                      color: color,
+                      value: data.value,
+                      title: '${data.key}\n${data.value.toStringAsFixed(1)}%',
+                      radius: 90,
+                      titleStyle: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      titlePositionPercentageOffset: 0.6,
+                      showTitle: true,
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -327,73 +565,57 @@ class UserAnalysisPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          _buildPieChart(200.h, state.functionUsage),
+          _buildFunctionUsageChart(),
         ],
       ),
     );
   }
 
-  // 饼图
-  Widget _buildPieChart(double height, Map<String, dynamic> data) {
-    // 实际应用中这里应该使用图表库绘制饼图
+  // 功能使用饼图
+  Widget _buildFunctionUsageChart() {
+    final List<Color> colors = [
+      const Color(0xFF4646DF), // 蓝色
+      const Color(0xFF36CBCB), // 青色
+      const Color(0xFFFF8F1F), // 橙色
+      const Color(0xFF4ECB73), // 绿色
+      const Color(0xFFFF6B6B), // 红色
+    ];
+
     return Container(
-      height: height,
-      decoration: BoxDecoration(
-        color: FYColors.color_F9F9F9,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
+      height: 280.h,
       child: Stack(
         children: [
           Center(
-            child: Container(
-              width: 120.w,
-              height: 120.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: FYColors.whiteColor,
+            child: SizedBox(
+              width: 240.w,
+              height: 240.w,
+              child: PieChart(
+                PieChartData(
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 50,
+                  sections: state.functionUsage.entries.toList().asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final data = entry.value;
+                    final color = colors[index % colors.length];
+
+                    return PieChartSectionData(
+                      color: color,
+                      value: data.value,
+                      title: '${data.key}\n${data.value.toStringAsFixed(1)}%',
+                      radius: 90,
+                      titleStyle: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      titlePositionPercentageOffset: 0.6,
+                      showTitle: true,
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ),
-          ...data.entries.map((entry) {
-            return Positioned(
-              left: entry.value['position'].dx,
-              top: entry.value['position'].dy,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 12.w,
-                        height: 12.w,
-                        decoration: BoxDecoration(
-                          color: entry.value['color'],
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        '${entry.value['percentage']}%',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.bold,
-                          color: FYColors.color_1A1A1A,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    entry.key,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_666666,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
         ],
       ),
     );
@@ -415,166 +637,141 @@ class UserAnalysisPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          _buildContentTable(),
-        ],
-      ),
-    );
-  }
-
-  // 内容表格
-  Widget _buildContentTable() {
-    return Column(
-      children: [
-        // 表头
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-          decoration: BoxDecoration(
-            color: FYColors.color_F0F5FF,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8.r),
-              topRight: Radius.circular(8.r),
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Text(
-                  '内容标题',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '访问次数',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  '平均停留时间',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '转发率',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '关注率',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // 表格内容
-        ...state.highFrequencyContent.map((item) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+          Container(
+            height: 280.h,
             decoration: BoxDecoration(
-              color: FYColors.whiteColor,
-              border: Border(
-                bottom: BorderSide(
-                  color: FYColors.color_F5F5F5,
-                  width: 1,
-                ),
-              ),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.r),
             ),
             child: Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    item['title'],
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                // 固定的第一列（内容标题）
+                Container(
+                  width: 160.w,
+                  child: Column(
+                    children: [
+                      // 表头
+                      Container(
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          color: FYColors.color_F0F5FF,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8.r),
+                          ),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.only(left: 16.w),
+                        child: Text(
+                          '内容标题',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: FYColors.color_3361FE,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      // 数据行
+                      Expanded(
+                        child: ListView.builder(
+                          controller: state.highScrollController,
+                          itemCount: state.highFrequencyContent.length,
+                          itemBuilder: (context, index) {
+                            final item = state.highFrequencyContent[index];
+                            return Container(
+                              height: 48.h,
+                              decoration: BoxDecoration(
+                                color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: FYColors.color_F5F5F5,
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                item['title'] ?? '',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: FYColors.color_1A1A1A,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                // 右侧可滚动部分
                 Expanded(
-                  flex: 1,
-                  child: Text(
-                    item['visitCount'].toString(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: 400.w,
+                      child: Column(
+                        children: [
+                          // 表头
+                          Container(
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              color: FYColors.color_F0F5FF,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(8.r),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                _buildHeaderCell('访问次数', 100.w),
+                                _buildHeaderCell('平均时长', 100.w),
+                                _buildHeaderCell('转化率', 100.w),
+                                _buildHeaderCell('关注率', 100.w),
+                              ],
+                            ),
+                          ),
+                          // 数据行
+                          Expanded(
+                            child: ListView.builder(
+                              controller: state.highScrollController,
+                              itemCount: state.highFrequencyContent.length,
+                              itemBuilder: (context, index) {
+                                final item = state.highFrequencyContent[index];
+                                return Container(
+                                  height: 48.h,
+                                  decoration: BoxDecoration(
+                                    color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: FYColors.color_F5F5F5,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      _buildContentCell(item['visitCount'].toString(), 100.w),
+                                      _buildContentCell(item['avgTime'], 100.w),
+                                      _buildContentCell('${item['conversionRate']}%', 100.w),
+                                      _buildContentCell('${item['bounceRate']}%', 100.w),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    item['avgTime'],
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    '${item['shareRate']}%',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    '${item['followRate']}%',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
             ),
-          );
-        }).toList(),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -690,180 +887,211 @@ class UserAnalysisPage extends StatelessWidget {
 
   // 用户行为表格
   Widget _buildUserBehaviorTable() {
-    return Column(
-      children: [
-        // 表头
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-          decoration: BoxDecoration(
-            color: FYColors.color_F0F5FF,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8.r),
-              topRight: Radius.circular(8.r),
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '用户',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  '最近活动',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '登录次数',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '活动次数',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '总时长',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_3361FE,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // 表格内容
-        ...state.userBehaviors.map((item) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
-            decoration: BoxDecoration(
-              color: FYColors.whiteColor,
-              border: Border(
-                bottom: BorderSide(
-                  color: FYColors.color_F5F5F5,
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Row(
+    return Container(
+      height: 200.h,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        children: [
+          // 固定的第一列（用户信息）
+          Container(
+            width: 100.w,
+            child: Column(
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['name'],
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: FYColors.color_1A1A1A,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        item['department'],
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          color: FYColors.color_A6A6A6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['activity'],
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: FYColors.color_1A1A1A,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        item['time'],
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          color: FYColors.color_A6A6A6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    item['loginCount'].toString(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
+                // 表头
+                Container(
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    color: FYColors.color_F0F5FF,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8.r),
                     ),
-                    textAlign: TextAlign.center,
+                  ),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(left: 16.w),
+                  child: Text(
+                    '用户',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_3361FE,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
+                // 数据行
                 Expanded(
-                  flex: 1,
-                  child: Text(
-                    item['activityCount'].toString(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    item['duration'],
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: ListView.builder(
+                    controller: state.highScrollController,
+                    itemCount: state.userBehaviors.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final item = state.userBehaviors[index];
+                      return Container(
+                        height: 64.h,
+                        decoration: BoxDecoration(
+                          color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: FYColors.color_F5F5F5,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              item['user'] ?? '',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: FYColors.color_1A1A1A,
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              item['department'] ?? '',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: FYColors.color_A6A6A6,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          );
-        }).toList(),
-      ],
+          ),
+          // 右侧可滚动部分
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                width: 500.w,
+                child: Column(
+                  children: [
+                    // 表头
+                    Container(
+                      height: 40.h,
+                      decoration: BoxDecoration(
+                        color: FYColors.color_F0F5FF,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8.r),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildHeaderCell('最近活动', 200.w),
+                          _buildHeaderCell('登录次数', 100.w),
+                          _buildHeaderCell('活动次数', 100.w),
+                          _buildHeaderCell('总时长', 100.w),
+                        ],
+                      ),
+                    ),
+                    // 数据行
+                    Expanded(
+                      child: ListView.builder(
+                        controller: state.listScrollController,
+                        itemCount: state.userBehaviors.length,
+                        itemBuilder: (context, index) {
+                          final item = state.userBehaviors[index];
+                          return Container(
+                            height: 64.h,
+                            decoration: BoxDecoration(
+                              color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: FYColors.color_F5F5F5,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 200.w,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        item['action'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: FYColors.color_1A1A1A,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Text(
+                                        item['time'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: FYColors.color_A6A6A6,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                _buildContentCell(item['pages'].toString(), 100.w),
+                                _buildContentCell(item['duration'], 100.w),
+                                _buildContentCell(item['details'], 100.w),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 表头单元格
+  Widget _buildHeaderCell(String title, double width) {
+    return Container(
+      width: width,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: FYColors.color_3361FE,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  // 内容单元格
+  Widget _buildContentCell(String text, double width) {
+    return Container(
+      width: width,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: FYColors.color_1A1A1A,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 
