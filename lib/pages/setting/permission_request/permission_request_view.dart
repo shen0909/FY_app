@@ -24,7 +24,7 @@ class PermissionRequestPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.help_outline, color: FYColors.color_1A1A1A),
             onPressed: () {
-              // 帮助说明
+              _showPermissionDetailDialog(context);
             },
           ),
         ],
@@ -35,7 +35,8 @@ class PermissionRequestPage extends StatelessWidget {
           children: [
             _buildTabBar(),
             Padding(
-              padding: EdgeInsets.only(left: 16.w,right: 16.w, top: 16.h, bottom: 16.h),
+              padding: EdgeInsets.only(
+                  left: 16.w, right: 16.w, top: 16.h, bottom: 16.h),
               child: Row(
                 children: [
                   Text(
@@ -58,11 +59,8 @@ class PermissionRequestPage extends StatelessWidget {
                       child: Row(
                         children: [
                           SizedBox(width: 16.w),
-                          Icon(
-                              Icons.search,
-                              color: FYColors.color_3A3A3A,
-                              size: 20.w
-                          ),
+                          Icon(Icons.search,
+                              color: FYColors.color_3A3A3A, size: 20.w),
                           SizedBox(width: 8.w),
                           Expanded(
                             child: TextField(
@@ -72,11 +70,11 @@ class PermissionRequestPage extends StatelessWidget {
                                 hintText: '搜索用户名称',
                                 hintStyle: TextStyle(
                                     color: FYColors.color_A6A6A6,
-                                    fontSize: 14.sp
-                                ),
+                                    fontSize: 14.sp),
                                 border: InputBorder.none,
                                 isDense: true,
-                                contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 8.h),
                               ),
                             ),
                           ),
@@ -123,101 +121,265 @@ class PermissionRequestPage extends StatelessWidget {
     );
   }
 
-  // 标签栏
-  Widget _buildTabBar() {
-    return Container(
-      // height: 56.h,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      child: GetBuilder<PermissionRequestLogic>(
-        builder: (logic) {
-          return Row(
-            children: [
-              _buildTabItem(
-                title: '已批准申请',
-                count: logic.getTabCount(0),
-                index: 0,
-                bgColor: const Color(0xFFE7FEF8),
-                countColor: const Color(0xFF07CC89),
-                isSelected: state.selectedTabIndex == 0,
-                iconPath: FYImages.check_gree
-              ),
-              SizedBox(width: 12.w),
-              _buildTabItem(
-                title: '待审核',
-                count: logic.getTabCount(1),
-                index: 1,
-                bgColor: const Color(0xFFF9F9F9),
-                countColor: Colors.black,
-                isSelected: state.selectedTabIndex == 1,
-                iconPath: FYImages.uncheck
-              ),
-              SizedBox(width: 12.w),
-              _buildTabItem(
-                title: '已驳回',
-                count: logic.getTabCount(2),
-                index: 2,
-                bgColor: const Color(0xFFFFECE9),
-                countColor: const Color(0xFFFF3B30),
-                isSelected: state.selectedTabIndex == 2,
-                  iconPath: FYImages.refuse_red
-              ),
-            ],
-          );
-        }
-      ),
+  // 申请详情弹窗
+  void _showPermissionDetailDialog(BuildContext context) {
+    final approvedRequest = state.permissionRequests.firstWhere(
+      (request) => request.status == 0,
+      orElse: () => state.permissionRequests.first,
     );
-  }
-
-  // 标签项
-  Widget _buildTabItem({
-    required String title,
-    required int count,
-    required int index,
-    required Color bgColor,
-    required Color countColor,
-    required bool isSelected,
-    required String iconPath,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => logic.switchTab(index),
-        child: Container(
-          // height: 56.h,
-          width: 106.w,
-          padding: EdgeInsets.only(left: 6.w,right: 4.w,top: 10.w,bottom: 5),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(8.r),
+    
+    // 获取屏幕高度的80%
+    final screenHeight = MediaQuery.of(context).size.height;
+    final dialogHeight = screenHeight * 0.8;
+    
+    Get.bottomSheet(
+      Container(
+        width: 375.w,
+        height: dialogHeight,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.r),
+            topRight: Radius.circular(16.r),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        child: Column(
+          children: [
+            // 弹窗标题栏
+            Container(
+              height: 48.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                  ),
-                  Text(
-                    count.toString(),
+                    '申请详情',
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
-                      color: countColor,
+                      color: FYColors.color_1A1A1A,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 24.w,
+                      height: 24.h,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.close,
+                        size: 20.sp,
+                        color: FYColors.color_1A1A1A,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const Spacer(),
-              Image.asset(iconPath,width: 24.w,height: 24.w,fit: BoxFit.contain,),
-            ],
-          ),
+            ),
+            // 用户信息
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              child: Row(
+                children: [
+                  // 用户头像
+                  Container(
+                    width: 48.w,
+                    height: 48.h,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      size: 30.sp,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  // 用户信息
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '刘晓龙',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        '用户名：ZQP001',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: FYColors.color_1A1A1A,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  // 批准状态
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE7FEF8),
+                      borderRadius: BorderRadius.circular(12.5.r),
+                    ),
+                    child: Text(
+                      '已批准',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: const Color(0xFF07CC89),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 申请信息
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  children: [
+                    // 申请编号
+                    _buildInfoItem('申请编号', 'REO-2024-0301'),
+
+                    // 申请时间
+                    _buildInfoItem('申请时间', '2024-05-03 09:15'),
+
+                    // 申请权限
+                    _buildInfoItem('申请权限', approvedRequest.permissionType),
+
+                    // 批准时间
+                    _buildInfoItem('批准时间', approvedRequest.approveTime ?? ''),
+
+                    // 申请原因
+                    _buildReasonItem(
+                      '申请原因',
+                      '部门新增员工，需要创建新的普通用户账号用于系统访问和日常工作。',
+                    ),
+
+                    // 批准备注
+                    _buildReasonItem(
+                      '批准备注',
+                      '用户已完成相关培训，符合权限授予条件。已向用户发送权限使用指南。',
+                    ),
+
+                    SizedBox(height: 20.h),
+                  ],
+                ),
+              ),
+            ),
+
+            // 底部按钮
+            Container(
+              height: 72.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3361FE),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  elevation: 0,
+                  minimumSize: Size(double.infinity, 48.h),
+                ),
+                child: Text(
+                  '关闭',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
+      isScrollControlled: true, // 允许弹窗内容滚动
+    );
+  }
+
+  // 构建信息项
+  Widget _buildInfoItem(String label, String value) {
+    return Container(
+      height: 48.h,
+      margin: EdgeInsets.only(bottom: 8.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F9F9).withOpacity(0),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.transparent, width: 0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF666666),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_1A1A1A,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 构建多行文本项
+  Widget _buildReasonItem(String label, String content) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 14.h),
+      margin: EdgeInsets.only(bottom: 8.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F9F9),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 16.w),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: const Color(0xFF666666),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Text(
+              content,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_1A1A1A,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -226,7 +388,7 @@ class PermissionRequestPage extends StatelessWidget {
   Widget _buildScrollableTable(List<PermissionRequest> requests) {
     // 使用两个同步滚动控制器，确保左右两侧列表同步滚动
     final ScrollController verticalController = ScrollController();
-    
+
     return Row(
       children: [
         // 固定的第一列（账户ID）
@@ -308,13 +470,16 @@ class PermissionRequestPage extends StatelessWidget {
                         final isEven = index % 2 == 0;
                         return Container(
                           height: 44.h,
-                          color: isEven ? Colors.white : const Color(0xFFF9F9F9),
+                          color:
+                              isEven ? Colors.white : const Color(0xFFF9F9F9),
                           child: Row(
                             children: [
                               _buildDataCell(item.permissionType, width: 120.w),
                               _buildDataCell(item.applyTime, width: 120.w),
                               _buildActionOrTimeCell(item, width: 140.w),
-                              _buildDataCell(item.remark ?? '', width: 140.w, color: _getRemarkColor(item.status)),
+                              _buildDataCell(item.remark ?? '',
+                                  width: 140.w,
+                                  color: _getRemarkColor(item.status)),
                             ],
                           ),
                         );
@@ -366,7 +531,8 @@ class PermissionRequestPage extends StatelessWidget {
   }
 
   // 操作按钮或时间单元格（右侧滚动部分使用）
-  Widget _buildActionOrTimeCell(PermissionRequest item, {required double width}) {
+  Widget _buildActionOrTimeCell(PermissionRequest item,
+      {required double width}) {
     return Container(
       width: width,
       padding: EdgeInsets.symmetric(horizontal: 8.w),
@@ -454,6 +620,105 @@ class PermissionRequestPage extends StatelessWidget {
         //   ),
         // ),
       ],
+    );
+  }
+
+  // 标签栏
+  Widget _buildTabBar() {
+    return Container(
+      // height: 56.h,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: GetBuilder<PermissionRequestLogic>(builder: (logic) {
+        return Row(
+          children: [
+            _buildTabItem(
+                title: '已批准申请',
+                count: logic.getTabCount(0),
+                index: 0,
+                bgColor: const Color(0xFFE7FEF8),
+                countColor: const Color(0xFF07CC89),
+                isSelected: state.selectedTabIndex == 0,
+                iconPath: FYImages.check_gree),
+            SizedBox(width: 12.w),
+            _buildTabItem(
+                title: '待审核',
+                count: logic.getTabCount(1),
+                index: 1,
+                bgColor: const Color(0xFFF9F9F9),
+                countColor: Colors.black,
+                isSelected: state.selectedTabIndex == 1,
+                iconPath: FYImages.uncheck),
+            SizedBox(width: 12.w),
+            _buildTabItem(
+                title: '已驳回',
+                count: logic.getTabCount(2),
+                index: 2,
+                bgColor: const Color(0xFFFFECE9),
+                countColor: const Color(0xFFFF3B30),
+                isSelected: state.selectedTabIndex == 2,
+                iconPath: FYImages.refuse_red),
+          ],
+        );
+      }),
+    );
+  }
+
+  // 标签项
+  Widget _buildTabItem({
+    required String title,
+    required int count,
+    required int index,
+    required Color bgColor,
+    required Color countColor,
+    required bool isSelected,
+    required String iconPath,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => logic.switchTab(index),
+        child: Container(
+          // height: 56.h,
+          width: 106.w,
+          padding: EdgeInsets.only(left: 6.w, right: 4.w, top: 10.w, bottom: 5),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
+                  ),
+                  Text(
+                    count.toString(),
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: countColor,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Image.asset(
+                iconPath,
+                width: 24.w,
+                height: 24.w,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

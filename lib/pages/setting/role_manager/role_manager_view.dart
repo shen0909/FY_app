@@ -464,7 +464,7 @@ class RoleManagerPage extends StatelessWidget {
               children: [
                 // 固定的首列
                 Container(
-                  width: 120.w, // 设置首列宽度
+                  width: 80.w,
                   child: Column(
                     children: [
                       // 首列表头
@@ -482,7 +482,6 @@ class RoleManagerPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
                       // 首列数据
                       Expanded(
                         child: Obx(() => ListView.builder(
@@ -494,20 +493,33 @@ class RoleManagerPage extends StatelessWidget {
                               height: 44.h,
                               decoration: BoxDecoration(
                                 color: index % 2 == 0 ? Colors.white : FYColors.color_F9F9F9,
-                                border: Border(
+                                border: const Border(
                                   bottom: BorderSide(color: FYColors.color_F9F9F9),
                                 ),
                               ),
                               padding: EdgeInsets.only(left: 16.w),
                               alignment: Alignment.centerLeft,
-                              child: Text(
-                                '${user.name} (${user.id})',
-                                style: TextStyle(
-                                  color: FYColors.color_1A1A1A,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    '${user.name}',
+                                    style: TextStyle(
+                                      color: FYColors.color_1A1A1A,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    '(${user.id})',
+                                    style: TextStyle(
+                                      color: FYColors.color_1A1A1A,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             );
                           },
@@ -534,10 +546,10 @@ class RoleManagerPage extends StatelessWidget {
                                 color: FYColors.color_F0F5FF,
                                 child: Row(
                                   children: [
-                                    _buildTableHeader('角色', width: 100.w),
-                                    _buildTableHeader('状态', width: 100.w),
+                                    _buildTableHeader('角色', width: 70.w),
+                                    _buildTableHeader('状态', width: 70.w),
                                     _buildTableHeader('最后登录时间', width: 140.w),
-                                    _buildTableHeader('操作', width: 60.w),
+                                    _buildTableHeader('操作', width: 30.w),
                                   ],
                                 ),
                               ),
@@ -560,11 +572,11 @@ class RoleManagerPage extends StatelessWidget {
                                       child: Row(
                                         children: [
                                           Container(
-                                            width: 100.w,
+                                            width: 70.w,
                                             child: _buildRoleBadge(user.role),
                                           ),
                                           Container(
-                                            width: 100.w,
+                                            width: 70.w,
                                             child: _buildStatusBadge(user.status),
                                           ),
                                           Container(
@@ -675,8 +687,7 @@ class RoleManagerPage extends StatelessWidget {
     }
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      margin: EdgeInsets.only(top: 10.h, bottom: 10.h, right: 12.w),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(4.r),
@@ -714,8 +725,7 @@ class RoleManagerPage extends StatelessWidget {
     }
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      margin: EdgeInsets.only(top: 10.h, bottom: 10.h, right: 12.w),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(4.r),
