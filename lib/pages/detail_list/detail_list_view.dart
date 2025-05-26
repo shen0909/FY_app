@@ -14,7 +14,9 @@ class DetailListPage extends StatelessWidget {
   DetailListPage({Key? key}) : super(key: key);
 
   final DetailListLogic logic = Get.put(DetailListLogic());
-  final DetailListState state = Get.find<DetailListLogic>().state;
+  final DetailListState state = Get
+      .find<DetailListLogic>()
+      .state;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class DetailListPage extends StatelessWidget {
         children: [
           _buildInfoSection(),
           _buildFilterSection(),
-          _buildFilterChips(),
+          _buildFilterChips(context),
           _buildResultCount(),
           Expanded(
             child: _buildTable(),
@@ -35,7 +37,7 @@ class DetailListPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // 信息区域
   Widget _buildInfoSection() {
     return Padding(
@@ -43,14 +45,28 @@ class DetailListPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Obx(() => Text(
-            "当前总数：${state.totalCount}",
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: FYColors.color_A6A6A6,
-              fontWeight: FontWeight.normal,
-            ),
-          )),
+          Row(
+            children: [
+              Text(
+                "当前总数：",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              Obx(() {
+                return Text(
+                  "${state.totalCount}",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_3361FE,
+                    fontWeight: FontWeight.normal,
+                  ),
+                );
+              }),
+            ],
+          ),
           Text(
             "更新时间：2025-05-15",
             style: TextStyle(
@@ -63,7 +79,7 @@ class DetailListPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // 筛选条件区域
   Widget _buildFilterSection() {
     return Padding(
@@ -88,7 +104,9 @@ class DetailListPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Image.asset(FYImages.search_icon,width: 20.w,height: 20.w,fit: BoxFit.contain,),
+                Image.asset(FYImages.search_icon, width: 20.w,
+                  height: 20.w,
+                  fit: BoxFit.contain,),
                 SizedBox(width: 8.w),
                 Expanded(
                   child: TextField(
@@ -115,122 +133,96 @@ class DetailListPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // 筛选标签区域
-  Widget _buildFilterChips() {
+  Widget _buildFilterChips(BuildContext context) {
     return Container(
       height: 56,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildFilterChip("类型", state.typeFilter.value, () => _showFilterDialog("类型")),
+          Expanded(child: _buildFilterChip(
+              context, "类型", state.typeFilter, logic.typeKey)),
           const SizedBox(width: 12),
-          _buildFilterChip("省份", state.provinceFilter.value, () => _showFilterDialog("省份")),
+          Expanded(child: _buildFilterChip(
+              context, "省份", state.provinceFilter, logic.provinceKey)),
           const SizedBox(width: 12),
-          _buildFilterChip("城市", state.cityFilter.value, () => _showFilterDialog("城市")),
+          Expanded(child: _buildFilterChip(
+              context, "城市", state.cityFilter, logic.cityKey)),
         ],
       ),
     );
   }
-  
+
   // 筛选按钮
-  Widget _buildFilterChip(String title, String value, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: 36,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Color(0xFFF9F9F9),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF1A1A1A),
+  Widget _buildFilterChip(BuildContext context, String title, Rx<String> filter,
+      GlobalKey key) {
+    return Obx(() {
+      final bool hasValue = filter.value.isNotEmpty;
+
+      return InkWell(
+        key: key,
+        onTap: () {
+          logic.showFilterOverlay(context, title, key);
+        },
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: hasValue ? Color(0xFFF0F5FF) : Color(0xFFF9F9F9),
+            borderRadius: BorderRadius.circular(8),
+            border: hasValue
+                ? Border.all(color: Color(0xFF3361FE), width: 1)
+                : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                hasValue ? filter.value : title,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                ),
               ),
-            ),
-            SizedBox(width: 4),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 14,
-              color: Color(0xFF1A1A1A),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  // 显示筛选对话框
-  void _showFilterDialog(String type) {
-    // 实际开发中这里应该根据类型不同显示不同的选项
-    List<String> options = [];
-    
-    if (type == "类型") {
-      options = ["EL", "NS-CMIC", "CMC", "Non-SDN CMIC", "SSI", "UVL", "DPL"];
-    } else if (type == "省份") {
-      options = ["广东", "北京", "上海", "浙江", "安徽", "香港"];
-    } else if (type == "城市") {
-      options = ["广州", "深圳", "北京", "上海", "杭州", "合肥", "香港"];
-    }
-    
-    Get.dialog(
-      AlertDialog(
-        title: Text("选择$type"),
-        content: Container(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: options.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(options[index]),
-                onTap: () {
-                  if (type == "类型") {
-                    logic.setTypeFilter(options[index]);
-                  } else if (type == "省份") {
-                    logic.setProvinceFilter(options[index]);
-                  } else if (type == "城市") {
-                    logic.setCityFilter(options[index]);
-                  }
-                  Get.back();
-                },
-              );
-            },
+              const Spacer(),
+              Icon(
+                hasValue ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                size: 16,
+                color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+              ),
+            ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
-  
+
   // 结果数量
   Widget _buildResultCount() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Obx(() => Text(
-        "${state.companyList.length} 条结果",
-        style: TextStyle(
-          fontSize: 12,
-          color: Color(0xFF3361FE),
-          fontWeight: FontWeight.normal,
-        ),
-      )),
+      child: Obx(() =>
+          Text(
+            "${state.companyList.length} 条结果",
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xFF3361FE),
+              fontWeight: FontWeight.normal,
+            ),
+          )),
     );
   }
-  
+
   // 表格实现（固定首列且可滑动）
   Widget _buildTable() {
     return Obx(() {
       if (state.isLoading.value) {
         return Center(child: CircularProgressIndicator());
       }
-      
+
       return Row(
         children: [
           // 固定的首列（序号列）
@@ -252,7 +244,7 @@ class DetailListPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // 首列数据
                 Expanded(
                   child: ListView.builder(
@@ -278,7 +270,7 @@ class DetailListPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // 右侧可滚动部分
           Expanded(
             child: Stack(
@@ -337,7 +329,7 @@ class DetailListPage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        
+
                         // 表格数据行
                         Expanded(
                           child: ListView.builder(
@@ -346,7 +338,7 @@ class DetailListPage extends StatelessWidget {
                             itemBuilder: (context, index) {
                               final item = state.companyList[index];
                               final isOdd = index % 2 == 1;
-                              
+
                               return Container(
                                 height: 44.h,
                                 color: isOdd ? Colors.white : Color(0xFFF9F9F9),
@@ -370,8 +362,10 @@ class DetailListPage extends StatelessWidget {
                                     SizedBox(
                                       width: 100.w,
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                        child: _buildSanctionTypeTag(item.sanctionType),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.w),
+                                        child: _buildSanctionTypeTag(
+                                            item.sanctionType),
                                       ),
                                     ),
                                     SizedBox(
@@ -394,7 +388,7 @@ class DetailListPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // 右侧滑动指示阴影
                 Positioned(
                   right: 0,
@@ -427,12 +421,12 @@ class DetailListPage extends StatelessWidget {
       );
     });
   }
-  
+
   // 构建制裁类型标签
   Widget _buildSanctionTypeTag(String type) {
     Color bgColor;
     Color textColor;
-    
+
     switch (type) {
       case 'EL':
         bgColor = Color(0xFFFFECE9);
@@ -455,7 +449,7 @@ class DetailListPage extends StatelessWidget {
         textColor = Color(0xFF1A1A1A);
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(

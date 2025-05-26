@@ -5,11 +5,17 @@ import 'detail_list_state.dart';
 
 class DetailListLogic extends GetxController {
   final DetailListState state = DetailListState();
-  
+
   // 添加滚动控制器
   late final ScrollController horizontalScrollController;
   late final ScrollController leftVerticalController;
   late final ScrollController rightVerticalController;
+
+  // Overlay相关变量
+  OverlayEntry? _overlayEntry;
+  final GlobalKey typeKey = GlobalKey();
+  final GlobalKey provinceKey = GlobalKey();
+  final GlobalKey cityKey = GlobalKey();
 
   @override
   void onInit() {
@@ -18,7 +24,7 @@ class DetailListLogic extends GetxController {
     horizontalScrollController = ScrollController();
     leftVerticalController = ScrollController();
     rightVerticalController = ScrollController();
-    
+
     // 设置滚动同步
     setupScrollControllers();
   }
@@ -36,33 +42,35 @@ class DetailListLogic extends GetxController {
     horizontalScrollController.dispose();
     leftVerticalController.dispose();
     rightVerticalController.dispose();
+    // 确保关闭overlay
+    hideOverlay();
     super.onClose();
   }
-  
+
   // 设置滚动控制器
   void setupScrollControllers() {
     leftVerticalController.addListener(syncRightScroll);
     rightVerticalController.addListener(syncLeftScroll);
   }
-  
+
   // 同步右侧滚动到左侧
   void syncRightScroll() {
     if (leftVerticalController.offset != rightVerticalController.offset) {
       rightVerticalController.jumpTo(leftVerticalController.offset);
     }
   }
-  
+
   // 同步左侧滚动到右侧
   void syncLeftScroll() {
     if (rightVerticalController.offset != leftVerticalController.offset) {
       leftVerticalController.jumpTo(rightVerticalController.offset);
     }
   }
-  
+
   // 加载清单数据
   void loadData() {
     state.isLoading.value = true;
-    
+
     // 模拟网络请求延迟
     Future.delayed(const Duration(milliseconds: 800), () {
       // 模拟数据 - 实际项目中应从API获取
@@ -71,7 +79,7 @@ class DetailListLogic extends GetxController {
       state.isLoading.value = false;
     });
   }
-  
+
   // 搜索
   void search(String keyword) {
     state.searchText.value = keyword;
@@ -79,28 +87,28 @@ class DetailListLogic extends GetxController {
     // 这里简单模拟过滤本地数据
     loadData();
   }
-  
+
   // 设置类型筛选
   void setTypeFilter(String type) {
     state.typeFilter.value = type;
     // 重新加载数据
     loadData();
   }
-  
+
   // 设置省份筛选
   void setProvinceFilter(String province) {
     state.provinceFilter.value = province;
     // 重新加载数据
     loadData();
   }
-  
+
   // 设置城市筛选
   void setCityFilter(String city) {
     state.cityFilter.value = city;
     // 重新加载数据
     loadData();
   }
-  
+
   // 清除所有筛选条件
   void clearFilters() {
     state.typeFilter.value = '';
@@ -110,20 +118,339 @@ class DetailListLogic extends GetxController {
     // 重新加载数据
     loadData();
   }
-  
+
   // 模拟数据
   List<CompanyItem> _getMockData() {
     return [
       CompanyItem(id: 1, name: '华为技术有限公司', sanctionType: 'EL', region: '广东'),
-      CompanyItem(id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: 'EL', region: '上海'),
-      CompanyItem(id: 3, name: '字节跳动有限公司', sanctionType: 'NS-CMIC', region: '北京'),
+      CompanyItem(
+          id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: 'EL', region: '上海'),
+      CompanyItem(
+          id: 3, name: '字节跳动有限公司', sanctionType: 'NS-CMIC', region: '北京'),
       CompanyItem(id: 4, name: '大疆创新科技有限公司', sanctionType: 'CMC', region: '广东'),
-      CompanyItem(id: 5, name: '海康威视数字技术股份有限公司', sanctionType: 'Non-SDN CMIC', region: '浙江'),
+      CompanyItem(
+          id: 5,
+          name: '海康威视数字技术股份有限公司',
+          sanctionType: 'Non-SDN CMIC',
+          region: '浙江'),
       CompanyItem(id: 6, name: '科大讯飞股份有限公司', sanctionType: 'SSI', region: '安徽'),
       CompanyItem(id: 7, name: '商汤科技有限公司', sanctionType: 'EL', region: '香港'),
       CompanyItem(id: 8, name: '旷视科技有限公司', sanctionType: 'UVL', region: '北京'),
       CompanyItem(id: 9, name: '北京云从科技有限公司', sanctionType: 'UVL', region: '北京'),
-      CompanyItem(id: 10, name: '深信服科技股份有限公司', sanctionType: 'DPL', region: '广东'),
+      CompanyItem(
+          id: 10, name: '深信服科技股份有限公司', sanctionType: 'DPL', region: '广东'),
     ];
+  }
+
+  // 显示筛选器浮层
+  void showFilterOverlay(
+      BuildContext context, String filterType, GlobalKey key) {
+    // 先隐藏可能存在的浮层
+    hideOverlay();
+
+    // 获取按钮位置
+    final RenderBox renderBox =
+        key.currentContext?.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    // 创建浮层
+    _overlayEntry = OverlayEntry(
+      builder: (context) => _buildOverlayContent(filterType, position, size),
+    );
+
+    // 显示浮层
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  // 隐藏浮层
+  void hideOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  // 构建浮层内容
+  Widget _buildOverlayContent(String filterType, Offset position, Size size) {
+    List<String> options = [];
+    double maxHeight = 300.0;
+    // 根据筛选类型设置宽度
+    double overlayWidth = 200.0;
+    
+    // 根据不同筛选类型获取选项
+    if (filterType == "类型") {
+      options = getTypeOptions();
+      overlayWidth = 200.0; // 类型筛选器保持现有宽度
+    } else if (filterType == "省份") {
+      options = getProvinceOptions();
+      overlayWidth = size.width; // 与上方筛选框宽度一致
+    } else if (filterType == "城市") {
+      options = getCityOptions();
+      overlayWidth = size.width; // 与上方筛选框宽度一致
+    }
+    
+    // 声明一个controller
+    final scrollController = ScrollController();
+    
+    return Material(
+      color: Colors.transparent,
+      child: Stack(
+        children: [
+          // 背景遮罩，点击后关闭浮层
+          GestureDetector(
+            onTap: hideOverlay,
+            child: Container(
+              color: Colors.transparent,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+          
+          // 筛选内容
+          Positioned(
+            left: position.dx,
+            top: position.dy + size.height,
+            width: overlayWidth, // 使用根据类型设置的宽度
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              constraints: BoxConstraints(
+                maxHeight: maxHeight,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 选项列表
+                  Flexible(
+                    child: _DynamicScrollbarWrapper(
+                      scrollController: scrollController,
+                      child: ListView.builder(
+                        controller: scrollController,
+                        padding: EdgeInsets.only(right: 10), // 为滚动条留出空间
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (context, index) {
+                          final option = options[index];
+                          bool isSelected = false;
+                          if (filterType == "类型") {
+                            isSelected = state.typeFilter.value == option;
+                          } else if (filterType == "省份") {
+                            isSelected = state.provinceFilter.value == option;
+                          } else if (filterType == "城市") {
+                            isSelected = state.cityFilter.value == option;
+                          }
+                          
+                          return InkWell(
+                            onTap: () {
+                              if (filterType == "类型") {
+                                setTypeFilter(option);
+                              } else if (filterType == "省份") {
+                                setProvinceFilter(option);
+                              } else if (filterType == "城市") {
+                                setCityFilter(option);
+                              }
+                              hideOverlay();
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                              color: isSelected ? Color(0xFFF0F5FF) : Colors.white,
+                              child: Text(
+                                option,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isSelected ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 获取类型选项
+  List<String> getTypeOptions() {
+    return ["EL", "NS-CMIC", "CMC", "Non-SDN CMIC", "SSI", "UVL", "DPL"];
+  }
+
+  // 获取省份选项
+  List<String> getProvinceOptions() {
+    return [
+      "广东",
+      "北京",
+      "上海",
+      "江苏",
+      "浙江",
+      "四川",
+      "福建",
+      "湖北",
+      "山东",
+      "安徽",
+      "辽宁",
+      "湖南",
+      "河北",
+      "江西",
+      "中国香港",
+      "中国澳门",
+      "中国台湾"
+    ];
+  }
+
+  // 获取城市选项
+  List<String> getCityOptions() {
+    return [
+      "广州",
+      "深圳",
+      "北京",
+      "上海",
+      "杭州",
+      "合肥",
+      "香港",
+      "苏州",
+      "南京",
+      "成都",
+      "福州",
+      "武汉",
+      "济南",
+      "青岛",
+      "长沙",
+      "石家庄",
+      "南昌",
+      "沈阳",
+      "大连"
+    ];
+  }
+}
+
+// 自定义滚动条包装器，处理动态滑块逻辑
+class _DynamicScrollbarWrapper extends StatefulWidget {
+  final ScrollController scrollController;
+  final Widget child;
+  
+  const _DynamicScrollbarWrapper({
+    Key? key,
+    required this.scrollController,
+    required this.child,
+  }) : super(key: key);
+  
+  @override
+  State<_DynamicScrollbarWrapper> createState() => _DynamicScrollbarWrapperState();
+}
+
+class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
+  double _scrollPosition = 0.0;
+  double _contentHeight = 0.0;
+  double _viewportHeight = 0.0;
+  final double _thumbHeight = 32.0; // 固定滑块高度为6像素
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // 延迟添加监听器，确保ScrollController已初始化
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _updateScrollData();
+        widget.scrollController.addListener(_handleScrollChange);
+      }
+    });
+  }
+  
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_handleScrollChange);
+    super.dispose();
+  }
+  
+  void _handleScrollChange() {
+    if (mounted) {
+      setState(() {
+        _updateScrollData();
+      });
+    }
+  }
+  
+  void _updateScrollData() {
+    try {
+      if (widget.scrollController.hasClients) {
+        _scrollPosition = widget.scrollController.position.pixels;
+        _contentHeight = widget.scrollController.position.maxScrollExtent + widget.scrollController.position.viewportDimension;
+        _viewportHeight = widget.scrollController.position.viewportDimension;
+      }
+    } catch (e) {
+      // 捕获任何可能的异常
+      print("Error updating scroll data: $e");
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    // 计算滑块位置
+    double thumbPositionRatio = 0.0;
+    if (_contentHeight > 0 && _viewportHeight > 0) {
+      thumbPositionRatio = _scrollPosition / (_contentHeight - _viewportHeight);
+      thumbPositionRatio = thumbPositionRatio.clamp(0.0, 1.0);
+    }
+    
+    double trackHeight = _viewportHeight > 0 ? _viewportHeight : 100;
+    double availableTrackSpace = trackHeight - _thumbHeight;
+    double thumbPosition = thumbPositionRatio * availableTrackSpace;
+    
+    // 是否显示滚动条
+    bool showScrollbar = _contentHeight > _viewportHeight;
+    
+    return Stack(
+      children: [
+        // 子组件
+        widget.child,
+        
+        // 滚动条轨道
+        Positioned(
+          right: 2,
+          top: 0,
+          bottom: 0,
+          width: 4,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFE7E7E7),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        ),
+        
+        // 滚动条滑块（仅当需要滚动时显示）
+        if (showScrollbar) 
+          Positioned(
+            right: 2,
+            top: thumbPosition,
+            width: 4,
+            height: _thumbHeight,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFF3361FE),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
