@@ -145,7 +145,7 @@ class LoginPage extends StatelessWidget {
                             },
                             child: Padding(
                               padding: EdgeInsets.only(right: 16.w),
-                              child: Image.asset(FYImages.pwd_see, width: 24.w, height: 24.w,fit: BoxFit.contain),
+                              child: Image.asset(state.showPassword.value ? FYImages.pwd_see : FYImages.pwd_unsee, width: 24.w, height: 24.w,fit: BoxFit.contain),
                             ),
                           ),
                         )),

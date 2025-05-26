@@ -12,6 +12,7 @@ class FYImages {
   static const String login_account = 'assets/images/login_account.png';
   static const String login_pwd = 'assets/images/login_pwd.png';
   static const String pwd_see = 'assets/images/pwd_see.png';
+  static const String pwd_unsee = 'assets/images/pwd_unsee.png';
   static const String image_1 = 'assets/images/image_1.png';
   static const String tip_icon = 'assets/images/tip.png';
   static const String icon_back = 'assets/images/icon_back.png';
