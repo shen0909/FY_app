@@ -56,6 +56,47 @@ class RiskPage extends StatelessWidget {
             state.location,
             style: FYTextStyles.riskLocationTitleStyle(),
           ),
+          const SizedBox(width: 8),
+          Image.asset(FYImages.down_icon, width: 8.w, height: 8.w, fit: BoxFit.contain,),
+          const Spacer(),
+          Container(
+            width: 180.w,
+            decoration: BoxDecoration(
+              color: FYColors.whiteColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: FYColors.color_E6E6E6),
+            ),
+            child: Row(
+              children: [
+                SizedBox(width: 8.w),
+                Image.asset(FYImages.search_icon, width: 20.w,
+                  height: 20.w,
+                  fit: BoxFit.contain,),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: TextField(
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: '请输入企业名称',
+                      hintStyle: TextStyle(
+                        color: FYColors.color_A6A6A6,
+                        fontSize: 14.sp,
+                      ),
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      print("风险预警--value ${value}");
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         ],
       ),
     );
@@ -69,11 +110,11 @@ class RiskPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-            child: _buildUnitTypeButton('一类单位', 0),
+            child: _buildUnitTypeButton('烽云一号', 0),
           ),
           SizedBox(width: 9.w),
           Expanded(
-            child: _buildUnitTypeButton('二类单位', 1),
+            child: _buildUnitTypeButton('烽云二号', 1),
           ),
           SizedBox(width: 9.w),
           Expanded(

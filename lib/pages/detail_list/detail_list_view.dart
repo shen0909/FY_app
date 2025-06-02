@@ -104,6 +104,7 @@ class DetailListPage extends StatelessWidget {
             ),
             child: Row(
               children: [
+                SizedBox(width: 8.w),
                 Image.asset(FYImages.search_icon, width: 20.w,
                   height: 20.w,
                   fit: BoxFit.contain,),

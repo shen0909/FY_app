@@ -139,7 +139,7 @@ class RiskDetailsPage extends StatelessWidget {
   // 构建时间线项目列表
   List<Widget> _buildTimelineItems() {
     final timelineItems = [
-      {'date': '2025-04-15', 'content': '与美国某化工企业的专利纠纷案开庭审理\n涉及高性能聚合物技术'},
+      {'date': '2025-04-15', 'content': '与美国某化工企业的专利纠纷案开庭审理涉及高性能聚合物技术'},
       {'date': '2025-04-15', 'content': '广州工厂因环保问题被当地环保部门责令整改，限期30天'},
       {'date': '2025-04-15', 'content': '在东南亚地区的合资工厂投产，但当地政策存在不确定性'},
       {'date': '2025-04-15', 'content': '被列入美国商务部实体清单观察名单，部分产品出口受限'},
@@ -195,7 +195,6 @@ class RiskDetailsPage extends StatelessWidget {
   Widget _buildTimelineItem(Map<String, dynamic> item, bool isLast) {
     return Container(
       padding: EdgeInsets.only(left: 16.w, right: 16.w),
-      height: 78.w,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
