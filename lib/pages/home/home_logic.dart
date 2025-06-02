@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/routers/routers.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
 
 import 'home_state.dart';
@@ -35,7 +36,7 @@ class HomeLogic extends GetxController {
   // 启动自动轮播
   void _startAutoPlay() {
     _autoPlayTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      if (state.currentBannerIndex < state.bannerImages.length - 1) {
+      if (state.currentBannerIndex < state.carouselItems.length - 1) {
         pageController.nextPage(
           duration: Duration(milliseconds: 300),
           curve: Curves.easeIn,
@@ -63,16 +64,36 @@ class HomeLogic extends GetxController {
   }
 
   // 处理轮播图点击
-  void onBannerTap(int index) {
-    Get.snackbar(
-      '轮播图',
-      '点击了轮播图${index}',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  void onBannerTap(int index) async {
+    final item = state.carouselItems[index];
+    try {
+      if (await canLaunchUrlString(item.linkUrl)) {
+        await launchUrlString(
+          item.linkUrl,
+          mode: LaunchMode.externalApplication, // 使用外部浏览器打开
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: true,
+            enableDomStorage: true,
+          ),
+        );
+      } else {
+        Get.snackbar(
+          '提示',
+          '无法打开链接',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        '提示',
+        '链接打开失败: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   // 去风险预警页
-  void goRisk(){
+  void goRisk() {
     Get.toNamed(Routers.risk);
   }
 
@@ -85,7 +106,7 @@ class HomeLogic extends GetxController {
   void goAiQus() {
     Get.toNamed(Routers.aiQus);
   }
-  
+
   // 导航到订阅管理页面
   void goOrder() {
     Get.toNamed(Routers.order);

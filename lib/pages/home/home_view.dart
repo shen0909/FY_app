@@ -71,11 +71,12 @@ class HomePage extends StatelessWidget {
               builder: (controller) {
                 return PageView.builder(
                   controller: controller.pageController,
-                  itemCount: state.bannerImages.length,
+                  itemCount: state.carouselItems.length,
                   onPageChanged: (index) {
                     logic.updateBannerIndex(index);
                   },
                   itemBuilder: (context, index) {
+                    final item = state.carouselItems[index];
                     return GestureDetector(
                       onTap: () => logic.onBannerTap(index),
                       child: Container(
@@ -84,7 +85,7 @@ class HomePage extends StatelessWidget {
                           children: [
                             // 图片
                             Image.asset(
-                              state.bannerImages[index],
+                              item.imageUrl,
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: 172.w,
@@ -107,7 +108,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  state.bannerTitles[index],
+                                  item.title,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.sp,
@@ -134,7 +135,7 @@ class HomePage extends StatelessWidget {
                 builder: (controller) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: state.bannerImages.asMap().entries.map((entry) {
+                    children: state.carouselItems.asMap().entries.map((entry) {
                       return Container(
                         width: 8.w,
                         height: 8.w,
