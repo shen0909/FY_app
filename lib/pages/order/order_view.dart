@@ -20,7 +20,7 @@ class OrderPage extends StatelessWidget {
       backgroundColor: FYColors.whiteColor,
       appBar: FYAppBar(
         title: '我的订阅',
-        actions: [
+       /* actions: [
           GestureDetector(
             onTap: () => logic.showSubscriptionManage(),
             child: Container(
@@ -28,7 +28,7 @@ class OrderPage extends StatelessWidget {
               child: Row(
                 children: [
                   Image.asset(
-                    FYImages.oder_share, 
+                    FYImages.oder_share,
                     width: 20.w,
                     height: 20.w,
                     fit: BoxFit.contain,
@@ -37,16 +37,15 @@ class OrderPage extends StatelessWidget {
                   Text(
                     '订阅管理',
                     style: TextStyle(
-                      color: FYColors.color_1A1A1A,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400
-                    ),
+                        color: FYColors.color_1A1A1A,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400),
                   ),
                 ],
               ),
             ),
           )
-        ],
+        ],*/
       ),
       body: Obx(() => _buildBody()),
       bottomNavigationBar: _buildBottomNavigationBar(),
