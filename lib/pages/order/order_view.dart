@@ -16,42 +16,46 @@ class OrderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FYColors.whiteColor,
-      appBar: FYAppBar(
-        title: '我的订阅',
-       /* actions: [
-          GestureDetector(
-            onTap: () => logic.showSubscriptionManage(),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Row(
-                children: [
-                  Image.asset(
-                    FYImages.oder_share,
-                    width: 20.w,
-                    height: 20.w,
-                    fit: BoxFit.contain,
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    '订阅管理',
-                    style: TextStyle(
-                        color: FYColors.color_1A1A1A,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ],
+    return Obx(() {
+      return Scaffold(
+        backgroundColor: FYColors.whiteColor,
+        appBar: FYAppBar(
+          title: state.currentTabIndex.value == 0 ? '我的订阅' : state
+              .currentTabIndex.value == 1 ? '专题订阅' : '我的关注',
+          actions: [
+            state.currentTabIndex.value != 0 ?
+            GestureDetector(
+              onTap: () => logic.showSubscriptionManage(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      FYImages.oder_share,
+                      width: 20.w,
+                      height: 20.w,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      '订阅管理',
+                      style: TextStyle(
+                          color: FYColors.color_1A1A1A,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          )
-        ],*/
-      ),
-      body: Obx(() => _buildBody()),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
+            ) : Container()
+          ],
+        ),
+        body: _buildBody(),
+        bottomNavigationBar: _buildBottomNavigationBar(),
+      );
+    });
   }
-  
+
   Widget _buildBody() {
     if (state.currentTabIndex.value == 0) {
       return _buildEventSubscriptions();
@@ -61,19 +65,19 @@ class OrderPage extends StatelessWidget {
       return _buildMyFavorites();
     }
   }
-  
+
   Widget _buildEventSubscriptions() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHotEventsSection(),
-          _buildCustomEventsSection(),
+          // _buildCustomEventsSection(),
         ],
       ),
     );
   }
-  
+
   Widget _buildHotEventsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +131,7 @@ class OrderPage extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildCustomEventsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +254,7 @@ class OrderPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildTopicSubscriptions() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -290,7 +294,7 @@ class OrderPage extends StatelessWidget {
 
   Widget _buildTopicItem(Map<String, dynamic> topic) {
     final bool isFollowed = topic['isFavorite'] == true;
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 10.w),
       decoration: BoxDecoration(
@@ -320,7 +324,8 @@ class OrderPage extends StatelessWidget {
                       GestureDetector(
                         onTap: () => logic.toggleTopicFavorite(topic),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
+                          padding: EdgeInsets.symmetric(horizontal: 14.w,
+                              vertical: 8.w),
                           decoration: BoxDecoration(
                             color: isFollowed
                                 ? Color(0x333361FE)
@@ -331,7 +336,9 @@ class OrderPage extends StatelessWidget {
                             isFollowed ? '已关注' : '加关注',
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: isFollowed ? FYColors.color_3361FE : FYColors.whiteColor,
+                              color: isFollowed
+                                  ? FYColors.color_3361FE
+                                  : FYColors.whiteColor,
                             ),
                           ),
                         ),
@@ -357,9 +364,9 @@ class OrderPage extends StatelessWidget {
               Text(
                 '相关事件: ${topic['count']}个',
                 style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                  fontWeight: FontWeight.w400
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                    fontWeight: FontWeight.w400
                 ),
               ),
               SizedBox(height: 12.w),
@@ -367,20 +374,22 @@ class OrderPage extends StatelessWidget {
                 spacing: 8.w,
                 children: List.generate(
                   topic['tags'].length,
-                  (tagIndex) => Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.w),
-                    decoration: BoxDecoration(
-                      color: FYColors.color_E7E7E7,
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
-                    child: Text(
-                      topic['tags'][tagIndex],
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: FYColors.color_1A1A1A,
+                      (tagIndex) =>
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 14.w, vertical: 6.w),
+                        decoration: BoxDecoration(
+                          color: FYColors.color_E7E7E7,
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          topic['tags'][tagIndex],
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: FYColors.color_1A1A1A,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -389,7 +398,7 @@ class OrderPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildFavoriteEventItem(Map<String, dynamic> event) {
     return Container(
       margin: EdgeInsets.only(bottom: 8.w),
@@ -433,7 +442,7 @@ class OrderPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildMyFavorites() {
     return Padding(
       padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.w),
@@ -462,14 +471,14 @@ class OrderPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // 这里使用SizedBox包装ListView，限制高度以解决无限高度问题
           SizedBox(
             height: 120.w, // 固定高度，根据实际需求调整
             child: Obx(() {
               final favoriteEvents = state.myFavorites.where((e) =>
               !state.topicList.any((t) => t['title'] == e['title'])).toList();
-  
+
               if (favoriteEvents.isEmpty) {
                 return Center(
                   child: Column(
@@ -493,7 +502,7 @@ class OrderPage extends StatelessWidget {
                   ),
                 );
               }
-  
+
               return ListView.builder(
                 itemCount: favoriteEvents.length,
                 shrinkWrap: true, // 内容大小决定ListView高度
@@ -505,9 +514,9 @@ class OrderPage extends StatelessWidget {
               );
             }),
           ),
-          
+
           SizedBox(height: 20.w),
-          
+
           // 关注的专题部分
           Padding(
             padding: EdgeInsets.only(bottom: 10.w),
@@ -530,12 +539,13 @@ class OrderPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // 使用Expanded确保专题列表填充剩余空间
           Expanded(
             child: Obx(() {
-              final favoriteTopics = state.topicList.where((t) => t['isFavorite'] == true).toList();
-  
+              final favoriteTopics = state.topicList.where((
+                  t) => t['isFavorite'] == true).toList();
+
               if (favoriteTopics.isEmpty) {
                 return Center(
                   child: Column(
@@ -559,7 +569,7 @@ class OrderPage extends StatelessWidget {
                   ),
                 );
               }
-              
+
               return ListView.builder(
                 itemCount: favoriteTopics.length,
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -574,7 +584,7 @@ class OrderPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildBottomNavigationBar() {
     return Obx(() {
       return Theme(
@@ -596,18 +606,23 @@ class OrderPage extends StatelessWidget {
           unselectedIconTheme: IconThemeData(size: 24),
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset(FYImages.calendar_unchoose, width: 24, height: 24),
+              icon: Image.asset(
+                  FYImages.calendar_unchoose, width: 24, height: 24),
               activeIcon: Image.asset(FYImages.calendar, width: 24, height: 24),
               label: '事件订阅',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset(FYImages.zhuanti_unchoose, width: 24, height: 24),
-              activeIcon: Image.asset(FYImages.zhuanti_choose, width: 24, height: 24),
+              icon: Image.asset(
+                  FYImages.zhuanti_unchoose, width: 24, height: 24),
+              activeIcon: Image.asset(
+                  FYImages.zhuanti_choose, width: 24, height: 24),
               label: '专题订阅',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset(FYImages.attention_unchoose, width: 24, height: 24),
-              activeIcon: Image.asset(FYImages.attention_choose, width: 24, height: 24),
+              icon: Image.asset(
+                  FYImages.attention_unchoose, width: 24, height: 24),
+              activeIcon: Image.asset(
+                  FYImages.attention_choose, width: 24, height: 24),
               label: '我的关注',
             ),
           ],

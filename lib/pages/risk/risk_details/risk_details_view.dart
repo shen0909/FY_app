@@ -424,14 +424,12 @@ class RiskDetailsPage extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(top: 8.w, left: 16.w),
-          child: Expanded(
-            child: Text(
-              description,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFFA6A6A6),
-                height: 1.5,
-              ),
+          child: Text(
+            description,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFFA6A6A6),
+              height: 1.5,
             ),
           ),
         ),
