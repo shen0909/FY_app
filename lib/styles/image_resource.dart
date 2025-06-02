@@ -64,4 +64,5 @@ class FYImages {
   static const String uncheck = 'assets/images/uncheck.png';
   static const String open_icon = 'assets/images/open_icon.png';
   static const String unopen_icon = 'assets/images/unopen_icon.png';
+  static const String more_info = 'assets/images/more_info.png';
 }
