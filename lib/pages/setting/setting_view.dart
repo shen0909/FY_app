@@ -578,17 +578,17 @@ class SettingPage extends StatelessWidget {
               SizedBox(width: 8.w),
               Row(
                 children: [
+                  Icon(
+                    isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+                    size: 12.sp,
+                    color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                  ),
                   Text(
                     '$trendValue%',
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: isPositive ? FYColors.color_07CC89 : Colors.red,
                     ),
-                  ),
-                  Icon(
-                    isPositive ? Icons.arrow_downward : Icons.arrow_upward,
-                    size: 12.sp,
-                    color: isPositive ? FYColors.color_07CC89 : Colors.red,
                   ),
                 ],
               ),
