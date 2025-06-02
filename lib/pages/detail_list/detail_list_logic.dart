@@ -82,8 +82,8 @@ class DetailListLogic extends GetxController {
   }
 
   // 设置类型筛选
-  void setTypeFilter(String type) {
-    state.typeFilter.value = type;
+  void setTypeFilter(String typeName) {
+    state.typeFilter.value = typeName;
     // 重新加载数据
     loadData();
   }
@@ -281,7 +281,7 @@ class DetailListLogic extends GetxController {
 
   // 获取类型选项
   List<String> getTypeOptions() {
-    return ["EL", "NS-CMIC", "CMC", "Non-SDN CMIC", "SSI", "UVL", "DPL"];
+    return state.sanctionTypes.map((type) => type.name).toList();
   }
 
   // 获取省份选项
@@ -330,6 +330,24 @@ class DetailListLogic extends GetxController {
       "沈阳",
       "大连"
     ];
+  }
+
+  // 根据类型名称获取类型数据
+  SanctionType? getSanctionTypeByName(String name) {
+    try {
+      return state.sanctionTypes.firstWhere((type) => type.name == name);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 根据类型代码获取类型数据
+  SanctionType? getSanctionTypeByCode(String code) {
+    try {
+      return state.sanctionTypes.firstWhere((type) => type.code == code);
+    } catch (e) {
+      return null;
+    }
   }
 }
 
