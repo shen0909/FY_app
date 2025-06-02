@@ -668,17 +668,22 @@ class AiQusLogic extends GetxController {
   
   /// 导出选中的消息
   exportSelectedMessages() {
-    // 实际项目中应该实现导出功能
-    // 这里只是简单的提示
-    Get.snackbar(
-      '导出成功',
-      '已导出${state.selectedMessageIndexes.length}条消息',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-    
-    // 退出批量选择模式
-    state.isBatchCheck.value = false;
-    state.selectedMessageIndexes.clear();
+    state.isExporting.value = true;
+    state.exportStatus.value = ExportStatus.generating;
+
+    // 模拟导出过程
+    Future.delayed(const Duration(seconds: 2), () {
+      // 设置导出信息
+      // state.exportInfo.value = {
+      //   'title': '对话内容导出文件',
+      //   'date': DateTime.now().toString().substring(0, 16),
+      //   'fileType': 'TXT文件',
+      //   'size': '1.2MB',
+      //   'description': '包含${state.selectedMessageIndexes.length}条对话内容，已按时间顺序整理。',
+      // };
+      
+      state.exportStatus.value = ExportStatus.success;
+    });
   }
   
   /// 取消批量选择
@@ -1188,5 +1193,25 @@ class AiQusLogic extends GetxController {
       // 确保在弹窗关闭后移除焦点
       FocusScope.of(context).unfocus();
     });
+  }
+
+  // 关闭导出弹窗
+  void closeExportDialog() {
+    state.isExporting.value = false;
+    state.exportStatus.value = ExportStatus.generating;
+    state.exportInfo.clear();
+  }
+
+  // 预览导出内容
+  void previewExport() {
+    // TODO: 实现预览功能
+    Get.snackbar('提示', '预览功能开发中');
+  }
+
+  // 下载导出文件
+  void downloadExport() {
+    // TODO: 实现下载功能
+    Get.snackbar('提示', '文件已开始下载');
+    closeExportDialog();
   }
 }

@@ -75,6 +75,8 @@ class AiQusPage extends StatelessWidget {
                     child: _buildBatchSelectionBar(),
                   )
                 : const SizedBox()),
+            // 导出弹窗
+            _buildExportDialog(),
           ],
         ),
         floatingActionButton: Obx(() => !state.isBatchCheck.value ? Container(
@@ -491,5 +493,302 @@ class AiQusPage extends StatelessWidget {
               ),
             );
     });
+  }
+
+  // 导出弹窗
+  Widget _buildExportDialog() {
+    return Obx(() {
+      if (!state.isExporting.value) {
+        return const SizedBox.shrink();
+      }
+
+      return Stack(
+        children: [
+          // 半透明背景
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.7),
+            ),
+          ),
+          // 弹窗内容
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+              ),
+              child: Material(
+                color: FYColors.whiteColor,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(16.r),
+                  topLeft: Radius.circular(16.r)
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 顶部标题栏
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.1),
+                            width: 1.h,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '导出对话内容',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => logic.closeExportDialog(),
+                            child: Icon(
+                              Icons.close,
+                              size: 24.w,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 根据状态显示不同内容
+                    if (state.exportStatus.value == ExportStatus.generating)
+                      _buildGeneratingContent()
+                    else if (state.exportStatus.value == ExportStatus.success)
+                      _buildSuccessContent(),
+                    SizedBox(height: MediaQuery.of(Get.context!).padding.bottom),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    });
+  }
+
+  // 生成中的内容
+  Widget _buildGeneratingContent() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 60.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 加载动画
+          SizedBox(
+            width: 64.w,
+            height: 64.h,
+            child: CircularProgressIndicator(
+              color: Color(0xFF3361FE),
+              strokeWidth: 3.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            '正在导出内容...',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            '正在处理所选对话内容并整合为文本文件',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Color(0xFF666666),
+            ),
+          ),
+          SizedBox(height: 60.h),
+        ],
+      ),
+    );
+  }
+
+  // 导出成功的内容
+  Widget _buildSuccessContent() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 成功图标
+          Container(
+            width: 64.w,
+            height: 64.h,
+            decoration: BoxDecoration(
+              color: Color(0xFF3361FE),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 40.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            '已成功导出所选问答内容',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            '文件名:AI问答导出_2025-05-23T02-40-25.txt',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Color(0xFF666666),
+            ),
+          ),
+          SizedBox(height: 37.h),
+          //
+          // // 文件信息卡片
+          // Container(
+          //   padding: EdgeInsets.all(12.w),
+          //   decoration: BoxDecoration(
+          //     color: Color(0xFFF9F9F9),
+          //     borderRadius: BorderRadius.circular(8.r),
+          //     border: Border.all(
+          //       color: Colors.grey.withOpacity(0.1),
+          //       width: 1.w,
+          //     ),
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         state.exportInfo.value['title'] ?? '',
+          //         style: TextStyle(
+          //           fontSize: 14.sp,
+          //           fontWeight: FontWeight.w500,
+          //           color: Color(0xFF1A1A1A),
+          //         ),
+          //       ),
+          //       SizedBox(height: 8.h),
+          //       Row(
+          //         children: [
+          //           Icon(
+          //             Icons.calendar_today,
+          //             size: 14.sp,
+          //             color: Color(0xFF666666),
+          //           ),
+          //           SizedBox(width: 4.w),
+          //           Text(
+          //             state.exportInfo.value['date'] ?? '',
+          //             style: TextStyle(
+          //               fontSize: 12.sp,
+          //               color: Color(0xFFA6A6A6),
+          //             ),
+          //           ),
+          //           SizedBox(width: 10.w),
+          //           Icon(
+          //             Icons.description,
+          //             size: 14.sp,
+          //             color: Color(0xFF666666),
+          //           ),
+          //           SizedBox(width: 4.w),
+          //           Text(
+          //             state.exportInfo.value['fileType'] ?? '',
+          //             style: TextStyle(
+          //               fontSize: 12.sp,
+          //               color: Color(0xFFA6A6A6),
+          //             ),
+          //           ),
+          //           Spacer(),
+          //           Text(
+          //             state.exportInfo.value['size'] ?? '',
+          //             style: TextStyle(
+          //               fontSize: 12.sp,
+          //               color: Color(0xFFA6A6A6),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //       SizedBox(height: 8.h),
+          //       Text(
+          //         state.exportInfo.value['description'] ?? '',
+          //         style: TextStyle(
+          //           fontSize: 14.sp,
+          //           color: Color(0xFF666666),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: 20.h),
+          
+          // 操作按钮
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.previewExport(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '预览内容',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.downloadExport(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1.w,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '下载文件',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

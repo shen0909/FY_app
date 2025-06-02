@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// 导出状态枚举
+enum ExportStatus {
+  generating,
+  success,
+}
+
 class AiQusState {
   // 对话消息列表
   final RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
@@ -29,6 +35,11 @@ class AiQusState {
   
   // 批量选择模式下选中的消息索引
   final RxList<int> selectedMessageIndexes = <int>[].obs;
+
+  // 导出相关状态
+  final RxBool isExporting = false.obs;
+  final Rx<ExportStatus> exportStatus = ExportStatus.generating.obs;
+  final RxMap<String, dynamic> exportInfo = <String, dynamic>{}.obs;
 
   AiQusState() {
     ///Initialize variables
