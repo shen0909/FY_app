@@ -6,10 +6,11 @@ import 'detail_list_state.dart';
 class DetailListLogic extends GetxController {
   final DetailListState state = DetailListState();
 
-  // 添加滚动控制器
-  late final ScrollController horizontalScrollController;
-  late final ScrollController leftVerticalController;
-  late final ScrollController rightVerticalController;
+  // 滚动控制器
+  late ScrollController yearlyStatsController;
+  late ScrollController leftVerticalController;
+  late ScrollController rightVerticalController;
+  late ScrollController horizontalScrollController;
 
   // Overlay相关变量
   OverlayEntry? _overlayEntry;
@@ -21,12 +22,23 @@ class DetailListLogic extends GetxController {
   void onInit() {
     super.onInit();
     // 初始化滚动控制器
-    horizontalScrollController = ScrollController();
+    yearlyStatsController = ScrollController();
     leftVerticalController = ScrollController();
     rightVerticalController = ScrollController();
+    horizontalScrollController = ScrollController();
 
-    // 设置滚动同步
-    setupScrollControllers();
+    // 同步左右两侧的垂直滚动
+    leftVerticalController.addListener(() {
+      if (rightVerticalController.offset != leftVerticalController.offset) {
+        rightVerticalController.jumpTo(leftVerticalController.offset);
+      }
+    });
+
+    rightVerticalController.addListener(() {
+      if (leftVerticalController.offset != rightVerticalController.offset) {
+        leftVerticalController.jumpTo(rightVerticalController.offset);
+      }
+    });
   }
 
   @override
@@ -38,33 +50,14 @@ class DetailListLogic extends GetxController {
 
   @override
   void onClose() {
-    // 释放滚动控制器资源
-    horizontalScrollController.dispose();
+    // 释放控制器
+    yearlyStatsController.dispose();
     leftVerticalController.dispose();
     rightVerticalController.dispose();
+    horizontalScrollController.dispose();
     // 确保关闭overlay
     hideOverlay();
     super.onClose();
-  }
-
-  // 设置滚动控制器
-  void setupScrollControllers() {
-    leftVerticalController.addListener(syncRightScroll);
-    rightVerticalController.addListener(syncLeftScroll);
-  }
-
-  // 同步右侧滚动到左侧
-  void syncRightScroll() {
-    if (leftVerticalController.offset != rightVerticalController.offset) {
-      rightVerticalController.jumpTo(leftVerticalController.offset);
-    }
-  }
-
-  // 同步左侧滚动到右侧
-  void syncLeftScroll() {
-    if (rightVerticalController.offset != leftVerticalController.offset) {
-      leftVerticalController.jumpTo(rightVerticalController.offset);
-    }
   }
 
   // 加载清单数据
