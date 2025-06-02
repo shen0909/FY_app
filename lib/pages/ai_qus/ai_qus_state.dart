@@ -41,6 +41,26 @@ class AiQusState {
   final Rx<ExportStatus> exportStatus = ExportStatus.generating.obs;
   final RxMap<String, dynamic> exportInfo = <String, dynamic>{}.obs;
 
+  // 模型选择相关
+  final modelOverlayEntry = Rx<OverlayEntry?>(null);
+  final modelList = [
+    {
+      'name': 'Perplexity +',
+      'description': '境外舆情信息检索融合',
+      'isSelected': false.obs,
+    },
+    {
+      'name': 'Deepseek +',
+      'description': '中文深度思考',
+      'isSelected': false.obs,
+    },
+    {
+      'name': 'Hunyuan +',
+      'description': '大数据分析处理',
+      'isSelected': false.obs,
+    },
+  ].obs;
+
   AiQusState() {
     ///Initialize variables
     _initDemoData();

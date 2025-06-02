@@ -333,6 +333,7 @@ class AiQusPage extends StatelessWidget {
 
   // 顶部操作区域
   Widget _buildTopActionBar(BuildContext context) {
+    final GlobalKey modelKey = GlobalKey();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
@@ -362,8 +363,10 @@ class AiQusPage extends StatelessWidget {
               // 批量选择按钮
               batchCheckWidget(),
               SizedBox(width: 10.w),
+              // 模型选择按钮
               GestureDetector(
-                onTap: () => logic.showModelSelectionDialog(context),
+                key: modelKey,
+                onTap: () => logic.showModelSelectionDialog(context, modelKey),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 9.w),
                   decoration: BoxDecoration(
@@ -396,7 +399,7 @@ class AiQusPage extends StatelessWidget {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ],

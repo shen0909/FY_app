@@ -140,7 +140,12 @@ class AiQusLogic extends GetxController {
                   itemBuilder: (context, index) {
                     final history = state.chatHistory[index];
                     return ListTile(
-                      leading: Image.asset(FYImages.messenge_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+                      leading: Image.asset(
+                        FYImages.messenge_icon,
+                        width: 24.w,
+                        height: 24.w,
+                        fit: BoxFit.contain,
+                      ),
                       title: Text(
                         history['title'],
                         style: TextStyle(
@@ -178,7 +183,8 @@ class AiQusLogic extends GetxController {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.w),
                               ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 24.w, horizontal: 16.w),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 24.w, horizontal: 16.w),
                               actionsPadding: EdgeInsets.zero,
                               buttonPadding: EdgeInsets.zero,
                               actions: [
@@ -200,7 +206,7 @@ class AiQusLogic extends GetxController {
                                           decoration: BoxDecoration(
                                             border: Border(
                                               right: BorderSide(
-                                                color: const Color(0xFFEFEFEF), 
+                                                color: const Color(0xFFEFEFEF),
                                                 width: 1.w,
                                               ),
                                             ),
@@ -244,7 +250,12 @@ class AiQusLogic extends GetxController {
                             ),
                           );
                         },
-                        child: Image.asset(FYImages.cancle_cion,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+                        child: Image.asset(
+                          FYImages.cancle_cion,
+                          width: 24.w,
+                          height: 24.w,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                       onTap: () {
                         // 加载对话
@@ -276,7 +287,8 @@ class AiQusLogic extends GetxController {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.w),
                         ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 24.w, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 24.w, horizontal: 16.w),
                         actionsPadding: EdgeInsets.zero,
                         buttonPadding: EdgeInsets.zero,
                         actions: [
@@ -298,7 +310,7 @@ class AiQusLogic extends GetxController {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         right: BorderSide(
-                                          color: const Color(0xFFEFEFEF), 
+                                          color: const Color(0xFFEFEFEF),
                                           width: 1.w,
                                         ),
                                       ),
@@ -344,15 +356,21 @@ class AiQusLogic extends GetxController {
                   child: Container(
                     height: 48.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFECE9),
-                      borderRadius: BorderRadius.circular(4.w),
-                      border: Border.all( color: const Color(0xFFFF6850),)
-                    ),
+                        color: const Color(0xFFFFECE9),
+                        borderRadius: BorderRadius.circular(4.w),
+                        border: Border.all(
+                          color: const Color(0xFFFF6850),
+                        )),
                     alignment: Alignment.center,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(FYImages.cancel_red,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+                        Image.asset(
+                          FYImages.cancel_red,
+                          width: 24.w,
+                          height: 24.w,
+                          fit: BoxFit.contain,
+                        ),
                         Text(
                           '删除所有历史',
                           style: TextStyle(
@@ -656,7 +674,7 @@ class AiQusLogic extends GetxController {
       state.selectedMessageIndexes.clear();
     }
   }
-  
+
   /// 选择/取消选择消息
   toggleMessageSelection(int index) {
     if (state.selectedMessageIndexes.contains(index)) {
@@ -665,7 +683,7 @@ class AiQusLogic extends GetxController {
       state.selectedMessageIndexes.add(index);
     }
   }
-  
+
   /// 导出选中的消息
   exportSelectedMessages() {
     state.isExporting.value = true;
@@ -681,11 +699,11 @@ class AiQusLogic extends GetxController {
       //   'size': '1.2MB',
       //   'description': '包含${state.selectedMessageIndexes.length}条对话内容，已按时间顺序整理。',
       // };
-      
+
       state.exportStatus.value = ExportStatus.success;
     });
   }
-  
+
   /// 取消批量选择
   cancelBatchSelection() {
     state.isBatchCheck.value = false;
@@ -696,7 +714,7 @@ class AiQusLogic extends GetxController {
   void showTipTemplateDialog(BuildContext context) {
     // 首先确保当前焦点被移除
     FocusScope.of(context).unfocus();
-    
+
     // 状态控制
     bool showTemplateForm = false;
 
@@ -777,19 +795,23 @@ class AiQusLogic extends GetxController {
                     child: Row(
                       children: [
                         Container(
-                          width: 24.w,
-                          height: 24.w,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                            width: 24.w,
+                            height: 24.w,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              shape: BoxShape.circle,
                             ),
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
-                          child: Image.asset(FYImages.add_tip_mock,width: 24.w,height: 24.w,fit: BoxFit.contain,)
-                        ),
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              FYImages.add_tip_mock,
+                              width: 24.w,
+                              height: 24.w,
+                              fit: BoxFit.contain,
+                            )),
                         SizedBox(width: 8.w),
                         Text(
                           '创建新模板',
@@ -948,7 +970,8 @@ class AiQusLogic extends GetxController {
                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
                   child: Row(
                     children: [
-                      Image.asset(FYImages.my_mock,width: 20.w,height: 20.w,fit: BoxFit.contain),
+                      Image.asset(FYImages.my_mock,
+                          width: 20.w, height: 20.w, fit: BoxFit.contain),
                       SizedBox(width: 8.w),
                       Text(
                         '我的模板',
@@ -972,7 +995,8 @@ class AiQusLogic extends GetxController {
                           return GestureDetector(
                             onTap: () {
                               // 使用该模板
-                              state.messageController.text = template['content'];
+                              state.messageController.text =
+                                  template['content'];
                             },
                             child: Container(
                               margin: EdgeInsets.only(bottom: 10.w),
@@ -1015,184 +1039,122 @@ class AiQusLogic extends GetxController {
     );
   }
 
-  /// 显示模型选择弹窗
-  void showModelSelectionDialog(BuildContext context) {
-    // 首先确保当前焦点被移除
-    FocusScope.of(context).unfocus();
-    
-    // 模型列表数据
-    final models = [
-      {
-        'name': 'Perplexity +',
-        'desc': '全能处理，融合',
-        'isSelected': state.selectedModel.value == 'Perplexity +'
-      },
-      {
-        'name': 'Deepseek +',
-        'desc': '适合深思考，融合',
-        'isSelected': state.selectedModel.value == 'Deepseek +'
-      },
-      {
-        'name': '腾讯混元',
-        'desc': '文章仿写',
-        'isSelected': state.selectedModel.value == '腾讯混元'
-      }
-    ];
+  // 显示模型选择弹窗
+  void showModelSelectionDialog(BuildContext context, GlobalKey modelKey) {
+    if (state.modelOverlayEntry.value != null) {
+      hideModelSelection();
+      return;
+    }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.5,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.w),
-                topRight: Radius.circular(16.w),
+    // 获取按钮的位置和大小
+    final RenderBox? renderBox =
+        modelKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final Size size = renderBox.size;
+    final Offset position = renderBox.localToGlobal(Offset.zero);
+
+    // 创建浮层
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          // 背景遮罩，点击后关闭浮层
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: hideModelSelection,
+              child: Container(
+                color: Colors.transparent,
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 头部标题栏
-                Container(
-                  height: 48.w,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.w),
-                      topRight: Radius.circular(16.w),
+          ),
+          // 下拉菜单内容
+          Positioned(
+            top: position.dy + size.height + 4,
+            left: position.dx - 120,
+            right: 16.w,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 0,
+                      blurRadius: 8,
+                      offset: const Offset(0, 8),
                     ),
-                    color: Colors.white,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: const Color(0xFFEFEFEF),
-                        width: 1.w,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '选择模型',
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // 关闭弹窗并确保移除焦点
-                          Navigator.pop(context);
-                          FocusScope.of(context).unfocus();
-                        },
-                        child: Container(
-                          width: 24.w,
-                          height: 24.w,
-                          child: Icon(
-                            Icons.close,
-                            size: 20.w,
-                            color: const Color(0xFF1A1A1A),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-                
-                // 模型列表
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      itemCount: models.length,
-                      itemBuilder: (context, index) {
-                        final model = models[index];
-                        
-                        return GestureDetector(
-                          onTap: () {
-                            // 更新选择状态
-                            setState(() {
-                              for (var i = 0; i < models.length; i++) {
-                                models[i]['isSelected'] = i == index;
-                              }
-                            });
-                            
-                            // 更新全局状态
-                            state.selectedModel.value = model['name'] as String;
-                            
-                            // 关闭弹窗并确保移除焦点
-                            Navigator.pop(context);
-                            FocusScope.of(context).unfocus();
-                          },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: state.modelList.map((model) {
+                    return Obx(() => GestureDetector(
+                          onTap: () => selectModel(model['name'].toString()),
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 10.w),
-                            padding: EdgeInsets.all(16.w),
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF9F9F9),
-                              borderRadius: BorderRadius.circular(8.w),
-                              border: Border.all(
-                                color: model['isSelected'] as bool 
-                                    ? FYColors.color_3361FE 
-                                    : const Color(0xFFF9F9F9),
-                                width: model['isSelected'] as bool ? 1.w : 0,
-                              ),
+                              color: model['name'] == state.selectedModel.value
+                                  ? const Color(0xFFF0F6FF)
+                                  : Colors.white,
                             ),
                             child: Row(
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        model['name'] as String,
-                                        style: TextStyle(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color(0xFF1A1A1A),
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.w),
-                                      Text(
-                                        model['desc'] as String,
-                                        style: TextStyle(
-                                          fontSize: 11.sp,
-                                          color: const Color(0xFFA6A6A6),
-                                        ),
-                                      ),
-                                    ],
+                                SizedBox(
+                                  width: 80.w,
+                                  child: Text(
+                                    model['name'].toString(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF1A1A1A),
+                                    ),
                                   ),
                                 ),
-                                if (model['isSelected'] as bool)
-                                  Image.asset(
-                                    FYImages.check_icon,
-                                    width: 24.w,
-                                    height: 24.w,
-                                    fit: BoxFit.contain,
+                                SizedBox(width: 8.w),
+                                Text(
+                                  model['description'].toString(),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: const Color(0xFFA6A6A6),
+                                  ),
+                                ),
+                                const Spacer(),
+                                if (model['name'] == state.selectedModel.value)
+                                  Icon(
+                                    Icons.check,
+                                    size: 20,
+                                    color: FYColors.color_3361FE,
                                   ),
                               ],
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        ));
+                  }).toList(),
                 ),
-              ],
+              ),
             ),
-          );
-        },
+          ),
+        ],
       ),
-    ).then((_) {
-      // 确保在弹窗关闭后移除焦点
-      FocusScope.of(context).unfocus();
-    });
+    );
+
+    state.modelOverlayEntry.value = overlayEntry;
+    Overlay.of(context).insert(overlayEntry);
+  }
+
+  // 隐藏模型选择弹窗
+  void hideModelSelection() {
+    state.modelOverlayEntry.value?.remove();
+    state.modelOverlayEntry.value = null;
+  }
+
+  // 选择模型
+  void selectModel(String modelName) {
+    state.selectedModel.value = modelName;
+    hideModelSelection();
   }
 
   // 关闭导出弹窗
