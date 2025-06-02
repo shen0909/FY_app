@@ -146,7 +146,7 @@ class OrderEventDetialLogic extends GetxController {
         'date': state.eventDate.value,
         'fileType': 'word文档',
         'size': '4.2 MB',
-        'description': '包含${state.selectedItems.length}个事件的分析、影响评估及未来趋势预测，适合决策参考。'
+        'description': '包含摘要和背景、事件分析、影响评估、趋势预测和应对策略'
       };
     });
   }
