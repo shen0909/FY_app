@@ -10,9 +10,14 @@ import 'risk_logic.dart';
 import 'risk_state.dart';
 import 'package:safe_app/styles/text_styles.dart';
 
-class RiskPage extends StatelessWidget {
-  RiskPage({Key? key}) : super(key: key);
+class RiskPage extends StatefulWidget {
+  const RiskPage({Key? key}) : super(key: key);
 
+  @override
+  State<RiskPage> createState() => _RiskPageState();
+}
+
+class _RiskPageState extends State<RiskPage> {
   final RiskLogic logic = Get.put(RiskLogic());
   final RiskState state = Get.find<RiskLogic>().state;
 
@@ -52,12 +57,20 @@ class RiskPage extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            state.location,
-            style: FYTextStyles.riskLocationTitleStyle(),
+          GestureDetector(
+            key: logic.locationKey,
+            onTap: () => logic.showCitySelector(context),
+            child: Row(
+              children: [
+                Obx(() => Text(
+                  state.location.value,
+                  style: FYTextStyles.riskLocationTitleStyle(),
+                )),
+                const SizedBox(width: 8),
+                Image.asset(FYImages.down_icon, width: 8.w, height: 8.w, fit: BoxFit.contain,),
+              ],
+            ),
           ),
-          const SizedBox(width: 8),
-          Image.asset(FYImages.down_icon, width: 8.w, height: 8.w, fit: BoxFit.contain,),
           const Spacer(),
           Container(
             width: 180.w,
@@ -96,7 +109,6 @@ class RiskPage extends StatelessWidget {
               ],
             ),
           ),
-
         ],
       ),
     );
@@ -327,9 +339,31 @@ class RiskPage extends StatelessWidget {
 
   // 一类单位风险项
   Widget _buildRiskItem1(Map<String, dynamic> item) {
-    final bool isHighRisk = item['riskLevel'] == '高风险';
+    final String riskLevel = item['riskLevel'];
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
+
+    // 根据风险等级设置背景色和边框颜色
+    Color backgroundColor;
+    Color borderColor;
+    
+    switch (riskLevel) {
+      case '高风险':
+        backgroundColor = Color(0xFFFFECE9);
+        borderColor = Color(0xFFFF6850);
+        break;
+      case '中风险':
+        backgroundColor = Color(0xFFFFF7E6);
+        borderColor = Color(0xFFF6D500);
+        break;
+      case '低风险':
+        backgroundColor = Color(0xFFE7FEF8);
+        borderColor = Color(0xFF07CC89);
+        break;
+      default:
+        backgroundColor = Color(0xFFE7FEF8);
+        borderColor = Color(0xFF07CC89);
+    }
 
     return GestureDetector(
       onTap: () => Get.toNamed('/risk/details', arguments: item),
@@ -339,9 +373,9 @@ class RiskPage extends StatelessWidget {
           width: 343.w,
           padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
           decoration: BoxDecoration(
-              color: isHighRisk ? Colors.red.shade50 : Color(0xffE7FEF8),
+              color: backgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(8.w)),
-              border: Border.all(width: 1.w, color: item['borderColor'])),
+              border: Border.all(width: 1.w, color: borderColor)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -441,9 +475,31 @@ class RiskPage extends StatelessWidget {
 
   // 二类单位风险项
   Widget _buildRiskItem2(Map<String, dynamic> item) {
-    final bool isHighRisk = item['riskLevel'] == '高风险';
+    final String riskLevel = item['riskLevel'];
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
+
+    // 根据风险等级设置背景色和边框颜色
+    Color backgroundColor;
+    Color borderColor;
+    
+    switch (riskLevel) {
+      case '高风险':
+        backgroundColor = Color(0xFFFFECE9);
+        borderColor = Color(0xFFFF6850);
+        break;
+      case '中风险':
+        backgroundColor = Color(0xFFFFF7E6);
+        borderColor = Color(0xFFF6D500);
+        break;
+      case '低风险':
+        backgroundColor = Color(0xFFE7FEF8);
+        borderColor = Color(0xFF07CC89);
+        break;
+      default:
+        backgroundColor = Color(0xFFE7FEF8);
+        borderColor = Color(0xFF07CC89);
+    }
 
     return GestureDetector(
       onTap: () => Get.toNamed('/risk/details', arguments: item),
@@ -453,9 +509,9 @@ class RiskPage extends StatelessWidget {
           width: 343.w,
           padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
           decoration: BoxDecoration(
-              color: isHighRisk ? Colors.red.shade50 : Colors.green.shade50,
+              color: backgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(8.w)),
-              border: Border.all(width: 1.w, color: item['borderColor'])),
+              border: Border.all(width: 1.w, color: borderColor)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

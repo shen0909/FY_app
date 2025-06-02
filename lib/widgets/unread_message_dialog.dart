@@ -89,10 +89,7 @@ class UnreadMessageDialog extends StatelessWidget {
       decoration: BoxDecoration(
         color: FYColors.color_F9F9F9,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: FYColors.color_E6E6E6,
-          width: 1.w,
-        ),
+
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

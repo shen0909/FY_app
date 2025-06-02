@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>风险预警</title>
+    <link rel="stylesheet" href="../../../Documents/bussiness_0602_output/bussiness_0602_output/monitoring-system/assets/css/tailwind.min.css">
+    <link rel="stylesheet" href="../../../Documents/bussiness_0602_output/bussiness_0602_output/monitoring-system/assets/css/font-awesome.min.css">
+    <script src="../../../Documents/bussiness_0602_output/bussiness_0602_output/monitoring-system/assets/js/tailwind.min.js"></script>
+    <script src="../../../Documents/bussiness_0602_output/bussiness_0602_output/monitoring-system/assets/js/tailwind.config.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: local("Noto Sans SC Regular"),
+                 local("NotoSansSC-Regular"),
+                 local("Source Han Sans SC"),
+                 local("PingFang SC"),
+                 local("Microsoft YaHei"),
+                 url("../assets/fonts/NotoSansSC-Regular.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: local("Noto Sans SC Medium"),
+                 local("NotoSansSC-Medium"),
+                 local("Source Han Sans SC Medium"),
+                 local("PingFang SC Medium"),
+                 local("Microsoft YaHei"),
+                 url("../assets/fonts/NotoSansSC-Medium.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: local("Noto Sans SC Bold"),
+                 local("NotoSansSC-Bold"),
+                 local("Source Han Sans SC Bold"),
+                 local("PingFang SC Bold"),
+                 local("Microsoft YaHei Bold"),
+                 url("../assets/fonts/NotoSansSC-Bold.woff2") format("woff2");
+        }
+        
+        :root {
+            --primary-color: #3b82f6;
+            --primary-light: #93c5fd;
+            --primary-dark: #2563eb;
+            --primary-bg: #e0e7ff;
+            --secondary-bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --risk-high: #ef4444;
+            --risk-medium: #f59e0b;
+            --risk-low: #10b981;
+            --border-color: rgba(203, 213, 225, 0.5);
+            --shadow-sm: 0 2px 4px rgba(148, 163, 184, 0.1);
+            --shadow-md: 0 4px 12px rgba(148, 163, 184, 0.12);
+            --shadow-lg: 0 10px 15px -3px rgba(148, 163, 184, 0.1), 0 4px 6px -2px rgba(148, 163, 184, 0.05);
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+            --transition-normal: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            min-height: 100vh;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .main-container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px 0 rgba(59,130,246,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .header-content {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 1rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .back-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            color: var(--primary-dark);
+            background: rgba(219, 234, 254, 0.5);
+            transition: var(--transition-normal);
+        }
+        
+        .back-button:hover {
+            background: rgba(219, 234, 254, 0.8);
+            transform: translateX(-2px);
+        }
+        
+        .back-button:active {
+            transform: scale(0.95);
+        }
+        
+        .page-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin: 0;
+            position: relative;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            border-radius: var(--radius-full);
+            opacity: 0.7;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6 0%, #1e3a8a 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .alerts-content {
+            margin-top: 80px;
+            flex: 1;
+            padding: 0.5rem 0.3rem 0.3rem;
+        }
+        
+        /* 区域样式 */
+        .location-section {
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .location-section::before {
+            content: '';
+            display: inline-block;
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: var(--primary-color);
+            border-radius: var(--radius-full);
+            margin-right: 0.5rem;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* 城市选择下拉框样式 */
+        .province-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-right: 0.25rem;
+            white-space: nowrap;
+        }
+        
+        .city-selector {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .city-select {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1.5rem 0.5rem 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            appearance: none;
+            width: 70px;
+            text-align: center;
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+            overflow-y: auto;
+            max-height: 200px;
+        }
+        
+        .city-select:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .city-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .city-selector::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0.5rem;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--text-secondary);
+            pointer-events: none;
+            transition: var(--transition-normal);
+        }
+        
+        .city-selector:hover::after {
+            border-top-color: var(--primary-color);
+        }
+        
+        /* 添加搜索框样式 */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: var(--radius-full);
+            padding: 0.35rem 0.75rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-normal);
+        }
+        
+        .search-container:focus-within {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+        
+        .search-input {
+            border: none;
+            background: transparent;
+            padding: 0.25rem;
+            width: 140px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .search-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: var(--transition-normal);
+        }
+        
+        .search-button:hover {
+            color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        /* 单位选择按钮 */
+        .unit-selection {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .unit-btn {
+            flex: 1;
+            display: inline-block;
+            padding: 0.625rem 0.5rem;
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            transition: var(--transition-normal);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .unit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
+            opacity: 0;
+            transition: var(--transition-normal);
+            transform: translateY(-3px);
+        }
+        
+        .unit-btn:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .unit-btn.active {
+            background: rgba(239, 246, 255, 0.95);
+            border-color: var(--primary-color);
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+            font-weight: 600;
+        }
+        
+        .unit-btn.active::before {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.30rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-normal);
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(147, 197, 253, 0.5);
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), transparent);
+            opacity: 0.5;
+        }
+        
+        .stat-card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card-number {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card-change {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* 风险提示卡片 */
+        .risk-alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        
+        .risk-alert-section {
+            cursor: pointer;
+            position: relative;
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-normal);
+            overflow: hidden;
+        }
+        
+        .risk-alert-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* 根据风险等级设置卡片背景色 */
+        .risk-alert-section.high-risk {
+            background-color: rgba(254, 226, 226, 0.6); /* 浅红色背景 */
+            border-color: rgba(248, 113, 113, 0.4);
+        }
+        
+        .risk-alert-section.medium-risk {
+            background-color: rgba(254, 243, 199, 0.6); /* 浅黄色背景 */
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+        
+        .risk-alert-section.low-risk {
+            background-color: rgba(209, 250, 229, 0.6); /* 浅绿色背景 */
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+        
+        .risk-alert-section::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 6px;
+            height: 6px;
+            border-top: 2px solid var(--primary-light);
+            border-right: 2px solid var(--primary-light);
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .risk-alert-section:hover::after {
+            opacity: 1;
+            right: 0.75rem;
+        }
+        
+        .risk-alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .risk-alert-title {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--text-primary);
+        }
+        
+        .unread-badge {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--risk-high);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-full);
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        
+        .unread-badge:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .risk-alert-body {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .risk-alert-body:first-of-type {
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+        
+        .risk-alert-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        .risk-level {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+        
+        .risk-level-text {
+            margin-left: 0.25rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+        
+        .risk-level-text.high {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--risk-high);
+        }
+        
+        .risk-level-text.medium {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--risk-medium);
+        }
+        
+        .risk-level-text.low {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--risk-low);
+        }
+        
+        .risk-star {
+            display: inline-block;
+            font-size: 1.1rem;
+            letter-spacing: -1px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .risk-star.high {
+            color: var(--risk-high);
+        }
+        
+        .risk-star.medium {
+            color: var(--risk-medium);
+        }
+        
+        .risk-star.low {
+            color: var(--risk-low);
+        }
+        
+        /* 添加单位内容的显示与隐藏样式 */
+        .unit-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .unit-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.8);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.7);
+        }
+        
+        /* 添加未读消息弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: var(--radius-md);
+            width: 90%;
+            max-width: 360px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(239, 246, 255, 0.8);
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(219, 234, 254, 1);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .unread-messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .unread-message-item {
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            background-color: rgba(239, 246, 255, 0.5);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        
+        .unread-message-item:hover {
+            background-color: rgba(219, 234, 254, 0.8);
+            transform: translateX(4px);
+        }
+        
+        .unread-message-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .unread-message-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* 添加已读消息样式 */
+        .unread-message-item.read {
+            background-color: #f1f1f1;
+            border-color: #e5e5e5;
+            opacity: 0.8;
+        }
+        
+        .unread-message-item.read .unread-message-title {
+            color: #6b7280;
+        }
+        
+        /* 添加已读标记 */
+        .unread-message-item .read-status {
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .unread-message-item .read-status.unread {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--risk-high);
+        }
+        
+        .unread-message-item .read-status.read {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--risk-low);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- 顶部导航栏 -->
+        <header class="page-header">
+            <div class="header-content">
+                <div class="flex items-center">
+                    <a href="../../../Documents/bussiness_0602_output/bussiness_0602_output/monitoring-system/home.html" class="text-gray-700 hover:text-primary mr-3">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </a>
+                    <h1 class="text-xl gradient-text">风险预警</h1>
+                </div>
+                <div style="width: 36px;"></div> <!-- 占位元素，保持对称 -->
+            </div>
+        </header>
+        
+        <div class="alerts-content">
+            <!-- 城市位置信息 -->
+            <div class="location-section flex justify-between items-center">
+                <div class="flex items-center">
+                    <span class="province-label">广东省</span>
+                    <div class="city-selector">
+                        <select id="citySelect" class="city-select" onchange="switchCity()">
+                            <option value="all">全部</option>
+                            <option value="guangzhou">广州市</option>
+                            <option value="shenzhen">深圳市</option>
+                            <option value="zhuhai">珠海市</option>
+                            <option value="foshan">佛山市</option>
+                            <option value="dongguan">东莞市</option>
+                            <option value="zhongshan">中山市</option>
+                            <option value="jiangmen">江门市</option>
+                            <option value="huizhou">惠州市</option>
+                            <option value="shantou">汕头市</option>
+                            <option value="chaozhou">潮州市</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="companySearch" placeholder="请输入单位名称..." class="search-input">
+                    <button class="search-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 单位类型选择 -->
+            <div class="unit-selection">
+                <button class="unit-btn active" data-type="type1">烽云一号</button>
+                <button class="unit-btn" data-type="type2">烽云二号</button>
+                <button class="unit-btn" data-type="type3">星云</button>
+            </div>
+            
+            <!-- 烽云一号的内容 -->
+            <div id="type1-content" class="unit-content active">
+                <!-- 统计信息 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-title">高风险</div>
+                        <div class="stat-card-number">12家</div>
+                        <div class="stat-card-change">较昨日调整了0家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">中风险</div>
+                        <div class="stat-card-number">7家</div>
+                        <div class="stat-card-change">较昨日调整了0家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">低风险</div>
+                        <div class="stat-card-number">31家</div>
+                        <div class="stat-card-change">较昨日调整了0家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">总数</div>
+                        <div class="stat-card-number">50家</div>
+                        <div class="stat-card-change">&nbsp;</div>
+                    </div>
+                </div>
+                
+                <!-- 风险提示列表 -->
+                <div class="risk-alerts-list">
+                    <div class="risk-alert-section medium-risk" onclick="location.href='cssc-huangpu-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">中船黄埔文冲船舶有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '104', '中船黄埔文冲船舶有限公司')">5条未读</div>
+                        </div>
+                        <div class="risk-alert-body">CSSC Huangpu Wenchong Shipbuilding Company Limited</div>
+                        <div class="risk-alert-body">中船集团旗下大型造船企业，专注于各类船舶建造与海工装备</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-01-09</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text medium">中风险</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section low-risk" onclick="location.href='gsi-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">广船国际有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '101', '广船国际有限公司')">3条未读</div>
+                        </div>
+                        <div class="risk-alert-body">CSSC Guangzhou Longxue Shipbuilding Co.,Ltd.</div>
+                        <div class="risk-alert-body">市值为 8448.59 万元 | 股价为 3.30 元人民币</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-05-14</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text low">低风险</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section low-risk" onclick="location.href='gzlab-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">广州实验室</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '102', '广州实验室')">2条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Guangzhou Laboratory</div>
+                        <div class="risk-alert-body">国家级科研机构，专注于生物医学与健康科学研究</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-04-18</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text low">低风险</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section low-risk" onclick="location.href='scut-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">华南理工大学</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '103', '华南理工大学')">1条未读</div>
+                        </div>
+                        <div class="risk-alert-body">South China University of Technology</div>
+                        <div class="risk-alert-body">国家"双一流"建设高校，教育部直属全国重点大学</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-04-19</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text low">低风险</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 烽云二号的内容 -->
+            <div id="type2-content" class="unit-content">
+                <!-- 统计信息 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-title">高风险</div>
+                        <div class="stat-card-number">18家</div>
+                        <div class="stat-card-change">较昨日调整了0家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">中风险</div>
+                        <div class="stat-card-number">10家</div>
+                        <div class="stat-card-change">较昨日调整了1家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">低风险</div>
+                        <div class="stat-card-number">22家</div>
+                        <div class="stat-card-change">较昨日调整了1家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">总数</div>
+                        <div class="stat-card-number">50家</div>
+                        <div class="stat-card-change">&nbsp;</div>
+                    </div>
+                </div>
+                
+                <!-- 风险提示列表 -->
+                <div class="risk-alerts-list">
+                    <div class="risk-alert-section high-risk" onclick="location.href='hkist-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">中国科学院香港创新研究院</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '305', '中国科学院香港创新研究院')">3条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Hong Kong Institute of Science & Innovation, CAS</div>
+                        <div class="risk-alert-body">专注于人工智能、生物医药和材料科学领域的前沿研究</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-04-22</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text high">高风险</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section medium-risk" onclick="location.href='cloudwalk-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">云从科技集团股份有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '302', '云从科技集团股份有限公司')">3条未读</div>
+                        </div>
+                        <div class="risk-alert-body">CloudWalk Technology Co., Ltd.</div>
+                        <div class="risk-alert-body">人工智能领域独角兽企业，专注于计算机视觉技术</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-01-06</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text medium">中风险</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section low-risk" onclick="location.href='kingfa-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">金发科技股份有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '303', '金发科技股份有限公司')">2条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Kingfa Science & Technology Co., Ltd.</div>
+                        <div class="risk-alert-body">市值：198.6亿元 | 股价：7.32元（收市）</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-01-06</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-level-text low">低风险</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 星云的内容 -->
+            <div id="type3-content" class="unit-content">
+                <!-- 统计信息 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-title">重点关注</div>
+                        <div class="stat-card-number">100家</div>
+                        <div class="stat-card-change">较昨日调整了3家</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">一般关注</div>
+                        <div class="stat-card-number">50家</div>
+                        <div class="stat-card-change">较昨日调整了2家</div>
+                    </div>
+                    <!-- <div class="stat-card">
+                        <div class="stat-card-title">新增</div>
+                        <div class="stat-card-number">100家</div>
+                        <div class="stat-card-change">较昨日调整了3家</div>
+                    </div> -->
+                    <div class="stat-card">
+                        <div class="stat-card-title">总数</div>
+                        <div class="stat-card-number">150家</div>
+                        <div class="stat-card-change">&nbsp;</div>
+                    </div>
+                </div>
+                
+                <!-- 风险提示列表 -->
+                <div class="risk-alerts-list">
+                    <div class="risk-alert-section high-risk" onclick="location.href='smic-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">中芯国际集成电路制造有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '204', '中芯国际集成电路制造有限公司')">3条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Semiconductor Manufacturing International Corporation</div>
+                        <div class="risk-alert-body">A股总市值：6624.19亿元人民币|收盘价为82.16元人民币</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-05-28</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-star high">★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section high-risk" onclick="location.href='yizhi-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">广东一知安全科技有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '205', '广东一知安全科技有限公司')">2条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Guangdong Yizhi Security Technology Co., Ltd.</div>
+                        <div class="risk-alert-body">专注于网络安全与数据保护的高新技术企业</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-05-16</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-star high">★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section high-risk" onclick="location.href='pcitech-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">佳都科技集团股份有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '202', '佳都科技集团股份有限公司')">4条未读</div>
+                        </div>
+                        <div class="risk-alert-body">PCI Technology Group Co., Ltd.</div>
+                        <div class="risk-alert-body">市值：102.3亿元 | 股价：5.84元（收市）</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-01-06</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-star high">★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section medium-risk" onclick="location.href='yundie-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">广州云蝶科技有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '201', '广州云蝶科技有限公司')">2条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Guangzhou Yundie Technology Co., Ltd.</div>
+                        <div class="risk-alert-body">专注于人工智能和大数据分析技术开发的科技企业</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-01-06</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-star medium">★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-alert-section low-risk" onclick="location.href='zhijing-detail.html'">
+                        <div class="risk-alert-header">
+                            <div class="risk-alert-title">广州致景信息科技有限公司</div>
+                            <div class="unread-badge" onclick="showUnreadMessages(event, '203', '广州致景信息科技有限公司')">1条未读</div>
+                        </div>
+                        <div class="risk-alert-body">Guangzhou Zhijing Information Technology Co., Ltd.</div>
+                        <div class="risk-alert-body">专注于信息安全与软件服务的高新技术企业</div>
+                        <div class="risk-alert-footer">
+                            <div>更新：2025-01-06</div>
+                            <div class="risk-level">
+                                风险等级：
+                                <span class="risk-star low">★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加模态框 -->
+    <div class="modal-overlay" id="unreadMessagesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">未读消息</div>
+                <div class="modal-close" onclick="closeUnreadModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="unread-messages-list" id="unreadMessagesList">
+                    <!-- 消息内容会通过JS动态添加 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 单位类型选择
+            const unitButtons = document.querySelectorAll('.unit-btn');
+            
+            unitButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    unitButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // 为当前点击的按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 获取当前选中的单位类型
+                    const unitType = this.getAttribute('data-type');
+                    
+                    // 隐藏所有内容
+                    document.querySelectorAll('.unit-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // 显示对应类型的内容
+                    document.getElementById(unitType + '-content').classList.add('active');
+                });
+            });
+            
+            // 初始化模拟未读消息数据
+            window.unreadMessagesData = {
+                // 广州市企业消息
+                "101": [
+                    { "title": "美国国防部更新中国涉军企业清单", "date": "2025-01-06", "source": "https://www.defense.gov/", "id": "101-1", "read": false },
+                    { "title": "蓬莱巨涛因涉俄项目被美国列入SDN清单", "date": "2024-06-19", "source": "https://www.worldoe.com/html/2024/Shipyards_0618/204002.html", "id": "101-2", "read": false },
+                    { "title": "商船三井退出Arctic LNG 2项目租船合同", "date": "2024-02-08", "source": "http://m.toutiao.com/group/7333107879946043938/?upstream_biz=doubao", "id": "101-3", "read": false }
+                ],
+                "102": [
+                    { "title": "广州实验室在生物医学领域取得重大突破", "date": "2025-01-06", "source": "https://www.gzlab.ac.cn/news/2025-01-06", "id": "102-1", "read": false },
+                    { "title": "国际合作项目面临新的监管要求", "date": "2025-01-06", "source": "https://www.gzlab.ac.cn/news/2025-01-06", "id": "102-2", "read": false }
+                ],
+                "103": [
+                    { "title": "华南理工大学与美国高校合作项目调整", "date": "2025-01-06", "source": "https://www.scut.edu.cn/news/2025-01-06", "id": "103-1", "read": false }
+                ],
+                "104": [
+                    { "title": "美国国防部进一步解释CMC清单目的与影响", "date": "2025-01-09", "source": "https://www.defense.gov/News/Releases/2025-01-09", "id": "104-1", "read": false },
+                    { "title": "中船黄埔文冲被列入美国最新版\"中国涉军企业\"清单", "date": "2025-01-06", "source": "https://www.federalregister.gov/documents/2025/01/06", "id": "104-2", "read": false },
+                    { "title": "蓬莱巨涛因参与俄罗斯项目被美国列入SDN清单", "date": "2024-06-19", "source": "https://www.worldoe.com/html/2024/Shipyards_0618/204002.html", "id": "104-3", "read": false },
+                    { "title": "美国对航运及船舶行业制裁范围扩大", "date": "2024-03-28", "source": "https://www.treasury.gov/press-releases/2024-03-28", "id": "104-4", "read": false },
+                    { "title": "中国船舶集团下属25家机构被列入实体清单", "date": "2020-12-20", "source": "https://www.commerce.gov/news/2020-12-20", "id": "104-5", "read": false }
+                ],
+                "301": [
+                    { "title": "先导科技锂电设备出口面临新规限制", "date": "2025-01-06", "source": "https://www.lead.com.cn/news/2025-01-06", "id": "301-1", "read": false },
+                    { "title": "先导科技获得国家重大科技专项支持", "date": "2025-01-06", "source": "https://www.lead.com.cn/news/2025-01-06", "id": "301-2", "read": false },
+                    { "title": "欧盟对中国锂电设备征收临时关税", "date": "2025-01-06", "source": "https://ec.europa.eu/trade/2025-01-06", "id": "301-3", "read": false },
+                    { "title": "先导科技与特斯拉签署长期供货协议", "date": "2025-01-06", "source": "https://www.lead.com.cn/news/2025-01-06", "id": "301-4", "read": false }
+                ],
+                "302": [
+                    { "title": "云从科技AI技术被纳入出口管制清单", "date": "2025-01-06", "source": "https://www.cloudwalk.com/news/2025-01-06", "id": "302-1", "read": false },
+                    { "title": "云从科技获得新一轮战略投资", "date": "2025-01-06", "source": "https://www.cloudwalk.com/news/2025-01-06", "id": "302-2", "read": false },
+                    { "title": "欧盟审查中国AI企业数据处理合规性", "date": "2025-01-06", "source": "https://ec.europa.eu/digital/2025-01-06", "id": "302-3", "read": false }
+                ],
+                "303": [
+                    { "title": "金发科技被指在欧洲倾销高性能塑料产品", "date": "2025-01-06", "source": "https://www.reuters.com/business/2025-01-06", "id": "303-1", "read": false },
+                    { "title": "金发科技新型环保材料获国家科技进步奖", "date": "2025-01-06", "source": "https://www.kingfa.com/news/2025-01-06", "id": "303-2", "read": false }
+                ],
+                // 深圳市企业消息
+                "401": [
+                    { "title": "美国商务部发布指导意见：全球禁用华为昇腾AI芯片", "date": "2025-05-14", "source": "https://www.bis.gov/media/documents/general-prohibition-10-guidance-may-13-2025.pdf", "id": "401-1", "read": false },
+                    { "title": "中国商务部和外交部：美方制裁是单边霸凌行为", "date": "2025-05-15", "source": "https://www.mofcom.gov.cn/xwfb/xwfyrth/art/2025/art_9eadf7e9c71c4a4f80d7ca5ea5759a28.html", "id": "401-2", "read": false },
+                    { "title": "美国商务部废除AI扩散规则，加强芯片出口管制", "date": "2025-05-13", "source": "https://www.bis.gov/media/documents/ai-policy-statement-training-ai-models-may-13-2025", "id": "401-3", "read": false },
+                    { "title": "华为推出最新款AI功能手机", "date": "2025-02-10", "source": "https://www.huawei.com/cn/news/2025-02-10", "id": "401-4", "read": false },
+                    { "title": "美国撤销多个公司向华为供货许可证", "date": "2024-05-08", "source": "https://www.reuters.com/technology/us-revokes-licenses-intel-qualcomm-to-sell-chips-to-chinas-huawei-sources-2024-05-07/", "id": "401-5", "read": false }
+                ],
+                "402": [
+                    { "title": "中兴通讯获得5G基站大单", "date": "2025-01-06", "source": "https://www.zte.com.cn/news/2025-01-06", "id": "402-1", "read": false },
+                    { "title": "欧盟对中兴通讯产品进行安全审查", "date": "2025-01-06", "source": "https://ec.europa.eu/digital/2025-01-06", "id": "402-2", "read": false },
+                    { "title": "中兴通讯在非洲市场扩大投资", "date": "2025-01-06", "source": "https://www.zte.com.cn/news/2025-01-06", "id": "402-3", "read": false }
+                ],
+                "403": [
+                    { "title": "比亚迪电动车在欧洲销量创新高", "date": "2025-01-06", "source": "https://www.byd.com/news/2025-01-06", "id": "403-1", "read": false },
+                    { "title": "欧盟调查中国电动车补贴政策", "date": "2025-01-06", "source": "https://ec.europa.eu/competition/2025-01-06", "id": "403-2", "read": false }
+                ],
+                "501": [
+                    { "title": "深圳医学科学院国际合作项目受到关注", "date": "2025-01-06", "source": "https://www.sams.org.cn/news/2025-01-06", "id": "501-1", "read": false },
+                    { "title": "生物医学研究数据安全新规发布", "date": "2025-01-06", "source": "https://www.sams.org.cn/news/2025-01-06", "id": "501-2", "read": false }
+                ],
+                "502": [
+                    { "title": "中科院先进院技术转移面临新挑战", "date": "2025-01-06", "source": "https://www.siat.ac.cn/news/2025-01-06", "id": "502-1", "read": false }
+                ],
+                // 星云企业消息（保持原有）
+                "201": [
+                    { "title": "广州云蝶获得5000万美元B轮融资", "date": "2025-01-06", "source": "https://www.yundie.com/news/2025-01-06", "id": "201-1", "read": false },
+                    { "title": "云蝶AI模型被指存在数据隐私风险", "date": "2025-01-06", "source": "https://tech.sina.com.cn/2025-01-06", "id": "201-2", "read": false }
+                ],
+                "202": [
+                    { "title": "佳都科技中标广州地铁智能安防项目", "date": "2025-01-06", "source": "https://www.pcitech.com/news/2025-01-06", "id": "202-1", "read": false },
+                    { "title": "佳都科技AI芯片研发取得突破", "date": "2025-01-06", "source": "https://www.pcitech.com/news/2025-01-06", "id": "202-2", "read": false },
+                    { "title": "分析师下调佳都科技评级至\"中性\"", "date": "2025-01-06", "source": "https://finance.eastmoney.com/news/2025-01-06", "id": "202-3", "read": false },
+                    { "title": "佳都科技董事长增持公司股份500万股", "date": "2025-01-06", "source": "https://www.cnstock.com/company/2025-01-06", "id": "202-4", "read": false }
+                ],
+                "203": [
+                    { "title": "广州致景获评省级网络安全技术创新中心", "date": "2025-01-06", "source": "https://www.gzzhijing.com/news/2025-01-06", "id": "203-1", "read": false }
+                ],
+                "204": [
+                    { "title": "美国商务部将中芯国际列入实体清单", "date": "2020-12-18", "source": "https://www.commerce.gov/news/press-releases/2020/12/commerce-adds-china-national-offshore-oil-corporation-and-subsidiaries", "id": "204-1", "read": false },
+                    { "title": "中芯国际14纳米工艺技术获得突破", "date": "2024-08-15", "source": "https://www.smic.com/news/2024-08-15", "id": "204-2", "read": false },
+                    { "title": "荷兰政府限制对华半导体设备出口", "date": "2023-06-30", "source": "https://www.government.nl/latest/news/2023/06/30/export-restrictions-semiconductor-manufacturing-equipment", "id": "204-3", "read": false }
+                ],
+                "205": [
+                    { "title": "美国商务部将广东一知安全科技列入实体清单", "date": "2025-05-16", "source": "https://www.commerce.gov/news/2025-05-16", "id": "205-1", "read": false },
+                    { "title": "广东一知安全科技获国家网络安全重点实验室认证", "date": "2025-03-20", "source": "https://www.yizhi-security.com/news/2025-03-20", "id": "205-2", "read": false }
+                ],
+                "305": [
+                    { "title": "中科院香港创新研究院纳入美国关注监控名单", "date": "2025-04-22", "source": "https://www.hkisi.cas.cn/news/2025-04-22", "id": "305-1", "read": false },
+                    { "title": "中科院香港创新研究院暂停与麻省理工学院合作计划", "date": "2025-03-15", "source": "https://www.hkisi.cas.cn/news/2025-03-15", "id": "305-2", "read": false },
+                    { "title": "香港创新研究院AI技术进入国家战略审查范围", "date": "2025-02-28", "source": "https://www.hkisi.cas.cn/news/2025-02-28", "id": "305-3", "read": false }
+                ]
+            };
+            
+            // 从本地存储加载已读状态
+            loadReadStatus();
+            
+            // 更新所有企业的未读消息数量
+            updateAllUnreadCounts();
+            
+            // 模拟企业数据库（用于模糊搜索）
+            window.companiesDatabase = [
+                // 广州市企业
+                { id: "101", name: "广船国际有限公司", type: "type1", city: "guangzhou", specialPage: "gsi-detail.html", updateDate: "2025-01-06" },
+                { id: "102", name: "广州实验室", type: "type1", city: "guangzhou", specialPage: "gzlab-detail.html" },
+                { id: "103", name: "华南理工大学", type: "type1", city: "guangzhou", specialPage: "scut-detail.html" },
+                { id: "104", name: "中船黄埔文冲船舶有限公司", type: "type1", city: "guangzhou", specialPage: "cssc-huangpu-detail.html", updateDate: "2025-01-09" },
+                { id: "302", name: "云从科技集团股份有限公司", type: "type2", city: "guangzhou", specialPage: "cloudwalk-detail.html" },
+                { id: "303", name: "金发科技股份有限公司", type: "type2", city: "guangzhou", specialPage: "kingfa-detail.html" },
+                { id: "305", name: "中国科学院香港创新研究院", type: "type2", city: "guangzhou", specialPage: "hkist-detail.html", updateDate: "2025-04-22" },
+                // 深圳市企业
+                { id: "401", name: "华为技术有限公司", type: "type1", city: "shenzhen", specialPage: "huawei-detail.html" },
+                { id: "402", name: "中兴通讯股份有限公司", type: "type1", city: "shenzhen", specialPage: "zte-detail.html" },
+                { id: "403", name: "比亚迪股份有限公司", type: "type1", city: "shenzhen", specialPage: "byd-detail.html" },
+                { id: "501", name: "深圳市医学科学院", type: "type2", city: "shenzhen", specialPage: "sams-detail.html" },
+                { id: "502", name: "中芯国际（深圳）", type: "type1", city: "shenzhen", specialPage: "smic-shenzhen-detail.html", updateDate: "2025-05-20" },
+                { id: "503", name: "中科院先进院", type: "type2", city: "shenzhen", specialPage: "siat-detail.html" },
+                // 星云企业（保持原有）
+                { id: "201", name: "广州云蝶科技有限公司", type: "type3", city: "guangzhou", specialPage: "yundie-detail.html" },
+                { id: "202", name: "佳都科技集团股份有限公司", type: "type3", city: "guangzhou", specialPage: "pcitech-detail.html" },
+                { id: "203", name: "广州致景信息科技有限公司", type: "type3", city: "guangzhou", specialPage: "zhijing-detail.html" },
+                { id: "204", name: "中芯国际集成电路制造有限公司", type: "type3", city: "guangzhou", specialPage: "smic-detail.html" },
+                { id: "205", name: "广东一知安全科技有限公司", type: "type3", city: "guangzhou", specialPage: "yizhi-detail.html", updateDate: "2025-05-16" }
+            ];
+            
+            // 默认选择"全部"城市
+            document.getElementById('citySelect').value = 'all';
+            switchCity();
+            
+            // 企业搜索功能
+            const searchInput = document.getElementById('companySearch');
+            
+            searchInput.addEventListener('keyup', function(e) {
+                // 如果按下回车键，执行搜索
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            document.querySelector('.search-button').addEventListener('click', performSearch);
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                
+                if (searchTerm.length < 2) {
+                    alert('请输入至少2个字符进行搜索');
+                    return;
+                }
+                
+                // 获取当前选择的城市
+                const currentCity = document.getElementById('citySelect').value;
+                
+                // 进行模糊搜索，根据当前城市选择过滤
+                const results = window.companiesDatabase.filter(company => {
+                    return company.name.toLowerCase().includes(searchTerm) && 
+                           (currentCity === 'all' || company.city === currentCity || company.type === 'type3'); // type3是星云，不分城市
+                });
+                
+                if (results.length > 0) {
+                    // 找到了匹配的企业
+                    const company = results[0]; // 取第一个匹配结果
+                    
+                    // 如果当前不是"全部"城市，且搜索到的企业不在当前城市，需要切换城市
+                    if (currentCity !== 'all' && company.city && company.city !== currentCity && company.type !== 'type3') {
+                        document.getElementById('citySelect').value = company.city;
+                        switchCity();
+                    }
+                    
+                    // 切换到对应的单位类型标签
+                    document.querySelector(`.unit-btn[data-type="${company.type}"]`).click();
+                    
+                    // 高亮显示搜索到的企业
+                    setTimeout(() => {
+                        highlightCompany(company.id);
+                    }, 100);
+                    
+                    // 提示用户
+                    if (results.length > 1) {
+                        alert(`找到了${results.length}个结果，已定位到"${company.name}"`);
+                    }
+                } else {
+                    alert('未找到匹配的企业，请尝试其他关键词');
+                }
+            }
+            
+            function highlightCompany(companyId) {
+                // 移除之前的高亮
+                document.querySelectorAll('.risk-alert-section.highlighted').forEach(el => {
+                    el.classList.remove('highlighted');
+                });
+                
+                // 找到对应的企业卡片
+                const companyCard = document.querySelector(`.risk-alert-section[onclick*="id=${companyId}"]`);
+                
+                if (companyCard) {
+                    // 高亮显示
+                    companyCard.classList.add('highlighted');
+                    
+                    // 滚动到该企业卡片
+                    companyCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // 添加高亮动画
+                    companyCard.style.animation = 'highlight-pulse 2s';
+                    
+                    // 动画结束后移除
+                    setTimeout(() => {
+                        companyCard.style.animation = '';
+                    }, 2000);
+                }
+            }
+            
+            // 更新所有企业的未读消息数量
+            updateAllUnreadCounts();
+        });
+        
+        // 添加高亮动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .risk-alert-section.highlighted {
+                border: 2px solid var(--primary-color);
+                box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            }
+            
+            @keyframes highlight-pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 从localStorage加载已读状态
+        function loadReadStatus() {
+            try {
+                const savedReadStatus = localStorage.getItem('messageReadStatus');
+                if (savedReadStatus) {
+                    const readStatusData = JSON.parse(savedReadStatus);
+                    
+                    // 更新消息的已读状态
+                    for (const companyId in window.unreadMessagesData) {
+                        window.unreadMessagesData[companyId].forEach(message => {
+                            if (readStatusData[message.id]) {
+                                message.read = true;
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('加载已读状态时出错:', error);
+            }
+        }
+        
+        // 保存已读状态到localStorage
+        function saveReadStatus(messageId) {
+            try {
+                const savedReadStatus = localStorage.getItem('messageReadStatus') || '{}';
+                const readStatusData = JSON.parse(savedReadStatus);
+                
+                // 标记为已读
+                readStatusData[messageId] = true;
+                
+                // 保存到localStorage
+                localStorage.setItem('messageReadStatus', JSON.stringify(readStatusData));
+                console.log('消息已标记为已读:', messageId);
+            } catch (error) {
+                console.error('保存已读状态时出错:', error);
+            }
+        }
+        
+        // 更新所有企业的未读消息数量
+        function updateAllUnreadCounts() {
+            const companies = ['101', '102', '103', '104', '201', '202', '203', '204', '205', '301', '302', '303', '401', '402', '403', '501', '502'];
+            
+            companies.forEach(companyId => {
+                updateUnreadCount(companyId);
+            });
+        }
+        
+        // 更新特定企业的未读消息数量
+        function updateUnreadCount(companyId) {
+            const messages = window.unreadMessagesData[companyId] || [];
+            const unreadCount = messages.filter(msg => !msg.read).length;
+            
+            // 找到对应的未读消息标签
+            const unreadBadges = document.querySelectorAll(`.unread-badge[onclick*="'${companyId}'"]`);
+            
+            unreadBadges.forEach(badge => {
+                if (unreadCount > 0) {
+                    badge.textContent = `${unreadCount}条未读`;
+                    badge.style.display = '';
+                } else {
+                    badge.textContent = '全部已读';
+                    badge.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                    badge.style.color = 'var(--risk-low)';
+                    badge.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+                }
+            });
+            
+            return unreadCount;
+        }
+        
+        // 显示未读消息弹窗
+        function showUnreadMessages(event, companyId, companyName) {
+            // 阻止事件冒泡，防止点击未读标签时触发卡片的点击事件
+            event.stopPropagation();
+            
+            // 获取模态框元素
+            const modal = document.getElementById('unreadMessagesModal');
+            const messagesList = document.getElementById('unreadMessagesList');
+            
+            // 清空现有消息列表
+            messagesList.innerHTML = '';
+            
+            // 获取该公司的消息
+            const messages = window.unreadMessagesData[companyId] || [];
+            
+            // 添加消息到列表
+            if (messages.length > 0) {
+                messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = `unread-message-item ${message.read ? 'read' : ''}`;
+                    messageElement.setAttribute('data-message-id', message.id);
+                    
+                    messageElement.onclick = function() {
+                        // 标记为已读
+                        markAsRead(companyId, message.id);
+                        
+                        // 打开来源链接
+                        window.open(message.source, '_blank');
+                    };
+                    
+                    messageElement.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="unread-message-title">${message.title}</div>
+                            <span class="read-status ${message.read ? 'read' : 'unread'}">
+                                ${message.read ? '已读' : '未读'}
+                            </span>
+                        </div>
+                        <div class="unread-message-meta">
+                            <span>${message.date}</span>
+                            <span>${companyName}</span>
+                        </div>
+                    `;
+                    
+                    messagesList.appendChild(messageElement);
+                });
+            } else {
+                // 如果没有消息，显示提示
+                messagesList.innerHTML = '<div class="text-center text-gray-500 py-4">暂无消息</div>';
+            }
+            
+            // 显示模态框
+            modal.classList.add('active');
+            
+            // 添加点击模态框外部区域关闭模态框的事件
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeUnreadModal();
+                }
+            });
+        }
+        
+        // 标记消息为已读
+        function markAsRead(companyId, messageId) {
+            // 更新内存中的数据
+            const messages = window.unreadMessagesData[companyId] || [];
+            const message = messages.find(msg => msg.id === messageId);
+            
+            if (message && !message.read) {
+                message.read = true;
+                
+                // 保存到localStorage
+                saveReadStatus(messageId);
+                
+                // 更新UI显示
+                const messageElement = document.querySelector(`.unread-message-item[data-message-id="${messageId}"]`);
+                if (messageElement) {
+                    messageElement.classList.add('read');
+                    const statusElement = messageElement.querySelector('.read-status');
+                    if (statusElement) {
+                        statusElement.textContent = '已读';
+                        statusElement.classList.remove('unread');
+                        statusElement.classList.add('read');
+                    }
+                }
+                
+                // 更新未读消息数量
+                updateUnreadCount(companyId);
+            }
+        }
+        
+        // 关闭未读消息弹窗
+        function closeUnreadModal() {
+            const modal = document.getElementById('unreadMessagesModal');
+            modal.classList.remove('active');
+        }
+        
+        // 城市数据配置
+        const cityData = {
+            all: {
+                name: "全部",
+                type1: {
+                    stats: {
+                        high: 12,
+                        medium: 7,
+                        low: 31,
+                        total: 50
+                    },
+                    companies: [
+                        {
+                            id: "401",
+                            name: "华为技术有限公司",
+                            englishName: "Huawei Technologies Co., Ltd.",
+                            description: "全球领先的ICT基础设施和智能终端提供商",
+                            riskLevel: "high",
+                            updateDate: "2025-05-14",
+                            unreadCount: 5,
+                            specialPage: "huawei-detail.html"
+                        },
+                        {
+                            id: "502",
+                            name: "中芯国际（深圳）",
+                            englishName: "SMIC (Shenzhen)",
+                            description: "中国大型集成电路制造企业，专注于先进芯片工艺",
+                            riskLevel: "high",
+                            updateDate: "2025-05-20",
+                            unreadCount: 4,
+                            specialPage: "smic-shenzhen-detail.html"
+                        },
+                        {
+                            id: "104",
+                            name: "中船黄埔文冲船舶有限公司",
+                            englishName: "CSSC Huangpu Wenchong Shipbuilding Company Limited",
+                            description: "中船集团旗下大型造船企业，专注于各类船舶建造与海工装备",
+                            riskLevel: "medium",
+                            updateDate: "2025-01-09",
+                            unreadCount: 5,
+                            specialPage: "cssc-huangpu-detail.html"
+                        },
+                        {
+                            id: "402",
+                            name: "中兴通讯股份有限公司",
+                            englishName: "ZTE Corporation",
+                            description: "市值：1245.8亿元 | 股价：28.45元（收市）",
+                            riskLevel: "high",
+                            updateDate: "2025-05-14",
+                            unreadCount: 3,
+                            specialPage: "zte-detail.html"
+                        },
+                        {
+                            id: "403",
+                            name: "比亚迪股份有限公司",
+                            englishName: "BYD Company Limited",
+                            description: "市值：6982.5亿元 | 股价：237.52元（收市）",
+                            riskLevel: "high",
+                            updateDate: "2025-05-14",
+                            unreadCount: 2,
+                            specialPage: "byd-detail.html"
+                        },
+                        {
+                            id: "501",
+                            name: "深圳市医学科学院",
+                            englishName: "Shenzhen Academy of Medical Sciences",
+                            description: "深圳市重要的医学科研机构，专注于转化医学研究",
+                            riskLevel: "high",
+                            updateDate: "2025-01-06",
+                            unreadCount: 2,
+                            specialPage: "sams-detail.html"
+                        },
+                        {
+                            id: "101",
+                            name: "广船国际有限公司",
+                            englishName: "Guangzhou Shipyard International Company Limited",
+                            description: "市值为 8448.59 万元 | 股价为 3.30 元人民币",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 3,
+                            specialPage: "gsi-detail.html"
+                        },
+                        {
+                            id: "102",
+                            name: "广州实验室",
+                            englishName: "Guangzhou Laboratory",
+                            description: "国家级科研机构，专注于生物医学与健康科学研究",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 2
+                        },
+                        {
+                            id: "103",
+                            name: "华南理工大学",
+                            englishName: "South China University of Technology",
+                            description: "国家\"双一流\"建设高校，教育部直属全国重点大学",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 1
+                        }
+                    ]
+                },
+                type2: {
+                    stats: {
+                        high: 18,
+                        medium: 10,
+                        low: 22,
+                        total: 50
+                    },
+                    companies: [
+                        {
+                            id: "305",
+                            name: "中国科学院香港创新研究院",
+                            englishName: "Hong Kong Institute of Science & Innovation, CAS",
+                            description: "专注于人工智能、生物医药和材料科学领域的前沿研究",
+                            riskLevel: "high",
+                            updateDate: "2025-04-22",
+                            unreadCount: 3,
+                            specialPage: "hkist-detail.html"
+                        },
+                        {
+                            id: "302",
+                            name: "云从科技集团股份有限公司",
+                            englishName: "CloudWalk Technology Co., Ltd.",
+                            description: "人工智能领域独角兽企业，专注于计算机视觉技术",
+                            riskLevel: "medium",
+                            updateDate: "2025-01-06",
+                            unreadCount: 3
+                        },
+                        {
+                            id: "303",
+                            name: "金发科技股份有限公司",
+                            englishName: "Kingfa Science & Technology Co., Ltd.",
+                            description: "市值：198.6亿元 | 股价：7.32元（收市）",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 2
+                        }
+                    ]
+                }
+            },
+            guangzhou: {
+                name: "广州市",
+                type1: {
+                    stats: {
+                        high: 0,
+                        medium: 2,
+                        low: 12,
+                        total: 14
+                    },
+                    companies: [
+                        {
+                            id: "104",
+                            name: "中船黄埔文冲船舶有限公司",
+                            englishName: "CSSC Huangpu Wenchong Shipbuilding Company Limited",
+                            description: "中船集团旗下大型造船企业，专注于各类船舶建造与海工装备",
+                            riskLevel: "medium",
+                            updateDate: "2025-01-09",
+                            unreadCount: 5,
+                            specialPage: "cssc-huangpu-detail.html"
+                        },
+                        {
+                            id: "101",
+                            name: "广船国际有限公司",
+                            englishName: "Guangzhou Shipyard International Company Limited",
+                            description: "市值为 8448.59 万元 | 股价为 3.30 元人民币",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 3,
+                            specialPage: "gsi-detail.html"
+                        },
+                        {
+                            id: "102",
+                            name: "广州实验室",
+                            englishName: "Guangzhou Laboratory",
+                            description: "国家级科研机构，专注于生物医学与健康科学研究",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 2
+                        },
+                        {
+                            id: "103",
+                            name: "华南理工大学",
+                            englishName: "South China University of Technology",
+                            description: "国家\"双一流\"建设高校，教育部直属全国重点大学",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 1
+                        }
+                    ]
+                },
+                type2: {
+                    stats: {
+                        high: 2,
+                        medium: 4,
+                        low: 9,
+                        total: 15
+                    },
+                    companies: [
+                        {
+                            id: "305",
+                            name: "中国科学院香港创新研究院",
+                            englishName: "Hong Kong Institute of Science & Innovation, CAS",
+                            description: "专注于人工智能、生物医药和材料科学领域的前沿研究",
+                            riskLevel: "high",
+                            updateDate: "2025-04-22",
+                            unreadCount: 3,
+                            specialPage: "hkist-detail.html"
+                        },
+                        {
+                            id: "302",
+                            name: "云从科技集团股份有限公司",
+                            englishName: "CloudWalk Technology Co., Ltd.",
+                            description: "人工智能领域独角兽企业，专注于计算机视觉技术",
+                            riskLevel: "medium",
+                            updateDate: "2025-01-06",
+                            unreadCount: 3
+                        },
+                        {
+                            id: "303",
+                            name: "金发科技股份有限公司",
+                            englishName: "Kingfa Science & Technology Co., Ltd.",
+                            description: "市值：198.6亿元 | 股价：7.32元（收市）",
+                            riskLevel: "low",
+                            updateDate: "2025-01-06",
+                            unreadCount: 2
+                        }
+                    ]
+                }
+            },
+            shenzhen: {
+                name: "深圳市",
+                type1: {
+                    stats: {
+                        high: 11,
+                        medium: 3,
+                        low: 9,
+                        total: 23
+                    },
+                    companies: [
+                        {
+                            id: "401",
+                            name: "华为技术有限公司",
+                            englishName: "Huawei Technologies Co., Ltd.",
+                            description: "全球领先的ICT基础设施和智能终端提供商",
+                            riskLevel: "high",
+                            updateDate: "2025-05-14",
+                            unreadCount: 5,
+                            specialPage: "huawei-detail.html"
+                        },
+                        {
+                            id: "402",
+                            name: "中兴通讯股份有限公司",
+                            englishName: "ZTE Corporation",
+                            description: "市值：1245.8亿元 | 股价：28.45元（收市）",
+                            riskLevel: "high",
+                            updateDate: "2025-05-14",
+                            unreadCount: 3,
+                            specialPage: "zte-detail.html"
+                        },
+                        {
+                            id: "403",
+                            name: "比亚迪股份有限公司",
+                            englishName: "BYD Company Limited",
+                            description: "市值：6982.5亿元 | 股价：237.52元（收市）",
+                            riskLevel: "high",
+                            updateDate: "2025-05-14",
+                            unreadCount: 2,
+                            specialPage: "byd-detail.html"
+                        },
+                        {
+                            id: "502",
+                            name: "中芯国际（深圳）",
+                            englishName: "SMIC (Shenzhen)",
+                            description: "中国大型集成电路制造企业，专注于先进芯片工艺",
+                            riskLevel: "high",
+                            updateDate: "2025-05-20",
+                            unreadCount: 4,
+                            specialPage: "smic-shenzhen-detail.html"
+                        }
+                    ]
+                },
+                type2: {
+                    stats: {
+                        high: 1,
+                        medium: 1,
+                        low: 0,
+                        total: 2
+                    },
+                    companies: [
+                        {
+                            id: "501",
+                            name: "深圳市医学科学院",
+                            englishName: "Shenzhen Academy of Medical Sciences",
+                            description: "深圳市重要的医学科研机构，专注于转化医学研究",
+                            riskLevel: "high",
+                            updateDate: "2025-01-06",
+                            unreadCount: 2,
+                            specialPage: "sams-detail.html"
+                        },
+                        {
+                            id: "502",
+                            name: "中科院先进院",
+                            englishName: "Shenzhen Institutes of Advanced Technology, CAS",
+                            description: "中国科学院深圳先进技术研究院，专注于前沿技术研发",
+                            riskLevel: "medium",
+                            updateDate: "2025-01-06",
+                            unreadCount: 1,
+                            specialPage: "siat-detail.html"
+                        }
+                    ]
+                }
+            }
+        };
+        
+        // 城市切换功能
+        function switchCity() {
+            const citySelect = document.getElementById('citySelect');
+            const selectedCity = citySelect.value;
+            const currentData = cityData[selectedCity];
+            
+            if (!currentData) return;
+            
+            // 更新统计数据和企业列表
+            updateCityData(currentData);
+            
+            // 重置到第一个标签页
+            document.querySelector('.unit-btn[data-type="type1"]').click();
+        }
+        
+        // 更新城市数据
+        function updateCityData(data) {
+            // 更新烽云一号数据
+            updateUnitData('type1', data.type1);
+            
+            // 更新烽云二号数据
+            updateUnitData('type2', data.type2);
+        }
+        
+        // 更新单位数据
+        function updateUnitData(unitType, unitData) {
+            const contentDiv = document.getElementById(`${unitType}-content`);
+            
+            // 更新统计数据
+            const statCards = contentDiv.querySelectorAll('.stat-card-number');
+            statCards[0].textContent = `${unitData.stats.high}家`;
+            statCards[1].textContent = `${unitData.stats.medium}家`;
+            statCards[2].textContent = `${unitData.stats.low}家`;
+            statCards[3].textContent = `${unitData.stats.total}家`;
+            
+            // 更新企业列表
+            const alertsList = contentDiv.querySelector('.risk-alerts-list');
+            alertsList.innerHTML = '';
+            
+            unitData.companies.forEach(company => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `risk-alert-section ${company.riskLevel}-risk`;
+                
+                // 检查是否有特殊页面，如果有则使用特殊页面，否则使用通用页面
+                if (company.specialPage) {
+                    alertDiv.onclick = () => location.href = company.specialPage;
+                } else {
+                    alertDiv.onclick = () => location.href = `company-detail.html?id=${company.id}&type=${unitType.slice(-1)}`;
+                }
+                
+                const riskLevelText = {
+                    'high': '高风险',
+                    'medium': '中风险',
+                    'low': '低风险'
+                };
+                
+                alertDiv.innerHTML = `
+                    <div class="risk-alert-header">
+                        <div class="risk-alert-title">${company.name}</div>
+                        <div class="unread-badge" onclick="showUnreadMessages(event, '${company.id}', '${company.name}')">${company.unreadCount}条未读</div>
+                    </div>
+                    <div class="risk-alert-body">${company.englishName}</div>
+                    <div class="risk-alert-body">${company.description}</div>
+                    <div class="risk-alert-footer">
+                        <div>更新：${company.updateDate}</div>
+                        <div class="risk-level">
+                            风险等级：
+                            <span class="risk-level-text ${company.riskLevel}">${riskLevelText[company.riskLevel]}</span>
+                        </div>
+                    </div>
+                `;
+                
+                alertsList.appendChild(alertDiv);
+            });
+        }
+    </script>
+</body>
+</html>

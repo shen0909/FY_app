@@ -100,12 +100,15 @@ class RiskDetailsPage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8.w),
-          Text(
-            'CSSC Huangpu Wenchong Shipbuilding Company Limited',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF345DFF),
+          GestureDetector(
+            onTap: () => logic.showNewsResource(),
+            child: Text(
+              'CSSC Huangpu Wenchong Shipbuilding Company Limited',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF345DFF),
+              ),
             ),
           ),
         ],

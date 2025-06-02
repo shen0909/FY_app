@@ -132,6 +132,38 @@ class RiskDetailsLogic extends GetxController {
     );
   }
 
+  // 显示风险来源
+  void showNewsResource() {
+    Get.bottomSheet(
+      Container(
+        width: double.infinity,
+        height: 500.h,
+        decoration: BoxDecoration(
+          color: FYColors.whiteColor,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 顶部标题区域
+            dialogTitle('2025-04-15 新闻来源'),
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8.r)),
+                  color: Color(0xffF9FBFF)
+              ),
+              child: Text('中国裁判文书网'),
+            )
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: true,
+    );
+  }
+
   // 风险评分项目
   Widget _buildRiskScoreItem(Map<String, dynamic> score) {
     return Container(
