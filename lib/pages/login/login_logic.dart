@@ -141,7 +141,7 @@ class LoginLogic extends GetxController {
 
     if (failedAttempts >= 5 && timestamp != null) {
       final now = DateTime.now().millisecondsSinceEpoch;
-      final lockDuration = 30 * 60 * 1000; // 30分钟
+      final lockDuration = 0.3 * 60 * 1000; // 30分钟
 
       if (now - timestamp < lockDuration) {
         state.isLocked.value = true;
@@ -149,7 +149,7 @@ class LoginLogic extends GetxController {
             ((lockDuration - (now - timestamp)) / (60 * 1000)).ceil();
         _startLockTimer();
         // 如果被锁定，切换到密码登录
-        state.loginMethod.value = 0;
+        // state.loginMethod.value = 0;
       } else {
         await SharedPreference.resetPatternLockFailedAttempts();
         state.remainingAttempts.value = 5;
@@ -250,8 +250,7 @@ class LoginLogic extends GetxController {
         _showError('图案不正确，还可以尝试${state.remainingAttempts.value}次');
 
         if (newFailedAttempts >= 5) {
-          await SharedPreference.setPatternLockTimestamp(
-              DateTime.now().millisecondsSinceEpoch);
+          await SharedPreference.setPatternLockTimestamp(DateTime.now().millisecondsSinceEpoch);
           await _checkLockStatus();
         }
       }
