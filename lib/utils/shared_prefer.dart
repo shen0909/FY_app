@@ -8,6 +8,12 @@ class SharedPreference {
   static const String USER_NAME_KEY = 'user_name';
   static const String USER_ROLE_KEY = 'user_role';
   static const String USER_DATA_KEY = 'user_data';
+  static const String USE_PASSWORD_LOGIN_KEY = 'use_password_login';
+  static const String FINGERPRINT_ENABLED_KEY = 'fingerprint_enabled';
+  static const String PATTERN_LOCK_FAILED_ATTEMPTS = 'pattern_lock_failed_attempts';
+  static const String PATTERN_LOCK_TIMESTAMP = 'pattern_lock_timestamp';
+  static const String PATTERN_LOCK_ENABLED = 'pattern_lock_enabled';
+  static const String IS_FIRST_LOGIN = 'is_first_login';
 
   // 保存完整的LoginData对象
   static Future<bool> saveLoginData(LoginData loginData) async {
@@ -103,5 +109,89 @@ class SharedPreference {
   static Future<bool> clearAll() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.clear();
+  }
+
+  // 设置使用密码登录标记
+  static Future<bool> setUsePasswordLogin(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setBool(USE_PASSWORD_LOGIN_KEY, value);
+  }
+
+  // 获取使用密码登录标记
+  static Future<bool> getUsePasswordLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(USE_PASSWORD_LOGIN_KEY) ?? false;
+  }
+
+  // 移除使用密码登录标记
+  static Future<bool> removeUsePasswordLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.remove(USE_PASSWORD_LOGIN_KEY);
+  }
+
+  // 设置指纹登录启用状态
+  static Future<bool> setFingerprintEnabled(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setBool(FINGERPRINT_ENABLED_KEY, value);
+  }
+
+  // 获取指纹登录启用状态
+  static Future<bool> getFingerprintEnabled() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(FINGERPRINT_ENABLED_KEY) ?? false;
+  }
+
+  // 获取图案锁失败次数
+  static Future<int> getPatternLockFailedAttempts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(PATTERN_LOCK_FAILED_ATTEMPTS) ?? 0;
+  }
+
+  // 设置图案锁失败次数
+  static Future<bool> setPatternLockFailedAttempts(int attempts) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setInt(PATTERN_LOCK_FAILED_ATTEMPTS, attempts);
+  }
+
+  // 重置图案锁失败次数
+  static Future<bool> resetPatternLockFailedAttempts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setInt(PATTERN_LOCK_FAILED_ATTEMPTS, 0);
+  }
+
+  // 设置图案锁锁定时间戳
+  static Future<bool> setPatternLockTimestamp(int timestamp) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setInt(PATTERN_LOCK_TIMESTAMP, timestamp);
+  }
+
+  // 获取图案锁锁定时间戳
+  static Future<int?> getPatternLockTimestamp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(PATTERN_LOCK_TIMESTAMP);
+  }
+
+  // 设置图案锁启用状态
+  static Future<bool> setPatternLockEnabled(bool enabled) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setBool(PATTERN_LOCK_ENABLED, enabled);
+  }
+
+  // 获取图案锁启用状态
+  static Future<bool> getPatternLockEnabled() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(PATTERN_LOCK_ENABLED) ?? false;
+  }
+
+  // 检查是否是首次登录
+  static Future<bool> isFirstLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(IS_FIRST_LOGIN) ?? true;
+  }
+
+  // 设置非首次登录
+  static Future<bool> setNotFirstLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setBool(IS_FIRST_LOGIN, false);
   }
 }

@@ -14,6 +14,24 @@ class LoginState {
   // 是否显示密码
   final RxBool showPassword = false.obs;
   
-  // 是否正在检查登录状态 (从splash页面迁移)
+  // 是否正在检查登录状态
   final RxBool isChecking = true.obs;
+
+  // 登录方式 (0: 密码登录, 1: 划线登录, 2: 指纹登录)
+  final RxInt loginMethod = 0.obs;
+
+  // 划线登录相关状态
+  final RxString errorMessage = ''.obs;
+  final RxBool isError = false.obs;
+  final RxInt remainingAttempts = 5.obs;
+  final RxBool isLocked = false.obs;
+  final RxInt lockTimeMinutes = 0.obs;
+  final RxString userName = ''.obs;
+  final RxString greetingMessage = ''.obs;
+
+  // 清理控制器
+  void dispose() {
+    accountController.dispose();
+    passwordController.dispose();
+  }
 }
