@@ -5,6 +5,7 @@ import android.view.WindowManager;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.util.Log;
 
 import io.flutter.embedding.android.FlutterFragmentActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -12,6 +13,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import androidx.annotation.NonNull;
 
 public class MainActivity extends FlutterFragmentActivity {
+    private static final String TAG = "MainActivity";
+
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
@@ -39,6 +42,8 @@ public class MainActivity extends FlutterFragmentActivity {
 
         if (isTablet) {
             try {
+                Log.d(TAG, "检测到平板设备，开始调整窗口大小...");
+
                 // 覆盖系统字体缩放设置，防止文字过大
                 Configuration configuration = getResources().getConfiguration();
                 configuration.fontScale = 1.0f;  // 强制使用1.0的字体缩放
@@ -47,65 +52,70 @@ public class MainActivity extends FlutterFragmentActivity {
                 // 获取屏幕尺寸
                 DisplayMetrics displayMetrics = new DisplayMetrics();
                 getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-                // 计算屏幕宽高
                 int screenWidth = displayMetrics.widthPixels;
                 int screenHeight = displayMetrics.heightPixels;
 
-                // 设置窗口大小为固定尺寸
+                Log.d(TAG, "屏幕尺寸: " + screenWidth + "x" + screenHeight);
+
+                // 获取状态栏高度
+                int statusBarHeight = 0;
+                int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+                if (resourceId > 0) {
+                    statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+                }
+                Log.d(TAG, "状态栏高度: " + statusBarHeight + "px");
+
+                // 计算可用高度（屏幕高度 - 状态栏高度）
+                int usableHeight = screenHeight - statusBarHeight;
+                Log.d(TAG, "可用高度: " + usableHeight + "px");
+
+                // 设计尺寸和比例
+                int designWidth = 375;    // 设计宽度 (dp)
+                int designHeight = 812;   // 设计高度 (dp)
+                float aspectRatio = (float) designWidth / designHeight; // 宽高比 ≈ 0.462
+                Log.d(TAG, "设计宽高比: " + aspectRatio);
+
                 WindowManager.LayoutParams params = getWindow().getAttributes();
 
-                // 使用Flutter设计尺寸的实际值
-                int designWidth = 375;
-                int designHeight = 812;
+                // 策略1: 高度优先（高度设为100%可用高度）
+                params.height = usableHeight;
+                params.width = (int) (params.height * aspectRatio);
+                Log.d(TAG, "策略1计算尺寸: " + params.width + "x" + params.height);
 
-                // 计算缩放因子
-                float scaleFactor = getResources().getDisplayMetrics().density;
+                // 检查宽度是否超过屏幕宽度
+                if (params.width > screenWidth) {
+                    Log.d(TAG, "宽度超过屏幕宽度，采用策略2");
 
-                // 检查当前是横屏还是竖屏
-                boolean isLandscape = getResources().getConfiguration().orientation
-                        == Configuration.ORIENTATION_LANDSCAPE;
+                    // 策略2: 宽度优先（宽度设为100%屏幕宽度）
+                    params.width = screenWidth;
+                    params.height = (int) (params.width / aspectRatio);
+                    Log.d(TAG, "策略2计算尺寸: " + params.width + "x" + params.height);
 
-                if (isLandscape) {
-                    // 横屏模式下，保持设计尺寸的比例，但窗口居中显示
-                    // 窗口高度设为屏幕高度的90%
-                    params.height = (int)(screenHeight * 0.9);
-                    // 根据设计比例计算对应的宽度
-                    params.width = (int)(params.height * ((float)designWidth / designHeight));
+                    // 检查高度是否超过可用高度
+                    if (params.height > usableHeight) {
+                        Log.d(TAG, "高度超过可用高度，进行高度限制");
 
-                    // 确保宽度不超过屏幕宽度的90%
-                    if (params.width > screenWidth * 0.9) {
-                        float ratio = (float)params.width / (screenWidth * 0.9f);
-                        params.width = (int)(screenWidth * 0.9);
-                        params.height = (int)(params.height / ratio);
-                    }
-                } else {
-                    // 竖屏模式，使用原来的计算方式
-                    params.width = (int)(designWidth * scaleFactor);
-                    params.height = (int)(designHeight * scaleFactor);
-
-                    // 确保窗口不超过屏幕的限制
-                    if (params.width > screenWidth * 0.9) {
-                        float ratio = (float)params.width / (screenWidth * 0.9f);
-                        params.width = (int)(screenWidth * 0.9);
-                        params.height = (int)(params.height / ratio);
-                    }
-
-                    if (params.height > screenHeight * 0.9) {
-                        float ratio = (float)params.height / (screenHeight * 0.9f);
-                        params.height = (int)(screenHeight * 0.9);
-                        params.width = (int)(params.width / ratio);
+                        // 策略3: 高度限制（高度设为100%可用高度，宽度重新计算）
+                        params.height = usableHeight;
+                        params.width = (int) (params.height * aspectRatio);
+                        Log.d(TAG, "策略3最终尺寸: " + params.width + "x" + params.height);
                     }
                 }
 
                 // 应用窗口参数
                 getWindow().setAttributes(params);
+                Log.d(TAG, "应用窗口尺寸: " + params.width + "x" + params.height);
 
                 // 设置窗口位置为居中
                 getWindow().setGravity(Gravity.CENTER);
+                Log.d(TAG, "窗口位置设置为居中");
+
             } catch (Exception e) {
+                Log.e(TAG, "调整窗口大小时出错", e);
                 e.printStackTrace();
             }
+        } else {
+            Log.d(TAG, "非平板设备，保持全屏显示");
         }
     }
 }
