@@ -127,20 +127,38 @@ class LoginPage extends StatelessWidget {
                 : Container()),
           ),
           // 图案锁控件
-          Obx(() =>
-              PatternLockWidget(
-                size: 300.w,
-                dotSize: 59.w,
-                lineWidth: 4.w,
-                selectedColor: FYColors.color_1A1A1A,
-                notSelectedColor: FYColors.color_D8D8D8,
-                errorColor: FYColors.color_FF3B30,
-                isError: state.isError.value,
-                onCompleted: (pattern) {
-                  logic.handlePatternLogin(pattern);
-                },
-                showInput: false,
-              )),
+          Obx(() {
+            // 使用一个状态标志来确保只在布局准备好后渲染PatternLockWidget
+            if (!state.isPatternReady.value) {
+              // 如果图案锁未准备好，先显示一个占位符容器
+              Future.delayed(Duration.zero, () {
+                // 延迟标记为就绪，让页面先完成布局
+                state.isPatternReady.value = true;
+              });
+              return Container(
+                width: 300.w,
+                height: 300.w,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+              );
+            }
+            // 布局准备好后，显示图案锁
+            return PatternLockWidget(
+              size: 300.w,
+              dotSize: 59.w,
+              lineWidth: 4.w,
+              selectedColor: FYColors.color_1A1A1A,
+              notSelectedColor: FYColors.color_D8D8D8,
+              errorColor: FYColors.color_FF3B30,
+              isError: state.isError.value,
+              onCompleted: (pattern) {
+                logic.handlePatternLogin(pattern);
+              },
+              showInput: false,
+            );
+          }),
           // 锁定信息显示
           Obx(() =>
               Visibility(

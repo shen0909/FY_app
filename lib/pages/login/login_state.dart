@@ -28,6 +28,9 @@ class LoginState {
   final RxInt lockTimeMinutes = 0.obs;
   final RxString userName = ''.obs;
   final RxString greetingMessage = ''.obs;
+  
+  // 图案锁是否准备好渲染
+  final RxBool isPatternReady = false.obs;
 
   // 清理控制器
   void dispose() {
