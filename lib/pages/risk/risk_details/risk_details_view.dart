@@ -204,7 +204,7 @@ class RiskDetailsPage extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                 ),
-                if (!isLast) SizedBox(
+                SizedBox(
                   width: 1,
                   height: 68.w,
                   child: CustomPaint(

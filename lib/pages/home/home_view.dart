@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.w),
+          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h),
           child: Column(
             children: [
               Row(
@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
                   Image.asset(
                     FYImages.appIcon_32,
                     width: 32.w,
-                    height: 32.w,
+                    height: 32.h,
                     fit: BoxFit.contain,
                   ),
                   SizedBox(width: 10.w),
@@ -39,13 +39,13 @@ class HomePage extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: 16.w),
+              SizedBox(height: 16.h),
               _buildHeader(),
-              SizedBox(height: 16.w),
+              SizedBox(height: 16.h),
               _buildRiskWarning(),
-              SizedBox(height: 16.w),
+              SizedBox(height: 16.h),
               _buildQuickMenu(),
-              SizedBox(height: 16.w),
+              SizedBox(height: 16.h),
               _buildListUpdate(),
             ],
           ),
@@ -58,12 +58,12 @@ class HomePage extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      height: 172.w,
+      height: 172.h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(12.w)),
+        borderRadius: BorderRadius.all(Radius.circular(12.r)),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(20.w)),
+        borderRadius: BorderRadius.all(Radius.circular(20.r)),
         child: Stack(
           children: [
             // 轮播图
@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
                               item.imageUrl,
                               fit: BoxFit.cover,
                               width: double.infinity,
-                              height: 172.w,
+                              height: 172.h,
                             ),
                             // 文字遮罩层（渐变背景）
                             Positioned(
@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
                               right: 0,
                               bottom: 0,
                               child: Container(
-                                padding: EdgeInsets.fromLTRB(15.w, 30.w, 15.w, 15.w),
+                                padding: EdgeInsets.fromLTRB(15.w, 30.h, 15.w, 15.h),
                                 decoration: const BoxDecoration(
                                   gradient: LinearGradient(
                                     begin: Alignment.topLeft,
@@ -129,7 +129,7 @@ class HomePage extends StatelessWidget {
             ),
             // 轮播图指示器
             Positioned(
-              bottom: 10.w,
+              bottom: 10.h,
               right: 16.w,
               child: GetBuilder<HomeLogic>(
                 builder: (controller) {
@@ -163,10 +163,10 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => logic.goRisk(),
       child: Container(
-        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 22.w, bottom: 20.w),
+        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 22.h, bottom: 20.h),
         decoration: BoxDecoration(
           image: const DecorationImage(image: AssetImage(FYImages.riskyBg), fit: BoxFit.cover),
-          borderRadius: BorderRadius.circular(15.w),
+          borderRadius: BorderRadius.circular(15.r),
         ),
         child: Column(
           children: [
@@ -204,12 +204,15 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16.w),
-            Wrap(
-              spacing: 8.w,
-              children: state.riskType
-                  .map((element) => _buildRiskItem(element))
-                  .toList(),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Expanded(child: _buildRiskItem(state.riskType[0])),
+                SizedBox(width: 8.w),
+                Expanded(child: _buildRiskItem(state.riskType[1])),
+                SizedBox(width: 8.w),
+                Expanded(child: _buildRiskItem(state.riskType[2])),
+              ],
             )
           ],
         ),
@@ -220,11 +223,10 @@ class HomePage extends StatelessWidget {
   // 风险类型项
   Widget _buildRiskItem(Map<String, dynamic> item) {
     return Container(
-      width: 101.w,
-      height: 60.w,
+      height: 60.h,
       decoration: BoxDecoration(
           color: item['bgColor'],
-          borderRadius: BorderRadius.circular(10.w),
+          borderRadius: BorderRadius.circular(10.r),
           border: Border.all(width: 1.w, color: item['borderColor'])),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -235,21 +237,18 @@ class HomePage extends StatelessWidget {
               color: item['borderColor'],
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              // letterSpacing: 0.04 * 16.sp,
               height: 1,
               leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
-          SizedBox(height: 7.55.w,),
+          SizedBox(height: 7.55.h),
           Text(
             "${item['count']}家",
             style: TextStyle(
               color: item['borderColor'],
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
-              // letterSpacing: 0.04 * 14.sp,
               height: 1.2,
-              // leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
         ],
@@ -273,20 +272,20 @@ class HomePage extends StatelessWidget {
       onTap: () => _handleMenuItemClick(item['title']),
       child: Container(
         width: 170.w,
-        height: 80.w,
+        height: 80.h,
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: item['bgColor']),
-          borderRadius: BorderRadius.circular(15.w),
+          borderRadius: BorderRadius.circular(15.r),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(item['image'], width: 32.w, height: 32.w),
-              SizedBox(height: 8.w),
+              Image.asset(item['image'], width: 32.w, height: 32.h),
+              SizedBox(height: 8.h),
               Text(
                 item['title'],
                 style: TextStyle(
@@ -329,14 +328,14 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => logic.goDetailList(),
       child: Container(
-        padding: EdgeInsets.only(top: 17.w, left: 16.w, bottom: 16.w),
+        padding: EdgeInsets.only(top: 17.h, left: 16.w, bottom: 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15.w),
+          borderRadius: BorderRadius.circular(15.r),
         ),
         child: Row(
           children: [
-            Image.asset(FYImages.detailList,width: 44.w,height: 44.w,fit: BoxFit.contain,),
+            Image.asset(FYImages.detailList, width: 44.w, height: 44.h, fit: BoxFit.contain),
             SizedBox(width: 15.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,11 +346,11 @@ class HomePage extends StatelessWidget {
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF222222),
-                    height: 0.8.w,
+                    height: 0.8,
                     leadingDistribution: TextLeadingDistribution.even,
                   ),
                 ),
-                SizedBox(height: 14.w),
+                SizedBox(height: 14.h),
                 Text(
                   "${state.listUpdateTime}更新",
                   style: TextStyle(
