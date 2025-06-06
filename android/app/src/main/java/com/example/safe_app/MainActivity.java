@@ -20,7 +20,18 @@ public class MainActivity extends FlutterFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adjustWindowSizeForTablet();
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // 屏幕方向改变时重新调整窗口大小
+        adjustWindowSizeForTablet();
+    }
+
+    // 调整平板设备的窗口大小
+    private void adjustWindowSizeForTablet() {
         // 检测是否为平板设备
         boolean isTablet = (getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
@@ -51,21 +62,40 @@ public class MainActivity extends FlutterFragmentActivity {
                 // 计算缩放因子
                 float scaleFactor = getResources().getDisplayMetrics().density;
 
-                // 设置窗口宽度为设计宽度的实际像素值
-                params.width = (int)(designWidth * scaleFactor);
-                params.height = (int)(designHeight * scaleFactor);
+                // 检查当前是横屏还是竖屏
+                boolean isLandscape = getResources().getConfiguration().orientation
+                        == Configuration.ORIENTATION_LANDSCAPE;
 
-                // 确保窗口不超过屏幕的限制
-                if (params.width > screenWidth * 0.9) {
-                    float ratio = (float)params.width / (screenWidth * 0.9f);
-                    params.width = (int)(screenWidth * 0.9);
-                    params.height = (int)(params.height / ratio);
-                }
-
-                if (params.height > screenHeight * 0.9) {
-                    float ratio = (float)params.height / (screenHeight * 0.9f);
+                if (isLandscape) {
+                    // 横屏模式下，保持设计尺寸的比例，但窗口居中显示
+                    // 窗口高度设为屏幕高度的90%
                     params.height = (int)(screenHeight * 0.9);
-                    params.width = (int)(params.width / ratio);
+                    // 根据设计比例计算对应的宽度
+                    params.width = (int)(params.height * ((float)designWidth / designHeight));
+
+                    // 确保宽度不超过屏幕宽度的90%
+                    if (params.width > screenWidth * 0.9) {
+                        float ratio = (float)params.width / (screenWidth * 0.9f);
+                        params.width = (int)(screenWidth * 0.9);
+                        params.height = (int)(params.height / ratio);
+                    }
+                } else {
+                    // 竖屏模式，使用原来的计算方式
+                    params.width = (int)(designWidth * scaleFactor);
+                    params.height = (int)(designHeight * scaleFactor);
+
+                    // 确保窗口不超过屏幕的限制
+                    if (params.width > screenWidth * 0.9) {
+                        float ratio = (float)params.width / (screenWidth * 0.9f);
+                        params.width = (int)(screenWidth * 0.9);
+                        params.height = (int)(params.height / ratio);
+                    }
+
+                    if (params.height > screenHeight * 0.9) {
+                        float ratio = (float)params.height / (screenHeight * 0.9f);
+                        params.height = (int)(screenHeight * 0.9);
+                        params.width = (int)(params.width / ratio);
+                    }
                 }
 
                 // 应用窗口参数
