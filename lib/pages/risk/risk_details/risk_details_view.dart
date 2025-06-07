@@ -5,7 +5,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+import '../../../models/risk_company_details.dart';
 import '../../../widgets/custom_app_bar.dart';
 import 'risk_details_logic.dart';
 import 'risk_details_state.dart';
@@ -44,7 +44,7 @@ class RiskDetailsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.w),
                 ),
                 child: Obx(() => Text(
-                  '${state.riskScore}分',
+                  '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
                   style: TextStyle(
                       color: FYColors.whiteColor,
                       fontWeight: FontWeight.w500,
@@ -85,7 +85,7 @@ class RiskDetailsPage extends StatelessWidget {
           Row(
             children: [
               Obx(() => Text(
-                state.companyName.value,
+                state.riskCompanyDetail.value!.companyInfo.name,
                 style: FYTextStyles.riskLocationTitleStyle().copyWith(fontSize: 20.sp),
               )),
               SizedBox(width: 8.w),
@@ -101,7 +101,7 @@ class RiskDetailsPage extends StatelessWidget {
           ),
           SizedBox(height: 8.w),
           Obx(() => Text(
-            state.companyNameEn.value,
+            state.riskCompanyDetail.value!.companyInfo.englishName,
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w700,
@@ -139,13 +139,16 @@ class RiskDetailsPage extends StatelessWidget {
   // 构建时间线项目列表
   List<Widget> _buildTimelineItems() {
     List<Widget> items = [];
+    List<TimelineEvent> itemsPre = state.riskCompanyDetail.value!.timelineTracking;
 
     // 判断是否展开，如果未展开，只显示第一项
-    int itemsToShow = state.isExpandTimeLine.value ? state.timelineEvents.length : 1;
+    int itemsToShow = state.isExpandTimeLine.value
+        ? state.riskCompanyDetail.value!.timelineTracking.length
+        : 1;
 
     for (int i = 0; i < itemsToShow; i++) {
       bool isLastItem = i == itemsToShow - 1;
-      items.add(_buildTimelineItem(state.timelineEvents[i], isLastItem));
+      items.add(_buildTimelineItem(itemsPre[i], isLastItem));
     }
 
     items.add(InkWell(
@@ -182,9 +185,9 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 时间线项
-  Widget _buildTimelineItem(Map<String, dynamic> item, bool isLast) {
+  Widget _buildTimelineItem(TimelineEvent item, bool isLast) {
     return GestureDetector(
-      onTap: () => logic.showNewsResource(item['date']),
+      onTap: () => logic.showNewsResource(item.sources,item.date),
       child: Container(
         padding: EdgeInsets.only(left: 16.w, right: 16.w),
         child: Row(
@@ -219,7 +222,7 @@ class RiskDetailsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item['date'],
+                    item.date,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: const Color(0xFF326FFC),
@@ -228,7 +231,7 @@ class RiskDetailsPage extends StatelessWidget {
                   ),
                   SizedBox(height: 5.w),
                   Text(
-                    item['content'],
+                    item.content,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: FYColors.color_A6A6A6,

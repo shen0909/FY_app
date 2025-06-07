@@ -3,11 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/styles/colors.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../models/risk_company_details.dart';
 import 'risk_details_state.dart';
 
 class RiskDetailsLogic extends GetxController {
   final state = RiskDetailsState();
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    state.riskCompanyDetail.value = RiskCompanyDetail.mock();
+  }
 
   @override
   void onReady() {
@@ -62,8 +71,7 @@ class RiskDetailsLogic extends GetxController {
       Container(
         color: Colors.transparent,
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(Get.context!).size.height * 0.9
-        ),
+            maxHeight: MediaQuery.of(Get.context!).size.height * 0.9),
         child: SingleChildScrollView(
           child: RiskDetailsPage().buildRiskScoreDialog(),
         ),
@@ -73,9 +81,9 @@ class RiskDetailsLogic extends GetxController {
     );
   }
 
-  void showNewsResource(String date) {
-    final news = state.newsResources[date];
-    if (news == null || news.isEmpty) return;
+  showNewsResource(List<Source> listSource, String newsDate) {
+    final news = listSource;
+    if (news.isEmpty) return;
 
     Get.bottomSheet(
       Container(
@@ -84,20 +92,21 @@ class RiskDetailsLogic extends GetxController {
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.only(top: 17, left: 16, right: 16, bottom: 13),
+                padding:
+                    EdgeInsets.only(top: 17, left: 16, right: 16, bottom: 13),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '2025-04-15 新闻来源',
+                      newsDate,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF333333),
                       ),
@@ -138,32 +147,34 @@ class RiskDetailsLogic extends GetxController {
     );
   }
 
-  Widget _buildNewsItem(Map<String, String> news) {
+  Widget _buildNewsItem(Source news) {
     return Container(
-      margin: EdgeInsets.only(left: 16.w,right: 16.w,bottom: 10.w),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Color(0xffF9FBFF),
-        borderRadius: BorderRadius.all(Radius.circular(8.r))
-      ),
+          color: const Color(0xffF9FBFF),
+          borderRadius: BorderRadius.all(Radius.circular(8.r))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            news['title'] ?? '',
+            news.title ?? '',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w500,
               color: Color(0xFF333333),
             ),
           ),
           SizedBox(height: 8),
-          Text(
-            news['url'] ?? '',
-            style: TextStyle(
-              fontSize: 14,
-              color:FYColors.color_3361FE,
+          GestureDetector(
+            onTap: () => openUrl(news.url),
+            child: Text(
+              news.url ?? '',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_3361FE,
+              ),
             ),
           ),
         ],
@@ -228,9 +239,10 @@ class RiskDetailsLogic extends GetxController {
                           color: FYColors.color_F9FBFF,
                           borderRadius: BorderRadius.all(Radius.circular(8.w))),
                       padding: EdgeInsets.all(16.w),
-                      child:Text(
-                          style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w400)
-                          ,                          '广州金发科技股份有限公司成立于1993年，是一家专注于新型化工材料研发与生产的大型企业集团，主要业务包括改性塑料、特种工程塑料、生物基材料等产品的研发、生产和销售。公司总部位于广州科学城，现有员工超过5000人，在国内外拥有多个研发中心和生产基地。作为行业龙头企业，具有较强的技术实力和市场影响力。'),
+                      child: Text(
+                          style: TextStyle(
+                              fontSize: 14.sp, fontWeight: FontWeight.w400),
+                          '广州金发科技股份有限公司成立于1993年，是一家专注于新型化工材料研发与生产的大型企业集团，主要业务包括改性塑料、特种工程塑料、生物基材料等产品的研发、生产和销售。公司总部位于广州科学城，现有员工超过5000人，在国内外拥有多个研发中心和生产基地。作为行业龙头企业，具有较强的技术实力和市场影响力。'),
                     ),
                   ],
                 ),
@@ -408,7 +420,10 @@ class RiskDetailsLogic extends GetxController {
         {'title': '高端芯片制造依赖', 'description': '华为自研的麒麟芯片需要台积电等代工厂使用美国设备进行生产'},
       ],
       '供应链风险': [
-        {'title': '供应链断裂', 'description': '美国"实体清单"和"直接产品原则"的扩大适用，导致华为无法从全球供应商处获取关键组件'},
+        {
+          'title': '供应链断裂',
+          'description': '美国"实体清单"和"直接产品原则"的扩大适用，导致华为无法从全球供应商处获取关键组件'
+        },
         {'title': '替代供应商有限', 'description': '全球半导体产业高度集中，美国企业在多个关键环节占据主导地位'},
       ],
       '市场准入风险': [
@@ -428,5 +443,16 @@ class RiskDetailsLogic extends GetxController {
         {'title': '直接产品规则', 'description': '受美国扩大的外国直接产品规则影响，芯片供应受限'},
       ],
     };
+  }
+
+  openUrl(String url) async {
+    await launchUrlString(
+      url,
+      mode: LaunchMode.externalApplication, // 使用外部浏览器打开
+      webViewConfiguration: const WebViewConfiguration(
+        enableJavaScript: true,
+        enableDomStorage: true,
+      ),
+    );
   }
 }

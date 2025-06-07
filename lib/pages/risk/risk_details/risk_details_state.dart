@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
 
+import '../../../models/risk_company_details.dart';
+
 class RiskDetailsState {
+  final Rx<RiskCompanyDetail?> riskCompanyDetail = Rx<RiskCompanyDetail?>(null);
+
   // 基本信息
   final companyName = '华为技术有限公司'.obs;
   final companyNameEn = 'Huawei Technologies Co., Ltd.'.obs;
