@@ -214,11 +214,11 @@ class RiskDetailsLogic extends GetxController {
                       padding: EdgeInsets.only(left: 16.w, top: 16.w),
                       child: Column(
                         children: [
-                          companyItem('地区', '浙江省杭州市'),
-                          companyItem('所处行业', '浙江省杭州市'),
-                          companyItem('地区', '浙江省杭州市'),
-                          companyItem('地区', '浙江省杭州市'),
-                          companyItem('地区', '浙江省杭州市'),
+                          companyItem('地区', state.riskCompanyDetail.value!.companyInfo.location),
+                          companyItem('所处行业', state.riskCompanyDetail.value!.companyInfo.industry),
+                          companyItem('公司类型', '上市公司（股票代码：600143）'),
+                          companyItem('市值', state.riskCompanyDetail.value!.companyInfo.registeredCapital),
+                          companyItem('股价', state.riskCompanyDetail.value!.companyInfo.employees),
                         ],
                       ),
                     ),
