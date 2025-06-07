@@ -485,7 +485,7 @@ class RiskDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 15.w),
                 Obx(() {
-                  final cases = state.legalCases;
+                  final cases = state.riskCompanyDetail.value!.legalBasis;
                   final displayCases = state.isExpandCases.value
                       ? cases
                       : cases.take(1).toList();
@@ -497,9 +497,9 @@ class RiskDetailsPage extends StatelessWidget {
                           .map((entry) => Padding(
                                 padding: EdgeInsets.only(bottom: 8.w),
                                 child: _buildCaseItem(
-                                    entry.key + 1, entry.value['summary']!),
+                                    entry.key + 1, entry.value.summary),
                               ))
-                          .toList(),
+                          ,
                       Text(
                         '建议企业加强合规管理，特别关注知识产权保护和环保合规问题。',
                         style: TextStyle(
