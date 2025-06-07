@@ -18,9 +18,17 @@ class RiskLogic extends GetxController {
     super.onInit();
     state.riskyData.value = RiskyData.mock();
     _updateCurrentUnitData();
+    _updateCurrentRiskList();
+    
     // 监听单位类型变化
-    ever(state.chooseUint, (_) => _updateCurrentUnitData());
-    ever(state.riskyData, (_) => _updateCurrentUnitData());
+    ever(state.chooseUint, (_) {
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+    });
+    ever(state.riskyData, (_) {
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+    });
   }
 
   // 更新当前单位数据
@@ -108,6 +116,98 @@ class RiskLogic extends GetxController {
         break;
       default:
         state.currentUnitData.value = {};
+    }
+  }
+
+  // 更新当前风险列表
+  void _updateCurrentRiskList() {
+    if (state.riskyData.value == null) {
+      state.currentRiskList.clear();
+      return;
+    }
+
+    final companies = state.riskyData.value!.companies;
+    List<Map<String, dynamic>> newList = [];
+
+    switch (state.chooseUint.value) {
+      case 0:
+        if (companies.containsKey('fengyun_1')) {
+          newList = companies['fengyun_1']!.map((company) => {
+            'id': company.id,
+            'name': company.name,
+            'englishName': company.englishName,
+            'description': company.description,
+            'riskLevel': company.riskLevelText,
+            'riskColor': _getRiskColor(company.riskLevel),
+            'borderColor': _getBorderColor(company.riskLevel),
+            'updateTime': company.updateDate,
+            'unreadCount': company.unreadCount,
+            'isRead': false,
+          }).toList();
+        }
+        break;
+      case 1:
+        if (companies.containsKey('fengyun_2')) {
+          newList = companies['fengyun_2']!.map((company) => {
+            'id': company.id,
+            'name': company.name,
+            'englishName': company.englishName,
+            'description': company.description,
+            'riskLevel': company.riskLevelText,
+            'riskColor': _getRiskColor(company.riskLevel),
+            'borderColor': _getBorderColor(company.riskLevel),
+            'updateTime': company.updateDate,
+            'unreadCount': company.unreadCount,
+            'isRead': false,
+          }).toList();
+        }
+        break;
+      case 2:
+        if (companies.containsKey('xingyun')) {
+          newList = companies['xingyun']!.map((company) => {
+            'id': company.id,
+            'name': company.name,
+            'englishName': company.englishName,
+            'description': company.description,
+            'riskLevel': company.riskLevelText,
+            'riskColor': _getRiskColor(company.riskLevel),
+            'borderColor': _getBorderColor(company.riskLevel),
+            'updateTime': company.updateDate,
+            'unreadCount': company.unreadCount,
+            'isRead': false,
+          }).toList();
+        }
+        break;
+    }
+
+    state.currentRiskList.assignAll(newList);
+  }
+
+  // 获取风险等级对应的颜色
+  int _getRiskColor(String riskLevel) {
+    switch (riskLevel) {
+      case 'high':
+        return 0xFFFF6850;
+      case 'medium':
+        return 0xFFF6D500;
+      case 'low':
+        return 0xFF07CC89;
+      default:
+        return 0xFF07CC89;
+    }
+  }
+
+  // 获取风险等级对应的边框颜色
+  int _getBorderColor(String riskLevel) {
+    switch (riskLevel) {
+      case 'high':
+        return 0xFFFFECE9;
+      case 'medium':
+        return 0xFFFFF7E6;
+      case 'low':
+        return 0xFFE7FEF8;
+      default:
+        return 0xFFE7FEF8;
     }
   }
 
