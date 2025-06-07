@@ -390,7 +390,7 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: isRead ? null : () => logic.showMessageDialog(),
+                    onTap: isRead ? null : () => logic.showMessageDialog(item['id']),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
@@ -526,7 +526,7 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: isRead ? null : () => logic.showMessageDialog(),
+                    onTap: isRead ? null : () => logic.showMessageDialog(item['id']),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),

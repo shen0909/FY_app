@@ -10,6 +10,7 @@ class RiskState {
   final Rx<RiskyData?> riskyData = Rx<RiskyData?>(null); // 风险预警消息
   final Rx<Map<String, dynamic>> currentUnitData = Rx<Map<String, dynamic>>({}); // 当前单位数据
   final RxList<Map<String, dynamic>> currentRiskList = RxList<Map<String, dynamic>>([]); // 当前风险列表
+  final RxList<Map<String, dynamic>> currentUnreadMessages = RxList<Map<String, dynamic>>([]); // 当前未读消息列表
 
   // 地区
   RxString location = "广东省广州市".obs;
@@ -23,26 +24,4 @@ class RiskState {
     "河源市", "阳江市", "清远市", "东莞市", "中山市", 
     "潮州市", "揭阳市", "云浮市"
   ];
-
-  // 未读消息列表
-  final RxList<Map<String, dynamic>> unreadMessages = <Map<String, dynamic>>[
-    {
-      'title': '美国商务部将中船黄埔列入出口管制实体清单',
-      'date': '2025-04-15',
-      'company': '中船黄埔文冲船舶有限公司',
-      'isRead': false,
-    },
-    {
-      'title': '中船黄埔签订5艘大型集装箱船订单',
-      'date': '2025-04-15',
-      'company': '中船黄埔文冲船舶有限公司',
-      'isRead': false,
-    },
-    {
-      'title': '欧盟调查中国船厂获政府补贴情况',
-      'date': '2025-04-15',
-      'company': '中船黄埔文冲船舶有限公司',
-      'isRead': false,
-    },
-  ].obs;
 }

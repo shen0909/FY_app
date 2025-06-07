@@ -230,10 +230,46 @@ class RiskLogic extends GetxController {
   }
   
   // 显示未读消息弹窗
-  void showMessageDialog() {
+  void showMessageDialog(String companyId) {
+    if (state.riskyData.value == null) return;
+
+    // 获取当前单位类型对应的key
+    String unitKey;
+    switch (state.chooseUint.value) {
+      case 0:
+        unitKey = 'fengyun_1';
+        break;
+      case 1:
+        unitKey = 'fengyun_2';
+        break;
+      case 2:
+        unitKey = 'xingyun';
+        break;
+      default:
+        return;
+    }
+
+    // 从riskyData中获取对应公司的未读消息
+    final unreadMessages = state.riskyData.value!.unreadMessages[companyId];
+    if (unreadMessages == null || unreadMessages.isEmpty) return;
+
+    // 转换未读消息格式
+    final messages = unreadMessages.map((msg) => {
+      'title': msg.title,
+      'date': msg.date,
+      'content': msg.content,
+      'company': msg.sourceName,
+      'isRead': msg.read,
+      'category': msg.category,
+      'severity': msg.severity,
+      'tags': msg.tags,
+    }).toList();
+
+    state.currentUnreadMessages.assignAll(messages);
+
     Get.bottomSheet(
       UnreadMessageDialog(
-        messages: state.unreadMessages,
+        messages: state.currentUnreadMessages,
         onClose: () => Get.back(),
       ),
       backgroundColor: Colors.transparent,
@@ -241,8 +277,8 @@ class RiskLogic extends GetxController {
       isDismissible: true,
       enableDrag: true,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      shape:  RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
     );
   }
@@ -254,22 +290,22 @@ class RiskLogic extends GetxController {
   
   // 将消息标记为已读
   void markMessageAsRead(int index) {
-    if (index >= 0 && index < state.unreadMessages.length) {
-      final updatedMessage = Map<String, dynamic>.from(state.unreadMessages[index]);
+    if (index >= 0 && index < state.currentUnreadMessages.length) {
+      final updatedMessage = Map<String, dynamic>.from(state.currentUnreadMessages[index]);
       updatedMessage['isRead'] = true;
-      state.unreadMessages[index] = updatedMessage;
+      state.currentUnreadMessages[index] = updatedMessage;
     }
   }
   
   // 将所有消息标记为已读
   void markAllMessagesAsRead() {
-    final updatedMessages = state.unreadMessages.map((message) {
+    final updatedMessages = state.currentUnreadMessages.map((message) {
       final updatedMessage = Map<String, dynamic>.from(message);
       updatedMessage['isRead'] = true;
       return updatedMessage;
     }).toList();
     
-    state.unreadMessages.assignAll(updatedMessages);
+    state.currentUnreadMessages.assignAll(updatedMessages);
   }
 
   // 显示城市选择器浮层
