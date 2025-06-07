@@ -1,10 +1,15 @@
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 
+import '../../models/risk_data.dart';
+
 class RiskState {
   // 当前选择的单位类型 0-烽云一号 1-烽云二号 2-星云
   RxInt chooseUint = 0.obs;
-  
+  final Rx<UnreadMessage?> unreadMessageList = Rx<UnreadMessage?>(null); // 未读消息
+  final Rx<RiskyData?> riskyData = Rx<RiskyData?>(null); // 风险预警消息
+  final Rx<Map<String, dynamic>> currentUnitData = Rx<Map<String, dynamic>>({}); // 当前单位数据
+
   // 地区
   RxString location = "广东省广州市".obs;
 
@@ -17,43 +22,6 @@ class RiskState {
     "河源市", "阳江市", "清远市", "东莞市", "中山市", 
     "潮州市", "揭阳市", "云浮市"
   ];
-
-  // 烽云一号数据
-  final Map<String, dynamic> type1Data = {
-    'high': {'title': '高风险', 'count': 12, 'change': 0, 'color': 0xFFFF6850},
-    'medium': {'title': '中风险', 'count': 7, 'change': 0, 'color': 0xFFF6D500},
-    'low': {'title': '低风险', 'count': 31, 'change': 0, 'color': 0xFF07CC89},
-    'total': {'count': 50, 'color': 0xFF1A1A1A},
-  }.obs;
-
-  // 烽云二号数据
-  final Map<String, dynamic> type2Data = {
-    'high': {'title': '高风险', 'count': 18, 'change': 0, 'color': 0xFFFF6850},
-    'medium': {'title': '中风险', 'count': 10, 'change': 1, 'color': 0xFFF6D500},
-    'low': {'title': '低风险', 'count': 22, 'change': 1, 'color': 0xFF07CC89},
-    'total': {'count': 50, 'color': 0xFF1A1A1A},
-  }.obs;
-
-  // 星云数据
-  final Map<String, dynamic> type3Data = {
-    'high': {'title': '重点关注', 'count': 100, 'change': 3, 'color': 0xFFFF6850},
-    'medium': {'title': '一般关注', 'count': 50, 'change': 2, 'color': 0xFF07CC89},
-    'total': {'count': 150, 'color': 0xFF1A1A1A},
-  }.obs;
-
-  // 获取当前单位类型的数据
-  Map<String, dynamic> get currentUnitData {
-    switch (chooseUint.value) {
-      case 0:
-        return type1Data;
-      case 1:
-        return type2Data;
-      case 2:
-        return type3Data;
-      default:
-        return type1Data;
-    }
-  }
 
   // 风险列表数据
   final RxList<Map<String, dynamic>> type1List = <Map<String, dynamic>>[

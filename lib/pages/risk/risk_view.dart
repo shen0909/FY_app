@@ -173,7 +173,7 @@ class _RiskPageState extends State<RiskPage> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Obx(() {
-        final currentData = state.currentUnitData;
+        final currentData = state.currentUnitData.value;
         return Wrap(
           spacing: 7.0.w, // 横向间距
           runSpacing: 8.0.w, // 纵向间距
@@ -189,7 +189,6 @@ class _RiskPageState extends State<RiskPage> {
                 color: Color(item['color']),
               );
             }),
-
             // 总数卡片单独处理
             _buildTotalStatCard(
               total: currentData['total']['count'],

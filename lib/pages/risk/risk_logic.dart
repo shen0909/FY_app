@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/widgets/unread_message_dialog.dart';
 
+import '../../models/risk_data.dart';
 import 'risk_state.dart';
 
 class RiskLogic extends GetxController {
@@ -11,6 +12,104 @@ class RiskLogic extends GetxController {
   // Overlay相关变量
   OverlayEntry? _overlayEntry;
   final GlobalKey locationKey = GlobalKey();
+
+  @override
+  void onInit() {
+    super.onInit();
+    state.riskyData.value = RiskyData.mock();
+    _updateCurrentUnitData();
+    // 监听单位类型变化
+    ever(state.chooseUint, (_) => _updateCurrentUnitData());
+    ever(state.riskyData, (_) => _updateCurrentUnitData());
+  }
+
+  // 更新当前单位数据
+  void _updateCurrentUnitData() {
+    if (state.riskyData.value == null) {
+      state.currentUnitData.value = {};
+      return;
+    }
+    
+    switch (state.chooseUint.value) {
+      case 0:
+        final stats = state.riskyData.value!.statistics.fengyun1.stats;
+        state.currentUnitData.value = {
+          'high': {
+            'title': '高风险',
+            'count': stats.highRisk,
+            'change': stats.dailyChange.highRisk,
+            'color': 0xFFFF6850
+          },
+          'medium': {
+            'title': '中风险',
+            'count': stats.mediumRisk,
+            'change': stats.dailyChange.mediumRisk,
+            'color': 0xFFF6D500
+          },
+          'low': {
+            'title': '低风险',
+            'count': stats.lowRisk,
+            'change': stats.dailyChange.lowRisk,
+            'color': 0xFF07CC89
+          },
+          'total': {
+            'count': stats.total,
+            'color': 0xFF1A1A1A
+          },
+        };
+        break;
+      case 1:
+        final stats = state.riskyData.value!.statistics.fengyun2.stats;
+        state.currentUnitData.value = {
+          'high': {
+            'title': '高风险',
+            'count': stats.highRisk,
+            'change': stats.dailyChange.highRisk,
+            'color': 0xFFFF6850
+          },
+          'medium': {
+            'title': '中风险',
+            'count': stats.mediumRisk,
+            'change': stats.dailyChange.mediumRisk,
+            'color': 0xFFF6D500
+          },
+          'low': {
+            'title': '低风险',
+            'count': stats.lowRisk,
+            'change': stats.dailyChange.lowRisk,
+            'color': 0xFF07CC89
+          },
+          'total': {
+            'count': stats.total,
+            'color': 0xFF1A1A1A
+          },
+        };
+        break;
+      case 2:
+        final stats = state.riskyData.value!.statistics.xingyun.stats;
+        state.currentUnitData.value = {
+          'high': {
+            'title': '重点关注',
+            'count': stats.keyFocus,
+            'change': stats.dailyChange.keyFocus,
+            'color': 0xFFFF6850
+          },
+          'medium': {
+            'title': '一般关注',
+            'count': stats.generalFocus,
+            'change': stats.dailyChange.generalFocus,
+            'color': 0xFF07CC89
+          },
+          'total': {
+            'count': stats.total,
+            'color': 0xFF1A1A1A
+          },
+        };
+        break;
+      default:
+        state.currentUnitData.value = {};
+    }
+  }
 
   @override
   void onReady() {
