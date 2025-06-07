@@ -26,7 +26,12 @@ class RiskDetailsPage extends StatelessWidget {
         fontSize: 18,
         titleColor: Colors.black,
         actions: [
-          Image.asset(FYImages.download_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+          Image.asset(
+            FYImages.download_icon,
+            width: 24.w,
+            height: 24.w,
+            fit: BoxFit.contain,
+          ),
           SizedBox(width: 12.w),
           Container(
             margin: const EdgeInsets.only(right: 16),
@@ -44,13 +49,13 @@ class RiskDetailsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.w),
                 ),
                 child: Obx(() => Text(
-                  '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
-                  style: TextStyle(
-                      color: FYColors.whiteColor,
-                      fontWeight: FontWeight.w500,
-                      height: 0.6,
-                      fontSize: 18.sp),
-                )),
+                      '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
+                      style: TextStyle(
+                          color: FYColors.whiteColor,
+                          fontWeight: FontWeight.w500,
+                          height: 0.6,
+                          fontSize: 18.sp),
+                    )),
               ),
             ),
           ),
@@ -78,16 +83,17 @@ class RiskDetailsPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: FYColors.whiteColor,
-      padding: EdgeInsets.only(left: 16.w,top: 13.w),
+      padding: EdgeInsets.only(left: 16.w, top: 13.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Obx(() => Text(
-                state.riskCompanyDetail.value!.companyInfo.name,
-                style: FYTextStyles.riskLocationTitleStyle().copyWith(fontSize: 20.sp),
-              )),
+                    state.riskCompanyDetail.value!.companyInfo.name,
+                    style: FYTextStyles.riskLocationTitleStyle()
+                        .copyWith(fontSize: 20.sp),
+                  )),
               SizedBox(width: 8.w),
               GestureDetector(
                 onTap: () => logic.companyDetail(),
@@ -101,13 +107,13 @@ class RiskDetailsPage extends StatelessWidget {
           ),
           SizedBox(height: 8.w),
           Obx(() => Text(
-            state.riskCompanyDetail.value!.companyInfo.englishName,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF345DFF),
-            ),
-          )),
+                state.riskCompanyDetail.value!.companyInfo.englishName,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF345DFF),
+                ),
+              )),
         ],
       ),
     );
@@ -139,7 +145,8 @@ class RiskDetailsPage extends StatelessWidget {
   // 构建时间线项目列表
   List<Widget> _buildTimelineItems() {
     List<Widget> items = [];
-    List<TimelineEvent> itemsPre = state.riskCompanyDetail.value!.timelineTracking;
+    List<TimelineEvent> itemsPre =
+        state.riskCompanyDetail.value!.timelineTracking;
 
     // 判断是否展开，如果未展开，只显示第一项
     int itemsToShow = state.isExpandTimeLine.value
@@ -171,7 +178,9 @@ class RiskDetailsPage extends StatelessWidget {
               ),
               SizedBox(width: 5.w),
               Icon(
-                state.isExpandTimeLine.value ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                state.isExpandTimeLine.value
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
                 color: FYColors.color_3361FE,
                 size: 16,
               ),
@@ -187,7 +196,7 @@ class RiskDetailsPage extends StatelessWidget {
   // 时间线项
   Widget _buildTimelineItem(TimelineEvent item, bool isLast) {
     return GestureDetector(
-      onTap: () => logic.showNewsResource(item.sources,item.date),
+      onTap: () => logic.showNewsResource(item.sources, item.date),
       child: Container(
         padding: EdgeInsets.only(left: 16.w, right: 16.w),
         child: Row(
@@ -275,13 +284,14 @@ class RiskDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 15.w),
                 Obx(() => Wrap(
-                  spacing: 8.w,
-                  runSpacing: 10.w,
-                  children: List.generate(
-                    state.riskFactors.length,
-                        (index) => _buildRiskTag(state.riskFactors[index]),
-                  ),
-                )),
+                      spacing: 8.w,
+                      runSpacing: 10.w,
+                      children: List.generate(
+                        state.riskCompanyDetail.value!.riskFactors.length,
+                        (index) => _buildRiskTag(
+                            state.riskCompanyDetail.value!.riskFactors[index]),
+                      ),
+                    )),
               ],
             ),
           ),
@@ -291,9 +301,9 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 风险标签
-  Widget _buildRiskTag(String tagName) {
+  Widget _buildRiskTag(RiskFactor riskFactor) {
     return GestureDetector(
-      onTap: () => _showRiskFactorDetails(tagName),
+      onTap: () => _showRiskFactorDetails(riskFactor.details, riskFactor.title),
       child: Container(
         height: 36.w,
         constraints: BoxConstraints(minWidth: 124.w),
@@ -307,14 +317,19 @@ class RiskDetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              tagName,
+              riskFactor.title,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: FYColors.color_3361FE,
               ),
             ),
             SizedBox(width: 8.w),
-            Image.asset(FYImages.more_info,width: 16.w,height: 16.w,fit: BoxFit.contain,)
+            Image.asset(
+              FYImages.more_info,
+              width: 16.w,
+              height: 16.w,
+              fit: BoxFit.contain,
+            )
           ],
         ),
       ),
@@ -322,7 +337,8 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 显示风险因素详情弹窗
-  void _showRiskFactorDetails(String riskType) {
+  void _showRiskFactorDetails(
+      List<RiskFactorDetail> riskFactorDetailList, String title) {
     Get.bottomSheet(
       Container(
         width: double.infinity,
@@ -349,7 +365,7 @@ class RiskDetailsPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    riskType,
+                    title,
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
@@ -379,10 +395,10 @@ class RiskDetailsPage extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Column(
-                children: (state.riskFactorDetails[riskType] as List<Map<String, String>>)
+                children: (riskFactorDetailList)
                     .map((item) => _buildRiskFactorItem(
-                          item['title'] ?? '',
-                          item['description'] ?? '',
+                          item.title,
+                          item.description,
                         ))
                     .toList(),
               ),
@@ -470,15 +486,20 @@ class RiskDetailsPage extends StatelessWidget {
                 SizedBox(height: 15.w),
                 Obx(() {
                   final cases = state.legalCases;
-                  final displayCases = state.isExpandCases.value ? cases : cases.take(1).toList();
+                  final displayCases = state.isExpandCases.value
+                      ? cases
+                      : cases.take(1).toList();
                   return Column(
                     children: [
-                      ...displayCases.asMap().entries.map((entry) => 
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8.w),
-                          child: _buildCaseItem(entry.key + 1, entry.value['summary']!),
-                        )
-                      ).toList(),
+                      ...displayCases
+                          .asMap()
+                          .entries
+                          .map((entry) => Padding(
+                                padding: EdgeInsets.only(bottom: 8.w),
+                                child: _buildCaseItem(
+                                    entry.key + 1, entry.value['summary']!),
+                              ))
+                          .toList(),
                       Text(
                         '建议企业加强合规管理，特别关注知识产权保护和环保合规问题。',
                         style: TextStyle(
@@ -486,39 +507,43 @@ class RiskDetailsPage extends StatelessWidget {
                           color: FYColors.color_A6A6A6,
                         ),
                       ),
-                      if (cases.length > 1) InkWell(
-                        onTap: () => state.isExpandCases.value = !state.isExpandCases.value,
-                        child: Container(
-                          width: double.infinity,
-                          height: 36.w,
-                          margin: EdgeInsets.only(top: 8.w),
-                          padding: EdgeInsets.symmetric(vertical: 10.w),
-                          decoration: BoxDecoration(
-                            color: FYColors.whiteColor,
-                            borderRadius: BorderRadius.circular(8.w),
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  state.isExpandCases.value ? '收起' : '展开更多',
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: FYColors.color_3361FE,
+                      if (cases.length > 1)
+                        InkWell(
+                          onTap: () => state.isExpandCases.value =
+                              !state.isExpandCases.value,
+                          child: Container(
+                            width: double.infinity,
+                            height: 36.w,
+                            margin: EdgeInsets.only(top: 8.w),
+                            padding: EdgeInsets.symmetric(vertical: 10.w),
+                            decoration: BoxDecoration(
+                              color: FYColors.whiteColor,
+                              borderRadius: BorderRadius.circular(8.w),
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    state.isExpandCases.value ? '收起' : '展开更多',
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: FYColors.color_3361FE,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 5.w),
-                                Icon(
-                                  state.isExpandCases.value ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                  color: FYColors.color_3361FE,
-                                  size: 16,
-                                ),
-                              ],
+                                  SizedBox(width: 5.w),
+                                  Icon(
+                                    state.isExpandCases.value
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                    color: FYColors.color_3361FE,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   );
                 }),
@@ -549,27 +574,29 @@ class RiskDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget dialogWidget(Widget content,String title){
+  Widget dialogWidget(Widget content, String title) {
     return Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: FYColors.whiteColor,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 顶部标题区域
-            dialogTitle(title),
-            content
-          ],
-        ),
-      );
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: FYColors.whiteColor,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 顶部标题区域
+          dialogTitle(title),
+          content
+        ],
+      ),
+    );
   }
 
-  Widget dialogTitle(String title){
+  Widget dialogTitle(String title) {
     return Container(
-      padding: EdgeInsets.only(top: 17.w, left: 16.w, right: 16.w, bottom: 13.w),
+      padding:
+          EdgeInsets.only(top: 17.w, left: 16.w, right: 16.w, bottom: 13.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -590,14 +617,13 @@ class RiskDetailsPage extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Color(0xFFF0F0F0),
               ),
-              child: Icon(Icons.close,
-                  color: const Color(0xFF666666), size: 16.w),
+              child:
+                  Icon(Icons.close, color: const Color(0xFF666666), size: 16.w),
             ),
           ),
         ],
       ),
     );
-
   }
 
   // 风险评分详情弹窗
@@ -606,14 +632,16 @@ class RiskDetailsPage extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: FYColors.whiteColor,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.r), topRight: Radius.circular(12.r)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // 顶部标题区域
           Container(
-            padding: EdgeInsets.only(top: 17.w, left: 16.w, right: 16.w, bottom: 13.w),
+            padding: EdgeInsets.only(
+                top: 17.w, left: 16.w, right: 16.w, bottom: 13.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -658,17 +686,19 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                      '${state.externalRiskScore}分',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF333333),
-                      ),
-                    )),
+                          '${state.externalRiskScore}分',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF333333),
+                          ),
+                        )),
                   ],
                 ),
                 Divider(height: 35.w, color: const Color(0xFFE6E6E6)),
-                ...state.externalRiskDetails.map((item) => _buildExternalRiskItem(item)).toList(),
+                ...state.externalRiskDetails
+                    .map((item) => _buildExternalRiskItem(item))
+                    .toList(),
               ],
             ),
           ),
@@ -690,17 +720,19 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                      '${state.internalRiskScore}分',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF333333),
-                      ),
-                    )),
+                          '${state.internalRiskScore}分',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF333333),
+                          ),
+                        )),
                   ],
                 ),
                 Divider(height: 35.w, color: const Color(0xFFE6E6E6)),
-                ...state.internalRiskDetails.map((item) => _buildExternalRiskItem(item)).toList(),
+                ...state.internalRiskDetails
+                    .map((item) => _buildExternalRiskItem(item))
+                    .toList(),
               ],
             ),
           ),
@@ -722,13 +754,13 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                      '${state.operationalRiskScore}分',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF333333),
-                      ),
-                    )),
+                          '${state.operationalRiskScore}分',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF333333),
+                          ),
+                        )),
                   ],
                 ),
                 SizedBox(height: 16.w),
@@ -744,13 +776,13 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                      '${state.securityRiskScore}分',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF333333),
-                      ),
-                    )),
+                          '${state.securityRiskScore}分',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF333333),
+                          ),
+                        )),
                   ],
                 ),
               ],
@@ -778,13 +810,13 @@ class RiskDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 4.w),
                 Obx(() => Text(
-                  '${state.riskScore}分',
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFFF6850),
-                  ),
-                )),
+                      '${state.riskScore}分',
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFFF6850),
+                      ),
+                    )),
               ],
             ),
           ),
@@ -858,8 +890,10 @@ class RiskDetailsPage extends StatelessWidget {
                 reservedSize: 30,
                 interval: 1,
                 getTitlesWidget: (value, meta) {
-                  if (value.toInt() >= state.riskTrends.length) return const Text('');
-                  final date = state.riskTrends[value.toInt()]['date'] as String;
+                  if (value.toInt() >= state.riskTrends.length)
+                    return const Text('');
+                  final date =
+                      state.riskTrends[value.toInt()]['date'] as String;
                   return Padding(
                     padding: EdgeInsets.only(top: 8.w),
                     child: Transform.rotate(
@@ -963,7 +997,6 @@ class RiskDetailsPage extends StatelessWidget {
       ),
     );
   }
-
 }
 
 // 虚线绘制
