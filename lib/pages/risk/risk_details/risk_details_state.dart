@@ -19,22 +19,22 @@ class RiskDetailsState {
 
   // 风险评分详情
   final externalRiskScore = 120.obs;
-  final externalRiskDetails = [
-    {'name': '宣布调查', 'score': 10},
-    {'name': '实施调查', 'score': 20},
-    {'name': '技术攻击', 'score': 10},
-    {'name': '实施制裁', 'score': 30},
-    {'name': '司法诉讼', 'score': 25},
-    {'name': '攻击抹黑', 'score': 5},
-    {'name': '脱钩断链', 'score': 20}
-  ].obs;
+  // final externalRiskDetails = [
+  //   {'name': '宣布调查', 'score': 10},
+  //   {'name': '实施调查', 'score': 20},
+  //   {'name': '技术攻击', 'score': 10},
+  //   {'name': '实施制裁', 'score': 30},
+  //   {'name': '司法诉讼', 'score': 25},
+  //   {'name': '攻击抹黑', 'score': 5},
+  //   {'name': '脱钩断链', 'score': 20}
+  // ].obs;
 
   final internalRiskScore = 25.obs;
-  final internalRiskDetails = [
-    {'name': '失密泄密', 'score': 10},
-    {'name': '人员失管', 'score': 10},
-    {'name': '负面舆情', 'score': 5}
-  ].obs;
+  // final internalRiskDetails = [
+  //   {'name': '失密泄密', 'score': 10},
+  //   {'name': '人员失管', 'score': 10},
+  //   {'name': '负面舆情', 'score': 5}
+  // ].obs;
 
   final operationalRiskScore = 120.obs;
   final securityRiskScore = 70.obs;
@@ -105,15 +105,15 @@ class RiskDetailsState {
     }
   ].obs;
 
-  // 风险趋势数据
-  final riskTrends = [
-    {'date': '2024-03', 'score': 335.0},
-    {'date': '2024-02', 'score': 328.0},
-    {'date': '2024-01', 'score': 315.0},
-    {'date': '2023-12', 'score': 320.0},
-    {'date': '2023-11', 'score': 310.0},
-    {'date': '2023-10', 'score': 305.0},
-  ].obs;
+  // // 风险趋势数据
+  // final riskTrends = [
+  //   {'date': '2024-03', 'score': 335.0},
+  //   {'date': '2024-02', 'score': 328.0},
+  //   {'date': '2024-01', 'score': 315.0},
+  //   {'date': '2023-12', 'score': 320.0},
+  //   {'date': '2023-11', 'score': 310.0},
+  //   {'date': '2023-10', 'score': 305.0},
+  // ].obs;
 
   // 是否显示风险评分详情对话框
   final RxBool showRiskScoreDialog = false.obs;
@@ -206,5 +206,54 @@ class RiskDetailsState {
         'content': '美国政府继续向盟友施压，要求限制华为设备在其5G网络中的使用。'
       }
     ];
+  }
+
+  // 外部风险详情列表
+  List<Map<String, dynamic>> get externalRiskDetails {
+    if (riskCompanyDetail.value == null) return [];
+    
+    final breakdown = riskCompanyDetail.value!.riskScore.components.externalRisk.breakdown;
+    return [
+      {'name': '调查宣布', 'score': breakdown.investigationAnnounced},
+      {'name': '调查进行中', 'score': breakdown.investigationOngoing},
+      {'name': '人员渗透', 'score': breakdown.personnelInfiltration},
+      {'name': '人员提取', 'score': breakdown.personnelExtraction},
+      {'name': '技术攻击', 'score': breakdown.technicalAttacks},
+      {'name': '制裁实施', 'score': breakdown.sanctionsImplemented},
+      {'name': '法律行动', 'score': breakdown.legalActions},
+      {'name': '声誉攻击', 'score': breakdown.reputationAttacks},
+      {'name': '脱钩压力', 'score': breakdown.decouplingPressure},
+      {'name': '外国渗透', 'score': breakdown.foreignInfiltration},
+    ].where((item) => (item['score'] as int) > 0).toList(); // 只显示分数大于0的项目
+  }
+
+  // 内部风险详情列表
+  List<Map<String, dynamic>> get internalRiskDetails {
+    if (riskCompanyDetail.value == null) return [];
+    
+    final breakdown = riskCompanyDetail.value!.riskScore.components.internalRisk.breakdown;
+    return [
+      {'name': '调查宣布', 'score': breakdown.investigationAnnounced},
+      {'name': '调查进行中', 'score': breakdown.investigationOngoing},
+      {'name': '人员渗透', 'score': breakdown.personnelInfiltration},
+      {'name': '人员提取', 'score': breakdown.personnelExtraction},
+      {'name': '技术攻击', 'score': breakdown.technicalAttacks},
+      {'name': '制裁实施', 'score': breakdown.sanctionsImplemented},
+      {'name': '法律行动', 'score': breakdown.legalActions},
+      {'name': '声誉攻击', 'score': breakdown.reputationAttacks},
+      {'name': '脱钩压力', 'score': breakdown.decouplingPressure},
+      {'name': '外国渗透', 'score': breakdown.foreignInfiltration},
+    ].where((item) => (item['score'] as int) > 0).toList(); // 只显示分数大于0的项目
+  }
+
+  // 获取风险趋势数据
+  List<Map<String, dynamic>> get riskTrends {
+    if (riskCompanyDetail.value == null) return [];
+    return riskCompanyDetail.value!.riskScore.trend
+        .map((trend) => {
+              'month': trend.month,
+              'score': trend.score,
+            })
+        .toList();
   }
 }

@@ -686,7 +686,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.externalRiskScore}分',
+                          '${state.riskCompanyDetail.value?.riskScore.components.externalRisk.score ?? 0}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -696,9 +696,11 @@ class RiskDetailsPage extends StatelessWidget {
                   ],
                 ),
                 Divider(height: 35.w, color: const Color(0xFFE6E6E6)),
-                ...state.externalRiskDetails
-                    .map((item) => _buildExternalRiskItem(item))
-                    .toList(),
+                Obx(() => Column(
+                  children: state.externalRiskDetails
+                      .map((item) => _buildExternalRiskItem(item))
+                      .toList(),
+                )),
               ],
             ),
           ),
@@ -720,7 +722,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.internalRiskScore}分',
+                          '${state.riskCompanyDetail.value?.riskScore.components.internalRisk.score}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -754,7 +756,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.operationalRiskScore}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components.operationalImpact}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -776,7 +778,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.securityRiskScore}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components.securityImpact}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -810,7 +812,7 @@ class RiskDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 4.w),
                 Obx(() => Text(
-                      '${state.riskScore}分',
+                      '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -852,9 +854,21 @@ class RiskDetailsPage extends StatelessWidget {
   // 构建风险趋势图
   Widget _buildRiskTrendChart() {
     return Obx(() {
+      if (state.riskCompanyDetail.value == null) {
+        return Container(); // 如果没有数据，返回空容器
+      }
+
       final spots = state.riskTrends.asMap().entries.map((entry) {
-        return FlSpot(entry.key.toDouble(), entry.value['score'] as double);
+        return FlSpot(entry.key.toDouble(), entry.value['score'].toDouble());
       }).toList();
+
+      // 计算Y轴的最大值和最小值
+      double minY = spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
+      double maxY = spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
+      
+      // 为了让图表显示更好看，我们给最大最小值加一个边距
+      minY = (minY - 20).clamp(0, double.infinity); // 最小值不小于0
+      maxY = maxY + 20;
 
       return LineChart(
         LineChartData(
@@ -890,10 +904,10 @@ class RiskDetailsPage extends StatelessWidget {
                 reservedSize: 30,
                 interval: 1,
                 getTitlesWidget: (value, meta) {
-                  if (value.toInt() >= state.riskTrends.length)
+                  if (value.toInt() >= state.riskTrends.length) {
                     return const Text('');
-                  final date =
-                      state.riskTrends[value.toInt()]['date'] as String;
+                  }
+                  final date = state.riskTrends[value.toInt()]['month'] as String;
                   return Padding(
                     padding: EdgeInsets.only(top: 8.w),
                     child: Transform.rotate(
@@ -932,8 +946,8 @@ class RiskDetailsPage extends StatelessWidget {
           ),
           minX: 0,
           maxX: (state.riskTrends.length - 1).toDouble(),
-          minY: 260,
-          maxY: 340,
+          minY: minY,
+          maxY: maxY,
           lineBarsData: [
             LineChartBarData(
               spots: spots,
