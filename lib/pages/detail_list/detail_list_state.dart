@@ -105,6 +105,205 @@ class SanctionType {
   }
 }
 
+// 制裁详情数据模型
+class SanctionDetail {
+  final String title; // 标题，例如"定义"
+  final String content; // 内容
+  
+  SanctionDetail({
+    required this.title,
+    required this.content,
+  });
+}
+
+// 完整制裁类型详情
+class SanctionTypeDetail {
+  final SanctionType sanctionType;
+  final List<Map<String, String>> details; // 包含标题和内容的详情列表
+  
+  SanctionTypeDetail({
+    required this.sanctionType,
+    required this.details,
+  });
+  
+  // 根据制裁类型代码获取对应的详情
+  static SanctionTypeDetail getDetailByCode(String code) {
+    // 在实际应用中，这些数据应该从API获取
+    switch (code) {
+      case 'EL':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '实体清单（Entity List）',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '由美国商务部工业与安全局（BIS）管理，针对"威胁美国国家安全或外交利益"的XX（企业、单位、政府机构等）。',
+            },
+            {
+              'title': '限制',
+              'content': '向清单内XX出口/再出口美国管制物项需申请许可，且通常为"推定拒绝"原则，供应链上下游合作伙伴能被迫中断。',
+            },
+            {
+              'title': '典型案例',
+              'content': '华为、中芯国际、深圳海思等半导体企业被列入，直接影响晶片片、服务器等产业。',
+            },
+          ],
+        );
+      case 'NS-CMIC':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '中国军工复合体清单 (NS-CMIC List)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '针对与中国军工企业有关联的企业，限制美国投资者对此类企业进行投资。',
+            },
+            {
+              'title': '限制',
+              'content': '禁止美国人对列入名单的中国军工企业进行投资，禁止在美国资本市场上市，并要求美国投资者撤资。',
+            },
+          ],
+        );
+      case 'CMC':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '中国涉军企业清单 (CMC List)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '由美国国防部制订，涉及"与解放军相关企业"、在军民两用领域。',
+            },
+            {
+              'title': '限制',
+              'content': '启发警示意义为主，但为其他制裁奠定基础和依据，可能伴随金融限制。',
+            },
+          ],
+        );
+      case 'Non-SDN CMIC':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '非SDN中国军事综合体企业清单 (Non-SDN CMIC)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '针对与中国军事工业复合体相关的企业，限制美国投资者对此类企业进行投资。',
+            },
+            {
+              'title': '特点',
+              'content': '与SDN清单不同，重点针对限制美国投资者对企业的投资。',
+            },
+          ],
+        );
+      case 'SSI':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '行业制裁名单 (Sectoral Sanctions Identifications List, SSI)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '针对特定行业（如能源、金融）的制裁，限制特定领域的贸易和金融活动。',
+            },
+            {
+              'title': '限制',
+              'content': '美国人不得为限制清单内的公司、活动提供融资或服务，并禁止特定贸易活动。',
+            },
+          ],
+        );
+      case 'UVL':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '未经核实清单 (Unverified List, UVL)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '包含那些美国政府无法通过最终用户核查确认为"适格"的实体，通常是作为EL的预警。',
+            },
+            {
+              'title': '限制',
+              'content': '出口商需证实接收方是可靠的，且还是美国受管制商品，需通过专门审查程序。',
+            },
+          ],
+        );
+      case 'DPL':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '被拒绝人员清单 (Denied Persons List, DPL)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '可能由于违反出口管制或违反美国国家安全法规而被禁止从美国获得出口物品的实体或个人。',
+            },
+            {
+              'title': '限制',
+              'content': '全面禁止，远远强于分类管控物项，授权数量通常低于100万美元（企业）或20万美元（个人）。',
+            },
+          ],
+        );
+      case 'MEU':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '军事最终用户清单 (Military End User List, MEU)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '针对可能将美国产品用于军事目的的最终用户实体。',
+            },
+            {
+              'title': '限制',
+              'content': '出口许可要求民用最终用途证明（如商业用途、研发用途），禁止军事用途。',
+            },
+          ],
+        );
+      case 'MEUL':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '最终军事用户清单 (Military End User List)',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '与MEU列表类似，由美国商务部指定的保留用户用途限制的实体或个人出口管制。',
+            },
+          ],
+        );
+      default:
+        // 返回一个通用的详情信息
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().first,
+          details: [
+            {'title': '未知制裁类型', 'content': '未找到相关制裁类型的详细信息。'}
+          ],
+        );
+    }
+  }
+}
+
 class DetailListState {
   // 搜索关键词
   var searchText = ''.obs;

@@ -523,28 +523,34 @@ class DetailListPage extends StatelessWidget {
 
   // 构建制裁类型标签
   Widget _buildSanctionTypeTag(SanctionType sanctionType) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(
-        color: Color(sanctionType.bgColor),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: IntrinsicWidth(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              sanctionType.name,
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(sanctionType.color),
+    return GestureDetector(
+      onTap: () {
+        // 点击显示详情弹窗
+        logic.showSanctionDetailOverlay(sanctionType);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: BoxDecoration(
+          color: Color(sanctionType.bgColor),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: IntrinsicWidth(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                sanctionType.name,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(sanctionType.color),
+                ),
               ),
-            ),
-            SizedBox(width: 4.w),
-            Icon(Icons.remove_red_eye_outlined,
-                size: 14.w, color: Color(sanctionType.color))
-          ],
+              SizedBox(width: 4.w),
+              Icon(Icons.remove_red_eye_outlined,
+                  size: 14.w, color: Color(sanctionType.color))
+            ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'detail_list_state.dart';
 
@@ -78,27 +79,27 @@ class DetailListLogic extends GetxController {
       if (state.typeFilter.value.isNotEmpty) {
         SanctionType? selectedType = getSanctionTypeByName(state.typeFilter.value);
         if (selectedType != null) {
-          allCompanies = allCompanies.where((company) => 
+          allCompanies = allCompanies.where((company) =>
             company.sanctionType.code == selectedType.code).toList();
         }
       }
-      
+
       if (state.provinceFilter.value.isNotEmpty) {
-        allCompanies = allCompanies.where((company) => 
+        allCompanies = allCompanies.where((company) =>
             company.region == state.provinceFilter.value).toList();
       }
-      
+
       if (state.cityFilter.value.isNotEmpty) {
-        allCompanies = allCompanies.where((company) => 
+        allCompanies = allCompanies.where((company) =>
             company.region == state.cityFilter.value).toList();
       }
-      
+
       if (state.searchText.value.isNotEmpty) {
         final keyword = state.searchText.value.toLowerCase();
-        allCompanies = allCompanies.where((company) => 
+        allCompanies = allCompanies.where((company) =>
             company.name.toLowerCase().contains(keyword)).toList();
       }
-      
+
       state.companyList.value = allCompanies;
       state.totalCount.value = state.companyList.length;
       state.isLoading.value = false;
@@ -148,66 +149,66 @@ class DetailListLogic extends GetxController {
   List<CompanyItem> _getMockData() {
     return [
       CompanyItem(
-          id: 2, 
-          name: '中芯国际集成电路制造有限公司', 
-          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0], 
-          region: '上海', 
+          id: 2,
+          name: '中芯国际集成电路制造有限公司',
+          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0],
+          region: '上海',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 3, 
-          name: '字节跳动有限公司', 
-          sanctionType: getSanctionTypeByCode('NS-CMIC') ?? state.sanctionTypes[1], 
-          region: '北京', 
+          id: 3,
+          name: '字节跳动有限公司',
+          sanctionType: getSanctionTypeByCode('NS-CMIC') ?? state.sanctionTypes[1],
+          region: '北京',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 4, 
-          name: '大疆创新科技有限公司', 
-          sanctionType: getSanctionTypeByCode('CMC') ?? state.sanctionTypes[2], 
-          region: '广东', 
+          id: 4,
+          name: '大疆创新科技有限公司',
+          sanctionType: getSanctionTypeByCode('CMC') ?? state.sanctionTypes[2],
+          region: '广东',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
           id: 5,
           name: '海康威视数字技术股份有限公司',
           sanctionType: getSanctionTypeByCode('Non-SDN CMIC') ?? state.sanctionTypes[3],
-          region: '浙江', 
+          region: '浙江',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 6, 
-          name: '科大讯飞股份有限公司', 
-          sanctionType: getSanctionTypeByCode('SSI') ?? state.sanctionTypes[4], 
-          region: '安徽', 
+          id: 6,
+          name: '科大讯飞股份有限公司',
+          sanctionType: getSanctionTypeByCode('SSI') ?? state.sanctionTypes[4],
+          region: '安徽',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 7, 
-          name: '商汤科技有限公司', 
-          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0], 
-          region: '香港', 
+          id: 7,
+          name: '商汤科技有限公司',
+          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0],
+          region: '香港',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 8, 
-          name: '旷视科技有限公司', 
-          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5], 
-          region: '北京', 
+          id: 8,
+          name: '旷视科技有限公司',
+          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5],
+          region: '北京',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 9, 
-          name: '北京云从科技有限公司', 
-          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5], 
-          region: '北京', 
+          id: 9,
+          name: '北京云从科技有限公司',
+          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5],
+          region: '北京',
           time: '2023.05',
           removalTime: '-'),
       CompanyItem(
-          id: 10, 
-          name: '深信服科技股份有限公司', 
-          sanctionType: getSanctionTypeByCode('DPL') ?? state.sanctionTypes[6], 
-          region: '广东', 
+          id: 10,
+          name: '深信服科技股份有限公司',
+          sanctionType: getSanctionTypeByCode('DPL') ?? state.sanctionTypes[6],
+          region: '广东',
           time: '2023.05',
           removalTime: '-'),
     ];
@@ -431,6 +432,106 @@ class DetailListLogic extends GetxController {
     } catch (e) {
       return null;
     }
+  }
+
+  // 显示制裁类型详情弹窗
+  void showSanctionDetailOverlay(SanctionType sanctionType) {
+    // 获取制裁类型详情数据
+    SanctionTypeDetail detail = SanctionTypeDetail.getDetailByCode(sanctionType.code);
+
+    // 使用Get.dialog显示弹窗
+    Get.bottomSheet(
+      // 弹窗内容
+      Container(
+        width: double.infinity,
+        height: MediaQuery.of(Get.context!).size.height * 0.5,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 标题栏
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                // color: Color(detail.sanctionType.bgColor),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '制裁类型',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A1A1A),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Icon(
+                      Icons.close,
+                      size: 20.w,
+                      color: Color(0xFF1A1A1A),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 内容区域
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemCount: detail.details.length,
+                separatorBuilder: (context, index) => Divider(
+                  height: 1,
+                  color: Color(0xFFEEEEEE),
+                ),
+                itemBuilder: (context, index) {
+                  final item = detail.details[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 详情标题
+                        Text(
+                          item['title'] ?? '',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        if (item['content']!.isNotEmpty) ...[
+                          SizedBox(height: 8.h),
+                          // 详情内容
+                          Text(
+                            item['content'] ?? '',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Color(0xFF666666),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.black54,
+    );
   }
 }
 
