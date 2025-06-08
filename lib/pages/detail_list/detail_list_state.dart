@@ -118,12 +118,12 @@ class DetailListState {
     yearlyStats.addAll([
       YearlyStats(year: '2018', newCount: 63, totalCount: 63),
       YearlyStats(year: '2019', newCount: 151, totalCount: 214),
-      YearlyStats(year: '2020', newCount: 240, totalCount: 454),
-      YearlyStats(year: '2021', newCount: 157, totalCount: 611),
-      YearlyStats(year: '2022', newCount: 43, totalCount: 654),
-      YearlyStats(year: '2023', newCount: 73, totalCount: 727),
-      YearlyStats(year: '2024', newCount: 136, totalCount: 863),
-      YearlyStats(year: '2025(截至5月)', newCount: 54, totalCount: 917),
+      YearlyStats(year: '2020', newCount: 240, totalCount: 100),
+      YearlyStats(year: '2021', newCount: 157, totalCount: 60),
+      YearlyStats(year: '2022', newCount: 43, totalCount: 70),
+      YearlyStats(year: '2023', newCount: 73, totalCount: 200),
+      YearlyStats(year: '2024', newCount: 136, totalCount: 20),
+      YearlyStats(year: '2025(截至5月)', newCount: 54, totalCount: 90),
     ]);
   }
 }

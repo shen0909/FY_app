@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import 'detail_list_logic.dart';
 import 'detail_list_state.dart';
@@ -481,108 +482,262 @@ class DetailListPage extends StatelessWidget {
     );
   }
 
-  // 年度统计表格
+  // 年度统计表格改为折线图
   Widget _buildYearlyStatsTable() {
     return Container(
       color: Colors.white,
+      padding: EdgeInsets.all(16.w),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 表头
-          Container(
-            height: 28.h,
-            color: Color(0xFFF0F5FF),
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 100.w,
-                  child: Text(
-                    "年份",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color(0xFF3361FE),
-                      fontWeight: FontWeight.normal,
-                    ),
+          // 标题和位置选择器
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "实体清单趋势",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  // 添加位置选择功能
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF9F9F9),
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16.sp,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        "广东省",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Color(0xFF1A1A1A),
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 12.sp,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Text(
+              ),
+            ],
+          ),
+          
+          SizedBox(height: 16.h),
+          Text(
+            "新增实体数量",
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF808080),
+            ),
+          ),
+          SizedBox(height: 5.h),
+          // 折线图
+          Container(
+            height: 200.h,
+            child: Obx(() {
+              // 如果没有数据，显示空视图
+              if (state.yearlyStats.isEmpty) {
+                return Center(child: Text("暂无数据"));
+              }
+              return LineChart(
+                LineChartData(
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 30.w,
+                    // horizontalInterval: 38,
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: Color(0xFFEEEEEE),
+                        strokeWidth: 1,
+                      );
+                    },
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        getTitlesWidget: (value, meta) {
+                          // 年份标签
+                          if (value.toInt() >= 0 && value.toInt() < state.yearlyStats.length) {
+                            final year = state.yearlyStats[value.toInt()].year;
+                            return Padding(
+                              padding: EdgeInsets.only(top: 8.h),
+                              child: Transform.rotate(
+                                angle: -0.785398, // 45度角
+                                child: Text(
+                                  year,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: Color(0xFF808080),
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 40,
+                        getTitlesWidget: (value, meta) {
+                          if (value == 0) return const SizedBox();
+                          return Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: Text(
+                              value.toInt().toString(),
+                              style: TextStyle(
+                                color: Color(0xFF808080),
+                                fontSize: 10.sp,
+                              ),
+                            ),
+                          );
+                        },
+                        reservedSize: 30,
+                      ),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: false,
+                      ),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: false,
+                      ),
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  minX: 0,
+                  maxX: state.yearlyStats.length - 1.0,
+                  minY: 0,
+                  maxY: _getMaxYValue(),
+                  lineBarsData: [
+                    // 累计总数曲线
+                    LineChartBarData(
+                      spots: List.generate(state.yearlyStats.length, (index) {
+                        return FlSpot(index.toDouble(), state.yearlyStats[index].totalCount.toDouble());
+                      }),
+                      isCurved: true,
+                      color: Color(0xFF3361FE),
+                      barWidth: 2,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) {
+                          return FlDotCirclePainter(
+                            radius: 4,
+                            color: Color(0xFF3361FE),
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(
+                        show: false,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+          
+          SizedBox(height: 16.h),
+          
+          // 图例说明
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 16.w,
+                    height: 8.h,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD3DCFF),
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  Text(
                     "新增实体数量",
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Color(0xFF3361FE),
-                      fontWeight: FontWeight.normal,
+                      color: FYColors.color_1A1A1A,
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: 100.w,
-                  child: Text(
+                ],
+              ),
+              SizedBox(width: 24.w),
+              Row(
+                children: [
+                  Container(
+                    width: 16.w,
+                    height: 3.h,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF3361FE),
+                      borderRadius: BorderRadius.circular(1.5.r),
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  Text(
                     "累计总数",
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Color(0xFF3361FE),
-                      fontWeight: FontWeight.normal,
+                      color: FYColors.color_1A1A1A,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          
-          // 表格内容
-          Obx(() {
-            return Column(
-              children: List.generate(
-                state.yearlyStats.length,
-                (index) {
-                  final item = state.yearlyStats[index];
-                  final isOdd = index % 2 == 1;
-                  
-                  return Container(
-                    height: 44.h,
-                    color: isOdd ? Colors.white : Color(0xFFF9F9F9),
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 100.w,
-                          child: Text(
-                            item.year,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xFF1A1A1A),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            "${item.newCount}",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xFF1A1A1A),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 100.w,
-                          child: Text(
-                            "${item.totalCount}",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xFF1A1A1A),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                ],
               ),
-            );
-          }),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  // 获取图表Y轴最大值
+  double _getMaxYValue() {
+    if (state.yearlyStats.isEmpty) return 240;
+    
+    double maxTotal = 0;
+    double maxNew = 0;
+    
+    for (var stat in state.yearlyStats) {
+      if (stat.totalCount > maxTotal) {
+        maxTotal = stat.totalCount.toDouble();
+      }
+      if (stat.newCount > maxNew) {
+        maxNew = stat.newCount.toDouble();
+      }
+    }
+    
+    // 向上取整到最接近的40的倍数
+    return (((maxTotal > maxNew ? maxTotal : maxNew) ~/ 40) + 1) * 40.0;
   }
 }
