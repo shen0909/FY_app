@@ -475,27 +475,19 @@ class DetailListPage extends StatelessWidget {
     Color bgColor;
     Color textColor;
 
-    switch (type) {
-      case 'EL':
-        bgColor = Color(0xFFFFECE9);
-        textColor = Color(0xFFFF2A08);
-        break;
-      case 'NS-CMIC':
-      case 'Non-SDN CMIC':
-        bgColor = Color(0xFFFFF7E9);
-        textColor = Color(0xFFFFA408);
-        break;
-      case 'CMC':
-      case 'SSI':
-        bgColor = Color(0xFFE7FEF8);
-        textColor = Color(0xFF07CC89);
-        break;
-      case 'UVL':
-      case 'DPL':
-      default:
-        bgColor = Color(0xFFEDEDED);
-        textColor = Color(0xFF1A1A1A);
-        break;
+    if (type.contains('EL')) {
+      bgColor = Color(0xFFFFECE9);
+      textColor = Color(0xFFFF2A08);
+    } else if (type.contains('Non-SDN CMIC') || type.contains('NS-CMIC')) {
+      bgColor = Color(0xFFFFF7E9);
+      textColor = Color(0xFFFFA408);
+    } else if (type.contains('CMC') || type.contains('SSI')) {
+      bgColor = Color(0xFFE7FEF8);
+      textColor = Color(0xFF07CC89);
+    } else {
+      // 默认情况（UVL/DPL/其他）
+      bgColor = Color(0xFFEDEDED);
+      textColor = Color(0xFF1A1A1A);
     }
 
     return Container(
@@ -504,13 +496,19 @@ class DetailListPage extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(
-        type,
-        style: TextStyle(
-          fontSize: 12,
-          color: textColor,
-        ),
-        textAlign: TextAlign.center,
+      child: Row(
+        children: [
+          Text(
+            type,
+            style: TextStyle(
+              fontSize: 12,
+              color: textColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(width: 4.w),
+          Icon(Icons.remove_red_eye_outlined,size: 14.w,color: textColor)
+        ],
       ),
     );
   }

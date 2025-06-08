@@ -115,23 +115,23 @@ class DetailListLogic extends GetxController {
   // 模拟数据
   List<CompanyItem> _getMockData() {
     return [
-      CompanyItem(id: 1, name: '华为技术有限公司', sanctionType: 'EL', region: '广东', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 1, name: '华为技术有限公司', sanctionType: '实体清单(EL)', region: '广东', time: '2023.05',removalTime: '-'),
       CompanyItem(
-          id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: 'EL', region: '上海', time: '2023.05',removalTime: '-'),
+          id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: '实体清单(EL)', region: '上海', time: '2023.05',removalTime: '-'),
       CompanyItem(
-          id: 3, name: '字节跳动有限公司', sanctionType: 'NS-CMIC', region: '北京', time: '2023.05',removalTime: '-'),
+          id: 3, name: '字节跳动有限公司', sanctionType: 'NS-中国军工复合体清单 (NS-CMIC List)', region: '北京', time: '2023.05',removalTime: '-'),
       CompanyItem(id: 4, name: '大疆创新科技有限公司', sanctionType: 'CMC', region: '广东', time: '2023.05',removalTime: '-'),
       CompanyItem(
           id: 5,
           name: '海康威视数字技术股份有限公司',
-          sanctionType: 'Non-SDN CMIC',
+          sanctionType: '非SDN中国军事综合体企业清单 (Non-SDN CMIC',
           region: '浙江', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 6, name: '科大讯飞股份有限公司', sanctionType: 'SSI', region: '安徽', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 7, name: '商汤科技有限公司', sanctionType: 'EL', region: '香港', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 8, name: '旷视科技有限公司', sanctionType: 'UVL', region: '北京', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 9, name: '北京云从科技有限公司', sanctionType: 'UVL', region: '北京', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 6, name: '科大讯飞股份有限公司', sanctionType: '行业制裁名单 (SSI)', region: '安徽', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 7, name: '商汤科技有限公司', sanctionType: '实体清单(EL)', region: '香港', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 8, name: '旷视科技有限公司', sanctionType: '末经核实清单 (UVL)', region: '北京', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 9, name: '北京云从科技有限公司', sanctionType: '末经核实清单 (UVL)', region: '北京', time: '2023.05',removalTime: '-'),
       CompanyItem(
-          id: 10, name: '深信服科技股份有限公司', sanctionType: 'DPL', region: '广东', time: '2023.05',removalTime: '-'),
+          id: 10, name: '深信服科技股份有限公司', sanctionType: '被拒绝人员清单 (DPL)', region: '广东', time: '2023.05',removalTime: '-'),
     ];
   }
 
