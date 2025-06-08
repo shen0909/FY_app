@@ -311,7 +311,7 @@ class DetailListPage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 100.w,
+                                  // width: 229.w,
                                   child: Text(
                                     "制裁类型",
                                     style: TextStyle(
@@ -378,6 +378,7 @@ class DetailListPage extends StatelessWidget {
                                           padding: EdgeInsets.only(left: 8.w),
                                           child: Text(
                                             item.name,
+                                            textAlign: TextAlign.start,
                                             style: TextStyle(
                                               fontSize: 12.sp,
                                               color: Color(0xFF1A1A1A),
@@ -388,11 +389,10 @@ class DetailListPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 100.w,
+                                        // width: 229.w,
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8.w),
-                                          child: _buildSanctionTypeTag(item.sanctionType)
+                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                          child: _buildSanctionTypeTag(item.sanctionType),
                                         ),
                                       ),
                                       SizedBox(
@@ -435,7 +435,6 @@ class DetailListPage extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   // 右侧滑动指示阴影
                   Positioned(
                     right: 0,
