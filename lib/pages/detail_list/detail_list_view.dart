@@ -229,6 +229,40 @@ class DetailListPage extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
+        // 计算每列需要的最大宽度
+        double maxNameWidth = 150.w; // 名称列最小宽度
+        double maxSanctionTypeWidth = 0; // 制裁类型列，需要计算最大宽度
+        double maxRegionWidth = 100.w; // 地区列最小宽度
+        double timeWidth = 80.w; // 时间列
+        double removalTimeWidth = 80.w; // 移除时间列
+        
+        // 测量每个制裁类型的宽度
+        TextStyle sanctionTextStyle = TextStyle(fontSize: 12, color: Colors.black);
+        TextPainter textPainter = TextPainter(
+          textDirection: TextDirection.ltr,
+        );
+        
+        // 为每个制裁类型计算所需宽度
+        for (var item in state.companyList) {
+          // 加上一些额外的宽度用于图标和内边距
+          double totalWidth = 50.w; // 基础宽度，包含图标和padding
+          
+          // 计算文本宽度
+          textPainter.text = TextSpan(text: item.sanctionType, style: sanctionTextStyle);
+          textPainter.layout();
+          totalWidth += textPainter.width;
+          
+          if (totalWidth > maxSanctionTypeWidth) {
+            maxSanctionTypeWidth = totalWidth;
+          }
+        }
+        
+        // 确保制裁类型宽度至少有一个最小值
+        maxSanctionTypeWidth = maxSanctionTypeWidth < 120.w ? 120.w : maxSanctionTypeWidth;
+        
+        // 计算总宽度
+        double totalTableWidth = maxNameWidth + maxSanctionTypeWidth + maxRegionWidth + timeWidth + removalTimeWidth;
+
         return Row(
           children: [
             // 固定的首列（序号列）
@@ -287,7 +321,7 @@ class DetailListPage extends StatelessWidget {
                     controller: logic.horizontalScrollController,
                     child: SizedBox(
                       // 设置足够的宽度让内容可以滚动
-                      width: 510.w,
+                      width: totalTableWidth,
                       child: Column(
                         children: [
                           // 表头行
@@ -297,7 +331,7 @@ class DetailListPage extends StatelessWidget {
                             child: Row(
                               children: [
                                 SizedBox(
-                                  width: 150.w,
+                                  width: maxNameWidth,
                                   child: Padding(
                                     padding: EdgeInsets.only(left: 8.w),
                                     child: Text(
@@ -311,18 +345,21 @@ class DetailListPage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  // width: 229.w,
-                                  child: Text(
-                                    "制裁类型",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
+                                  width: maxSanctionTypeWidth,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                    child: Text(
+                                      "制裁类型",
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Color(0xFF3361FE),
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 100.w,
+                                  width: maxRegionWidth,
                                   child: Text(
                                     "地区",
                                     style: TextStyle(
@@ -333,7 +370,7 @@ class DetailListPage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 80.w,
+                                  width: timeWidth,
                                   child: Text(
                                     "时间",
                                     style: TextStyle(
@@ -344,7 +381,7 @@ class DetailListPage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 80.w,
+                                  width: removalTimeWidth,
                                   child: Text(
                                     "移除时间",
                                     style: TextStyle(
@@ -366,14 +403,13 @@ class DetailListPage extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 final item = state.companyList[index];
                                 final isOdd = index % 2 == 1;
-
                                 return Container(
                                   height: 44.h,
                                   color: isOdd ? Colors.white : Color(0xFFF9F9F9),
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                        width: 150.w,
+                                        width: maxNameWidth,
                                         child: Padding(
                                           padding: EdgeInsets.only(left: 8.w),
                                           child: Text(
@@ -389,14 +425,14 @@ class DetailListPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        // width: 229.w,
+                                        width: maxSanctionTypeWidth,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(horizontal: 8.w),
                                           child: _buildSanctionTypeTag(item.sanctionType),
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 100.w,
+                                        width: maxRegionWidth,
                                         child: Text(
                                           item.region,
                                           style: TextStyle(
@@ -406,7 +442,7 @@ class DetailListPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 80.w,
+                                        width: timeWidth,
                                         child: Text(
                                           item.time,
                                           style: TextStyle(
@@ -416,7 +452,7 @@ class DetailListPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 80.w,
+                                        width: removalTimeWidth,
                                         child: Text(
                                           item.removalTime,
                                           style: TextStyle(
@@ -496,17 +532,20 @@ class DetailListPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            type,
-            style: TextStyle(
-              fontSize: 12,
-              color: textColor,
+          Flexible(
+            child: Text(
+              type,
+              style: TextStyle(
+                fontSize: 12,
+                color: textColor,
+              ),
             ),
-            textAlign: TextAlign.center,
           ),
           SizedBox(width: 4.w),
-          Icon(Icons.remove_red_eye_outlined,size: 14.w,color: textColor)
+          Icon(Icons.remove_red_eye_outlined, size: 14.w, color: textColor)
         ],
       ),
     );
