@@ -156,7 +156,7 @@ class DetailListState {
 class CompanyItem {
   final int id;
   final String name;
-  final String sanctionType; // 制裁类型
+  final SanctionType sanctionType;
   final String region; // 地区
   final String time; // 时间
   final String removalTime; // 移除时间

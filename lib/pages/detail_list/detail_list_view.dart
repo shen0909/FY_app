@@ -14,9 +14,7 @@ class DetailListPage extends StatelessWidget {
   DetailListPage({Key? key}) : super(key: key);
 
   final DetailListLogic logic = Get.put(DetailListLogic());
-  final DetailListState state = Get
-      .find<DetailListLogic>()
-      .state;
+  final DetailListState state = Get.find<DetailListLogic>().state;
 
   @override
   Widget build(BuildContext context) {
@@ -108,9 +106,12 @@ class DetailListPage extends StatelessWidget {
             child: Row(
               children: [
                 SizedBox(width: 8.w),
-                Image.asset(FYImages.search_icon, width: 20.w,
+                Image.asset(
+                  FYImages.search_icon,
+                  width: 20.w,
                   height: 20.w,
-                  fit: BoxFit.contain,),
+                  fit: BoxFit.contain,
+                ),
                 SizedBox(width: 8.w),
                 Expanded(
                   child: TextField(
@@ -147,22 +148,25 @@ class DetailListPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Expanded(child: _buildFilterChip(
-              context, "类型", state.typeFilter, logic.typeKey)),
+          Expanded(
+              child: _buildFilterChip(
+                  context, "类型", state.typeFilter, logic.typeKey)),
           const SizedBox(width: 12),
-          Expanded(child: _buildFilterChip(
-              context, "省份", state.provinceFilter, logic.provinceKey)),
+          Expanded(
+              child: _buildFilterChip(
+                  context, "省份", state.provinceFilter, logic.provinceKey)),
           const SizedBox(width: 12),
-          Expanded(child: _buildFilterChip(
-              context, "城市", state.cityFilter, logic.cityKey)),
+          Expanded(
+              child: _buildFilterChip(
+                  context, "城市", state.cityFilter, logic.cityKey)),
         ],
       ),
     );
   }
 
   // 筛选按钮
-  Widget _buildFilterChip(BuildContext context, String title, Rx<String> filter,
-      GlobalKey key) {
+  Widget _buildFilterChip(
+      BuildContext context, String title, Rx<String> filter, GlobalKey key) {
     return Obx(() {
       final bool hasValue = filter.value.isNotEmpty;
 
@@ -208,8 +212,7 @@ class DetailListPage extends StatelessWidget {
   Widget _buildResultCount() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Obx(() =>
-          Text(
+      child: Obx(() => Text(
             "${state.companyList.length} 条结果",
             style: TextStyle(
               fontSize: 12,
@@ -235,37 +238,41 @@ class DetailListPage extends StatelessWidget {
         double maxRegionWidth = 100.w; // 地区列最小宽度
         double timeWidth = 80.w; // 时间列
         double removalTimeWidth = 80.w; // 移除时间列
-        
+
         // 测量每个制裁类型的宽度
-        TextStyle sanctionTextStyle = TextStyle(fontSize: 12, color: Colors.black);
-        TextPainter textPainter = TextPainter(
-          textDirection: TextDirection.ltr,
-        );
-        
+        TextStyle sanctionTextStyle =
+            TextStyle(fontSize: 12.sp, color: Colors.black);
+        TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+
         // 为每个制裁类型计算所需宽度
         for (var item in state.companyList) {
-          // 加上一些额外的宽度用于图标和内边距
-          double totalWidth = 50.w; // 基础宽度，包含图标和padding
-          
+          // 计算每个制裁类型标签所需的总宽度
+          // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2)
+
           // 计算文本宽度
-          textPainter.text = TextSpan(text: item.sanctionType, style: sanctionTextStyle);
+          textPainter.text = TextSpan(text: item.sanctionType.name, style: sanctionTextStyle);
           textPainter.layout();
-          totalWidth += textPainter.width;
-          
+          double totalWidth =
+              textPainter.width + 14.w + 4.w + 16.w + 20.w; // 额外添加10.w作为缓冲
+
           if (totalWidth > maxSanctionTypeWidth) {
             maxSanctionTypeWidth = totalWidth;
           }
         }
-        
-        // 确保制裁类型宽度至少有一个最小值
-        maxSanctionTypeWidth = maxSanctionTypeWidth < 120.w ? 120.w : maxSanctionTypeWidth;
 
-        // 不再计算具体宽度，保持一个合理的列宽
-        // 图片中可以看到制裁类型列宽度设置得比较宽，以便容纳最长的标签
-        maxSanctionTypeWidth = 220.w;
-        
+        // 确保制裁类型宽度至少有一个最小值
+        maxSanctionTypeWidth =
+            maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
+
+        // 保留动态计算的宽度，不再强制设置固定值
+        // maxSanctionTypeWidth = 240.w;
+
         // 计算总宽度
-        double totalTableWidth = maxNameWidth + maxSanctionTypeWidth + maxRegionWidth + timeWidth + removalTimeWidth;
+        double totalTableWidth = maxNameWidth +
+            maxSanctionTypeWidth +
+            maxRegionWidth +
+            timeWidth +
+            removalTimeWidth;
 
         return Row(
           children: [
@@ -351,7 +358,8 @@ class DetailListPage extends StatelessWidget {
                                 SizedBox(
                                   width: maxSanctionTypeWidth,
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8.w),
                                     child: Text(
                                       "制裁类型",
                                       style: TextStyle(
@@ -409,7 +417,8 @@ class DetailListPage extends StatelessWidget {
                                 final isOdd = index % 2 == 1;
                                 return Container(
                                   height: 44.h,
-                                  color: isOdd ? Colors.white : Color(0xFFF9F9F9),
+                                  color:
+                                      isOdd ? Colors.white : Color(0xFFF9F9F9),
                                   child: Row(
                                     children: [
                                       SizedBox(
@@ -431,9 +440,11 @@ class DetailListPage extends StatelessWidget {
                                       Container(
                                         width: maxSanctionTypeWidth,
                                         alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.w),
                                         child: IntrinsicWidth(
-                                          child: _buildSanctionTypeTag(item.sanctionType),
+                                          child: _buildSanctionTypeTag(
+                                              item.sanctionType),
                                         ),
                                       ),
                                       SizedBox(
@@ -511,29 +522,11 @@ class DetailListPage extends StatelessWidget {
   }
 
   // 构建制裁类型标签
-  Widget _buildSanctionTypeTag(String type) {
-    Color bgColor;
-    Color textColor;
-
-    if (type.contains('EL')) {
-      bgColor = Color(0xFFFFECE9);
-      textColor = Color(0xFFFF2A08);
-    } else if (type.contains('Non-SDN CMIC') || type.contains('NS-CMIC')) {
-      bgColor = Color(0xFFFFF7E9);
-      textColor = Color(0xFFFFA408);
-    } else if (type.contains('CMC') || type.contains('SSI')) {
-      bgColor = Color(0xFFE7FEF8);
-      textColor = Color(0xFF07CC89);
-    } else {
-      // 默认情况（UVL/DPL/其他）
-      bgColor = Color(0xFFEDEDED);
-      textColor = Color(0xFF1A1A1A);
-    }
-
+  Widget _buildSanctionTypeTag(SanctionType sanctionType) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: Color(sanctionType.bgColor),
         borderRadius: BorderRadius.circular(4),
       ),
       child: IntrinsicWidth(
@@ -542,14 +535,15 @@ class DetailListPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              type,
+              sanctionType.name,
               style: TextStyle(
                 fontSize: 12,
-                color: textColor,
+                color: Color(sanctionType.color),
               ),
             ),
             SizedBox(width: 4.w),
-            Icon(Icons.remove_red_eye_outlined, size: 14.w, color: textColor)
+            Icon(Icons.remove_red_eye_outlined,
+                size: 14.w, color: Color(sanctionType.color))
           ],
         ),
       ),
@@ -589,7 +583,8 @@ class DetailListPage extends StatelessWidget {
                   // 添加位置选择功能
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                   decoration: BoxDecoration(
                     color: Color(0xFFF9F9F9),
                     borderRadius: BorderRadius.circular(16.r),
@@ -621,7 +616,7 @@ class DetailListPage extends StatelessWidget {
               ),
             ],
           ),
-          
+
           SizedBox(height: 16.h),
           Text(
             "新增实体数量",
@@ -661,7 +656,8 @@ class DetailListPage extends StatelessWidget {
                         reservedSize: 30,
                         getTitlesWidget: (value, meta) {
                           // 年份标签
-                          if (value.toInt() >= 0 && value.toInt() < state.yearlyStats.length) {
+                          if (value.toInt() >= 0 &&
+                              value.toInt() < state.yearlyStats.length) {
                             final year = state.yearlyStats[value.toInt()].year;
                             return Padding(
                               padding: EdgeInsets.only(top: 8.h),
@@ -722,7 +718,8 @@ class DetailListPage extends StatelessWidget {
                     // 累计总数曲线
                     LineChartBarData(
                       spots: List.generate(state.yearlyStats.length, (index) {
-                        return FlSpot(index.toDouble(), state.yearlyStats[index].totalCount.toDouble());
+                        return FlSpot(index.toDouble(),
+                            state.yearlyStats[index].totalCount.toDouble());
                       }),
                       isCurved: true,
                       color: Color(0xFF3361FE),
@@ -748,9 +745,9 @@ class DetailListPage extends StatelessWidget {
               );
             }),
           ),
-          
+
           SizedBox(height: 16.h),
-          
+
           // 图例说明
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -806,10 +803,10 @@ class DetailListPage extends StatelessWidget {
   // 获取图表Y轴最大值
   double _getMaxYValue() {
     if (state.yearlyStats.isEmpty) return 240;
-    
+
     double maxTotal = 0;
     double maxNew = 0;
-    
+
     for (var stat in state.yearlyStats) {
       if (stat.totalCount > maxTotal) {
         maxTotal = stat.totalCount.toDouble();
@@ -818,7 +815,7 @@ class DetailListPage extends StatelessWidget {
         maxNew = stat.newCount.toDouble();
       }
     }
-    
+
     // 向上取整到最接近的40的倍数
     return (((maxTotal > maxNew ? maxTotal : maxNew) ~/ 40) + 1) * 40.0;
   }

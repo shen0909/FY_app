@@ -27,6 +27,11 @@ class DetailListLogic extends GetxController {
     rightVerticalController = ScrollController();
     horizontalScrollController = ScrollController();
 
+    // 确保制裁类型列表已初始化
+    if (state.sanctionTypes.isEmpty) {
+      state.sanctionTypes.addAll(SanctionType.mockSanctionType());
+    }
+
     // 同步左右两侧的垂直滚动
     leftVerticalController.addListener(() {
       if (rightVerticalController.offset != leftVerticalController.offset) {
@@ -67,7 +72,34 @@ class DetailListLogic extends GetxController {
     // 模拟网络请求延迟
     Future.delayed(const Duration(milliseconds: 800), () {
       // 模拟数据 - 实际项目中应从API获取
-      state.companyList.value = _getMockData();
+      List<CompanyItem> allCompanies = _getMockData();
+      
+      // 过滤数据
+      if (state.typeFilter.value.isNotEmpty) {
+        SanctionType? selectedType = getSanctionTypeByName(state.typeFilter.value);
+        if (selectedType != null) {
+          allCompanies = allCompanies.where((company) => 
+            company.sanctionType.code == selectedType.code).toList();
+        }
+      }
+      
+      if (state.provinceFilter.value.isNotEmpty) {
+        allCompanies = allCompanies.where((company) => 
+            company.region == state.provinceFilter.value).toList();
+      }
+      
+      if (state.cityFilter.value.isNotEmpty) {
+        allCompanies = allCompanies.where((company) => 
+            company.region == state.cityFilter.value).toList();
+      }
+      
+      if (state.searchText.value.isNotEmpty) {
+        final keyword = state.searchText.value.toLowerCase();
+        allCompanies = allCompanies.where((company) => 
+            company.name.toLowerCase().contains(keyword)).toList();
+      }
+      
+      state.companyList.value = allCompanies;
       state.totalCount.value = state.companyList.length;
       state.isLoading.value = false;
     });
@@ -116,21 +148,68 @@ class DetailListLogic extends GetxController {
   List<CompanyItem> _getMockData() {
     return [
       CompanyItem(
-          id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: '实体清单(EL)', region: '上海', time: '2023.05',removalTime: '-'),
+          id: 2, 
+          name: '中芯国际集成电路制造有限公司', 
+          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0], 
+          region: '上海', 
+          time: '2023.05',
+          removalTime: '-'),
       CompanyItem(
-          id: 3, name: '字节跳动有限公司', sanctionType: 'NS-中国军工复合体清单 (NS-CMIC List)', region: '北京', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 4, name: '大疆创新科技有限公司', sanctionType: 'CMC', region: '广东', time: '2023.05',removalTime: '-'),
+          id: 3, 
+          name: '字节跳动有限公司', 
+          sanctionType: getSanctionTypeByCode('NS-CMIC') ?? state.sanctionTypes[1], 
+          region: '北京', 
+          time: '2023.05',
+          removalTime: '-'),
+      CompanyItem(
+          id: 4, 
+          name: '大疆创新科技有限公司', 
+          sanctionType: getSanctionTypeByCode('CMC') ?? state.sanctionTypes[2], 
+          region: '广东', 
+          time: '2023.05',
+          removalTime: '-'),
       CompanyItem(
           id: 5,
           name: '海康威视数字技术股份有限公司',
-          sanctionType: '非SDN中国军事综合体企业清单 (Non-SDN CMIC',
-          region: '浙江', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 6, name: '科大讯飞股份有限公司', sanctionType: '行业制裁名单 (SSI)', region: '安徽', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 7, name: '商汤科技有限公司', sanctionType: '实体清单(EL)', region: '香港', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 8, name: '旷视科技有限公司', sanctionType: '末经核实清单 (UVL)', region: '北京', time: '2023.05',removalTime: '-'),
-      CompanyItem(id: 9, name: '北京云从科技有限公司', sanctionType: '末经核实清单 (UVL)', region: '北京', time: '2023.05',removalTime: '-'),
+          sanctionType: getSanctionTypeByCode('Non-SDN CMIC') ?? state.sanctionTypes[3],
+          region: '浙江', 
+          time: '2023.05',
+          removalTime: '-'),
       CompanyItem(
-          id: 10, name: '深信服科技股份有限公司', sanctionType: '被拒绝人员清单 (DPL)', region: '广东', time: '2023.05',removalTime: '-'),
+          id: 6, 
+          name: '科大讯飞股份有限公司', 
+          sanctionType: getSanctionTypeByCode('SSI') ?? state.sanctionTypes[4], 
+          region: '安徽', 
+          time: '2023.05',
+          removalTime: '-'),
+      CompanyItem(
+          id: 7, 
+          name: '商汤科技有限公司', 
+          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0], 
+          region: '香港', 
+          time: '2023.05',
+          removalTime: '-'),
+      CompanyItem(
+          id: 8, 
+          name: '旷视科技有限公司', 
+          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5], 
+          region: '北京', 
+          time: '2023.05',
+          removalTime: '-'),
+      CompanyItem(
+          id: 9, 
+          name: '北京云从科技有限公司', 
+          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5], 
+          region: '北京', 
+          time: '2023.05',
+          removalTime: '-'),
+      CompanyItem(
+          id: 10, 
+          name: '深信服科技股份有限公司', 
+          sanctionType: getSanctionTypeByCode('DPL') ?? state.sanctionTypes[6], 
+          region: '广东', 
+          time: '2023.05',
+          removalTime: '-'),
     ];
   }
 
