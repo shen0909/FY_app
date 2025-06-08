@@ -6,6 +6,7 @@
     <application
         android:label="FY"
         android:name="${applicationName}"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/launch_icon">
         <activity
             android:name=".MainActivity"
