@@ -15,40 +15,29 @@ class SanctionType {
     required this.color,
     required this.bgColor,
   });
-}
 
-class DetailListState {
-  // 搜索关键词
-  var searchText = ''.obs;
-  
-  // 筛选选项
-  var typeFilter = ''.obs;
-  var provinceFilter = ''.obs;
-  var cityFilter = ''.obs;
-  
-  // 是否正在加载数据
-  var isLoading = false.obs;
-  
-  // 企业清单数据
-  var companyList = <CompanyItem>[].obs;
-  
-  // 总数量
-  var totalCount = 10.obs;
-
-  // 年度统计数据
-  var yearlyStats = <YearlyStats>[].obs;
-
-  // 制裁类型列表
-  var sanctionTypes = <SanctionType>[].obs;
-  
-  DetailListState() {
-    ///Initialize variables
-    _initDemoData();
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'code': code,
+      'description': description,
+      'color': color,
+      'bgColor': bgColor,
+    };
   }
 
-  void _initDemoData() {
-    // 初始化制裁类型列表
-    sanctionTypes.addAll([
+  factory SanctionType.fromJson(Map<String, dynamic> json) {
+    return SanctionType(
+      name: json['name'] as String,
+      code: json['code'] as String,
+      description: json['description'] as String,
+      color: json['color'] as int,
+      bgColor: json['bgColor'] as int,
+    );
+  }
+
+  static List<SanctionType> mockSanctionType (){
+    return [
       SanctionType(
         name: '实体清单(EL)',
         code: 'EL',
@@ -112,7 +101,42 @@ class DetailListState {
         color: 0xFF1A1A1A,
         bgColor: 0xFFEDEDED,
       ),
-    ]);
+    ];
+  }
+}
+
+class DetailListState {
+  // 搜索关键词
+  var searchText = ''.obs;
+  
+  // 筛选选项
+  var typeFilter = ''.obs;
+  var provinceFilter = ''.obs;
+  var cityFilter = ''.obs;
+  
+  // 是否正在加载数据
+  var isLoading = false.obs;
+  
+  // 企业清单数据
+  var companyList = <CompanyItem>[].obs;
+  
+  // 总数量
+  var totalCount = 10.obs;
+
+  // 年度统计数据
+  var yearlyStats = <YearlyStats>[].obs;
+
+  // 制裁类型列表
+  var sanctionTypes = <SanctionType>[].obs;
+  
+  DetailListState() {
+    ///Initialize variables
+    _initDemoData();
+  }
+
+  void _initDemoData() {
+    // 初始化制裁类型列表
+    sanctionTypes.addAll(SanctionType.mockSanctionType());
 
     // 初始化年度统计数据
     yearlyStats.addAll([
