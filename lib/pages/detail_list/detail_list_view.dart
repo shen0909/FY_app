@@ -287,7 +287,7 @@ class DetailListPage extends StatelessWidget {
                     controller: logic.horizontalScrollController,
                     child: SizedBox(
                       // 设置足够的宽度让内容可以滚动
-                      width: 350.w,
+                      width: 510.w,
                       child: Column(
                         children: [
                           // 表头行
@@ -325,6 +325,28 @@ class DetailListPage extends StatelessWidget {
                                   width: 100.w,
                                   child: Text(
                                     "地区",
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Color(0xFF3361FE),
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80.w,
+                                  child: Text(
+                                    "时间",
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Color(0xFF3361FE),
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80.w,
+                                  child: Text(
+                                    "移除时间",
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       color: Color(0xFF3361FE),
@@ -370,14 +392,33 @@ class DetailListPage extends StatelessWidget {
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8.w),
-                                          child: _buildSanctionTypeTag(
-                                              item.sanctionType),
+                                          child: _buildSanctionTypeTag(item.sanctionType)
                                         ),
                                       ),
                                       SizedBox(
                                         width: 100.w,
                                         child: Text(
                                           item.region,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Color(0xFF1A1A1A),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 80.w,
+                                        child: Text(
+                                          item.time,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Color(0xFF1A1A1A),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 80.w,
+                                        child: Text(
+                                          item.removalTime,
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             color: Color(0xFF1A1A1A),

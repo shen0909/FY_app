@@ -134,12 +134,16 @@ class CompanyItem {
   final String name;
   final String sanctionType; // 制裁类型
   final String region; // 地区
+  final String time; // 时间
+  final String removalTime; // 移除时间
   
   CompanyItem({
     required this.id,
     required this.name,
     required this.sanctionType,
     required this.region,
+    required this.time,
+    required this.removalTime,
   });
 }
 

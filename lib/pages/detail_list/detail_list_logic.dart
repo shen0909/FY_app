@@ -115,23 +115,23 @@ class DetailListLogic extends GetxController {
   // 模拟数据
   List<CompanyItem> _getMockData() {
     return [
-      CompanyItem(id: 1, name: '华为技术有限公司', sanctionType: 'EL', region: '广东'),
+      CompanyItem(id: 1, name: '华为技术有限公司', sanctionType: 'EL', region: '广东', time: '2023.05',removalTime: '-'),
       CompanyItem(
-          id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: 'EL', region: '上海'),
+          id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: 'EL', region: '上海', time: '2023.05',removalTime: '-'),
       CompanyItem(
-          id: 3, name: '字节跳动有限公司', sanctionType: 'NS-CMIC', region: '北京'),
-      CompanyItem(id: 4, name: '大疆创新科技有限公司', sanctionType: 'CMC', region: '广东'),
+          id: 3, name: '字节跳动有限公司', sanctionType: 'NS-CMIC', region: '北京', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 4, name: '大疆创新科技有限公司', sanctionType: 'CMC', region: '广东', time: '2023.05',removalTime: '-'),
       CompanyItem(
           id: 5,
           name: '海康威视数字技术股份有限公司',
           sanctionType: 'Non-SDN CMIC',
-          region: '浙江'),
-      CompanyItem(id: 6, name: '科大讯飞股份有限公司', sanctionType: 'SSI', region: '安徽'),
-      CompanyItem(id: 7, name: '商汤科技有限公司', sanctionType: 'EL', region: '香港'),
-      CompanyItem(id: 8, name: '旷视科技有限公司', sanctionType: 'UVL', region: '北京'),
-      CompanyItem(id: 9, name: '北京云从科技有限公司', sanctionType: 'UVL', region: '北京'),
+          region: '浙江', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 6, name: '科大讯飞股份有限公司', sanctionType: 'SSI', region: '安徽', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 7, name: '商汤科技有限公司', sanctionType: 'EL', region: '香港', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 8, name: '旷视科技有限公司', sanctionType: 'UVL', region: '北京', time: '2023.05',removalTime: '-'),
+      CompanyItem(id: 9, name: '北京云从科技有限公司', sanctionType: 'UVL', region: '北京', time: '2023.05',removalTime: '-'),
       CompanyItem(
-          id: 10, name: '深信服科技股份有限公司', sanctionType: 'DPL', region: '广东'),
+          id: 10, name: '深信服科技股份有限公司', sanctionType: 'DPL', region: '广东', time: '2023.05',removalTime: '-'),
     ];
   }
 
@@ -168,7 +168,7 @@ class DetailListLogic extends GetxController {
     double maxHeight = 300.0;
     // 根据筛选类型设置宽度
     double overlayWidth = 200.0;
-    
+
     // 根据不同筛选类型获取选项
     if (filterType == "类型") {
       options = getTypeOptions();
@@ -180,10 +180,10 @@ class DetailListLogic extends GetxController {
       options = getCityOptions();
       overlayWidth = size.width; // 与上方筛选框宽度一致
     }
-    
+
     // 声明一个controller
     final scrollController = ScrollController();
-    
+
     return Material(
       color: Colors.transparent,
       child: Stack(
@@ -197,7 +197,7 @@ class DetailListLogic extends GetxController {
               height: double.infinity,
             ),
           ),
-          
+
           // 筛选内容
           Positioned(
             left: position.dx,
@@ -227,47 +227,52 @@ class DetailListLogic extends GetxController {
                     child: _DynamicScrollbarWrapper(
                       scrollController: scrollController,
                       child: ListView.builder(
-                        controller: scrollController,
-                        padding: EdgeInsets.only(right: 10), // 为滚动条留出空间
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (context, index) {
-                          final option = options[index];
-                          bool isSelected = false;
-                          if (filterType == "类型") {
-                            isSelected = state.typeFilter.value == option;
-                          } else if (filterType == "省份") {
-                            isSelected = state.provinceFilter.value == option;
-                          } else if (filterType == "城市") {
-                            isSelected = state.cityFilter.value == option;
-                          }
-                          
-                          return InkWell(
-                            onTap: () {
-                              if (filterType == "类型") {
-                                setTypeFilter(option);
-                              } else if (filterType == "省份") {
-                                setProvinceFilter(option);
-                              } else if (filterType == "城市") {
-                                setCityFilter(option);
-                              }
-                              hideOverlay();
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                              color: isSelected ? Color(0xFFF0F5FF) : Colors.white,
-                              child: Text(
-                                option,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: isSelected ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                          controller: scrollController,
+                          padding: EdgeInsets.only(right: 10),
+                          // 为滚动条留出空间
+                          shrinkWrap: true,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) {
+                            final option = options[index];
+                            bool isSelected = false;
+                            if (filterType == "类型") {
+                              isSelected = state.typeFilter.value == option;
+                            } else if (filterType == "省份") {
+                              isSelected = state.provinceFilter.value == option;
+                            } else if (filterType == "城市") {
+                              isSelected = state.cityFilter.value == option;
+                            }
+
+                            return InkWell(
+                              onTap: () {
+                                if (filterType == "类型") {
+                                  setTypeFilter(option);
+                                } else if (filterType == "省份") {
+                                  setProvinceFilter(option);
+                                } else if (filterType == "城市") {
+                                  setCityFilter(option);
+                                }
+                                hideOverlay();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                color: isSelected
+                                    ? Color(0xFFF0F5FF)
+                                    : Colors.white,
+                                child: Text(
+                                  option,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: isSelected
+                                        ? Color(0xFF3361FE)
+                                        : Color(0xFF1A1A1A),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }
-                      ),
+                            );
+                          }),
                     ),
                   ),
                 ],
@@ -355,15 +360,16 @@ class DetailListLogic extends GetxController {
 class _DynamicScrollbarWrapper extends StatefulWidget {
   final ScrollController scrollController;
   final Widget child;
-  
+
   const _DynamicScrollbarWrapper({
     Key? key,
     required this.scrollController,
     required this.child,
   }) : super(key: key);
-  
+
   @override
-  State<_DynamicScrollbarWrapper> createState() => _DynamicScrollbarWrapperState();
+  State<_DynamicScrollbarWrapper> createState() =>
+      _DynamicScrollbarWrapperState();
 }
 
 class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
@@ -371,11 +377,11 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
   double _contentHeight = 0.0;
   double _viewportHeight = 0.0;
   final double _thumbHeight = 32.0; // 固定滑块高度为6像素
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // 延迟添加监听器，确保ScrollController已初始化
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -384,13 +390,13 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       }
     });
   }
-  
+
   @override
   void dispose() {
     widget.scrollController.removeListener(_handleScrollChange);
     super.dispose();
   }
-  
+
   void _handleScrollChange() {
     if (mounted) {
       setState(() {
@@ -398,12 +404,13 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       });
     }
   }
-  
+
   void _updateScrollData() {
     try {
       if (widget.scrollController.hasClients) {
         _scrollPosition = widget.scrollController.position.pixels;
-        _contentHeight = widget.scrollController.position.maxScrollExtent + widget.scrollController.position.viewportDimension;
+        _contentHeight = widget.scrollController.position.maxScrollExtent +
+            widget.scrollController.position.viewportDimension;
         _viewportHeight = widget.scrollController.position.viewportDimension;
       }
     } catch (e) {
@@ -411,7 +418,7 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       print("Error updating scroll data: $e");
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     // 计算滑块位置
@@ -420,19 +427,19 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       thumbPositionRatio = _scrollPosition / (_contentHeight - _viewportHeight);
       thumbPositionRatio = thumbPositionRatio.clamp(0.0, 1.0);
     }
-    
+
     double trackHeight = _viewportHeight > 0 ? _viewportHeight : 100;
     double availableTrackSpace = trackHeight - _thumbHeight;
     double thumbPosition = thumbPositionRatio * availableTrackSpace;
-    
+
     // 是否显示滚动条
     bool showScrollbar = _contentHeight > _viewportHeight;
-    
+
     return Stack(
       children: [
         // 子组件
         widget.child,
-        
+
         // 滚动条轨道
         Positioned(
           right: 2,
@@ -446,9 +453,9 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
             ),
           ),
         ),
-        
+
         // 滚动条滑块（仅当需要滚动时显示）
-        if (showScrollbar) 
+        if (showScrollbar)
           Positioned(
             right: 2,
             top: thumbPosition,
