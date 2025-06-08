@@ -3,7 +3,17 @@ import 'package:get/get.dart';
 import '../../../models/risk_company_details.dart';
 
 class RiskDetailsState {
-  final Rx<RiskCompanyDetail?> riskCompanyDetail = Rx<RiskCompanyDetail?>(null);
+  // 企业详情数据
+  Rx<RiskCompanyDetail?> riskCompanyDetail = Rx<RiskCompanyDetail?>(null);
+  
+  // 添加企业详情数据列表
+  RxList<RiskCompanyDetail> allCompanyDetails = <RiskCompanyDetail>[].obs;
+  
+  // 添加加载状态
+  RxBool isLoading = true.obs;
+  
+  // 展开/收起时间线
+  RxBool isExpandTimeLine = false.obs;
 
   // 基本信息
   final companyName = '华为技术有限公司'.obs;
@@ -117,7 +127,6 @@ class RiskDetailsState {
 
   // 是否显示风险评分详情对话框
   final RxBool showRiskScoreDialog = false.obs;
-  final RxBool isExpandTimeLine = false.obs; // 是否展开时序跟踪
 
   // 是否展开过往判例依据
   final RxBool isExpandCases = false.obs;

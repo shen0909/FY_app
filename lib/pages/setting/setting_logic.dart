@@ -71,9 +71,37 @@ class SettingLogic extends GetxController {
         _showPatternSetupDialog();
       }
     } else {
-      // 关闭划线解锁
+      // 检查指纹解锁是否可用
+      bool isAvailable = await BiometricService.isBiometricAvailable();
+      List<BiometricType> availableBiometrics = await BiometricService.getAvailableBiometrics();
+      
+      // 如果指纹解锁不可用，则不允许关闭划线解锁
+      if (!isAvailable || availableBiometrics.isEmpty) {
+        ToastUtil.showError('指纹解锁不可用，无法关闭划线解锁');
+        state.isLockEnabled.value = true; // 保持开启状态
+        return;
+      }
+      
+      // 关闭划线解锁，同时开启指纹解锁
       await PatternLockUtil.enablePatternLock(false);
       state.isLockEnabled.value = false;
+      
+      // 自动开启指纹解锁
+      bool authenticated = await BiometricService.authenticateWithBiometrics(
+        reason: '请验证指纹以启用指纹解锁功能',
+      );
+      
+      if (authenticated) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('fingerprint_enabled', true);
+        state.isFingerprintEnabled.value = true;
+        ToastUtil.showShort('已自动开启指纹解锁');
+      } else {
+        // 如果验证失败，重新启用划线解锁
+        await PatternLockUtil.enablePatternLock(true);
+        state.isLockEnabled.value = true;
+        ToastUtil.showError('指纹验证失败，已恢复划线解锁');
+      }
     }
   }
 
@@ -116,18 +144,51 @@ class SettingLogic extends GetxController {
           await prefs.setBool('fingerprint_enabled', true);
           state.isFingerprintEnabled.value = true;
         } else {
-          // 验证失败，不开启指纹解锁
+          // 验证失败，不开启指纹解锁，并恢复划线解锁
           state.isFingerprintEnabled.value = false;
+          
+          // 恢复划线解锁
+          List<int>? savedPattern = await PatternLockUtil.getPattern();
+          if (savedPattern != null && savedPattern.isNotEmpty) {
+            await PatternLockUtil.enablePatternLock(true);
+            state.isLockEnabled.value = true;
+            ToastUtil.showShort('指纹验证失败，已恢复划线解锁');
+          } else {
+            // 如果没有设置过图案，引导用户设置
+            ToastUtil.showShort('请设置划线解锁');
+            _showPatternSetupDialog();
+          }
         }
       } catch (e) {
         state.isFingerprintEnabled.value = false;
         ToastUtil.showError(e.toString());
+        
+        // 出错时恢复划线解锁
+        List<int>? savedPattern = await PatternLockUtil.getPattern();
+        if (savedPattern != null && savedPattern.isNotEmpty) {
+          await PatternLockUtil.enablePatternLock(true);
+          state.isLockEnabled.value = true;
+        }
       }
     } else {
-      // 关闭指纹解锁
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('fingerprint_enabled', false);
-      state.isFingerprintEnabled.value = false;
+      // 关闭指纹解锁，需要先开启划线解锁
+      List<int>? savedPattern = await PatternLockUtil.getPattern();
+      if (savedPattern != null && savedPattern.isNotEmpty) {
+        // 已设置过图案，直接启用划线解锁
+        await PatternLockUtil.enablePatternLock(true);
+        state.isLockEnabled.value = true;
+        
+        // 关闭指纹解锁
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('fingerprint_enabled', false);
+        state.isFingerprintEnabled.value = false;
+        ToastUtil.showShort('已自动开启划线解锁');
+      } else {
+        // 未设置过图案，引导用户设置
+        ToastUtil.showShort('请先设置划线解锁，再关闭指纹解锁');
+        state.isFingerprintEnabled.value = true; // 保持开启状态
+        _showPatternSetupDialog();
+      }
     }
   }
 

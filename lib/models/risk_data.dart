@@ -42,42 +42,42 @@ class RiskyData {
       metadata: Metadata.fromJson(json['metadata']),
       statistics: Statistics.fromJson(json['statistics']),
       location: Location.fromJson(json['location']),
-      companies: (json['companies'] as Map<String, dynamic>).map(
+      companies: (json['companies'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(
           key,
-          (value as List).map((e) => Company.fromJson(e)).toList(),
+          (value as List?)?.map((e) => Company.fromJson(e)).toList() ?? [],
         ),
-      ),
-      unreadMessages: (json['unread_messages'] as Map<String, dynamic>).map(
+      ) ?? {},
+      unreadMessages: (json['unread_messages'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(
           key,
-          (value as List).map((e) => UnreadMessage.fromJson(e)).toList(),
+          (value as List?)?.map((e) => UnreadMessage.fromJson(e)).toList() ?? [],
         ),
-      ),
-      riskCategories: (json['risk_categories'] as Map<String, dynamic>).map(
+      ) ?? {},
+      riskCategories: (json['risk_categories'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(
           key,
           RiskCategory.fromJson(value),
         ),
-      ),
-      severityLevels: (json['severity_levels'] as Map<String, dynamic>).map(
+      ) ?? {},
+      severityLevels: (json['severity_levels'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(
           key,
           SeverityLevel.fromJson(value),
         ),
-      ),
-      riskLevels: (json['risk_levels'] as Map<String, dynamic>).map(
+      ) ?? {},
+      riskLevels: (json['risk_levels'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(
           key,
           RiskLevel.fromJson(value),
         ),
-      ),
-      attentionLevels: (json['attention_levels'] as Map<String, dynamic>).map(
+      ) ?? {},
+      attentionLevels: (json['attention_levels'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(
           key,
           AttentionLevel.fromJson(value),
         ),
-      ),
+      ) ?? {},
     );
   }
 
@@ -974,11 +974,11 @@ class Metadata {
 
   factory Metadata.fromJson(Map<String, dynamic> json) {
     return Metadata(
-      lastUpdated: json['lastUpdated'] as String,
-      version: json['version'] as String,
-      description: json['description'] as String,
-      totalCompanies: json['totalCompanies'] as int,
-      totalMessages: json['totalMessages'] as int,
+      lastUpdated: json['lastUpdated'] as String? ?? '',
+      version: json['version'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      totalCompanies: json['totalCompanies'] as int? ?? 0,
+      totalMessages: json['totalMessages'] as int? ?? 0,
     );
   }
 }
@@ -1004,9 +1004,9 @@ class Statistics {
 
   factory Statistics.fromJson(Map<String, dynamic> json) {
     return Statistics(
-      fengyun1: FengyunStats.fromJson(json['fengyun_1']),
-      fengyun2: FengyunStats.fromJson(json['fengyun_2']),
-      xingyun: XingyunStats.fromJson(json['xingyun']),
+      fengyun1: FengyunStats.fromJson(json['fengyun_1'] ?? {}),
+      fengyun2: FengyunStats.fromJson(json['fengyun_2'] ?? {}),
+      xingyun: XingyunStats.fromJson(json['xingyun'] ?? {}),
     );
   }
 }
@@ -1032,9 +1032,9 @@ class FengyunStats {
 
   factory FengyunStats.fromJson(Map<String, dynamic> json) {
     return FengyunStats(
-      name: json['name'] as String,
-      description: json['description'] as String,
-      stats: Stats.fromJson(json['stats']),
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      stats: Stats.fromJson(json['stats'] ?? {}),
     );
   }
 }
@@ -1066,11 +1066,11 @@ class Stats {
 
   factory Stats.fromJson(Map<String, dynamic> json) {
     return Stats(
-      highRisk: json['high_risk'] as int,
-      mediumRisk: json['medium_risk'] as int,
-      lowRisk: json['low_risk'] as int,
-      total: json['total'] as int,
-      dailyChange: DailyChange.fromJson(json['daily_change']),
+      highRisk: json['high_risk'] as int? ?? 0,
+      mediumRisk: json['medium_risk'] as int? ?? 0,
+      lowRisk: json['low_risk'] as int? ?? 0,
+      total: json['total'] as int? ?? 0,
+      dailyChange: DailyChange.fromJson(json['daily_change'] ?? {}),
     );
   }
 }
@@ -1096,9 +1096,9 @@ class DailyChange {
 
   factory DailyChange.fromJson(Map<String, dynamic> json) {
     return DailyChange(
-      highRisk: json['high_risk'] as int,
-      mediumRisk: json['medium_risk'] as int,
-      lowRisk: json['low_risk'] as int,
+      highRisk: json['high_risk'] as int? ?? 0,
+      mediumRisk: json['medium_risk'] as int? ?? 0,
+      lowRisk: json['low_risk'] as int? ?? 0,
     );
   }
 }
@@ -1124,9 +1124,9 @@ class XingyunStats {
 
   factory XingyunStats.fromJson(Map<String, dynamic> json) {
     return XingyunStats(
-      name: json['name'] as String,
-      description: json['description'] as String,
-      stats: XingyunStatsData.fromJson(json['stats']),
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      stats: XingyunStatsData.fromJson(json['stats'] ?? {}),
     );
   }
 }
@@ -1155,10 +1155,10 @@ class XingyunStatsData {
 
   factory XingyunStatsData.fromJson(Map<String, dynamic> json) {
     return XingyunStatsData(
-      keyFocus: json['key_focus'] as int,
-      generalFocus: json['general_focus'] as int,
-      total: json['total'] as int,
-      dailyChange: XingyunDailyChange.fromJson(json['daily_change']),
+      keyFocus: json['key_focus'] as int? ?? 0,
+      generalFocus: json['general_focus'] as int? ?? 0,
+      total: json['total'] as int? ?? 0,
+      dailyChange: XingyunDailyChange.fromJson(json['daily_change'] ?? {}),
     );
   }
 }
@@ -1181,8 +1181,8 @@ class XingyunDailyChange {
 
   factory XingyunDailyChange.fromJson(Map<String, dynamic> json) {
     return XingyunDailyChange(
-      keyFocus: json['key_focus'] as int,
-      generalFocus: json['general_focus'] as int,
+      keyFocus: json['key_focus'] as int? ?? 0,
+      generalFocus: json['general_focus'] as int? ?? 0,
     );
   }
 }
@@ -1205,8 +1205,8 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      province: json['province'] as String,
-      cities: (json['cities'] as List).map((e) => City.fromJson(e)).toList(),
+      province: json['province'] as String? ?? '',
+      cities: (json['cities'] as List?)?.map((e) => City.fromJson(e)).toList() ?? [],
     );
   }
 }
@@ -1229,8 +1229,8 @@ class City {
 
   factory City.fromJson(Map<String, dynamic> json) {
     return City(
-      code: json['code'] as String,
-      name: json['name'] as String,
+      code: json['code'] as String? ?? '',
+      name: json['name'] as String? ?? '',
     );
   }
 }
@@ -1295,22 +1295,22 @@ class Company {
 
   factory Company.fromJson(Map<String, dynamic> json) {
     return Company(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      englishName: json['english_name'] as String,
-      description: json['description'] as String,
-      riskLevel: json['risk_level'] as String,
-      riskLevelText: json['risk_level_text'] as String,
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      englishName: json['english_name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      riskLevel: json['risk_level'] as String? ?? '',
+      riskLevelText: json['risk_level_text'] as String? ?? '',
       attentionLevel: json['attention_level'] as String?,
       attentionLevelText: json['attention_level_text'] as String?,
-      city: json['city'] as String,
-      updateDate: json['update_date'] as String,
-      unreadCount: json['unread_count'] as int,
-      detailPage: json['detail_page'] as String,
-      industry: json['industry'] as String,
+      city: json['city'] as String? ?? '',
+      updateDate: json['update_date'] as String? ?? '',
+      unreadCount: json['unread_count'] as int? ?? 0,
+      detailPage: json['detail_page'] as String? ?? '',
+      industry: json['industry'] as String? ?? '',
       marketCap: json['market_cap'] as String?,
       stockPrice: json['stock_price'] as String?,
-      tags: (json['tags'] as List).map((e) => e as String).toList(),
+      tags: (json['tags'] as List?)?.map((e) => e as String).toList() ?? [],
     );
   }
 }
@@ -1363,10 +1363,10 @@ class UnreadMessage {
       date: json['date'] as String,
       source: json['source'] as String,
       sourceName: json['source_name'] as String,
-      read: json['read'] as bool,
+      read: json['read'] as bool? ?? false,
       category: json['category'] as String,
       severity: json['severity'] as String,
-      tags: (json['tags'] as List).map((e) => e as String).toList(),
+      tags: (json['tags'] as List?)?.map((e) => e as String).toList() ?? [],
     );
   }
 }
@@ -1392,9 +1392,9 @@ class RiskCategory {
 
   factory RiskCategory.fromJson(Map<String, dynamic> json) {
     return RiskCategory(
-      color: json['color'] as String,
-      priority: json['priority'] as int,
-      description: json['description'] as String,
+      color: json['color'] as String? ?? '',
+      priority: json['priority'] as int? ?? 0,
+      description: json['description'] as String? ?? '',
     );
   }
 }
@@ -1420,9 +1420,9 @@ class SeverityLevel {
 
   factory SeverityLevel.fromJson(Map<String, dynamic> json) {
     return SeverityLevel(
-      label: json['label'] as String,
-      color: json['color'] as String,
-      description: json['description'] as String,
+      label: json['label'] as String? ?? '',
+      color: json['color'] as String? ?? '',
+      description: json['description'] as String? ?? '',
     );
   }
 }
@@ -1451,10 +1451,10 @@ class RiskLevel {
 
   factory RiskLevel.fromJson(Map<String, dynamic> json) {
     return RiskLevel(
-      label: json['label'] as String,
-      color: json['color'] as String,
-      bgColor: json['bg_color'] as String,
-      borderColor: json['border_color'] as String,
+      label: json['label'] as String? ?? '',
+      color: json['color'] as String? ?? '',
+      bgColor: json['bg_color'] as String? ?? '',
+      borderColor: json['border_color'] as String? ?? '',
     );
   }
 }
@@ -1483,10 +1483,10 @@ class AttentionLevel {
 
   factory AttentionLevel.fromJson(Map<String, dynamic> json) {
     return AttentionLevel(
-      label: json['label'] as String,
-      color: json['color'] as String,
-      bgColor: json['bg_color'] as String,
-      borderColor: json['border_color'] as String,
+      label: json['label'] as String? ?? '',
+      color: json['color'] as String? ?? '',
+      bgColor: json['bg_color'] as String? ?? '',
+      borderColor: json['border_color'] as String? ?? '',
     );
   }
 }

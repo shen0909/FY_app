@@ -1,34 +1,75 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/widgets/unread_message_dialog.dart';
 
+import '../../models/risk_company_details.dart';
 import '../../models/risk_data.dart';
 import 'risk_state.dart';
 
 class RiskLogic extends GetxController {
   final RiskState state = RiskState();
-  
+
   // Overlay相关变量
   OverlayEntry? _overlayEntry;
   final GlobalKey locationKey = GlobalKey();
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-    state.riskyData.value = RiskyData.mock();
-    _updateCurrentUnitData();
-    _updateCurrentRiskList();
-    
-    // 监听单位类型变化
-    ever(state.chooseUint, (_) {
+    try {
+      final filePath = 'assets/complete-risk-alerts-data.json';
+      final fileContent = await rootBundle.loadString(filePath);
+      final jsonData = json.decode(fileContent) as Map<String, dynamic>;
+
+      print("数据数据:${jsonData}");
+      state.riskyData.value = RiskyData.fromJson(jsonData);
       _updateCurrentUnitData();
       _updateCurrentRiskList();
-    });
-    ever(state.riskyData, (_) {
-      _updateCurrentUnitData();
-      _updateCurrentRiskList();
-    });
+      
+      // 监听单位类型变化
+      ever(state.chooseUint, (_) {
+        _updateCurrentUnitData();
+        _updateCurrentRiskList();
+      });
+      ever(state.riskyData, (_) {
+        _updateCurrentUnitData();
+        _updateCurrentRiskList();
+      });
+    } catch (e, stackTrace) {
+      print("解析风险数据出错: $e");
+      print("错误堆栈: $stackTrace");
+      
+      // 确保UI不会因为数据解析错误而崩溃
+      state.currentUnitData.value = {
+        'high': {
+          'title': '高风险',
+          'count': 0,
+          'change': 0,
+          'color': 0xFFFF6850
+        },
+        'medium': {
+          'title': '中风险',
+          'count': 0,
+          'change': 0,
+          'color': 0xFFF6D500
+        },
+        'low': {
+          'title': '低风险',
+          'count': 0,
+          'change': 0,
+          'color': 0xFF07CC89
+        },
+        'total': {
+          'count': 0,
+          'color': 0xFF1A1A1A
+        },
+      };
+      state.currentRiskList.clear();
+    }
   }
 
   // 更新当前单位数据
@@ -175,6 +216,8 @@ class RiskLogic extends GetxController {
             'updateTime': company.updateDate,
             'unreadCount': company.unreadCount,
             'isRead': false,
+            'attentionLevel': company.attentionLevel,
+            'attentionLevelText': company.attentionLevelText,
           }).toList();
         }
         break;
@@ -233,54 +276,58 @@ class RiskLogic extends GetxController {
   void showMessageDialog(String companyId) {
     if (state.riskyData.value == null) return;
 
-    // 获取当前单位类型对应的key
-    String unitKey;
-    switch (state.chooseUint.value) {
-      case 0:
-        unitKey = 'fengyun_1';
-        break;
-      case 1:
-        unitKey = 'fengyun_2';
-        break;
-      case 2:
-        unitKey = 'xingyun';
-        break;
-      default:
-        return;
+    try {
+      // 获取当前单位类型对应的key
+      String unitKey;
+      switch (state.chooseUint.value) {
+        case 0:
+          unitKey = 'fengyun_1';
+          break;
+        case 1:
+          unitKey = 'fengyun_2';
+          break;
+        case 2:
+          unitKey = 'xingyun';
+          break;
+        default:
+          return;
+      }
+
+      // 从riskyData中获取对应公司的未读消息
+      final unreadMessages = state.riskyData.value!.unreadMessages[companyId];
+      if (unreadMessages == null || unreadMessages.isEmpty) return;
+
+      // 转换未读消息格式
+      final messages = unreadMessages.map((msg) => {
+        'title': msg.title,
+        'date': msg.date,
+        'content': msg.content,
+        'company': msg.sourceName,
+        'isRead': msg.read,
+        'category': msg.category,
+        'severity': msg.severity,
+        'tags': msg.tags,
+      }).toList();
+
+      state.currentUnreadMessages.assignAll(messages);
+
+      Get.bottomSheet(
+        UnreadMessageDialog(
+          messages: state.currentUnreadMessages,
+          onClose: () => Get.back(),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        isDismissible: true,
+        enableDrag: true,
+        isScrollControlled: true,
+        shape:  RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        ),
+      );
+    } catch (e) {
+      print("显示消息弹窗出错: $e");
     }
-
-    // 从riskyData中获取对应公司的未读消息
-    final unreadMessages = state.riskyData.value!.unreadMessages[companyId];
-    if (unreadMessages == null || unreadMessages.isEmpty) return;
-
-    // 转换未读消息格式
-    final messages = unreadMessages.map((msg) => {
-      'title': msg.title,
-      'date': msg.date,
-      'content': msg.content,
-      'company': msg.sourceName,
-      'isRead': msg.read,
-      'category': msg.category,
-      'severity': msg.severity,
-      'tags': msg.tags,
-    }).toList();
-
-    state.currentUnreadMessages.assignAll(messages);
-
-    Get.bottomSheet(
-      UnreadMessageDialog(
-        messages: state.currentUnreadMessages,
-        onClose: () => Get.back(),
-      ),
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      isDismissible: true,
-      enableDrag: true,
-      isScrollControlled: true,
-      shape:  RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-    );
   }
   
   // 关闭未读消息弹窗

@@ -63,11 +63,16 @@ class _RiskPageState extends State<RiskPage> {
             child: Row(
               children: [
                 Obx(() => Text(
-                  state.location.value,
-                  style: FYTextStyles.riskLocationTitleStyle(),
-                )),
+                      state.location.value,
+                      style: FYTextStyles.riskLocationTitleStyle(),
+                    )),
                 const SizedBox(width: 8),
-                Image.asset(FYImages.down_icon, width: 8.w, height: 8.w, fit: BoxFit.contain,),
+                Image.asset(
+                  FYImages.down_icon,
+                  width: 8.w,
+                  height: 8.w,
+                  fit: BoxFit.contain,
+                ),
               ],
             ),
           ),
@@ -82,9 +87,12 @@ class _RiskPageState extends State<RiskPage> {
             child: Row(
               children: [
                 SizedBox(width: 8.w),
-                Image.asset(FYImages.search_icon, width: 20.w,
+                Image.asset(
+                  FYImages.search_icon,
+                  width: 20.w,
                   height: 20.w,
-                  fit: BoxFit.contain,),
+                  fit: BoxFit.contain,
+                ),
                 SizedBox(width: 8.w),
                 Expanded(
                   child: TextField(
@@ -174,6 +182,12 @@ class _RiskPageState extends State<RiskPage> {
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Obx(() {
         final currentData = state.currentUnitData.value;
+
+        // 如果currentData为空或不包含必要的键，则返回空的容器
+        if (currentData.isEmpty || !currentData.containsKey('total')) {
+          return Container();
+        }
+
         return Wrap(
           spacing: 7.0.w, // 横向间距
           runSpacing: 8.0.w, // 纵向间距
@@ -183,16 +197,16 @@ class _RiskPageState extends State<RiskPage> {
                 .map((entry) {
               final item = entry.value;
               return _buildRiskStatCard(
-                title: item['title'],
-                count: item['count'],
-                change: item['change'],
-                color: Color(item['color']),
+                title: item['title'] as String? ?? '',
+                count: item['count'] as int? ?? 0,
+                change: item['change'] as int? ?? 0,
+                color: Color(item['color'] as int? ?? 0xFF000000),
               );
             }),
             // 总数卡片单独处理
             _buildTotalStatCard(
-              total: currentData['total']['count'],
-              color: Color(currentData['total']['color']),
+              total: currentData['total']['count'] as int? ?? 0,
+              color: Color(currentData['total']['color'] as int? ?? 0xFF000000),
             ),
           ],
         );
@@ -329,7 +343,7 @@ class _RiskPageState extends State<RiskPage> {
                 ? _buildRiskItem1(currentList[index]) // 一类单位
                 : state.chooseUint.value == 1
                     ? _buildRiskItem2(currentList[index])
-                    : _buildRiskItem2(currentList[index]); // 二类单位
+                    : _buildRiskItem3(currentList[index]);
           },
         );
       }),
@@ -338,14 +352,14 @@ class _RiskPageState extends State<RiskPage> {
 
   // 一类单位风险项
   Widget _buildRiskItem1(Map<String, dynamic> item) {
-    final String riskLevel = item['riskLevel'];
-    final Color riskColor = Color(item['riskColor']);
-    final bool isRead = item['isRead'] as bool;
+    final String riskLevel = item['riskLevel'] as String? ?? '';
+    final Color riskColor = Color(item['riskColor'] as int? ?? 0xFF07CC89);
+    final bool isRead = item['isRead'] as bool? ?? false;
 
     // 根据风险等级设置背景色和边框颜色
     Color backgroundColor;
     Color borderColor;
-    
+
     switch (riskLevel) {
       case '高风险':
         backgroundColor = Color(0xFFFFECE9);
@@ -390,7 +404,9 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: isRead ? null : () => logic.showMessageDialog(item['id']),
+                    onTap: isRead
+                        ? null
+                        : () => logic.showMessageDialog(item['id']),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
@@ -481,7 +497,7 @@ class _RiskPageState extends State<RiskPage> {
     // 根据风险等级设置背景色和边框颜色
     Color backgroundColor;
     Color borderColor;
-    
+
     switch (riskLevel) {
       case '高风险':
         backgroundColor = Color(0xFFFFECE9);
@@ -526,7 +542,9 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: isRead ? null : () => logic.showMessageDialog(item['id']),
+                    onTap: isRead
+                        ? null
+                        : () => logic.showMessageDialog(item['id']),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
@@ -596,6 +614,133 @@ class _RiskPageState extends State<RiskPage> {
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 星云
+  Widget _buildRiskItem3(Map<String, dynamic> item) {
+    final String riskLevel = item['riskLevel'];
+    final Color riskColor = Color(item['riskColor']);
+    final bool isRead = item['isRead'] as bool;
+    // 获取关注度数据
+    final String? attentionLevel = item['attentionLevel'] as String?;
+    final String? attentionLevelText = item['attentionLevelText'] as String?;
+
+    // 关注度级别颜色
+    Color attentionColor = Colors.grey;
+    Color backgroundColor = Colors.white;
+    Color borderColor = Colors.grey.withOpacity(0.4);
+
+    // 根据关注度级别设置颜色
+    if (attentionLevel == 'key_focus') {
+      attentionColor = Color(0xFFEF4444);
+      backgroundColor = Color(0xFFFEE2E2).withOpacity(0.6);
+      borderColor = Color(0xFFF87171).withOpacity(0.4);
+    } else if (attentionLevel == 'general_focus') {
+      attentionColor = Color(0xFFFF9719);
+      backgroundColor = Color(0xFFFFF7E6);
+      borderColor = Color(0xFFF6D500);
+    }
+
+    return GestureDetector(
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      child: Padding(
+        padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
+        child: Container(
+          width: 343.w,
+          padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
+          decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.all(Radius.circular(8.w)),
+              border: Border.all(width: 1.w, color: borderColor)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      item['name'],
+                      style: FYTextStyles.riskCompanyTitleStyle(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: isRead
+                        ? null
+                        : () => logic.showMessageDialog(item['id']),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isRead
+                            ? FYColors.color_CEFFEE
+                            : FYColors.color_FFD8D2,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        isRead ? '全部已读' : '${item['unreadCount']}条未读',
+                        style: TextStyle(
+                          color: isRead
+                              ? FYColors.color_07CC89
+                              : FYColors.color_FF2A08,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.w),
+              Text(
+                item['englishName'],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: FYTextStyles.commonTextStyle(),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                item['description'],
+                style: FYTextStyles.commonTextStyle(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 12.w),
+              Row(
+                children: [
+                  Text(
+                    '更新: ${item['updateTime']}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        '风险等级: ',
+                        style: FYTextStyles.commonTextStyle(),
+                      ),
+                      attentionLevel == 'key_focus' ?
+                      Row(
+                        children: [
+                          Icon(Icons.star,size: 16.w,color: attentionColor),
+                          Icon(Icons.star,size: 16.w,color: attentionColor),
+                        ],
+                      ):
+                      Icon(Icons.star,size: 16.w,color: attentionColor),
                     ],
                   ),
                 ],

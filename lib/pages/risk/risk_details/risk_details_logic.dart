@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'dart:async';
 
 import '../../../models/risk_company_details.dart';
 import 'risk_details_state.dart';
@@ -13,20 +14,25 @@ class RiskDetailsLogic extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    state.riskCompanyDetail.value = RiskCompanyDetail.mock();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    // 获取传入的企业数据，实际项目中可以在这里加载详细数据
-    if (Get.arguments != null) {
-      // 这里可以用于处理接收到的参数
-      // 例如：state.companyInfo = Get.arguments['companyInfo'];
+    String companyId;
+    if (Get.arguments != null && Get.arguments is Map<String, dynamic>) {
+      companyId = Get.arguments['id'];
+      print('接收到企业ID: $companyId');
+    } else{
+      companyId = '104';
+    }
+    // 初始化时先加载默认数据
+    RiskCompanyDetail.mockList().forEach((element){
+      if(companyId == element.companyId){
+        state.riskCompanyDetail.value = element;
+      }
+    });
+    if(state.riskCompanyDetail.value.isNull){
+      state.riskCompanyDetail.value = RiskCompanyDetail.mock();
     }
   }
+
 
   @override
   void onClose() {
