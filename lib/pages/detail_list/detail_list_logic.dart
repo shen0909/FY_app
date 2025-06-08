@@ -115,7 +115,6 @@ class DetailListLogic extends GetxController {
   // 模拟数据
   List<CompanyItem> _getMockData() {
     return [
-      CompanyItem(id: 1, name: '华为技术有限公司', sanctionType: '实体清单(EL)', region: '广东', time: '2023.05',removalTime: '-'),
       CompanyItem(
           id: 2, name: '中芯国际集成电路制造有限公司', sanctionType: '实体清单(EL)', region: '上海', time: '2023.05',removalTime: '-'),
       CompanyItem(

@@ -259,6 +259,10 @@ class DetailListPage extends StatelessWidget {
         
         // 确保制裁类型宽度至少有一个最小值
         maxSanctionTypeWidth = maxSanctionTypeWidth < 120.w ? 120.w : maxSanctionTypeWidth;
+
+        // 不再计算具体宽度，保持一个合理的列宽
+        // 图片中可以看到制裁类型列宽度设置得比较宽，以便容纳最长的标签
+        maxSanctionTypeWidth = 220.w;
         
         // 计算总宽度
         double totalTableWidth = maxNameWidth + maxSanctionTypeWidth + maxRegionWidth + timeWidth + removalTimeWidth;
@@ -424,10 +428,11 @@ class DetailListPage extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      Container(
                                         width: maxSanctionTypeWidth,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                        alignment: Alignment.centerLeft,
+                                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                        child: IntrinsicWidth(
                                           child: _buildSanctionTypeTag(item.sanctionType),
                                         ),
                                       ),
@@ -531,22 +536,22 @@ class DetailListPage extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Flexible(
-            child: Text(
+      child: IntrinsicWidth(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
               type,
               style: TextStyle(
                 fontSize: 12,
                 color: textColor,
               ),
             ),
-          ),
-          SizedBox(width: 4.w),
-          Icon(Icons.remove_red_eye_outlined, size: 14.w, color: textColor)
-        ],
+            SizedBox(width: 4.w),
+            Icon(Icons.remove_red_eye_outlined, size: 14.w, color: textColor)
+          ],
+        ),
       ),
     );
   }
