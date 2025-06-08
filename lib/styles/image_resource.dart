@@ -65,4 +65,9 @@ class FYImages {
   static const String open_icon = 'assets/images/open_icon.png';
   static const String unopen_icon = 'assets/images/unopen_icon.png';
   static const String more_info = 'assets/images/more_info.png';
+  static const String start_use = 'assets/images/start_use.png';
+  static const String event_tutorial = 'assets/images/event_tutorial.png';
+  static const String analyse_tutorial = 'assets/images/analyse_tutorial.png';
+  static const String tutorial_feedBack = 'assets/images/tutorial_feedBack.png';
+  static const String export_data = 'assets/images/export_data.png'; // 数据导出
 }
