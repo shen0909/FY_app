@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 
 import 'use_tutorial_logic.dart';
@@ -173,11 +174,7 @@ class UseTutorialPage extends StatelessWidget {
             padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
-                Icon(
-                  Icons.description_outlined,
-                  color: Colors.black,
-                  size: 24.w,
-                ),
+                Image.asset(tutorial['icon_path'],width: 24.w,height: 24.w,fit: BoxFit.contain,),
                 SizedBox(width: 8.w),
                 Text(
                   tutorial['title'],
@@ -372,11 +369,11 @@ class UseTutorialPage extends StatelessWidget {
             child: Row(
               children: [
                 if (tutorial['title'] == 'AI问答功能')
-                  Icon(Icons.smart_toy, color: FYColors.color_3361FE, size: 24.w)
+                  Image.asset(FYImages.aiIcon,width: 24.w,height: 24.w,fit: BoxFit.contain,)
                 else if (tutorial['title'] == '权限管理')
-                  Icon(Icons.security, color: Colors.black, size: 24.w)
+                  Image.asset(FYImages.setting_person,width: 24.w,height: 24.w,fit: BoxFit.contain,)
                 else
-                  Icon(Icons.download, color: Colors.black, size: 24.w),
+                  Image.asset(FYImages.export_data,width: 24.w,height: 24.w,fit: BoxFit.contain,),
                 SizedBox(width: 8.w),
                 Text(
                   tutorial['title'],
@@ -430,11 +427,13 @@ class UseTutorialPage extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '◈',
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: FYColors.color_A6A6A6,
+                            Container(
+                              width: 6.w,
+                              height: 6.w,
+                              margin: EdgeInsets.only(top: 5.h),
+                              decoration: BoxDecoration(
+                                color: FYColors.color_3361FE,
+                                shape: BoxShape.circle,
                               ),
                             ),
                             SizedBox(width: 8.w),
@@ -478,25 +477,23 @@ class UseTutorialPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ...(tutorial['steps'] as List<String>).map((step) {
+                        ...(tutorial['steps'] as List<String>).asMap().entries.map((step) {
                           return Padding(
                             padding: EdgeInsets.only(top: 8.h),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: 6.w,
-                                  height: 6.w,
-                                  margin: EdgeInsets.only(top: 5.h),
-                                  decoration: BoxDecoration(
-                                    color: FYColors.color_3361FE,
-                                    shape: BoxShape.circle,
+                                Text(
+                                  '${step.key+1}.',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: FYColors.color_A6A6A6,
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
                                 Expanded(
                                   child: Text(
-                                    step,
+                                    step.value,
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: FYColors.color_A6A6A6,
@@ -642,14 +639,14 @@ class UseTutorialPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...(tutorial['process'] as List<String>).map((step) {
+                    ...(tutorial['process'] as List<String>).asMap().entries.map((step) {
                       return Padding(
                         padding: EdgeInsets.only(top: 8.h),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '◐',
+                              '${step.key + 1}.',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: FYColors.color_A6A6A6,
@@ -658,7 +655,7 @@ class UseTutorialPage extends StatelessWidget {
                             SizedBox(width: 8.w),
                             Expanded(
                               child: Text(
-                                step,
+                                step.value,
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: FYColors.color_A6A6A6,
@@ -1077,10 +1074,11 @@ class UseTutorialPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.help_outline,
-                color: FYColors.color_1A1A1A,
-                size: 24.w,
+              Image.asset(
+                FYImages.tutorial_feedBack,
+                height: 24.w,
+                width: 24.w,
+                fit: BoxFit.contain
               ),
               SizedBox(width: 8.w),
               Text(

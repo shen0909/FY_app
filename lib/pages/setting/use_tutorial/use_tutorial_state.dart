@@ -1,5 +1,7 @@
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
+import '../../../styles/image_resource.dart';
+
 class UseTutorialState {
   // 当前选中的标签索引
   final RxInt selectedTabIndex = 0.obs;
@@ -64,10 +66,12 @@ class UseTutorialState {
     basicTutorials.addAll([
       {
         'title': '开始使用',
-        'description': '欢迎使用重点企业态势感知预警系统。系统主要包括以下功能模块：\n事件中心：浏览和订阅事件信息\n态势分析：查看企业态势和风险评估\nAI问答：智能分析和解答问题\n个人设置：管理账户和权限\n点击下方"查看详情"按钮学习如何使用各个功能。'
+        'icon_path' : FYImages.start_use,
+        'description': '欢迎使用重点企业态势感知预警系统。系统主要包括以下功能模块：\n1. 事件中心：浏览和订阅事件信息\n2. 态势分析：查看企业态势和风险评估\n3. AI问答：智能分析和解答问题\n4. 个人设置：管理账户和权限\n点击下方"查看详情"按钮学习如何使用各个功能。'
       },
       {
         'title': '事件中心使用指南',
+        'icon_path' : FYImages.event_tutorial,
         'description': '事件中心是系统的核心功能，提供企业相关事件的实时更新和订阅服务。',
         'features': [
           '事件订阅：订阅感兴趣的事件类型',
@@ -77,6 +81,7 @@ class UseTutorialState {
       },
       {
         'title': '态势分析使用指南',
+        'icon_path' : FYImages.analyse_tutorial,
         'description': '态势分析模块帮助您了解企业发展态势和潜在风险。',
         'features': [
           {'title': '风险评估', 'description': '分析企业面临的各类风险和警示'},

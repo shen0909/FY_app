@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:safe_app/utils/shared_prefer.dart';
 
 class SettingState {
   // 用户信息
@@ -30,7 +31,7 @@ class SettingState {
   }
   
   // 初始化演示数据
-  void _initDemoData() {
+  Future<void> _initDemoData() async {
     userInfo.addAll({
       'username': 'ZQP001',
       'name': '刘晓龙',
