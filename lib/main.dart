@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/routers/routers.dart';
@@ -9,7 +10,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 检查并确保锁屏方式不会冲突
   await _checkLockMethodConflicts();
-  
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 

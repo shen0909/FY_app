@@ -22,32 +22,34 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Image.asset(
-                    FYImages.appIcon_32,
-                    width: 32.w,
-                    height: 32.h,
-                    fit: BoxFit.contain,
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'FY APP',
-                    style: FYTextStyles.getAppTitle(),
-                  )
-                ],
-              ),
-              SizedBox(height: 16.h),
-              _buildHeader(),
-              SizedBox(height: 16.h),
-              _buildRiskWarning(),
-              SizedBox(height: 16.h),
-              _buildQuickMenu(),
-              SizedBox(height: 16.h),
-              _buildListUpdate(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Image.asset(
+                      FYImages.appIcon_32,
+                      width: 32.w,
+                      height: 32.h,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      'FY APP',
+                      style: FYTextStyles.getAppTitle(),
+                    )
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                _buildHeader(),
+                SizedBox(height: 16.h),
+                _buildRiskWarning(),
+                SizedBox(height: 16.h),
+                _buildQuickMenu(),
+                SizedBox(height: 16.h),
+                _buildListUpdate(),
+              ],
+            ),
           ),
         ),
       ),
