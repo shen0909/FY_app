@@ -1,0 +1,238 @@
+{
+  "company_id": "514",
+  "company_info": {
+    "name": "中国南方电网有限责任公司",
+    "english_name": "China Southern Power Grid Company Limited",
+    "industry": "电力供应与传输行业",
+    "location": "中国广东省广州市",
+    "business_scope": "涵盖管制业务（电网运营）、新兴业务（综合能源服务、数字电网）、国际业务（跨境电力贸易）、金融业务及共享服务五大板块",
+    "company_type": "国有独资有限责任公司",
+    "market_value": "母公司未整体上市，控股子公司南网能源（003035）市值约201.52亿元",
+    "stock_price": "南网能源股价5.32元（2025年6月5日）",
+    "established_date": "2004年",
+    "founder": "由国务院国资委履行出资人职责",
+    "global_presence": "负责广东、广西、云南、贵州、海南五省区及港澳地区的电网投资、建设与运营，参与东南亚国家电网互联项目",
+    "patents": "掌握超（特）高压直流输电、柔性直流输电等核心技术",
+    "rd_investment": "持续投入电网技术研发和智能电网建设",
+    "description": "中国南方电网有限责任公司成立于2004年，是中央管理的国有重要骨干企业，服务人口2.72亿，供电面积100万平方公里。建成世界首个±800千伏特高压直流输电工程，西电东送形成'八条交流、十一条直流'的输电架构。2022年位列《财富》世界500强第89位，中国企业500强第31位。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2023年5月18日",
+      "content": "菲律宾总统马科斯宣布暂停中国参与的电网项目，理由是国家安全担忧。菲律宾政府担心中国企业参与关键基础设施可能影响国家能源安全，这直接影响了南方电网的海外业务拓展。",
+      "sources": [
+        {
+          "title": "菲律宾暂停中国电网项目引发能源安全担忧",
+          "url": "https://www.rappler.com/nation/marcos-suspends-china-power-grid-projects-security-concerns/",
+          "source": "Rappler"
+        },
+        {
+          "title": "Philippines suspends China power grid projects over security concerns",
+          "url": "https://www.reuters.com/world/asia-pacific/philippines-suspends-china-power-grid-projects-security-concerns-2023-05-18/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2022年7月15日",
+      "content": "中国南方电网与老挝国家电力公司签署电力合作协议，参与老挝电网建设与运营，加强中老电力互联互通。这标志着南方电网在'一带一路'倡议下积极拓展海外市场。",
+      "sources": [
+        {
+          "title": "中国南方电网与老挝深化电力合作",
+          "url": "https://www.xinhuanet.com/english/asiapacific/2022-07/15/c_1310646789.htm",
+          "source": "新华社"
+        },
+        {
+          "title": "南方电网公司与老挝国家电力公司签署合作协议",
+          "url": "https://www.csg.cn/xwzx/2022/202207/t20220715_365421.html",
+          "source": "南方电网官网"
+        }
+      ]
+    },
+    {
+      "date": "2021年12月23日",
+      "content": "中国南方电网完成对越南、老挝、缅甸等国的跨境电力贸易，全年跨境电力贸易量达到189.2亿千瓦时，体现了区域电力合作的深化。",
+      "sources": [
+        {
+          "title": "南方电网2021年跨境电力贸易突破189亿千瓦时",
+          "url": "https://www.csg.cn/xwzx/2021/202112/t20211223_354632.html",
+          "source": "南方电网官网"
+        },
+        {
+          "title": "China Southern Power Grid expands cross-border electricity trade",
+          "url": "https://www.globaltimes.cn/page/202112/1243567.shtml",
+          "source": "环球时报"
+        }
+      ]
+    },
+    {
+      "date": "2020年6月30日",
+      "content": "南方电网海南联网二回工程投产，这是世界首个500千伏海底电缆工程，技术难度和规模均为世界之最，展现了中国在超高压海底输电技术方面的领先地位。",
+      "sources": [
+        {
+          "title": "世界首个500千伏海底电缆工程投产",
+          "url": "https://www.csg.cn/xwzx/2020/202006/t20200630_328765.html",
+          "source": "南方电网官网"
+        },
+        {
+          "title": "China completes world's first 500kV submarine cable project",
+          "url": "https://www.chinadaily.com.cn/a/202006/30/WS5efa6b9aa310834817254c8f.html",
+          "source": "中国日报"
+        }
+      ]
+    },
+    {
+      "date": "2018年10月11日",
+      "content": "美国政府在对华贸易战期间，开始审查中国国有企业在海外的投资项目，包括电网等关键基础设施领域，南方电网的海外项目面临更严格的审查。",
+      "sources": [
+        {
+          "title": "US scrutinizes Chinese state-owned enterprises' overseas investments",
+          "url": "https://www.scmp.com/economy/china-economy/article/2168147/us-scrutinizes-chinese-soes-overseas-investments-trade-war",
+          "source": "南华早报"
+        },
+        {
+          "title": "Trade war intensifies scrutiny of Chinese infrastructure investments",
+          "url": "https://www.ft.com/content/8b4e2d5a-cd65-11e8-b276-b9069bde0956",
+          "source": "金融时报"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "geopolitical-risk",
+      "title": "地缘政治风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外项目安全审查",
+          "description": "菲律宾等国以国家安全为由暂停或审查中国电网企业参与的项目，影响南方电网海外业务拓展"
+        },
+        {
+          "title": "中美关系影响",
+          "description": "中美贸易摩擦和科技竞争可能影响南方电网在第三国的项目合作和技术交流"
+        },
+        {
+          "title": "关键基础设施敏感性",
+          "description": "电网作为国家关键基础设施，容易成为地缘政治博弈的焦点，面临政治风险"
+        }
+      ]
+    },
+    {
+      "type": "technology-dependency",
+      "title": "技术依赖风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "核心技术自主可控",
+          "description": "南方电网在特高压、柔性直流等核心电网技术方面已达到世界领先水平，技术依赖风险相对较低"
+        },
+        {
+          "title": "智能电网设备",
+          "description": "部分高端智能电网设备和软件系统可能涉及国外技术，存在一定的技术风险"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "部分国家对中国国有企业参与电网等关键基础设施项目设置限制或审查"
+        },
+        {
+          "title": "投资审查加强",
+          "description": "各国对外资参与电网投资的审查趋严，可能影响南方电网的海外扩张"
+        }
+      ]
+    },
+    {
+      "type": "operational-risk",
+      "title": "运营风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "跨境电力贸易政策",
+          "description": "跨境电力贸易受双边政策影响，政策变化可能影响业务稳定性"
+        },
+        {
+          "title": "汇率风险",
+          "description": "海外业务涉及多种货币，汇率波动可能影响收益"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "investment-review",
+      "title": "外资投资审查机制",
+      "summary": "各国对外资参与关键基础设施投资的审查日趋严格，电网作为国家安全相关领域受到重点关注。",
+      "details": {
+        "legal_framework": "各国外资投资法、国家安全审查法",
+        "implementation": "通过外国投资委员会等机构对涉及国家安全的投资进行审查",
+        "scope": "覆盖电网、电力等关键基础设施领域的投资和并购",
+        "impact": "可能导致投资被禁止、附加条件或延期审批"
+      }
+    },
+    {
+      "category": "critical-infrastructure",
+      "title": "关键基础设施保护法规",
+      "summary": "电网作为国家关键基础设施，各国都有相应的保护法规限制外资参与。",
+      "details": {
+        "legal_framework": "国家安全法、关键基础设施保护法等",
+        "implementation": "限制外资在电网等关键基础设施中的参与程度和控制权",
+        "scope": "涵盖电网建设、运营、维护等各个环节",
+        "penalties": "违规可能面临投资撤销、业务限制等处罚"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 60,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 25,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 10
+      },
+      "security_impact": {
+        "score": 20
+      }
+    },
+    "trend": [
+      { "month": "2024年12月", "score": 0 },
+      { "month": "2025年5月", "score": 60 }
+    ]
+  },
+  "last_updated": "2025-05-09T16:45:00+08:00"
+} 

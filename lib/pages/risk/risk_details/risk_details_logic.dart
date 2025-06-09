@@ -7,10 +7,12 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
 
 import '../../../models/risk_company_details.dart';
+import '../../../services/risk_company_service.dart';
 import 'risk_details_state.dart';
 
 class RiskDetailsLogic extends GetxController {
   final state = RiskDetailsState();
+  final RiskCompanyService _companyService = RiskCompanyService();
 
   @override
   void onInit() {
@@ -20,19 +22,35 @@ class RiskDetailsLogic extends GetxController {
       companyId = Get.arguments['id'];
       print('接收到企业ID: $companyId');
     } else{
-      companyId = '104';
+      companyId = '401'; // 默认使用华为的数据
     }
-    // 初始化时先加载默认数据
-    RiskCompanyDetail.mockList().forEach((element){
-      if(companyId == element.companyId){
-        state.riskCompanyDetail.value = element;
-      }
-    });
-    if(state.riskCompanyDetail.value.isNull){
-      state.riskCompanyDetail.value = RiskCompanyDetail.mock();
-    }
+    // 加载企业详情数据
+    loadCompanyDetail(companyId);
   }
 
+  /// 加载企业详情数据
+  Future<void> loadCompanyDetail(String companyId) async {
+    state.isLoading.value = true;
+    
+    try {
+      state.riskCompanyDetail.value = await _companyService.getCompanyDetail(companyId);
+    } catch (e) {
+      print('加载企业详情出错: $e');
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+  
+  /// 加载所有企业详情数据
+  Future<void> loadAllCompanyDetails() async {
+    try {
+      // final companies = await _companyService.getAllCompanyDetails();
+      // state.allCompanyDetails.value = companies;
+      // print('成功加载 ${companies.length} 个企业详情');
+    } catch (e) {
+      print('加载所有企业详情失败: $e');
+    }
+  }
 
   @override
   void onClose() {
@@ -174,7 +192,7 @@ class RiskDetailsLogic extends GetxController {
           ),
           SizedBox(height: 8),
           GestureDetector(
-            onTap: () => openUrl(news.url),
+            onTap: () => openUrl(news.url!),
             child: Text(
               news.url ?? '',
               style: TextStyle(
@@ -220,11 +238,11 @@ class RiskDetailsLogic extends GetxController {
                       padding: EdgeInsets.only(left: 16.w, top: 16.w),
                       child: Column(
                         children: [
-                          companyItem('地区', state.riskCompanyDetail.value!.companyInfo.location),
-                          companyItem('所处行业', state.riskCompanyDetail.value!.companyInfo.industry),
+                          companyItem('地区', state.riskCompanyDetail.value!.companyInfo.location!),
+                          companyItem('所处行业', state.riskCompanyDetail.value!.companyInfo.industry!),
                           companyItem('公司类型', '上市公司（股票代码：600143）'),
-                          companyItem('市值', state.riskCompanyDetail.value!.companyInfo.registeredCapital),
-                          companyItem('股价', state.riskCompanyDetail.value!.companyInfo.employees),
+                          companyItem('市值', state.riskCompanyDetail.value!.companyInfo.registeredCapital ?? state.riskCompanyDetail.value!.companyInfo.marketValue!),
+                          companyItem('股价', state.riskCompanyDetail.value!.companyInfo.registeredCapital ?? state.riskCompanyDetail.value!.companyInfo.stockPrice!),
                         ],
                       ),
                     ),
@@ -246,9 +264,10 @@ class RiskDetailsLogic extends GetxController {
                           borderRadius: BorderRadius.all(Radius.circular(8.w))),
                       padding: EdgeInsets.all(16.w),
                       child: Text(
+                          state.riskCompanyDetail.value!.companyInfo.description ?? '无',
                           style: TextStyle(
                               fontSize: 14.sp, fontWeight: FontWeight.w400),
-                          '广州金发科技股份有限公司成立于1993年，是一家专注于新型化工材料研发与生产的大型企业集团，主要业务包括改性塑料、特种工程塑料、生物基材料等产品的研发、生产和销售。公司总部位于广州科学城，现有员工超过5000人，在国内外拥有多个研发中心和生产基地。作为行业龙头企业，具有较强的技术实力和市场影响力。'),
+                          ),
                     ),
                   ],
                 ),

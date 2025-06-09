@@ -1,0 +1,237 @@
+{
+  "company_id": "503",
+  "company_info": {
+    "name": "深圳市鹏芯微集成电路制造有限公司",
+    "english_name": "Shenzhen Pengxin Micro Integrated Circuit Manufacturing Co., Ltd.",
+    "industry": "半导体集成电路制造",
+    "location": "中国广东省深圳市龙岗区",
+    "business_scope": "汽车电子、新能源、图像传感、智慧家庭、可穿戴设备等芯片的晶圆代工及配套服务",
+    "company_type": "有限责任公司（国资背景）",
+    "market_value": "未公开上市，无相关数据",
+    "stock_price": "未公开上市，无股价信息",
+    "established_date": "2021年6月",
+    "registered_capital": "71.28亿元人民币",
+    "parent_company": "深圳市重大产业投资集团有限公司（通过星恒创芯科技合伙企业持股99.9%）",
+    "production_capacity": "平湖生产基地规划产能超2万片/月",
+    "technology_nodes": "28nm/20nm制程覆盖",
+    "description": "鹏芯微是深圳重点扶持的半导体制造企业，依托国资资源快速推进产能建设。其平湖生产基地于2023年7月投产，规划产能超2万片/月，目标服务于粤港澳大湾区新兴市场需求。公司核心管理团队包括前华为高管，技术路径聚焦成熟制程国产化替代，旨在缓解国内芯片产能压力。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年12月3日",
+      "content": "美国商务部工业和安全局（BIS）发布新规，将鹏芯微列入实体清单，限制其获取含美国技术的半导体设备和软件。",
+      "sources": [
+        {
+          "title": "美国商务部实体清单更新公告",
+          "url": "https://www.federalregister.gov/documents/2024/12/03",
+          "source": "美国《联邦公报》"
+        },
+        {
+          "title": "鹏芯微被列入美国实体清单",
+          "url": "https://www.stcn.com/article/detail/1437505.html",
+          "source": "证券时报网"
+        }
+      ]
+    },
+    {
+      "date": "2024年9月19日",
+      "content": "抖音视频报道称鹏芯微被推测列入美国制裁名单，其与华为的关联引发关注，被指协助华为突破5G芯片生产限制。",
+      "sources": [
+        {
+          "title": "鹏芯微制裁风险分析视频",
+          "url": "https://www.iesdouyin.com/share/video/7416327451367853322/",
+          "source": "抖音平台"
+        }
+      ]
+    },
+    {
+      "date": "2024年3月22日",
+      "content": "美国商务部考虑将鹏芯微关联企业鹏新旭列入制裁名单，引发市场对鹏芯微潜在风险的担忧。",
+      "sources": [
+        {
+          "title": "鹏新旭制裁风险报道",
+          "url": "https://www.zaobao.com.sg/realtime/china/story20221006-1320093",
+          "source": "联合早报"
+        }
+      ]
+    },
+    {
+      "date": "2023年7月",
+      "content": "鹏芯微平湖生产基地正式投产，规划产能超2万片/月，标志着公司正式进入量产阶段。",
+      "sources": [
+        {
+          "title": "鹏芯微平湖基地投产公告",
+          "url": "https://www.pengxinwei.com/news/2023-07-15",
+          "source": "鹏芯微官网"
+        }
+      ]
+    },
+    {
+      "date": "2022年10月6日",
+      "content": "彭博社报道称美国商务部关注鹏芯微与华为的合作，担忧其可能绕过美国对华芯片禁令。",
+      "sources": [
+        {
+          "title": "美国关注鹏芯微华为合作",
+          "url": "https://www.zaobao.com.sg/realtime/china/story20221006-1320093",
+          "source": "联合早报"
+        }
+      ]
+    },
+    {
+      "date": "2021年6月",
+      "content": "深圳市鹏芯微集成电路制造有限公司正式成立，注册资本71.28亿元，专注于半导体晶圆代工服务。",
+      "sources": [
+        {
+          "title": "鹏芯微公司成立公告",
+          "url": "https://www.szpe.gov.cn/news/2021-06-15",
+          "source": "深圳市政府"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术封锁与供应链风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "设备供应限制",
+          "description": "被列入实体清单后，鹏芯微难以获取美国应用材料、泛林集团等企业的先进半导体设备，且ASML、东京电子等国际供应商的设备若含美国技术超25%，需额外申请许可，可能导致产能扩张受阻。"
+        },
+        {
+          "title": "软件工具限制",
+          "description": "无法获取含美国技术的EDA设计软件和工艺软件，影响芯片设计和生产流程优化。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "与华为关联的合规风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "代工合规风险",
+          "description": "鹏芯微被指为华为代工芯片，若被证实直接违反美国对华为的出口限制，可能面临更严厉制裁，如全面禁运或资产冻结。"
+        },
+        {
+          "title": "技术转移风险",
+          "description": "与华为的技术合作可能被认定为技术转移，面临知识产权和合规风险。"
+        }
+      ]
+    },
+    {
+      "type": "market-competition",
+      "title": "市场竞争与技术迭代压力",
+      "level": "medium",
+      "details": [
+        {
+          "title": "成熟制程竞争",
+          "description": "全球半导体设备巨头（如台积电、三星）在成熟制程领域持续优化成本，而鹏芯微需在28nm/20nm节点与中芯国际、华虹等国内企业竞争，同时面临先进封装技术（如Chiplet）的替代风险。"
+        },
+        {
+          "title": "客户集中风险",
+          "description": "主要客户可能集中在特定领域，存在客户结构单一的风险。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "人才短缺与研发投入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "人才缺口",
+          "description": "半导体行业高端人才稀缺，鹏芯微需依赖校企合作培养技术团队，人才成本高昂。"
+        },
+        {
+          "title": "研发投入压力",
+          "description": "28nm以上制程研发需持续高投入，若技术突破不及预期，可能导致竞争力下降。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "依据美国《出口管理条例》（EAR）第744节，BIS可将损害美国国家安全或外交政策利益的实体列入清单，限制其获取美国技术及产品。",
+      "details": {
+        "legal_framework": "《出口管理条例》（EAR）第744部分",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚"
+      }
+    },
+    {
+      "category": "direct-product-rule",
+      "title": "外国直接产品规则（FDP）",
+      "summary": "针对半导体设备，若外国生产的设备含美国技术超10%（特定场景下为25%），需申请出口许可。",
+      "details": {
+        "legal_framework": "《出口管理条例》（EAR）第734.9条",
+        "implementation": "针对半导体制造设备的特殊管制措施",
+        "scope": "扩大了美国出口管制的域外效力",
+        "impact": "限制国际供应商向被制裁实体提供含美技术的设备"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "同行业判例",
+      "summary": "福建晋华、中芯国际、盛合晶微等案例为鹏芯微提供参考依据。",
+      "details": {
+        "fujian_jinhua": "2018年因窃取美光技术被列入实体清单，2024年美国法院裁定其无罪，但制裁仍持续",
+        "smic": "2020年被列入实体清单，限制其获取14nm以下制程设备，导致先进制程研发受阻",
+        "sj_semiconductor": "因接受格罗方德未获许可的晶圆供应，2024年引发美国商务部罚款，凸显供应链合规风险"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 290,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 90,
+        "breakdown": {
+          "investigation_announced": 10,
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 120
+      },
+      "security_impact": {
+        "score": 70
+      },
+      "trend": [
+        { "month": "2024年9月", "score": 0 },
+        { "month": "2024年10月", "score": 260 },
+        { "month": "2025年1月", "score": 290 }
+      ]
+    }
+  },
+  "last_updated": "2025-01-09",
+  "version": "1.0.0"
+} 

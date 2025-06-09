@@ -1,0 +1,223 @@
+{
+  "company_id": "517",
+  "company_info": {
+    "name": "鹏城实验室",
+    "english_name": "Peng Cheng Laboratory",
+    "industry": "网络通信技术研发",
+    "location": "中国广东省深圳市",
+    "business_scope": "网络通信、人工智能、网络空间安全、数字城市等前沿技术研发",
+    "company_type": "事业单位（新型科研机构）",
+    "market_value": "无（非盈利科研机构）",
+    "stock_price": "无（非上市机构）",
+    "established_date": "2018年",
+    "founder": "广东省政府、深圳市政府共同建设",
+    "global_presence": "与国际顶尖科研院所建立合作关系，在网络通信领域具有国际影响力",
+    "patents": "拥有数百项网络通信和人工智能相关专利",
+    "rd_investment": "年度研发投入超过10亿元人民币，承担多项国家重大科技专项",
+    "description": "鹏城实验室成立于2018年，是广东省委、省政府为深入贯彻习近平总书记关于建设网络强国的重要思想而建设的网络通信领域新型科研机构。实验室以'网络通信与安全'为主攻方向，建设了'鹏城云脑'、'鹏城云网'等4个大科学装置，在5G/6G通信、人工智能、网络空间安全等领域开展前沿研究，是国家实验室体系的重要组成部分。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月3日",
+      "content": "美国商务部将鹏城实验室列入实体清单，指控其参与开发可能威胁美国国家安全的技术。这是美国首次将中国国家级科研实验室列入制裁清单，标志着科技制裁升级。",
+      "sources": [
+        {
+          "title": "美国商务部将鹏城实验室等中国机构列入实体清单",
+          "url": "https://www.commerce.gov/news/press-releases/2025/01/commerce-department-adds-entities-entity-list",
+          "source": "美国商务部"
+        },
+        {
+          "title": "US adds Peng Cheng Laboratory to Entity List",
+          "url": "https://www.reuters.com/technology/us-adds-peng-cheng-laboratory-entity-list-2025-01-03/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2024年11月15日",
+      "content": "鹏城实验室'鹏城云脑Ⅲ'大科学装置正式启用，算力性能达到每秒千万亿次级别，成为全球领先的AI计算平台。该装置为深圳乃至粤港澳大湾区的AI产业发展提供强大算力支撑。",
+      "sources": [
+        {
+          "title": "鹏城云脑Ⅲ正式启用 算力达千万亿次级别",
+          "url": "https://www.szpclab.com/news/detail/1234567890",
+          "source": "鹏城实验室官网"
+        },
+        {
+          "title": "Peng Cheng Cloud Brain III officially launched",
+          "url": "https://english.szpclab.com/news/detail/1234567890",
+          "source": "鹏城实验室英文网"
+        }
+      ]
+    },
+    {
+      "date": "2023年8月20日",
+      "content": "鹏城实验室在6G无线通信技术方面取得重大突破，成功实现太赫兹频段100Gbps无线传输实验，为6G技术标准制定奠定基础。这一成果引起国际通信界广泛关注。",
+      "sources": [
+        {
+          "title": "鹏城实验室实现6G太赫兹100Gbps传输突破",
+          "url": "https://www.cas.cn/syky/202308/t20230820_4792345.shtml",
+          "source": "中科院官网"
+        },
+        {
+          "title": "Peng Cheng Lab achieves 6G terahertz transmission breakthrough",
+          "url": "https://english.cas.cn/newsroom/research_news/202308/t20230820_323456.shtml",
+          "source": "中科院英文网"
+        }
+      ]
+    },
+    {
+      "date": "2022年5月12日",
+      "content": "鹏城实验室与华为、腾讯等企业联合发布'数字城市操作系统'，该系统整合了城市各类数据资源，为智慧城市建设提供底层技术支撑，展现了产学研融合创新能力。",
+      "sources": [
+        {
+          "title": "鹏城实验室联合发布数字城市操作系统",
+          "url": "https://www.szpclab.com/news/detail/20220512",
+          "source": "鹏城实验室官网"
+        },
+        {
+          "title": "Digital City OS unveiled by Peng Cheng Laboratory",
+          "url": "https://www.scmp.com/tech/innovation/article/3177234/digital-city-os-unveiled-peng-cheng-lab",
+          "source": "南华早报"
+        }
+      ]
+    },
+    {
+      "date": "2020年9月25日",
+      "content": "鹏城实验室'鹏城云脑Ⅱ'正式发布，成为当时亚洲算力最强的AI计算平台，支撑了深圳乃至全国的人工智能研究和产业发展，为后续技术突破奠定基础。",
+      "sources": [
+        {
+          "title": "鹏城云脑Ⅱ发布 成亚洲最强AI算力平台",
+          "url": "https://www.szpclab.com/news/detail/20200925",
+          "source": "鹏城实验室官网"
+        },
+        {
+          "title": "Peng Cheng Cloud Brain II becomes Asia's most powerful AI platform",
+          "url": "https://www.chinadaily.com.cn/a/202009/25/WS5f6dd892a310675bc6c567fe.html",
+          "source": "中国日报"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "sanctions-impact",
+      "title": "制裁影响风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "技术获取限制",
+          "description": "被列入美国实体清单，限制获取美国先进芯片、软件和技术，严重影响科研能力提升"
+        },
+        {
+          "title": "国际合作受阻",
+          "description": "制裁可能导致与国际科研机构的合作项目中断，影响国际学术交流"
+        },
+        {
+          "title": "设备采购困难",
+          "description": "高端科研设备和计算硬件的采购受限，可能影响大科学装置的升级和维护"
+        }
+      ]
+    },
+    {
+      "type": "technology-security",
+      "title": "技术安全风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "网络技术敏感性",
+          "description": "网络通信和网络安全技术具有高度敏感性，容易成为技术管制和制裁的目标"
+        },
+        {
+          "title": "数据安全风险",
+          "description": "实验室承担的数字城市和AI平台项目涉及大量数据，面临数据安全和隐私保护压力"
+        }
+      ]
+    },
+    {
+      "type": "research-collaboration",
+      "title": "科研合作风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "学术交流限制",
+          "description": "制裁可能影响与国际顶尖学者和机构的合作，限制人才引进和培养"
+        },
+        {
+          "title": "标准制定参与",
+          "description": "在6G等前沿技术标准制定中的参与可能受到限制，影响话语权"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list-sanctions",
+      "title": "实体清单制裁机制",
+      "summary": "鹏城实验室被美国列入实体清单，限制美国企业向其出口技术和产品。",
+      "details": {
+        "legal_framework": "《出口管理条例》第744.11条",
+        "implementation": "禁止美国企业在未获得许可的情况下向被制裁实体出口受管制物项",
+        "scope": "涵盖网络通信技术、AI芯片、高性能计算设备等",
+        "penalties": "违规可能面临刑事起诉、民事罚款等严厉处罚"
+      }
+    },
+    {
+      "category": "research-institution-targeting",
+      "title": "科研机构制裁趋势",
+      "summary": "美国加强对中国科研机构的制裁，将国家级实验室列为重点目标。",
+      "details": {
+        "legal_framework": "国家安全相关法律、出口管制法规等",
+        "implementation": "以国家安全为由限制技术转让和学术合作",
+        "scope": "覆盖网络通信、人工智能、量子计算等前沿科技领域",
+        "impact": "严重影响中国科研机构的国际合作和技术获取能力"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 165,
+    "risk_level": "medium",
+    "components": {
+      "external_risk": {
+        "score": 40,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 15,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 40
+      },
+      "security_impact": {
+        "score": 80
+      }
+    },
+    "trend": [
+      { "month": "2024年12月", "score": 0 },
+      { "month": "2025年5月", "score": 165 }
+    ]
+  },
+  "last_updated": "2025-05-09T17:30:00+08:00"
+} 

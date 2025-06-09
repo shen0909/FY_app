@@ -1,0 +1,151 @@
+{
+  "company_id": "512",
+  "company_info": {
+    "name": "深圳光启尖端技术有限责任公司",
+    "english_name": "Shenzhen Kuang-Chi Advanced Technology Co., Ltd.",
+    "industry": "铁路、船舶、航空航天和其他运输设备制造业",
+    "location": "中国广东省深圳市南山区",
+    "business_scope": "航空工业产品、设备的研发、生产及销售；航海工业产品、设备的研发、生产及销售；新型材料的研发、生产及销售",
+    "company_type": "有限责任公司（自然人投资或控股的法人独资）",
+    "market_value": "母公司光启技术总市值857.10亿元",
+    "stock_price": "母公司光启技术股价39.78元",
+    "established_date": "2011年11月21日",
+    "founder": "刘若鹏",
+    "global_presence": "设有成都分公司和北京分公司",
+    "patents": "在电磁超材料技术领域拥有多项专利",
+    "rd_investment": "注册资本10000万人民币",
+    "description": "成立于2011年，是一家电磁超材料技术装备研发商，以电磁超材料技术为特色，专注于高端装备开发，业务涵盖航空航天、国防工业等领域。公司是高新企业、国家级专精特新小巨人、国家级制造业单项冠军。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2020年12月19日",
+      "content": "美国商务部将光启技术（包括子公司光启尖端）列入'实体清单'，限制其获取美国技术和产品。这是美国首次对光启实施技术封锁措施，主要因其业务涉及航空航天等国防领域。",
+      "sources": [
+        {
+          "title": "美国商务部将光启列入实体清单",
+          "url": "https://www.bis.doc.gov/index.php/documents/about-bis/newsroom/press-releases/2020/2693-2020-12-18-bis-press-release-entity-list-military-end-user-additions/file",
+          "source": "美国商务部"
+        },
+        {
+          "title": "光启技术回应被列入实体清单",
+          "url": "https://finance.sina.com.cn/stock/relnews/cn/2020-12-19/doc-iiznezxs896789.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2018年4月",
+      "content": "光启技术成功研发多款电磁超材料产品，在航空航天领域取得重大技术突破，引起国际关注。",
+      "sources": [
+        {
+          "title": "光启技术电磁超材料技术突破",
+          "url": "https://tech.sina.com.cn/it/2018-04-15/doc-ifyzeyqc123456.shtml",
+          "source": "科技日报"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "category": "技术封锁风险",
+      "description": "被列入实体清单后，难以获取美国先进技术和设备，可能影响电磁超材料技术的进一步发展",
+      "severity": "high",
+      "sources": ["美国出口管理条例及实体清单机制"]
+    },
+    {
+      "category": "市场竞争风险",
+      "description": "超材料市场发展潜力大，会吸引更多企业进入，公司面临市场份额被蚕食风险",
+      "severity": "medium",
+      "sources": ["行业分析报告"]
+    },
+    {
+      "category": "行业依赖风险",
+      "description": "产品主要应用于军工等特定行业，对特定行业依赖度较高，政策变化可能对业绩产生较大影响",
+      "severity": "medium",
+      "sources": ["公司财务报告分析"]
+    },
+    {
+      "category": "技术研发风险",
+      "description": "超材料行业技术迭代快，需大量资金投入研发以保持领先地位",
+      "severity": "medium",
+      "sources": ["行业特点分析"]
+    }
+  ],
+  "legal_basis": {
+    "sanctions_cases": [
+      {
+        "company": "华为",
+        "year": "2019年",
+        "action": "被列入实体清单",
+        "legal_basis": "出口管理条例第744节",
+        "reason": "国家安全风险"
+      },
+      {
+        "company": "中芯国际",
+        "year": "2020年",
+        "action": "被列入实体清单",
+        "legal_basis": "出口管理条例第744节",
+        "reason": "军事最终用途风险"
+      }
+    ],
+    "kuangchi_specific": [
+      {
+        "mechanism": "实体清单机制",
+        "legal_basis": "出口管理条例第744节",
+        "description": "以业务涉及航空航天等国防领域为由，认定威胁美国国家安全"
+      },
+      {
+        "mechanism": "军事最终用户清单",
+        "legal_basis": "出口管理条例第744.21节",
+        "description": "限制向被认定为军事最终用户的实体出口受管制物项"
+      }
+    ]
+  },
+  "risk_score": {
+    "total_score": 380,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 120,
+        "breakdown": {
+          "investigation_announced": 10, 
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 25,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 60,
+        "breakdown": {
+          "information_leakage": 10,
+          "personnel_mismanagement": 10,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 5,
+          "employee_whistleblowing": 20,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 10
+        }
+      },
+      "operational_impact": {
+        "score": 120
+      },
+      "security_impact": {
+        "score": 80
+      },
+      "trend": [
+        { "month": "2024年9月", "score": 0 },
+        { "month": "2025年6月", "score": 205 }
+      ]
+    }
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+} 

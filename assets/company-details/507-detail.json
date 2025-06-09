@@ -1,0 +1,197 @@
+{
+    "company_id": "507",
+    "company_info": {
+    "basic": {
+      "company_name": "深圳华大基因股份有限公司",
+      "english_name": "BGI Genomics Co., Ltd.",
+      "establishment_date": "2010年",
+      "headquarters": "中国广东省深圳市盐田区",
+      "business_nature": "股份有限公司（上市企业）",
+      "parent_company": "深圳华大基因科技有限公司（华大集团核心子公司）",
+      "main_business": "生物科技/基因测序",
+      "business_scope": "基因检测、肿瘤防控、出生缺陷筛查、微生物研究、农业育种等",
+      "market_cap": "214.06亿元人民币",
+      "stock_info": "深交所创业板上市，股票代码：300676，股价：51.48元",
+      "listing_date": "2017年在深交所创业板上市",
+      "global_presence": "业务覆盖全球100多个国家和地区"
+    },
+    "description": "深圳华大基因股份有限公司是全球领先的生命科学前沿机构，以'产学研'一体化模式推动基因组学研究与应用，业务涵盖基因检测、精准医疗、科研服务等领域，致力于通过基因科技改善人类健康。公司依托华大集团在基因测序领域的技术积累，提供从基因检测设备、试剂到数据分析的全产业链解决方案。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年9月9日",
+      "content": "美国众议院通过《生物安全法案》（H.R.8333号法案），点名华大基因集团等中国生物技术公司，旨在限制其从美国联邦资助机构获取基因数据，并削减在美市场份额。该法案后续需提交参议院审议，立法进程走向尚不明确。",
+      "sources": [
+        {
+          "title": "美国众议院通过《生物安全法案》",
+          "url": "https://www.voachinese.com/a/house-vote-on-biosecure-act-20240909/7777625.html",
+          "source": "美国之音"
+        },
+        {
+          "title": "美众议院通过《生物安全法》草案 对中国药企'出海'影响几何？",
+          "url": "https://finance.sina.com.cn/chanjing/cyxw/2024-09-10/doc-incntkri789234.shtml",
+          "source": "21世纪经济报道"
+        }
+      ]
+    },
+    {
+      "date": "2024年1月25日",
+      "content": "美国参众两院拟出台针对华大集团的'生物安全法案'，以'保护基因数据和国家安全'为由，限制其在美业务。法案在两党获得支持，对华大集团等企业预设性指控，解释法案通过后的潜在执行机制。",
+      "sources": [
+        {
+          "title": "美众议院通过《生物安全法》草案 对中国药企'出海'影响几何？",
+          "url": "https://finance.sina.com.cn/chanjing/cyxw/2024-01-25/doc-incntkri789456.shtml",
+          "source": "21世纪经济报道"
+        },
+        {
+          "title": "美国参众两院生物安全法案立法背景分析",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/8333",
+          "source": "美国国会官网"
+        }
+      ]
+    },
+    {
+      "date": "2023年6月15日",
+      "content": "华大基因发布公告，以1.95亿元参与认购常州市华大松禾创业投资基金份额，聚焦生物医药、新能源等领域，以应对潜在技术封锁风险。基金规模为4亿元，华大基因在基金中的出资占比接近50%。",
+      "sources": [
+        {
+          "title": "华大基因：以1.95亿元参与认购基金份额",
+          "url": "https://www.cls.cn/detail/1420234",
+          "source": "财联社"
+        },
+        {
+          "title": "华大基因：1.95亿元认购华大松禾基金，将主投生物医药、新能源、新材料等领域",
+          "url": "https://www.jiemian.com/article/9480123.html",
+          "source": "界面快讯"
+        }
+      ]
+    },
+    {
+      "date": "2022年9月9日",
+      "content": "华大智造成功登陆科创板上市，发行价87.18元，发行前市值突破360亿元，加速国产基因测序设备替代进程，间接回应美国技术压制。这是汪建继华大基因后的第二单IPO。",
+      "sources": [
+        {
+          "title": "汪建第二单IPO来了：华大智造即将登陆科创板 发行前市值突破360亿",
+          "url": "https://finance.sina.com.cn/stock/relnews/cn/2022-09-09/doc-imqqsmrp234567.shtml",
+          "source": "21世纪经济报道"
+        },
+        {
+          "title": "华大智造科创板上市公告",
+          "url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/",
+          "source": "上海证券交易所"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "category": "国际政治与技术封锁风险",
+      "description": "美国以'国家安全'为由，通过立法限制华大基因获取美国技术及市场准入，可能导致关键设备进口受限、国际合作受阻",
+      "severity": "high",
+      "sources": ["美国《生物安全法案》（H.R.8333号法案）及国会相关声明"]
+    },
+    {
+      "category": "供应链中断风险",
+      "description": "基因测序设备核心零部件依赖进口（如光学元件、芯片），若美国扩大制裁范围，可能影响生产连续性",
+      "severity": "high",
+      "sources": ["华大基因2024年年报及行业分析报告"]
+    },
+    {
+      "category": "法律诉讼与合规风险",
+      "description": "美国企业（如因美纳）曾以专利侵权为由对华大智造提起诉讼，未来可能面临更多知识产权纠纷",
+      "severity": "medium",
+      "sources": ["美国特拉华州联邦法院判例（案号：1:22-cv-00543）及华大基因公告"]
+    },
+    {
+      "category": "市场信任与股价波动风险",
+      "description": "制裁事件可能引发投资者担忧，导致股价波动。例如，2025年5月华大基因控股股东质押比例达72.19%，触发'风险'评级",
+      "severity": "medium",
+      "sources": ["华大基因质押公告及鹰眼预警评级模型"]
+    }
+  ],
+  "legal_basis": {
+    "sanctions_cases": [
+      {
+        "company": "药明康德",
+        "year": "2024年",
+        "action": "被美国《生物安全法案》点名",
+        "legal_basis": "美国《出口管理条例》（EAR）第744部分实体清单机制",
+        "reason": "指控其'涉及军事应用'"
+      },
+      {
+        "company": "商汤科技",
+        "year": "2022年",
+        "action": "被列入实体清单",
+        "legal_basis": "EAR第744.11节",
+        "reason": "'支持中国军方现代化'"
+      }
+    ],
+    "bgi_specific": [
+      {
+        "mechanism": "美国《出口管理条例》（EAR）",
+        "legal_basis": "第744部分：实体清单机制，第744.11节：针对'参与军事现代化'的中国企业",
+        "description": "限制被列名企业获取美国技术及产品"
+      },
+      {
+        "mechanism": "美国《生物安全法案》（H.R.8333）",
+        "legal_basis": "《国家安全法》及《对外贸易法》",
+        "description": "限制中国生物技术公司从美国联邦机构获取基因数据"
+      }
+    ],
+    "china_countermeasures": [
+      {
+        "measure": "不可靠实体清单",
+        "legal_basis": "《对外贸易法》《国家安全法》及《反外国制裁法》",
+        "description": "中国将美国因美纳列入不可靠实体清单，对其采取限制进出口、投资等措施"
+      }
+    ]
+  },
+  "risk_score": {
+    "total_score": 210,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 75,
+        "breakdown": {
+          "investigation_announced": 10, 
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 25,
+        "breakdown": {
+          "information_leakage": 10,
+          "personnel_mismanagement": 10,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 70
+      },
+      "security_impact": {
+        "score": 40
+      },
+      "trend": [
+        { "month": "2024年5月", "score": 0 },
+        { "month": "2024年6月", "score": 150 },
+        { "month": "2024年7月", "score": 190 },
+        { "month": "2025年5月", "score": 210 }
+      ]
+    }
+  }
+} 

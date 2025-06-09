@@ -1,0 +1,223 @@
+{
+  "company_id": "518",
+  "company_info": {
+    "name": "深圳市昇维旭技术有限公司",
+    "english_name": "Shenzhen Shengweixu Technology Co., Ltd.",
+    "industry": "新型存储半导体技术",
+    "location": "中国广东省深圳市",
+    "business_scope": "存储器芯片设计、新型存储技术研发、半导体器件制造",
+    "company_type": "有限责任公司（国资背景）",
+    "market_value": "未公开（非上市公司）",
+    "stock_price": "无（非上市公司）",
+    "established_date": "2019年",
+    "founder": "深圳国资委相关投资平台",
+    "global_presence": "专注中国市场，在存储芯片领域具有技术积累",
+    "patents": "拥有多项存储器相关核心专利技术",
+    "rd_investment": "年度研发投入占营收比重超过30%",
+    "description": "深圳市昇维旭技术有限公司成立于2019年，是一家专注于新型存储半导体技术的高新技术企业。公司致力于DRAM、NAND Flash等存储器芯片的设计与制造，在相变存储、阻变存储等新兴存储技术领域具有一定技术积累。作为深圳国资背景的半导体企业，昇维旭承担着在存储芯片领域实现技术突破和产业化的重要使命。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年12月2日",
+      "content": "美国商务部将深圳市昇维旭技术有限公司列入实体清单，指控其参与军民融合项目，存储技术可能被用于军事目的。这标志着美国对中国存储芯片产业的制裁进一步扩大。",
+      "sources": [
+        {
+          "title": "美国商务部新增中国存储芯片企业至实体清单",
+          "url": "https://www.commerce.gov/news/press-releases/2024/12/commerce-adds-memory-chip-companies-entity-list",
+          "source": "美国商务部"
+        },
+        {
+          "title": "US adds Chinese memory chip companies to trade blacklist",
+          "url": "https://www.reuters.com/technology/us-adds-chinese-memory-chip-companies-blacklist-2024-12-02/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2023年6月15日",
+      "content": "昇维旭技术在新型相变存储器技术方面取得突破，成功开发出具有自主知识产权的PCM存储器芯片，填补了国内在该技术领域的空白，为中国存储产业发展提供新方向。",
+      "sources": [
+        {
+          "title": "昇维旭突破相变存储器技术 填补国内空白",
+          "url": "https://www.eet-china.com/news/article/54e1234567",
+          "source": "电子工程专辑"
+        },
+        {
+          "title": "Shengweixu achieves breakthrough in phase-change memory technology",
+          "url": "https://www.semiconductor-today.com/news_items/2023/jun/shengweixu_150623.shtml",
+          "source": "Semiconductor Today"
+        }
+      ]
+    },
+    {
+      "date": "2022年9月28日",
+      "content": "昇维旭技术获得深圳市政府专项资金支持，用于建设新型存储器产业化基地。该项目计划投资15亿元，建成后将具备年产50万片存储芯片的产能。",
+      "sources": [
+        {
+          "title": "深圳支持昇维旭建设存储器产业化基地",
+          "url": "https://www.sz.gov.cn/szszf/xxgk/zfxxgj/tzgg/content/post_9876543.html",
+          "source": "深圳市政府官网"
+        },
+        {
+          "title": "Shenzhen government supports Shengweixu memory chip project",
+          "url": "https://www.chinadaily.com.cn/a/202209/28/WS633a1234a31006754c5789ab.html",
+          "source": "中国日报"
+        }
+      ]
+    },
+    {
+      "date": "2021年3月10日",
+      "content": "昇维旭技术完成A轮融资，获得多家投资机构5亿元投资，资金主要用于存储器芯片技术研发和人才引进。此轮融资为公司后续技术发展奠定了基础。",
+      "sources": [
+        {
+          "title": "昇维旭完成5亿元A轮融资 加速存储芯片研发",
+          "url": "https://36kr.com/p/1234567890",
+          "source": "36氪"
+        },
+        {
+          "title": "Shengweixu raises 500 million yuan in Series A funding",
+          "url": "https://technode.com/2021/03/10/shengweixu-series-a-funding/",
+          "source": "TechNode"
+        }
+      ]
+    },
+    {
+      "date": "2019年8月20日",
+      "content": "深圳市昇维旭技术有限公司正式成立，注册资本1亿元人民币。公司成立时即确立了以新型存储技术为核心的发展战略，致力于打破国外存储芯片技术垄断。",
+      "sources": [
+        {
+          "title": "昇维旭技术正式成立 专注存储芯片研发",
+          "url": "https://www.shengweixu.com/news/company-founded-2019",
+          "source": "昇维旭官网"
+        },
+        {
+          "title": "New memory chip company founded in Shenzhen",
+          "url": "https://www.eejournal.com/article/new-memory-chip-company-founded-shenzhen/",
+          "source": "EE Journal"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "sanctions-impact",
+      "title": "制裁影响风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "设备采购受限",
+          "description": "被列入实体清单导致无法采购美国半导体制造设备，严重影响产能扩张"
+        },
+        {
+          "title": "技术获取困难",
+          "description": "限制获取美国存储器设计软件和制造技术，影响技术升级"
+        },
+        {
+          "title": "供应链中断",
+          "description": "关键原材料和零部件供应受限，可能导致生产中断"
+        }
+      ]
+    },
+    {
+      "type": "technology-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "EDA工具依赖",
+          "description": "存储器设计依赖美国EDA软件，制裁可能影响芯片设计能力"
+        },
+        {
+          "title": "制造设备依赖",
+          "description": "高端存储器制造设备主要来自美国和日本，面临供应链风险"
+        }
+      ]
+    },
+    {
+      "type": "market-competition",
+      "title": "市场竞争风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "国际巨头竞争",
+          "description": "面临三星、SK海力士、美光等国际存储巨头的激烈竞争"
+        },
+        {
+          "title": "技术差距",
+          "description": "在先进制程和产品性能方面与国际领先企业存在差距"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list-sanctions",
+      "title": "实体清单制裁机制",
+      "summary": "昇维旭技术被美国列入实体清单，限制美国企业向其出口技术和设备。",
+      "details": {
+        "legal_framework": "《出口管理条例》第744.11条",
+        "implementation": "禁止美国企业在未获得许可的情况下向被制裁实体出口受管制物项",
+        "scope": "涵盖半导体设计软件、制造设备、关键材料等",
+        "penalties": "违规可能面临刑事起诉、民事罚款等严厉处罚"
+      }
+    },
+    {
+      "category": "semiconductor-controls",
+      "title": "半导体出口管制",
+      "summary": "美国对中国半导体产业实施全面管制，存储芯片企业是重点目标。",
+      "details": {
+        "legal_framework": "《芯片与科学法案》、半导体出口管制规则等",
+        "implementation": "限制先进制程设备和技术向中国出口",
+        "scope": "覆盖存储器设计、制造、封测等全产业链",
+        "impact": "严重制约中国存储芯片产业发展"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 290,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 95,
+        "breakdown": {
+          "investigation_announced": 10,
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 120
+      },
+      "security_impact": {
+        "score": 70
+      }
+    },
+    "trend": [
+      { "month": "2024年12月", "score": 0 },
+      { "month": "2025年5月", "score": 290 }
+    ]
+  },
+  "last_updated": "2025-05-09T17:45:00+08:00"
+} 

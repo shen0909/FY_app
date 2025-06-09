@@ -1,0 +1,223 @@
+{
+  "company_id": "516",
+  "company_info": {
+    "name": "中广核研究院有限公司",
+    "english_name": "China Nuclear Power Technology Research Institute Co., Ltd.",
+    "industry": "核能技术研发与工程设计",
+    "location": "中国广东省深圳市",
+    "business_scope": "核电技术研发、核电工程设计、核燃料技术、核安全技术、新能源技术研发",
+    "company_type": "国有控股企业",
+    "market_value": "未单独上市，隶属中国广核集团",
+    "stock_price": "母公司中广核电力(01816.HK)股价约3.12港元",
+    "established_date": "2010年",
+    "founder": "中国广核集团有限公司",
+    "global_presence": "在英国、法国、马来西亚等国设有技术合作项目和研发中心",
+    "patents": "拥有2873项专利，其中发明专利占比超过70%",
+    "rd_investment": "年度研发投入超过20亿元人民币，占营收比重约15%",
+    "description": "中广核研究院有限公司成立于2010年，是中国广核集团的核心科技研发平台，致力于核能技术的自主创新和产业化应用。研究院在核电关键技术、先进核燃料、数字化核电、小堆技术等领域拥有世界先进水平。作为华龙一号核电技术的主要研发单位，承担了多项国家重大专项任务，是中国核电技术走向世界的重要支撑。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2019年8月19日",
+      "content": "美国商务部将中广核集团及其下属4家企业（包括中广核研究院）列入实体清单，指控其获取或试图获取美国技术用于中国军事核项目。这是美国首次将中国大型核能企业列入制裁清单。",
+      "sources": [
+        {
+          "title": "美国商务部将中广核列入实体清单",
+          "url": "https://www.commerce.gov/news/press-releases/2019/08/commerce-department-adds-chinese-nuclear-companies-entity-list",
+          "source": "美国商务部"
+        },
+        {
+          "title": "US adds Chinese nuclear companies to trade blacklist",
+          "url": "https://www.reuters.com/article/us-usa-china-nuclear-idUSKCN1V908P",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2021年3月15日",
+      "content": "中广核研究院发布华龙一号全球首堆福清5号机组正式商运的技术成果，标志着中国自主三代核电技术正式走向世界。这是在美国制裁背景下中国核电技术的重大突破。",
+      "sources": [
+        {
+          "title": "华龙一号全球首堆商运 中国核电技术走向世界",
+          "url": "https://www.cnnc.com.cn/xwzx/mtjj/202103/t20210315_445362.html",
+          "source": "中核集团官网"
+        },
+        {
+          "title": "China's Hualong One reactor enters commercial operation",
+          "url": "https://www.world-nuclear-news.org/Articles/Fuqing-5-first-Hualong-One-enters-commercial-oper",
+          "source": "世界核工业新闻网"
+        }
+      ]
+    },
+    {
+      "date": "2020年9月2日",
+      "content": "中广核研究院在小堆技术领域取得突破，ACPR50S海上浮动核电站关键技术通过国际原子能机构评审，展现了中国在核能创新技术方面的实力。",
+      "sources": [
+        {
+          "title": "中广核海上浮动核电站技术获国际认可",
+          "url": "https://www.cgnpc.com.cn/xwzx/jtxw/202009/t20200902_437658.html",
+          "source": "中广核官网"
+        },
+        {
+          "title": "IAEA reviews CGN's floating nuclear power plant technology",
+          "url": "https://www.world-nuclear-news.org/Articles/IAEA-reviews-CGNs-floating-nuclear-power-plant-tec",
+          "source": "世界核工业新闻网"
+        }
+      ]
+    },
+    {
+      "date": "2018年10月17日",
+      "content": "英国政府批准中广核参与英国布拉德韦尔B核电项目，使用华龙一号技术。这是中国自主核电技术首次获得西方发达国家认可，但后因中英关系变化面临不确定性。",
+      "sources": [
+        {
+          "title": "英国批准中广核参与布拉德韦尔B核电项目",
+          "url": "https://www.gov.uk/government/news/bradwell-b-nuclear-power-station-project-approved",
+          "source": "英国政府官网"
+        },
+        {
+          "title": "UK approves Chinese nuclear project using Hualong One technology",
+          "url": "https://www.ft.com/content/0c2e5d8a-d221-11e8-a9f2-7574db66bcd5",
+          "source": "金融时报"
+        }
+      ]
+    },
+    {
+      "date": "2017年5月25日",
+      "content": "华龙一号示范工程福清5号机组开始首次装料，标志着中国自主三代核电技术迈向产业化的重要里程碑。这一技术突破为中广核应对后续制裁奠定了基础。",
+      "sources": [
+        {
+          "title": "华龙一号示范工程首次装料",
+          "url": "https://www.cgnpc.com.cn/xwzx/jtxw/202105/t20210525_471234.html",
+          "source": "中广核官网"
+        },
+        {
+          "title": "China loads fuel into first Hualong One reactor",
+          "url": "https://www.world-nuclear-news.org/Articles/China-loads-fuel-into-first-Hualong-One-reactor",
+          "source": "世界核工业新闻网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "sanctions-impact",
+      "title": "制裁影响风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "技术获取限制",
+          "description": "被列入美国实体清单，限制获取美国核技术、设备和材料，影响技术升级和国际合作"
+        },
+        {
+          "title": "国际项目受阻",
+          "description": "制裁影响中广核在英国等西方国家的核电项目推进，国际化战略受挫"
+        },
+        {
+          "title": "供应链中断",
+          "description": "关键核级设备和材料的进口受限，可能影响核电项目建设进度"
+        }
+      ]
+    },
+    {
+      "type": "technology-security",
+      "title": "技术安全风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "核技术敏感性",
+          "description": "核能技术具有军民两用性质，容易成为国际制裁和技术封锁的目标"
+        },
+        {
+          "title": "知识产权风险",
+          "description": "在技术引进受限的情况下，需要避免潜在的知识产权纠纷和技术泄露风险"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "美国制裁可能影响中广核在第三国的核电项目竞标和合作"
+        },
+        {
+          "title": "金融合作受限",
+          "description": "国际金融机构可能因制裁风险而减少对相关项目的资金支持"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list-sanctions",
+      "title": "实体清单制裁机制",
+      "summary": "中广核及其下属企业被美国列入实体清单，限制美国企业向其出口技术和产品。",
+      "details": {
+        "legal_framework": "《出口管理条例》第744.11条",
+        "implementation": "禁止美国企业在未获得许可的情况下向被制裁实体出口受管制物项",
+        "scope": "涵盖核技术、核设备、核材料等敏感领域",
+        "penalties": "违规可能面临刑事起诉、民事罚款等严厉处罚"
+      }
+    },
+    {
+      "category": "nuclear-technology-control",
+      "title": "核技术出口管制",
+      "summary": "核技术作为高度敏感技术，受到国际核供应国集团等多边管制机制严格控制。",
+      "details": {
+        "legal_framework": "核供应国集团(NSG)准则、《不扩散核武器条约》等",
+        "implementation": "限制核技术和设备的国际转让，需要获得多方许可",
+        "scope": "涵盖核反应堆技术、核燃料循环技术、核材料等",
+        "impact": "严重影响核技术的国际合作和技术获取"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 155,
+    "risk_level": "medium",
+    "components": {
+      "external_risk": {
+        "score": 35,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 15,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 20,
+        "breakdown": {
+          "information_leakage": 10,
+          "personnel_mismanagement": 10,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 100
+      }
+    },
+    "trend": [
+      { "month": "2024年12月", "score": 0 },
+      { "month": "2025年5月", "score": 155 }
+    ]
+  },
+  "last_updated": "2025-01-09T17:15:00+08:00"
+} 

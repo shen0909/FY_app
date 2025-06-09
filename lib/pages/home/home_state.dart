@@ -40,9 +40,9 @@ class HomeState {
 
   HomeState() {
     riskType = [
-      {'title': '高风险','count':5,'bgColor':FYColors.highRiskBg,'borderColor':FYColors.highRiskBorder},
-      {'title': '中风险','count':5,'bgColor':FYColors.middleRiskBg,'borderColor':FYColors.middleRiskBorder},
-      {'title': '低风险','count':5,'bgColor':FYColors.lowRiskBg,'borderColor':FYColors.lowRiskBorder},
+      {'title': '高风险','count':30,'bgColor':FYColors.highRiskBg,'borderColor':FYColors.highRiskBorder},
+      {'title': '中风险','count':17,'bgColor':FYColors.middleRiskBg,'borderColor':FYColors.middleRiskBorder},
+      {'title': '低风险','count':52,'bgColor':FYColors.lowRiskBg,'borderColor':FYColors.lowRiskBorder},
     ];
     homeItemList = [
       {'title': '舆情热点', 'image': FYImages.hotIcon, 'bgColor': FYColors.hotBgGridle},

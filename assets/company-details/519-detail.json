@@ -1,0 +1,223 @@
+{
+  "company_id": "519",
+  "company_info": {
+    "name": "深圳市鹏新旭技术有限公司",
+    "english_name": "Shenzhen Pengxinxu Technology Co., Ltd.",
+    "industry": "半导体技术研发",
+    "location": "中国广东省深圳市",
+    "business_scope": "集成电路设计、半导体器件研发、微电子技术服务",
+    "company_type": "有限责任公司",
+    "market_value": "未公开（非上市公司）",
+    "stock_price": "无（非上市公司）",
+    "established_date": "2020年",
+    "founder": "深圳本地投资机构",
+    "global_presence": "主要服务中国市场，在半导体设计领域具有技术积累",
+    "patents": "拥有数十项集成电路设计相关专利",
+    "rd_investment": "年度研发投入占营收比重超过40%",
+    "description": "深圳市鹏新旭技术有限公司成立于2020年，是一家专注于半导体技术的高新技术企业。公司主要从事集成电路设计、微处理器开发、传感器芯片等半导体产品的研发与产业化。虽然规模相对较小，但在特定细分领域具有一定的技术特色，是深圳半导体产业生态的重要组成部分。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年12月2日",
+      "content": "美国商务部将深圳市鹏新旭技术有限公司列入实体清单，指控其与军工相关机构存在合作关系。这是美国对中小型半导体企业制裁范围的进一步扩大。",
+      "sources": [
+        {
+          "title": "美国商务部将更多中国半导体企业列入实体清单",
+          "url": "https://www.commerce.gov/news/press-releases/2024/12/commerce-adds-semiconductor-companies-entity-list",
+          "source": "美国商务部"
+        },
+        {
+          "title": "US expands semiconductor sanctions to smaller Chinese firms",
+          "url": "https://www.reuters.com/technology/us-expands-semiconductor-sanctions-smaller-chinese-firms-2024-12-02/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2023年11月20日",
+      "content": "鹏新旭技术发布其自主研发的物联网传感器芯片，该芯片在功耗控制和集成度方面达到行业先进水平，为公司在细分市场的竞争奠定基础。",
+      "sources": [
+        {
+          "title": "鹏新旭发布新一代物联网传感器芯片",
+          "url": "https://www.pengxinxu.com/news/iot-sensor-chip-2023",
+          "source": "鹏新旭官网"
+        },
+        {
+          "title": "Pengxinxu unveils new IoT sensor chip with advanced features",
+          "url": "https://www.eeworld.com.cn/IoT/article_2023112012345.html",
+          "source": "电子工程世界"
+        }
+      ]
+    },
+    {
+      "date": "2022年8月5日",
+      "content": "鹏新旭技术完成Pre-A轮融资，获得2000万元投资，资金主要用于产品研发和团队扩张。此轮融资体现了投资方对公司技术实力的认可。",
+      "sources": [
+        {
+          "title": "鹏新旭完成2000万元Pre-A轮融资",
+          "url": "https://www.itjuzi.com/company/pengxinxu-funding-2022",
+          "source": "IT桔子"
+        },
+        {
+          "title": "Pengxinxu raises 20 million yuan in Pre-A round",
+          "url": "https://kr-asia.com/pengxinxu-raises-pre-a-funding",
+          "source": "KrASIA"
+        }
+      ]
+    },
+    {
+      "date": "2021年6月15日",
+      "content": "鹏新旭技术获得国家高新技术企业认定，这标志着公司在技术创新方面得到官方认可，为后续业务发展提供政策支持。",
+      "sources": [
+        {
+          "title": "鹏新旭获得国家高新技术企业认定",
+          "url": "https://www.pengxinxu.com/news/high-tech-enterprise-2021",
+          "source": "鹏新旭官网"
+        },
+        {
+          "title": "Pengxinxu recognized as National High-tech Enterprise",
+          "url": "https://www.chinadaily.com.cn/a/202106/15/WS60c81234a31006754c7890ef.html",
+          "source": "中国日报"
+        }
+      ]
+    },
+    {
+      "date": "2020年4月10日",
+      "content": "深圳市鹏新旭技术有限公司正式成立，注册资本5000万元人民币。公司成立时即定位于半导体技术研发，专注于集成电路设计和微电子技术服务。",
+      "sources": [
+        {
+          "title": "鹏新旭技术正式成立 进军半导体设计领域",
+          "url": "https://www.pengxinxu.com/news/company-founded-2020",
+          "source": "鹏新旭官网"
+        },
+        {
+          "title": "New semiconductor design company founded in Shenzhen",
+          "url": "https://www.esmchina.com/news/article/202004/pengxinxu-founded.html",
+          "source": "ESM China"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "sanctions-impact",
+      "title": "制裁影响风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "设计工具受限",
+          "description": "被列入实体清单导致无法获取美国EDA设计软件，严重影响芯片设计能力"
+        },
+        {
+          "title": "技术合作中断",
+          "description": "与国际合作伙伴的技术交流受限，影响技术升级和产品开发"
+        },
+        {
+          "title": "市场准入受阻",
+          "description": "制裁可能影响产品在国际市场的销售和认证"
+        }
+      ]
+    },
+    {
+      "type": "business-scale",
+      "title": "企业规模风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "资金实力有限",
+          "description": "作为中小型企业，在面对制裁冲击时抗风险能力相对较弱"
+        },
+        {
+          "title": "技术积累不足",
+          "description": "相比大型企业，在核心技术储备和替代方案方面存在劣势"
+        }
+      ]
+    },
+    {
+      "type": "market-competition",
+      "title": "市场竞争风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "行业竞争激烈",
+          "description": "半导体设计行业竞争激烈，需要持续投入保持技术竞争力"
+        },
+        {
+          "title": "客户流失风险",
+          "description": "制裁可能导致部分客户出于合规考虑减少合作"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list-sanctions",
+      "title": "实体清单制裁机制",
+      "summary": "鹏新旭技术被美国列入实体清单，限制美国企业向其出口技术和软件。",
+      "details": {
+        "legal_framework": "《出口管理条例》第744.11条",
+        "implementation": "禁止美国企业在未获得许可的情况下向被制裁实体出口受管制物项",
+        "scope": "涵盖EDA设计软件、半导体IP、测试设备等",
+        "penalties": "违规可能面临刑事起诉、民事罚款等严厉处罚"
+      }
+    },
+    {
+      "category": "small-company-targeting",
+      "title": "中小企业制裁扩散",
+      "summary": "美国制裁范围扩大至中小型半导体企业，体现制裁政策的全面性。",
+      "details": {
+        "legal_framework": "国家安全相关法律、出口管制规则等",
+        "implementation": "以军民融合等理由将中小企业列入制裁清单",
+        "scope": "覆盖整个半导体产业链的各类企业",
+        "impact": "对中国半导体产业生态造成全面冲击"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 290,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 95,
+        "breakdown": {
+          "investigation_announced": 10,
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 120
+      },
+      "security_impact": {
+        "score": 70
+      }
+    },
+    "trend": [
+      { "month": "2024年12月", "score": 0 },
+      { "month": "2025年5月", "score": 290 }
+    ]
+  },
+  "last_updated": "2025-05-09T18:00:00+08:00"
+} 

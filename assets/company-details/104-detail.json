@@ -1,0 +1,250 @@
+{
+  "company_id": "104",
+  "company_info": {
+    "name": "中船黄埔文冲船舶有限公司",
+    "english_name": "CSSC Huangpu Wenchong Shipbuilding Company Limited",
+    "industry": "船舶制造业",
+    "location": "广东省广州市",
+    "established_date": "1948年",
+    "registered_capital": "50亿元人民币",
+    "employees": "8000+",
+    "website": "http://www.cssc-hwwc.com"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月9日",
+      "content": "美国国防部进一步解释CMC清单目的与影响，对列入CMC清单企业的影响范围进行进一步说明。",
+      "sources": [
+        {
+          "title": "美国国防部官方声明",
+          "url": "https://www.defense.gov/News/Releases/2025-01-09",
+          "source": "美国国防部"
+        }
+      ]
+    },
+    {
+      "date": "2025年1月6日",
+      "content": "中船黄埔文冲被列入美国最新版\"中国涉军企业\"清单，美国财政部更新中国涉军企业清单。",
+      "sources": [
+        {
+          "title": "美国联邦公报",
+          "url": "https://www.federalregister.gov/documents/2025/01/06",
+          "source": "美国联邦公报"
+        },
+        {
+          "title": "路透社报道",
+          "url": "https://www.reuters.com/world/china/us-adds-chinese-firms-military-list-2025-01-06",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2024年6月19日",
+      "content": "蓬莱巨涛因参与俄罗斯项目被美国列入SDN清单，美国财政部将蓬莱巨涛海洋工程重工有限公司列入SDN清单。",
+      "sources": [
+        {
+          "title": "世界海事新闻报道",
+          "url": "https://www.worldoe.com/html/2024/Shipyards_0618/204002.html",
+          "source": "世界海事新闻"
+        }
+      ]
+    },
+    {
+      "date": "2024年3月28日",
+      "content": "美国对航运及船舶行业制裁范围扩大，美国财政部宣布扩大对航运及船舶制造行业的制裁范围。",
+      "sources": [
+        {
+          "title": "美国财政部新闻稿",
+          "url": "https://www.treasury.gov/press-releases/2024-03-28",
+          "source": "美国财政部"
+        }
+      ]
+    },
+    {
+      "date": "2020年12月20日",
+      "content": "中国船舶集团下属25家机构被列入实体清单，美国商务部将中国船舶集团下属25家机构列入实体清单。",
+      "sources": [
+        {
+          "title": "美国商务部公告",
+          "url": "https://www.commerce.gov/news/2020-12-20",
+          "source": "美国商务部"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "sanction-risk",
+      "title": "制裁风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "CMC清单影响",
+          "description": "被列入美国国防部中国涉军企业清单（CMC），面临美国投资者投资限制，可能影响国际融资渠道。"
+        },
+        {
+          "title": "实体清单连带影响",
+          "description": "母公司中国船舶集团已被列入实体清单，技术和设备采购受到严格限制。"
+        },
+        {
+          "title": "次级制裁风险",
+          "description": "国际合作伙伴可能因担心美国次级制裁而减少或终止合作。"
+        },
+        {
+          "title": "金融制裁可能性",
+          "description": "存在被列入SDN清单的风险，可能导致美元结算和国际金融服务受限。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键设备依赖",
+          "description": "船舶制造需要的部分高端设备和技术来自欧美供应商，可能面临断供风险。"
+        },
+        {
+          "title": "软件系统限制",
+          "description": "船舶设计和制造使用的CAD/CAM软件可能受到出口管制影响。"
+        },
+        {
+          "title": "认证体系影响",
+          "description": "国际船级社认证可能受到政治因素影响，影响船舶的国际市场准入。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "国际订单影响",
+          "description": "部分国际客户可能因制裁担忧而减少订单，特别是与美国有业务往来的航运公司。"
+        },
+        {
+          "title": "融资渠道受限",
+          "description": "国际银行可能限制对公司的融资支持，增加资金成本。"
+        },
+        {
+          "title": "保险服务限制",
+          "description": "国际保险公司可能限制或拒绝为公司船舶提供保险服务。"
+        }
+      ]
+    },
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "军用技术自主",
+          "description": "军用舰船核心技术基本实现自主可控，受外部技术限制影响较小。"
+        },
+        {
+          "title": "民用技术替代",
+          "description": "民用船舶技术有较多替代方案，可通过国产化降低依赖。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用'推定拒绝'政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚"
+      }
+    },
+    {
+      "category": "cmc-list",
+      "title": "中国涉军企业清单(CMC)",
+      "summary": "美国国防部认定的与中国军方有关联的企业清单，主要影响美国投资者的投资行为。",
+      "details": {
+        "legal_framework": "《2021财年国防授权法》第1260H条",
+        "implementation": "禁止美国人购买或出售清单企业的公开交易证券",
+        "scope": "适用于所有美国人，包括美国公民、永久居民、美国境内的任何人、美国法律设立的实体",
+        "penalties": "违规投资可能面临民事和刑事处罚"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国造船企业面临的制裁情况和应对措施。",
+      "cases": [
+        {
+          "company": "江南造船（集团）有限责任公司",
+          "date": "2020年12月",
+          "action": "被列入实体清单",
+          "impact": "技术引进受限，但通过加强自主研发保持了业务稳定"
+        },
+        {
+          "company": "大连船舶重工集团",
+          "date": "2020年12月",
+          "action": "被列入实体清单",
+          "impact": "国际合作项目受影响，转向国内市场和友好国家市场"
+        },
+        {
+          "company": "蓬莱巨涛海洋工程",
+          "date": "2024年6月",
+          "action": "被列入SDN清单",
+          "impact": "美元结算完全中断，国际业务严重受损"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 125,
+    "risk_level": "medium",
+    "components": {
+      "external_risk": {
+        "score": 35,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 15,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 10,
+        "breakdown": {
+          "information_leakage": 5,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 80
+      }
+    },
+    "trend": [
+      { "month": "2024年8月", "score": 0 },
+      { "month": "2024年12月", "score": 105 },
+      { "month": "2025年1月", "score": 125 }
+    ]
+  },
+  "last_updated": "2025-05-09T15:00:00+08:00"
+} 

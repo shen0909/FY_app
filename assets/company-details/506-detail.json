@@ -1,0 +1,229 @@
+{
+  "company_id": "506",
+  "company_info": {
+    "basic": {
+      "company_name": "深圳市大疆创新科技有限公司",
+      "english_name": "DJI (DJ-Innovations)",
+      "establishment_date": "2006年",
+      "headquarters": "广东省深圳市",
+      "business_nature": "私营企业",
+      "parent_company": "智翔科技有限公司（注册于香港）",
+      "main_business": "无人机制造与智能硬件",
+      "business_scope": "无人机研发与生产、影像系统、机器人教育、智能驾驶",
+      "market_valuation": "1430亿元人民币（2025年估值）",
+      "stock_info": "未上市",
+      "employees": "超过1.4万人",
+      "global_presence": "业务遍及100多个国家与地区"
+    },
+    "description": "成立于2006年，总部位于中国深圳，是全球领先的无人机及影像技术解决方案提供商，业务覆盖消费级无人机、工业级无人机、手持影像系统等领域。截至2025年，大疆在全球无人机市场占有率超70%，并持续主导美国执法、救援等关键领域市场。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年10月18日",
+      "content": "大疆起诉美国国防部，要求撤销其被列入'中国军事企业清单'的决定，称该认定缺乏事实依据且损害了公司声誉和商业利益。大疆在起诉书中强调其为民用无人机制造商，与军事活动无关。",
+      "sources": [
+        {
+          "title": "大疆起诉美国国防部要求撤销军事企业认定",
+          "url": "https://www.caixin.com/2024-10-18/102244356.html",
+          "source": "财新网"
+        },
+        {
+          "title": "DJI sues Pentagon to remove it from Chinese military company list",
+          "url": "https://www.reuters.com/business/aerospace-defense/dji-sues-pentagon-remove-it-chinese-military-company-list-2024-10-18/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2024年8月5日",
+      "content": "中国宣布自9月1日起限制无人机出口，反制美国制裁。这一措施被视为对美国限制中国无人机企业的直接回应，可能影响全球无人机供应链。",
+      "sources": [
+        {
+          "title": "中国限制无人机出口新规正式实施",
+          "url": "https://www.163.com/news/article/J5K8QG5N0001899O.html",
+          "source": "网易新闻"
+        },
+        {
+          "title": "商务部等部门发布关于无人驾驶航空器出口管制措施的公告",
+          "url": "http://www.mofcom.gov.cn/article/zwgk/zcfb/202408/20240803477063.shtml",
+          "source": "中国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2024年6月17日",
+      "content": "美国众议院通过《反制中国无人机法案》，禁止大疆无人机未来在美销售，但参议院未通过该条款。该法案试图全面禁止大疆产品在美国市场的销售，但立法进程尚未完成。",
+      "sources": [
+        {
+          "title": "美众议院通过反制中国无人机法案",
+          "url": "https://www.reuters.com/technology/us-house-passes-bill-that-could-ban-dji-drones-2024-06-17/",
+          "source": "路透社"
+        },
+        {
+          "title": "House passes bill that could ban DJI drones in the US",
+          "url": "https://www.theverge.com/2024/6/17/24179842/house-passes-bill-ban-dji-drones-us",
+          "source": "The Verge"
+        }
+      ]
+    },
+    {
+      "date": "2023年4月15日",
+      "content": "美国得州法院判决大疆侵犯Textron公司专利，需赔偿2.79亿美元。这是大疆在美国面临的最大专利诉讼败诉案例，涉及无人机'悬停'和'远程跟踪'技术专利。",
+      "sources": [
+        {
+          "title": "大疆败诉需赔偿2.79亿美元专利费",
+          "url": "https://www.sohu.com/a/669234567_121124375",
+          "source": "搜狐网"
+        },
+        {
+          "title": "Textron wins $279 million patent case against DJI",
+          "url": "https://www.reuters.com/legal/litigation/textron-wins-279-million-patent-case-against-chinese-drone-maker-dji-2023-04-15/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2020年12月18日",
+      "content": "美国商务部将大疆列入'实体清单'，禁止美国企业向其出口技术。这标志着美国对大疆制裁的正式开始，严重影响了大疆获取美国技术和组件的能力。",
+      "sources": [
+        {
+          "title": "美国商务部将大疆等中国企业列入实体清单",
+          "url": "https://finance.sina.com.cn/tech/2020-12-19/doc-iiznezxs896234.shtml",
+          "source": "新浪财经"
+        },
+        {
+          "title": "Commerce Department adds DJI to Entity List",
+          "url": "https://www.reuters.com/technology/us-adds-chinese-drone-maker-dji-entity-list-2020-12-18/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "category": "供应链依赖风险",
+      "description": "大疆无人机80%的芯片依赖进口，其中美国企业供应占比较高，可能因制裁导致核心零部件断供",
+      "severity": "high",
+      "sources": ["日本拆解报告及行业分析"]
+    },
+    {
+      "category": "法律诉讼风险",
+      "description": "美国以专利侵权为由多次起诉大疆，如2023年Textron案赔偿2.79亿美元，且可能通过'实体清单'限制技术获取",
+      "severity": "high",
+      "sources": ["美国法院判决及政府公告"]
+    },
+    {
+      "category": "市场准入限制",
+      "description": "美国通过立法禁止政府机构采购大疆产品，并试图全面禁售，可能导致其在美市场份额下滑",
+      "severity": "high",
+      "sources": ["美国国会法案及行业报告"]
+    },
+    {
+      "category": "技术封锁风险",
+      "description": "美国以'国家安全'为由限制大疆获取高端芯片和技术，可能影响其产品性能和研发进度",
+      "severity": "high",
+              "sources": ["美国商务部'实体清单'及技术出口管制政策"]
+    },
+    {
+      "category": "国际政治风险",
+      "description": "中美地缘政治冲突可能升级制裁，如将大疆列入'中国军事企业清单'，损害其国际声誉和商业合作",
+      "severity": "high",
+      "sources": ["美国国防部清单及政府声明"]
+    }
+  ],
+  "legal_basis": {
+    "sanctions_cases": [
+      {
+        "company": "华为",
+        "year": "2019年",
+        "action": "被列入实体清单",
+        "legal_basis": "《出口管理条例》第744节",
+        "reason": "指控其危害美国国家安全"
+      },
+      {
+        "company": "中兴通讯",
+        "year": "2018年",
+        "action": "违反美国对伊朗出口禁令被制裁",
+        "legal_basis": "《出口管理条例》及《国际紧急经济权力法》",
+        "reason": "违反对伊朗制裁"
+      },
+      {
+        "company": "海康威视",
+        "year": "2022年",
+        "action": "被美国FCC禁止在美销售设备",
+        "legal_basis": "2019年《通信安全法》",
+        "reason": "指控其产品存在数据安全风险"
+      }
+    ],
+    "dji_specific": [
+      {
+        "mechanism": "实体清单机制",
+        "legal_basis": "《出口管理条例》第744节",
+        "description": "美国商务部以'危害国家安全'为由将大疆列入清单，限制技术出口"
+      },
+      {
+        "mechanism": "投资黑名单",
+        "legal_basis": "《2021财年国防授权法案》第1260H条",
+        "description": "美国国防部将大疆列入'中国军事企业清单'，限制美国主体投资"
+      },
+      {
+        "mechanism": "专利诉讼",
+        "legal_basis": "美国《专利法》",
+        "description": "Textron公司指控大疆侵犯其'悬停'和'远程跟踪'技术专利，法院判决赔偿"
+      }
+    ],
+    "china_countermeasures": [
+      {
+        "measure": "出口管制",
+        "legal_basis": "《出口管制法》及《民用无人驾驶航空器系统安全管理条例》",
+        "description": "2024年中国限制无人机及核心零部件出口，反制美国制裁"
+      }
+    ]
+  },
+  "risk_score": {
+    "total_score": 170,
+    "risk_level": "medium",
+    "components": {
+      "external_risk": {
+        "score": 95,
+        "breakdown": {
+          "investigation_announced": 10, 
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 40
+      },
+      "security_impact": {
+        "score": 30
+      },
+      "trend": [
+        { "month": "2024年9月", "score": 0 },
+        { "month": "2025年5月", "score": 170 }
+      ]
+    }
+  }
+} 

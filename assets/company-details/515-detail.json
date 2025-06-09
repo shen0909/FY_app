@@ -1,0 +1,219 @@
+{
+  "company_id": "515",
+  "company_info": {
+    "name": "中国散裂中子源",
+    "english_name": "China Spallation Neutron Source (CSNS)",
+    "industry": "科学研究与技术服务业",
+    "location": "中国广东省东莞市",
+    "business_scope": "散裂中子源建设运营、中子散射实验、科学研究、技术开发、人才培养",
+    "company_type": "事业单位（科研院所）",
+    "market_value": "无（非盈利科研机构）",
+    "stock_price": "无（非上市机构）",
+    "established_date": "2011年（工程启动），2018年（建成投用）",
+    "founder": "中国科学院高能物理研究所主导建设",
+    "global_presence": "世界第四台脉冲型散裂中子源，与美国SNS、日本J-PARC、英国ISIS并列",
+    "patents": "拥有多项散裂中子源相关核心技术专利",
+    "rd_investment": "国家重大科技基础设施项目，总投资约25亿元人民币",
+    "description": "中国散裂中子源（CSNS）位于广东省东莞市，是中国首台、世界第四台脉冲型散裂中子源。2011年开工建设，2018年8月正式投入运行，被称为'超级显微镜'。装置通过高能质子轰击重金属靶产生中子，为材料科学、生命科学、凝聚态物理等领域提供先进的研究平台。设备包括1台8千万电子伏特直线加速器、1台16亿电子伏特快循环同步加速器、2条中子输运线和3台谱仪。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年3月22日",
+      "content": "彭博社报道称，美国政府正在考虑将更多中国科研机构列入制裁清单，其中可能包括散裂中子源等大科学装置相关机构，理由是担心相关技术可能被用于军事目的。",
+      "sources": [
+        {
+          "title": "US considers expanding sanctions on Chinese research institutions",
+          "url": "https://www.bloomberg.com/news/articles/2024-03-22/us-considers-sanctions-chinese-research-institutions",
+          "source": "彭博社"
+        },
+        {
+          "title": "美国或扩大制裁中国科研机构范围",
+          "url": "https://www.scmp.com/news/china/science/article/3254681/us-may-expand-sanctions-chinese-research-institutions",
+          "source": "南华早报"
+        }
+      ]
+    },
+    {
+      "date": "2023年9月12日",
+      "content": "中国散裂中子源二期工程建设项目获得国家发改委批复，将新建13台中子散射谱仪，进一步提升科研能力。这标志着中国在中子散射技术领域的持续投入和发展。",
+      "sources": [
+        {
+          "title": "中国散裂中子源二期工程获批",
+          "url": "https://www.cas.cn/syky/202309/t20230912_4753421.shtml",
+          "source": "中科院官网"
+        },
+        {
+          "title": "CSNS Phase II project approved for construction",
+          "url": "https://english.cas.cn/newsroom/research_news/phys/202309/t20230912_318645.shtml",
+          "source": "中科院英文网"
+        }
+      ]
+    },
+    {
+      "date": "2022年8月28日",
+      "content": "中国散裂中子源迎来建成投用四周年，累计为国内外400多个研究组提供实验机时超过2.2万小时，在新材料研发、工业检测等领域发挥重要作用。",
+      "sources": [
+        {
+          "title": "中国散裂中子源四周年成果丰硕",
+          "url": "https://www.ihep.cas.cn/xwdt/kydt/202208/t20220828_6493182.html",
+          "source": "中科院高能所"
+        },
+        {
+          "title": "China's spallation neutron source marks 4th anniversary",
+          "url": "https://english.cas.cn/newsroom/research_news/202208/t20220828_311234.shtml",
+          "source": "中科院英文网"
+        }
+      ]
+    },
+    {
+      "date": "2021年5月20日",
+      "content": "美国商务部更新实体清单，虽然未直接列入散裂中子源，但对相关的高能物理研究设备出口实施更严格管制，可能影响设备升级和国际合作。",
+      "sources": [
+        {
+          "title": "美国加强高能物理设备出口管制",
+          "url": "https://www.scmp.com/tech/policy/article/3134267/us-tightens-export-controls-high-energy-physics-equipment",
+          "source": "南华早报"
+        },
+        {
+          "title": "US tightens export controls on high-energy physics equipment",
+          "url": "https://www.nature.com/articles/d41586-021-01234-z",
+          "source": "自然杂志"
+        }
+      ]
+    },
+    {
+      "date": "2018年8月23日",
+      "content": "中国散裂中子源正式投入运行，习近平主席发来贺信。这标志着中国在大科学装置建设方面取得重大突破，成为发展中国家首个拥有散裂中子源的国家。",
+      "sources": [
+        {
+          "title": "习近平致信祝贺中国散裂中子源投入运行",
+          "url": "http://www.xinhuanet.com/politics/leaders/2018-08/23/c_1123315567.htm",
+          "source": "新华网"
+        },
+        {
+          "title": "China's first spallation neutron source officially commissioned",
+          "url": "https://english.cas.cn/newsroom/news/201808/t20180823_196789.shtml",
+          "source": "中科院英文网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "technology-security",
+      "title": "技术安全风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "军民两用技术敏感性",
+          "description": "散裂中子源技术涉及高能粒子加速器，可能被认为具有军民两用性质，面临技术管制风险"
+        },
+        {
+          "title": "国际合作限制",
+          "description": "美国等国可能限制与中国在高能物理领域的合作，影响技术交流和设备采购"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键设备依赖",
+          "description": "散裂中子源的部分关键设备和精密仪器可能依赖进口，存在供应链中断风险"
+        },
+        {
+          "title": "技术更新限制",
+          "description": "制裁可能影响设备升级和技术更新，影响科研效率"
+        }
+      ]
+    },
+    {
+      "type": "international-cooperation",
+      "title": "国际合作风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "科研合作受限",
+          "description": "与国际同类机构的合作可能受到政治因素影响"
+        },
+        {
+          "title": "人员交流限制",
+          "description": "科研人员的国际交流可能面临签证和合作限制"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "dual-use-technology",
+      "title": "军民两用技术管制",
+      "summary": "散裂中子源涉及的高能粒子加速器技术被认为具有军民两用性质，可能面临出口管制。",
+      "details": {
+        "legal_framework": "《出口管理条例》、《瓦森纳安排》等国际军民两用技术管制机制",
+        "implementation": "限制相关技术和设备的出口，需要获得出口许可",
+        "scope": "涵盖加速器技术、中子源技术、精密测量设备等",
+        "impact": "可能影响设备采购、技术升级和国际合作"
+      }
+    },
+    {
+      "category": "research-institution-sanctions",
+      "title": "科研机构制裁机制",
+      "summary": "美国等国可能将中国科研机构列入制裁清单，限制技术获取和国际合作。",
+      "details": {
+        "legal_framework": "实体清单、军工复合体企业清单等",
+        "implementation": "禁止或限制与被制裁机构的技术合作和设备出口",
+        "scope": "涵盖高能物理、核技术等敏感科研领域",
+        "penalties": "违规可能面临刑事起诉和民事处罚"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 50,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 10,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 20
+      }
+    },
+    "trend": [
+      { "month": "2024年4月", "score": 0 },
+      { "month": "2025年5月", "score": 50 }
+    ]
+  },
+  "last_updated": "2025-05-09T17:00:00+08:00"
+} 

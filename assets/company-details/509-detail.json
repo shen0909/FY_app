@@ -1,0 +1,156 @@
+{
+  "company_id": "509",
+  "company_info": {
+    "name": "工业和信息化部电子第五研究所",
+    "english_name": "China Electronic Product Reliability and Environmental Testing Research Institute (CEPREI)",
+    "industry": "电子信息产业中的检测认证、可靠性研究及标准化服务",
+    "location": "总部位于中国广东省广州市",
+    "business_scope": "电子元器件检测、计量认证、标准制定、技术研发、失效分析、软件评测、信息安全等",
+    "company_type": "事业单位（隶属于工业和信息化部）",
+    "market_value": "无市值（事业单位）",
+    "stock_price": "无股价（事业单位）",
+    "established_date": "1955年",
+    "founder": "工业和信息化部",
+    "global_presence": "年服务企业超万家，在电子产品检测认证领域具有国际影响力",
+    "patents": "在电子产品可靠性与环境试验领域拥有多项技术专利",
+    "rd_investment": "承担国家重大科技项目和行业标准制定",
+    "description": "始建于1955年，是中国最早从事电子产品可靠性与环境试验的权威机构，隶属于工业和信息化部。其核心职能包括电子元器件检测、计量认证、标准制定、技术研发等，为政府和企业提供技术支撑。作为中国电子信息产业的核心技术支撑机构，拥有国家级实验室资质和国际互认能力。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年5月22日",
+      "content": "美国联邦通信委员会（FCC）全票通过新规，禁止被认定为'国家安全风险'的中国实验室参与测试出口到美国的电子设备。此举可能影响包括电子五所在内的中国权威检测机构的国际认证业务。",
+      "sources": [
+        {
+          "title": "FCC新规则：禁止被认定受中国政府控制的'不良实验室'测试在美国销售的电子产品",
+          "url": "https://www.voachinese.com/a/fcc-adopted-new-rules-to-block-chinese-government-ability-to-assert-control-over-wireless-equipment-authorization-process-20250523/8032264.html",
+          "source": "美国之音"
+        },
+        {
+          "title": "美机构禁被指存在安全风险的中国实验室测试销美电子产品",
+          "url": "https://www.rfi.fr/cn/%E5%9B%BD%E9%99%85/20250523-%E7%BE%8E%E6%9C%BA%E6%9E%84%E7%A6%81%E8%A2%AB%E6%8C%87%E5%AD%98%E5%AE%89%E5%85%A8%E9%A3%8E%E9%99%A9%E7%9A%84%E4%B8%AD%E5%9B%BD%E5%AE%9E%E9%AA%8C%E5%AE%A4%E6%B5%8B%E8%AF%95%E9%94%80%E7%BE%8E%E7%94%B5%E5%AD%90%E4%BA%A7%E5%93%81",
+          "source": "法国国际广播电台"
+        }
+      ]
+    },
+    {
+      "date": "2024年10月",
+      "content": "美国商务部更新出口管制政策，进一步加强对华技术限制。作为中国电子产品检测领域的权威机构，电子五所可能面临获取先进测试设备和技术的限制。",
+      "sources": [
+        {
+          "title": "美国出口管制政策对中国科技产业的影响分析",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部工业与安全局"
+        }
+      ]
+    },
+    {
+      "date": "2022年11月",
+      "content": "美国FCC禁止华为、中兴通讯等中国企业的电信设备进入美国市场。作为这些企业的重要合作伙伴，电子五所的相关检测认证业务受到影响。",
+      "sources": [
+        {
+          "title": "FCC禁止华为中兴设备进入美国市场",
+          "url": "https://www.fcc.gov/document/fcc-prohibits-authorization-equipment-poses-national-security-risk",
+          "source": "美国联邦通信委员会"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "category": "技术封锁与供应链中断风险",
+      "description": "美国对华科技制裁可能导致电子五所无法获取先进检测设备、软件工具及关键零部件，影响其技术研发和检测能力",
+      "severity": "high",
+      "sources": ["美国出口管理条例（EAR）及FCC的国家安全审查机制"]
+    },
+    {
+      "category": "国际合作受限风险",
+      "description": "被纳入实体清单或遭受其他制裁后，电子五所可能被排除在国际标准化组织的合作之外，削弱其在全球技术标准制定中的话语权",
+      "severity": "high",
+      "sources": ["美国商务部实体清单机制及FCC对'国资背景'实验室的限制"]
+    },
+    {
+      "category": "业务合规风险",
+      "description": "美国可能以'军民融合'或'支持军事应用'为由，对电子五所的检测项目进行追溯审查，要求其披露客户信息或停止特定领域服务",
+      "severity": "medium",
+      "sources": ["美国国际紧急经济权力法（IEEPA）及BIS的'军事最终用户'审查规则"]
+    }
+  ],
+  "legal_basis": {
+    "sanctions_cases": [
+      {
+        "company": "华为",
+        "year": "2019年",
+        "action": "被列入实体清单",
+        "legal_basis": "出口管理条例第744节",
+        "reason": "指控其危害美国国家安全"
+      },
+      {
+        "company": "中兴通讯",
+        "year": "2018年",
+        "action": "违反美国对伊朗出口禁令被制裁",
+        "legal_basis": "出口管理条例及国际紧急经济权力法",
+        "reason": "违反对伊朗制裁"
+      }
+    ],
+    "potential_risks": [
+      {
+        "mechanism": "实体清单机制",
+        "legal_basis": "出口管理条例第744节",
+        "description": "美国商务部可能以'危害国家安全'为由将电子五所列入清单，限制技术出口"
+      },
+      {
+        "mechanism": "FCC认证限制",
+        "legal_basis": "美国通信法第303节",
+        "description": "FCC可能禁止中国实验室参与输美电子设备测试，依据通信法及相关规则"
+      }
+    ]
+  },
+  "risk_score": {
+    "total_score": 10,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 10,
+        "breakdown": {
+          "investigation_announced": 0, 
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 10,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      },
+      "trend": [
+        { "month": "2024年9月", "score": 0 },
+        { "month": "2025年6月", "score": 10 }
+      ]
+    }
+  },
+  "last_updated": "2025-06-06T16:00:00+08:00"
+} 

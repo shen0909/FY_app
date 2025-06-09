@@ -7,6 +7,7 @@ import 'package:safe_app/styles/text_styles.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../models/risk_company_details.dart';
 import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/widgets.dart';
 import 'risk_details_logic.dart';
 import 'risk_details_state.dart';
 
@@ -35,46 +36,67 @@ class RiskDetailsPage extends StatelessWidget {
           SizedBox(width: 12.w),
           Container(
             margin: const EdgeInsets.only(right: 16),
-            child: GestureDetector(
-              onTap: () => logic.showRiskScoreDetails(),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.w),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                    colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
-                    stops: [0.0, 1.0],
-                  ),
-                  borderRadius: BorderRadius.circular(8.w),
-                ),
-                child: Obx(() => Text(
-                      '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
-                      style: TextStyle(
-                          color: FYColors.whiteColor,
-                          fontWeight: FontWeight.w500,
-                          height: 0.6,
-                          fontSize: 18.sp),
-                    )),
-              ),
-            ),
+            child: Obx(() {
+              return
+                state.isLoading.value ||
+                      state.riskCompanyDetail.value == null
+                  ? Container()
+                  : GestureDetector(
+                      onTap: () => logic.showRiskScoreDetails(),
+                      child: Container(
+                        height: 32.w,
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                            colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
+                            stops: [0.0, 1.0],
+                          ),
+                          borderRadius: BorderRadius.circular(8.w),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
+                            style: TextStyle(
+                                color: FYColors.whiteColor,
+                                fontWeight: FontWeight.w500,
+                                height: 0.6,
+                                fontSize: 18.sp),
+                          ),
+                        ),
+                      ),
+                    );
+            }),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCompanyHeader(),
-            SizedBox(height: 24.w),
-            _buildTimelineSection(),
-            SizedBox(height: 24.w),
-            _buildRiskFactorsSection(),
-            SizedBox(height: 24.w),
-            _buildCaseHistorySection(),
-          ],
-        ),
-      ),
+      body: Obx(() {
+        if (state.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (state.riskCompanyDetail.value == null) {
+          return FYWidget.buildEmptyContent();
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCompanyHeader(),
+              SizedBox(height: 24.w),
+              _buildTimelineSection(),
+              SizedBox(height: 24.w),
+              _buildRiskFactorsSection(),
+              SizedBox(height: 24.w),
+              _buildCaseHistorySection(),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -90,7 +112,7 @@ class RiskDetailsPage extends StatelessWidget {
           Row(
             children: [
               Obx(() => Text(
-                    state.riskCompanyDetail.value!.companyInfo.name,
+                    state.riskCompanyDetail.value!.companyInfo.name!,
                     style: FYTextStyles.riskLocationTitleStyle()
                         .copyWith(fontSize: 20.sp),
                   )),
@@ -107,7 +129,7 @@ class RiskDetailsPage extends StatelessWidget {
           ),
           SizedBox(height: 8.w),
           Obx(() => Text(
-                state.riskCompanyDetail.value!.companyInfo.englishName,
+                state.riskCompanyDetail.value!.companyInfo.englishName!,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
@@ -182,7 +204,7 @@ class RiskDetailsPage extends StatelessWidget {
                     ? Icons.keyboard_arrow_up
                     : Icons.keyboard_arrow_down,
                 color: FYColors.color_3361FE,
-                size: 16,
+                size: 16.sp,
               ),
             ],
           ),
@@ -196,61 +218,65 @@ class RiskDetailsPage extends StatelessWidget {
   // 时间线项
   Widget _buildTimelineItem(TimelineEvent item, bool isLast) {
     return GestureDetector(
-      onTap: () => logic.showNewsResource(item.sources, item.date),
+      onTap: () => logic.showNewsResource(item.sources!, item.date!),
       child: Container(
         padding: EdgeInsets.only(left: 16.w, right: 16.w),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: [
-                Container(
-                  width: 8.w,
-                  height: 8.w,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                SizedBox(
-                  width: 1,
-                  height: 68.w,
-                  child: CustomPaint(
-                    painter: DashedLinePainter(color: const Color(0xFF326FFC)),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(width: 15.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        margin: EdgeInsets.only(bottom: 2.w),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
                 children: [
-                  Text(
-                    item.date,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF326FFC),
-                      fontWeight: FontWeight.w700,
+                  Container(
+                    width: 8.w,
+                    height: 8.w,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                      ),
+                      shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(height: 5.w),
-                  Text(
-                    item.content,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: FYColors.color_A6A6A6,
-                      height: 1.4,
+                  Expanded(
+                    child: SizedBox(
+                      width: 1,
+                      child: CustomPaint(
+                        painter: DashedLinePainter(color: const Color(0xFF326FFC)),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+              SizedBox(width: 15.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.date!,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color(0xFF326FFC),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      item.content!,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: FYColors.color_A6A6A6,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -303,7 +329,7 @@ class RiskDetailsPage extends StatelessWidget {
   // 风险标签
   Widget _buildRiskTag(RiskFactor riskFactor) {
     return GestureDetector(
-      onTap: () => _showRiskFactorDetails(riskFactor.details, riskFactor.title),
+      onTap: () => _showRiskFactorDetails(riskFactor.details!, riskFactor.title!),
       child: Container(
         height: 36.w,
         constraints: BoxConstraints(minWidth: 124.w),
@@ -317,7 +343,7 @@ class RiskDetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              riskFactor.title,
+              riskFactor.title!,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: FYColors.color_3361FE,
@@ -397,8 +423,8 @@ class RiskDetailsPage extends StatelessWidget {
               child: Column(
                 children: (riskFactorDetailList)
                     .map((item) => _buildRiskFactorItem(
-                          item.title,
-                          item.description,
+                          item.title!,
+                          item.description!,
                         ))
                     .toList(),
               ),
@@ -497,7 +523,7 @@ class RiskDetailsPage extends StatelessWidget {
                           .map((entry) => Padding(
                                 padding: EdgeInsets.only(bottom: 8.w),
                                 child: _buildCaseItem(
-                                    entry.key + 1, entry.value.summary),
+                                    entry.key + 1, entry.value.summary!),
                               ))
                           ,
                       Text(
@@ -686,7 +712,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value?.riskScore.components.externalRisk.score ?? 0}分',
+                          '${state.riskCompanyDetail.value?.riskScore.components!.externalRisk!.score! ?? 0}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -722,7 +748,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value?.riskScore.components.internalRisk.score}分',
+                          '${state.riskCompanyDetail.value?.riskScore.components!.internalRisk!.score!}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -756,7 +782,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value!.riskScore.components.operationalImpact}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components!.operationalImpact['score']}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -778,7 +804,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value!.riskScore.components.securityImpact}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components!.securityImpact['score']}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -865,7 +891,7 @@ class RiskDetailsPage extends StatelessWidget {
       // 计算Y轴的最大值和最小值
       double minY = spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
       double maxY = spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
-      
+
       // 为了让图表显示更好看，我们给最大最小值加一个边距
       minY = (minY - 20).clamp(0, double.infinity); // 最小值不小于0
       maxY = maxY + 20;
@@ -937,7 +963,7 @@ class RiskDetailsPage extends StatelessWidget {
                     ),
                   );
                 },
-                reservedSize: 32,
+                reservedSize: 32.w,
               ),
             ),
           ),
@@ -1023,12 +1049,12 @@ class DashedLinePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..strokeWidth = 1.0
+      ..strokeWidth = 1.2
       ..style = PaintingStyle.stroke;
 
-    const dashWidth = 1.0;
+    const dashWidth = 3.0;
     const dashSpace = 3.0;
-    double startY = 0.0;
+    double startY = 2.0;
 
     while (startY < size.height) {
       canvas.drawLine(

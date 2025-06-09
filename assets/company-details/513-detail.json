@@ -1,0 +1,185 @@
+{
+  "company_id": "513",
+  "company_info": {
+    "name": "国家超级计算广州中心",
+    "english_name": "National Supercomputing Center in Guangzhou (NSCC Guangzhou)",
+    "industry": "高性能计算、信息技术服务业",
+    "location": "中国广东省广州市",
+    "business_scope": "超级计算机研发与运维、科学计算、人工智能训练、工业仿真、气象预测、生物医药等领域的算力服务",
+    "company_type": "事业单位（非企业性质）",
+    "market_value": "无（非上市公司）",
+    "stock_price": "无（非上市公司）",
+    "established_date": "2012年",
+    "founder": "由广东省政府、广州市政府、国防科技大学和中山大学共同建设",
+    "global_presence": "华南地区首个国家级超算中心，服务粤港澳大湾区",
+    "patents": "多项超级计算相关专利技术",
+    "rd_investment": "依托'天河二号'与'天河星逸'超级计算机，持续投入高性能计算研发",
+    "description": "国家超算广州中心成立于2012年，是华南地区首个国家级超算中心。其旗舰系统'天河二号'曾连续六次蝉联全球超级计算机TOP500榜单榜首，2023年升级为'天河星逸'系统，性能达每秒62亿亿次，位居全球第二。中心依托中山大学等高校资源，构建了'超级计算+仿真设计+人才培育'模式，为粤港澳大湾区的制造业、能源、交通等产业提供算力支持，并在气象预测、生物医药等领域取得多项科研突破。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年5月31日",
+      "content": "美国商务部将飞腾、申威等7家中国实体列入'实体清单'，指控其参与中国军队超级计算机建设。尽管未明确提及广州中心，但其关联企业（如使用飞腾CPU的超算中心）可能受到间接影响。",
+      "sources": [
+        {
+          "title": "美国制裁中国超算产业链",
+          "url": "https://www.reuters.com/technology/us-adds-chinese-ai-chip-firms-entity-list-2025-05-31/",
+          "source": "路透社"
+        },
+        {
+          "title": "美商务部新增中国实体清单企业",
+          "url": "https://www.commerce.gov/news/press-releases/2025/05/bis-adds-entities-entity-list",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2021年4月8日",
+      "content": "美国商务部将国家超级计算济南中心、深圳中心、无锡中心、郑州中心等7家实体列入'实体清单'，指控其支持中国军事现代化。广州中心虽未直接上榜，但其技术路径（如'天河二号'使用类似架构）与被制裁实体存在共性，为后续制裁埋下伏笔。",
+      "sources": [
+        {
+          "title": "美国将7家中国超算实体列入制裁清单",
+          "url": "https://www.commerce.gov/news/press-releases/2021/04/commerce-adds-seven-chinese-supercomputing-entities-entity-list-their",
+          "source": "美国商务部"
+        },
+        {
+          "title": "美国制裁中国七家超级计算机实体",
+          "url": "https://www.bbc.com/zhongwen/simp/world-56689334",
+          "source": "BBC中文"
+        },
+        {
+          "title": "拜登政府首次对华制裁",
+          "url": "https://www.voachinese.com/a/US-DOC-places-seven-Chinese-super-computer-companies-into-entity-list-20210408/5845687.html",
+          "source": "美国之音"
+        }
+      ]
+    },
+    {
+      "date": "2019年6月21日",
+      "content": "美国商务部将中科曙光等超算企业列入'实体清单'，标志着美国开始大规模制裁中国超算产业。这一先例为后续针对更多超算中心的制裁奠定了基础。",
+      "sources": [
+        {
+          "title": "美国制裁中科曙光等中国超算企业",
+          "url": "https://www.commerce.gov/news/press-releases/2019/06/commerce-department-adds-five-chinese-entities-entity-list",
+          "source": "美国商务部"
+        },
+        {
+          "title": "中美科技竞争升级",
+          "url": "https://www.reuters.com/article/us-usa-china-tech-idUSKCN1TM2B5",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术供应链中断风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "高端芯片依赖",
+          "description": "广州中心可能无法直接采购美国生产的高性能CPU、GPU芯片（如英特尔至强、英伟达A100），导致现有系统升级受阻，算力扩容能力受限。"
+        },
+        {
+          "title": "关键组件断供",
+          "description": "'天河星逸'系统的核心组件如高速互联设备、存储系统等可能受到美国出口管制影响。"
+        },
+        {
+          "title": "软件工具限制",
+          "description": "高性能计算所需的编译器、调试工具、优化软件等可能面临获取困难。"
+        }
+      ]
+    },
+    {
+      "type": "international-cooperation",
+      "title": "国际合作与学术交流受限",
+      "level": "medium",
+      "details": [
+        {
+          "title": "科研项目终止",
+          "description": "制裁可能导致广州中心与国际科研机构的合作项目（如气候模拟、天体物理研究）被迫终止，影响其在全球超算领域的学术影响力。"
+        },
+        {
+          "title": "人员交流限制",
+          "description": "研究人员参与国际会议、合作研究可能受到限制。"
+        }
+      ]
+    },
+    {
+      "type": "geopolitical",
+      "title": "地缘政治博弈风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "制裁升级风险",
+          "description": "美国将超算视为'军事现代化关键领域'，可能进一步升级制裁措施，将广州中心列入'军事最终用户清单'（MEU）。"
+        },
+        {
+          "title": "第三方压力",
+          "description": "国际合作伙伴可能因担心受到美国次级制裁而减少与广州中心的合作。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 60,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 10,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 30
+      }
+    },
+    "trend": [
+      { "month": "2025年4月", "score": 0 },
+      { "month": "2025年5月", "score": 60 }
+    ]
+  },
+  "last_updated": "2025-05-30T16:30:00+08:00"
+} 

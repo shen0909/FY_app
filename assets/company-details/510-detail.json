@@ -1,0 +1,169 @@
+{
+  "company_id": "510",
+  "company_info": {
+    "name": "国家超级计算深圳中心",
+    "english_name": "National Supercomputing Centre in Shenzhen (NSCS)",
+    "industry": "信息技术/高性能计算",
+    "location": "中国广东省深圳市南山区",
+    "business_scope": "高性能计算、云计算、数据处理、工程仿真、科学研究等，覆盖结构强度、动力学、计算化学、气象预报等应用场景",
+    "company_type": "事业单位（深圳市科技创新委员会直属）",
+    "market_value": "无市值（事业单位）",
+    "stock_price": "无股价（事业单位）",
+    "established_date": "2011年",
+    "founder": "深圳市科技创新委员会",
+    "global_presence": "立足深圳，服务华南及东南亚地区",
+    "patents": "在高性能计算领域拥有多项技术专利",
+    "rd_investment": "总投资12.3亿元，科技部拨款2亿元支持建设",
+    "description": "成立于2011年，是深圳市建市以来投资最大的重大科技基础设施，配置国产曙光6000超级计算机系统，运算速度达每秒1271万亿次（峰值3000万亿次）。中心立足深圳，服务华南及东南亚地区，承担大规模科学计算和工程计算任务，同时提供云计算和IDC服务。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2019年6月21日",
+      "content": "美国商务部将中科曙光、无锡江南计算技术研究所等5家中国超算机构列入'实体清单'，指控其参与中国军方超级计算机开发。虽然深圳中心未直接被列入，但作为使用曙光设备的机构，其技术升级和设备采购可能受到间接影响。",
+      "sources": [
+        {
+          "title": "美国将中科曙光等五家中国超算机构列入'实体清单'",
+          "url": "https://m.21jingji.com/article/20190622/herald/58a314463f5d6d0b308bde9be9c544be.html",
+          "source": "21世纪经济报道"
+        },
+        {
+          "title": "遏制中国超算发展美国制裁中科曙光等5家中企",
+          "url": "https://companies.caixin.com/2019-06-22/101430332.html",
+          "source": "财新网"
+        }
+      ]
+    },
+    {
+      "date": "2018年6月8日",
+      "content": "美国Summit超级计算机正式落成并投入使用，超越中国'神威·太湖之光'成为全球最快超算，标志着中美超算竞争的激烈化。此举对包括深圳中心在内的中国超算机构形成技术压力。",
+      "sources": [
+        {
+          "title": "为超越神威·太湖之光而生：美国超级计算机顶点（Summit）",
+          "url": "https://www.chaosuanwiki.com/lingxianchaosuanpinpai/wei-chao-yue-shen-wei-tai-hu-zhi-guang-er-sheng-mei-guo-chao-ji-ji-suan-ji-ding-dian-Summit.html",
+          "source": "超算百科"
+        }
+      ]
+    },
+    {
+      "date": "2015年2月18日",
+      "content": "美国将国家超级计算长沙中心、广州中心、天津中心、国防科学技术大学四家实体列入出口管制'实体清单'，开创了对中国超算中心制裁的先例，为后续对华超算制裁奠定了基础。",
+      "sources": [
+        {
+          "title": "美国制裁中国超算产业链历史回顾",
+          "url": "https://www.scmp.com/tech/science-research/article/3015858/what-you-need-know-about-chinese-supercomputer-firms-added-us",
+          "source": "南华早报"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "category": "技术封锁与供应链中断风险",
+      "description": "美国对华科技制裁可能导致深圳中心难以获取先进的高性能芯片、计算组件及相关技术，影响现有超算系统升级和未来E级机研发进度",
+      "severity": "high",
+      "sources": ["美国出口管理条例（EAR）及实体清单机制"]
+    },
+    {
+      "category": "国际合作受限风险",
+      "description": "制裁可能削弱深圳中心与国际科研机构的合作，影响其参与全球超算项目、学术交流及技术共享",
+      "severity": "high",
+      "sources": ["美国通过实体清单机制限制中国超算机构的国际协作"]
+    },
+    {
+      "category": "设备更新替代压力",
+      "description": "现有曙光6000系统可能面临零部件供应困难，需要加速国产化替代，但短期内可能面临技术成熟度不足的挑战",
+      "severity": "medium",
+      "sources": ["美国对中科曙光等供应商的制裁影响"]
+    },
+    {
+      "category": "合规与法律风险",
+      "description": "与美国企业或关联方的合作可能触发合规审查，导致合同违约或法律纠纷",
+      "severity": "medium",
+      "sources": ["美国出口管制法律的长臂管辖"]
+    }
+  ],
+  "legal_basis": {
+    "sanctions_cases": [
+      {
+        "company": "中科曙光",
+        "year": "2019年",
+        "action": "被列入实体清单",
+        "legal_basis": "出口管理条例第744节",
+        "reason": "指控参与中国军方超级计算机开发"
+      },
+      {
+        "company": "无锡江南计算技术研究所",
+        "year": "2019年",
+        "action": "被列入实体清单",
+        "legal_basis": "出口管理条例第744节",
+        "reason": "参与违背美国国家安全和外交政策利益的活动"
+      },
+      {
+        "company": "国防科技大学",
+        "year": "2015年",
+        "action": "被列入实体清单",
+        "legal_basis": "出口管理条例第744节",
+        "reason": "与超级计算机军事应用相关"
+      }
+    ],
+    "potential_risks": [
+      {
+        "mechanism": "实体清单机制",
+        "legal_basis": "出口管理条例第744节",
+        "description": "美国商务部可能以'参与军事现代化'为由将深圳中心列入清单，限制技术出口"
+      },
+      {
+        "mechanism": "先进计算直接产品规则",
+        "legal_basis": "出口管理条例FDP规则",
+        "description": "针对超级计算机相关技术，要求包含美国技术的外国生产设备出口需额外许可"
+      }
+    ]
+  },
+  "risk_score": {
+    "total_score": 50,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0, 
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 30
+      },
+      "trend": [
+        { "month": "2024年9月", "score": 0 },
+        { "month": "2025年6月", "score": 50 }
+      ]
+    }
+  },
+  "last_updated": "2025-06-06T16:00:00+08:00"
+} 
