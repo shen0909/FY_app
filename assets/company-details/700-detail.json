@@ -1,0 +1,155 @@
+{
+  "company_id": "700",
+  "company_info": {
+    "name": "中交四航局江门航通船业有限公司",
+    "english_name": "Jiangmen Hangtong Shipbuilding Co., Ltd. Of CCCC Fourth Harbor Engineering Co., Ltd.",
+    "industry": "铁路、船舶、航空航天和其他运输设备制造业",
+    "location": "广东省江门市新会区",
+    "business_scope": "金属船舶制造、船舶修理、海洋工程专用设备制造、钢结构工程、机电设备安装等，具备技术进出口和货物进出口资质",
+    "company_type": "有限责任公司（法人独资），注册资本2.35亿元人民币",
+    "market_value": "未公开上市，无公开市值及股价数据",
+    "stock_price": "未上市，无股价信息",
+    "established_date": "2013年12月24日",
+    "founder": "中交第四航务工程局有限公司",
+    "global_presence": "年建造各类船舶20余艘的能力，产品涵盖半潜式重吊船、工程船、特种运输船等",
+    "patents": "拥有465米长的船台、700米长的码头及先进的分段制造车间",
+    "rd_investment": "暂无公开研发投入数据",
+    "description": "中交四航局江门航通船业有限公司是中交集团在华南地区的重要装备制造基地，专注于船舶制造、海洋工程设备研发及钢结构工程。公司拥有现代化的船舶建造设施，曾参与全球首艘水体自然交换型深远海养殖工船'湾区伶仃'号等国家级项目。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月",
+      "content": "美国贸易代表办公室（USTR）发起针对中国海事、物流及造船业的301调查，拟对使用中国建造船舶的海运运营商征收额外费用，指控中国通过'非市场政策'主导全球造船业。",
+      "sources": [
+        {
+          "title": "美国USTR对华造船业301调查",
+          "url": "https://ustr.gov/about-us/policy-offices/press-office/press-releases",
+          "source": "美国贸易代表办公室"
+        }
+      ]
+    },
+    {
+      "date": "2024年12月",
+      "content": "美国财政部以'参与伊朗石油运输'为由，制裁5家中国航运公司及旗下8艘油船，但未涉及江门航通公司。",
+      "sources": [
+        {
+          "title": "美国财政部制裁中国航运企业",
+          "url": "https://www.treasury.gov/press-center/press-releases",
+          "source": "美国财政部"
+        }
+      ]
+    },
+    {
+      "date": "2024年6月",
+      "content": "蓬莱巨涛海洋工程重工有限公司因参与俄罗斯北极LNG 2项目被美国列入SDN清单，成为中国首个因涉俄项目被制裁的海工船厂。",
+      "sources": [
+        {
+          "title": "蓬莱巨涛被列入SDN清单",
+          "url": "https://www.treasury.gov/resource-center/sanctions/OFAC-Enforcement/Pages/20240619.aspx",
+          "source": "美国财政部"
+        }
+      ]
+    },
+    {
+      "date": "2020年9月",
+      "content": "美国商务部将中交集团旗下5家疏浚子公司列入实体清单，指控其参与南海岛礁建设，但江门航通船业未被纳入。",
+      "sources": [
+        {
+          "title": "美国商务部实体清单更新",
+          "url": "https://www.commerce.gov/news/press-releases/2020/09",
+          "source": "美国商务部"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

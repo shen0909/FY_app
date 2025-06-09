@@ -1,0 +1,144 @@
+{
+  "company_id": "705",
+  "company_info": {
+    "name": "\"东数西算\"韶关数据中心集群",
+    "english_name": "Shaoguan Data Center Cluster under the \"East Data West Computing\" Project",
+    "industry": "数字经济基础设施、云计算与数据服务",
+    "location": "中国广东省韶关市",
+    "business_scope": "数据中心建设运营、算力调度、数据要素流通、智能算力服务",
+    "company_type": "政府主导、多企业共建的产业集群（参与企业包括中国电信、中国移动、中国联通、华为、中电鹰硕等）",
+    "market_value": "该集群为国家级项目，非独立上市主体，因此无公开市值及股价信息",
+    "stock_price": "非企业实体，无股价信息",
+    "established_date": "2020年启动建设",
+    "founder": "由韶关市政府统筹，联合央企、国企及民营企业共同推进",
+    "global_presence": "韶关数据中心集群是粤港澳大湾区国家枢纽节点的核心组成部分，承担全国一体化算力网络建设任务",
+    "patents": "构建一核引领、三元驱动、多点协同的产业生态",
+    "rd_investment": "中电鹰硕华南数谷投资23.6亿元，华韶数据谷定位华南最大单体数据中心",
+    "description": "韶关数据中心集群是粤港澳大湾区国家枢纽节点的核心组成部分，承担全国一体化算力网络建设任务。依托韶关市在能源结构、地理区位及政策支持等方面的优势，目标成为华南地区算力中心，重点发展智能算力、超级算力。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月",
+      "content": "美国商务部将浪潮集团子公司列入实体清单，理由是'关联AI服务器及超级计算机产业'。此案例反映美国对中国数据中心和超算领域的制裁趋势，韶关数据中心集群作为重要算力基础设施面临潜在风险。",
+      "sources": [
+        {
+          "title": "美国商务部浪潮集团制裁案例",
+          "url": "https://www.commerce.gov/news/press-releases/2025/03",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2023年10月",
+      "content": "美国更新出口管制规则，禁止向中国出售运行速度超过300teraflops的数据中心芯片。此规则可能影响韶关数据中心集群的高性能芯片采购和算力提升。",
+      "sources": [
+        {
+          "title": "美国AI芯片出口管制新规",
+          "url": "https://www.bis.doc.gov/index.php/regulations/export-administration-regulations-ear",
+          "source": "美国商务部工业与安全局"
+        }
+      ]
+    },
+    {
+      "date": "2020年",
+      "content": "国家发改委正式启动'东数西算'工程，韶关数据中心集群作为粤港澳大湾区国家枢纽节点开始规划建设。目标构建全国一体化算力网络，优化数字经济基础设施布局。",
+      "sources": [
+        {
+          "title": "国家发改委东数西算工程启动",
+          "url": "https://www.ndrc.gov.cn/",
+          "source": "国家发展和改革委员会"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

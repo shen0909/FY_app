@@ -1,21 +1,20 @@
 {
   "company_id": "506",
   "company_info": {
-    "basic": {
-      "company_name": "深圳市大疆创新科技有限公司",
-      "english_name": "DJI (DJ-Innovations)",
-      "establishment_date": "2006年",
-      "headquarters": "广东省深圳市",
-      "business_nature": "私营企业",
-      "parent_company": "智翔科技有限公司（注册于香港）",
-      "main_business": "无人机制造与智能硬件",
-      "business_scope": "无人机研发与生产、影像系统、机器人教育、智能驾驶",
-      "market_valuation": "1430亿元人民币（2025年估值）",
-      "stock_info": "未上市",
-      "employees": "超过1.4万人",
-      "global_presence": "业务遍及100多个国家与地区"
-    },
-    "description": "成立于2006年，总部位于中国深圳，是全球领先的无人机及影像技术解决方案提供商，业务覆盖消费级无人机、工业级无人机、手持影像系统等领域。截至2025年，大疆在全球无人机市场占有率超70%，并持续主导美国执法、救援等关键领域市场。"
+    "description": "成立于2006年，总部位于中国深圳，是全球领先的无人机及影像技术解决方案提供商，业务覆盖消费级无人机、工业级无人机、手持影像系统等领域。截至2025年，大疆在全球无人机市场占有率超70%，并持续主导美国执法、救援等关键领域市场。",
+    "established_date": "2006年",
+    "founder": "未公开",
+    "global_presence": "主要业务集中在国内市场",
+    "patents": "具有相关技术专利",
+    "rd_investment": "持续投入研发资金",
+    "name": "深圳市大疆创新科技有限公司",
+    "english_name": "DJI (DJ-Innovations)",
+    "industry": "高新技术产业",
+    "location": "总部位于中国广东省",
+    "business_scope": "高新技术研发、生产和销售",
+    "company_type": "有限责任公司",
+    "market_value": "1430亿元人民币（2025年估值）",
+    "stock_price": "未上市"
   },
   "timeline_tracking": [
     {
@@ -101,85 +100,99 @@
   ],
   "risk_factors": [
     {
-      "category": "供应链依赖风险",
-      "description": "大疆无人机80%的芯片依赖进口，其中美国企业供应占比较高，可能因制裁导致核心零部件断供",
-      "severity": "high",
-      "sources": ["日本拆解报告及行业分析"]
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "企业在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
     },
     {
-      "category": "法律诉讼风险",
-      "description": "美国以专利侵权为由多次起诉大疆，如2023年Textron案赔偿2.79亿美元，且可能通过'实体清单'限制技术获取",
-      "severity": "high",
-      "sources": ["美国法院判决及政府公告"]
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
     },
     {
-      "category": "市场准入限制",
-      "description": "美国通过立法禁止政府机构采购大疆产品，并试图全面禁售，可能导致其在美市场份额下滑",
-      "severity": "high",
-      "sources": ["美国国会法案及行业报告"]
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
     },
     {
-      "category": "技术封锁风险",
-      "description": "美国以'国家安全'为由限制大疆获取高端芯片和技术，可能影响其产品性能和研发进度",
-      "severity": "high",
-              "sources": ["美国商务部'实体清单'及技术出口管制政策"]
-    },
-    {
-      "category": "国际政治风险",
-      "description": "中美地缘政治冲突可能升级制裁，如将大疆列入'中国军事企业清单'，损害其国际声誉和商业合作",
-      "severity": "high",
-      "sources": ["美国国防部清单及政府声明"]
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
     }
   ],
-  "legal_basis": {
-    "sanctions_cases": [
-      {
-        "company": "华为",
-        "year": "2019年",
-        "action": "被列入实体清单",
-        "legal_basis": "《出口管理条例》第744节",
-        "reason": "指控其危害美国国家安全"
-      },
-      {
-        "company": "中兴通讯",
-        "year": "2018年",
-        "action": "违反美国对伊朗出口禁令被制裁",
-        "legal_basis": "《出口管理条例》及《国际紧急经济权力法》",
-        "reason": "违反对伊朗制裁"
-      },
-      {
-        "company": "海康威视",
-        "year": "2022年",
-        "action": "被美国FCC禁止在美销售设备",
-        "legal_basis": "2019年《通信安全法》",
-        "reason": "指控其产品存在数据安全风险"
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
-    ],
-    "dji_specific": [
-      {
-        "mechanism": "实体清单机制",
-        "legal_basis": "《出口管理条例》第744节",
-        "description": "美国商务部以'危害国家安全'为由将大疆列入清单，限制技术出口"
-      },
-      {
-        "mechanism": "投资黑名单",
-        "legal_basis": "《2021财年国防授权法案》第1260H条",
-        "description": "美国国防部将大疆列入'中国军事企业清单'，限制美国主体投资"
-      },
-      {
-        "mechanism": "专利诉讼",
-        "legal_basis": "美国《专利法》",
-        "description": "Textron公司指控大疆侵犯其'悬停'和'远程跟踪'技术专利，法院判决赔偿"
-      }
-    ],
-    "china_countermeasures": [
-      {
-        "measure": "出口管制",
-        "legal_basis": "《出口管制法》及《民用无人驾驶航空器系统安全管理条例》",
-        "description": "2024年中国限制无人机及核心零部件出口，反制美国制裁"
-      }
-    ]
-  },
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
   "risk_score": {
     "total_score": 170,
     "risk_level": "medium",
@@ -187,7 +200,7 @@
       "external_risk": {
         "score": 95,
         "breakdown": {
-          "investigation_announced": 10, 
+          "investigation_announced": 10,
           "investigation_ongoing": 20,
           "personnel_infiltration": 0,
           "personnel_extraction": 0,
@@ -221,9 +234,26 @@
         "score": 30
       },
       "trend": [
-        { "month": "2024年9月", "score": 0 },
-        { "month": "2025年5月", "score": 170 }
+        {
+          "month": "2024年9月",
+          "score": 0
+        },
+        {
+          "month": "2025年5月",
+          "score": 170
+        }
       ]
-    }
-  }
-} 
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 120
+      },
+      {
+        "month": "2025年6月",
+        "score": 170
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

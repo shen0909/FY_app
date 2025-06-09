@@ -1,0 +1,144 @@
+{
+  "company_id": "707",
+  "company_info": {
+    "name": "中科院先进院",
+    "english_name": "Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences (SIAT)",
+    "industry": "科技研发与创新",
+    "location": "中国广东省深圳市",
+    "business_scope": "医疗设备、人工智能、机器人、新能源材料、合成生物学等先进技术研发与产业化",
+    "company_type": "事业单位（非上市公司）",
+    "market_value": "未上市，无公开市值及股价数据",
+    "stock_price": "非企业实体，无股价信息",
+    "established_date": "2006年",
+    "founder": "中国科学院、深圳市人民政府及香港中文大学联合成立",
+    "global_presence": "粤港澳大湾区重要的科研枢纽，孵化企业超2000家",
+    "patents": "累计申请专利超1.6万件",
+    "rd_investment": "自主研发医用重离子加速器、5T超高场人体磁共振成像系统等高端设备",
+    "description": "中科院先进院是中国科学院、深圳市人民政府及香港中文大学于2006年联合成立的新型科研机构，聚焦于先进技术研发与产业化。已形成研学产资四位一体的创新体系，牵头建设了国家高性能医疗器械创新中心、合成生物研究重大科技基础设施等国家级平台。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年5月9日",
+      "content": "美国商务部将37个中国实体列入实体清单，其中22个实体因涉及量子技术被制裁。尽管未直接提及中科院先进院，但关联实体包括中科院物理所、中科院量子信息重点实验室等，反映美国对中国量子技术领域的系统性打压。",
+      "sources": [
+        {
+          "title": "网易新闻 - 美国商务部制裁中国量子技术实体",
+          "url": "http://m.163.com/dy/article/J1RKAMIH0536A3D8.html",
+          "source": "网易新闻"
+        }
+      ]
+    },
+    {
+      "date": "2021年12月16日",
+      "content": "美国商务部以'涉及生物技术军事应用'为由，将中国军事医学科学院等25家中国实体列入实体清单。虽然未直接涉及中科院先进院，但此次制裁泛化'国家安全'概念，为后续针对中国科研机构的打压提供了先例。",
+      "sources": [
+        {
+          "title": "观察者网 - 美国制裁中国生物技术实体",
+          "url": "http://m.toutiao.com/group/7042510115903111687/?upstream_biz=doubao",
+          "source": "观察者网"
+        }
+      ]
+    },
+    {
+      "date": "2021年9月3日",
+      "content": "中科院文献情报中心研究指出，美国《商业管制清单》（CCL）中42.08%的条款涉及科学仪器管制，严重制约中国科研设备获取。中科院先进院作为高端医疗器械和科学仪器研发的重要机构，可能间接受到相关限制。",
+      "sources": [
+        {
+          "title": "观察者网 - 美国科学仪器管制影响中国科研",
+          "url": "https://m.guancha.cn/internation/2021_09_03_605674.shtml",
+          "source": "观察者网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

@@ -1,0 +1,149 @@
+{
+  "company_id": "701",
+  "company_info": {
+    "name": "中广核陆丰核电有限公司",
+    "english_name": "CGN Lufeng Nuclear Power Co., Ltd.",
+    "industry": "电力、热力生产和供应业，专注于核能发电",
+    "location": "广东省汕尾市陆丰市",
+    "business_scope": "核电机组建设、运营及相关技术研发，主要采用CAP1000和华龙一号三代核电技术",
+    "company_type": "有限责任公司（法人独资），注册资本8.4亿元人民币",
+    "market_value": "未公开上市，无公开市值及股价数据",
+    "stock_price": "未上市，无股价信息",
+    "established_date": "2008年2月20日",
+    "founder": "中国广核集团（CGN）",
+    "global_presence": "规划建设6台百万千瓦级核电机组，全部建成后年发电量约520亿度，可满足广东省约10%的电力需求",
+    "patents": "采用双三代技术路线：CAP1000非能动压水堆技术和华龙一号技术，国产化率超85%",
+    "rd_investment": "年减少二氧化碳排放4284.8万吨",
+    "description": "中广核陆丰核电有限公司是中国广核集团在华南地区的重要核电基地，负责广东陆丰核电站的投资、建设与运营。项目采用双三代技术路线，是中国核电技术发展的重要示范项目。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年6月",
+      "content": "美国暂停对华核电设备出口许可。特朗普政府以'国家安全'为由，暂停美国核能设备供应商（如西屋电气、艾默生）向中国核电站出口许可证，涉及中广核陆丰核电项目的关键设备采购，影响金额达数亿美元。",
+      "sources": [
+        {
+          "title": "路透社 - 美国暂停对华出口核电设备",
+          "url": "https://www.reuters.com/article/us-usa-china-nuclear-idUSKBN33P000",
+          "source": "路透社"
+        },
+        {
+          "title": "网易新闻 - 美方暂停对华出口核电设备",
+          "url": "http://m.163.com/dy/article/K1HFSB8S05564203.html",
+          "source": "网易手机网"
+        }
+      ]
+    },
+    {
+      "date": "2019年8月",
+      "content": "中广核集团被列入实体清单。美国商务部将中国广核集团及关联公司（含中广核研究院、苏州热工研究院）列入实体清单，指控其'将美国核技术用于军事用途'。陆丰核电作为子公司，间接受到技术出口限制。",
+      "sources": [
+        {
+          "title": "财经杂志 - 被美列入实体清单，中广核称影响可控",
+          "url": "http://m.toutiao.com/group/6725235201787560451/?upstream_biz=doubao",
+          "source": "财经杂志"
+        }
+      ]
+    },
+    {
+      "date": "2018年10月",
+      "content": "美国能源部对华核电出口禁令。美国能源部发布《美国对中国民用核能合作框架》，对中广核集团实施'推定拒绝'出口政策，限制其获取美国核技术、设备及材料。陆丰核电作为中广核子公司，其CAP1000项目设备进口受限。",
+      "sources": [
+        {
+          "title": "环球网 - 美国加码限制对华出口凸显霸道成性",
+          "url": "http://m.toutiao.com/group/7276042242152858164/?upstream_biz=doubao",
+          "source": "环球网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

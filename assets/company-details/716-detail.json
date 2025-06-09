@@ -1,0 +1,144 @@
+{
+  "company_id": "716",
+  "company_info": {
+    "name": "智能移动机器人（中山）研究院",
+    "english_name": "Zhongshan Institute of Intelligent Mobile Robotics",
+    "industry": "智能机器人研发与应用",
+    "location": "中国广东省中山市",
+    "business_scope": "智能移动机器人核心技术研发、国际合作平台建设、科技成果产业化，涉及医疗、物流等场景的机器人开发",
+    "company_type": "事业单位性质的研究院（非企业法人）",
+    "market_value": "非上市公司，无公开市值",
+    "stock_price": "无股价信息",
+    "established_date": "2019年3月",
+    "founder": "中国北方车辆研究所（隶属中国兵器工业集团有限公司）",
+    "global_presence": "与新加坡南洋理工大学等国际机构建立合作，推动技术落地与产业应用",
+    "patents": "重点突破智能移动机器人的自主导航、多机协作等核心技术",
+    "rd_investment": "聚焦技术研发与成果转化的科技创新孵化平台",
+    "description": "智能移动机器人（中山）研究院由中山市科学技术局与中国北方车辆研究所于2019年3月合作成立，定位为智能移动机器人领域的科技创新孵化平台。研究院以'创新驱动、国际合作'为战略，依托军工领域技术积累，重点突破智能移动机器人的自主导航、多机协作等核心技术。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月25日",
+      "content": "美国发布全球AI算力管控新规，将中国列为'Tier 3'国家，禁止高性能芯片进口。中山研究院若依赖美国GPU等算力资源，其机器人研发与测试可能受阻。",
+      "sources": [
+        {
+          "title": "美国全球AI算力管控新规",
+          "url": "https://www.whitehouse.gov/briefing-room/statements-releases/",
+          "source": "美国白宫"
+        }
+      ]
+    },
+    {
+      "date": "2025年1月3日",
+      "content": "美国商务部进一步修订《出口管制条例》（EAR），新增13个实体至清单，强化对先进制程芯片代工环节的限制。中山研究院若涉及机器人核心芯片研发，可能受此影响。",
+      "sources": [
+        {
+          "title": "美国出口管制条例修订",
+          "url": "http://finance.sina.cn/2025-01-25/detail-inehcvcc4306878.d.html",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2024年12月2日",
+      "content": "美国商务部工业与安全局（BIS）将140家中国实体列入'实体清单'，涉及半导体、人工智能等领域。尽管未直接点名中山研究院，但结合其业务领域（如机器人核心技术研发）及母公司背景（中国兵器工业集团），推测可能被纳入本轮制裁范围。",
+      "sources": [
+        {
+          "title": "美国商务部140家中国实体列入实体清单",
+          "url": "https://cloud.tencent.com/developer/news/1989729",
+          "source": "腾讯云开发者社区"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

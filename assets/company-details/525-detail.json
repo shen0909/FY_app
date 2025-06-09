@@ -1,0 +1,213 @@
+{
+  "company_id": "525",
+  "company_info": {
+    "name": "季华实验室",
+    "english_name": "Jihua Laboratory",
+    "industry": "先进制造科学与技术领域",
+    "location": "中国广东省佛山市南海区三山新城",
+    "business_scope": "重点聚焦新型显示装备、半导体技术与装备、高端数控机床，以及佛山传统产业转型升级四大主要方向，开展关键核心技术系统攻关和重大装备研制",
+    "company_type": "政府主导推动的科研事业单位",
+    "market_value": "不适用（非企业性质）",
+    "stock_price": "不适用（非上市机构）",
+    "established_date": "2017年12月",
+    "founder": "广东省委、省政府启动的首批省实验室",
+    "global_presence": "与20余所高校院所联合培养研究生和高技能人才，面向社会开放仪器设备共享服务",
+    "patents": "年度独有发明专利申请量居全省科研院所前列，成功研制出OLED喷墨打印装备及其配套墨水材料、SiC高温外延装备、大功率微波电源等",
+    "rd_investment": "累计承担国家及省部级科研项目180余项，获批多个创新平台",
+    "description": "季华实验室是广东省委、省政府于2017年12月启动的首批省实验室之一，以打造先进制造科学与技术领域国内一流、国际高端的战略科技创新平台为目标。实验室科研园区位于佛山市三龙湾科技城核心区域，占地238亩，建筑面积30万平方米。建有测试中心、光学平台、超滑平台等设备先进、功能齐全的公共科研平台，现有科研及公共技术部门17个，总人员规模达1100余人，孵化了22家科技型企业。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月6日",
+      "content": "美国商务部将季华实验室加入实体清单，理由是其获取或试图获取美国原产物项以支持中国的军事现代化。这一制裁措施将严重影响实验室在先进制造、半导体技术与装备等领域的科研工作。",
+      "sources": [
+        {
+          "title": "季华实验室、长春光机所等被美国'拉黑'，新型显示产业发展或'添堵'",
+          "url": "http://mp.weixin.qq.com/s?__biz=Mzk1NzM1MDEwNw==&mid=2247486593&idx=4&sn=6136ad689258be4b5be5094317947af8&scene=0",
+          "source": "微信公众号"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "季华实验室在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 125,
+    "risk_level": "medium",
+    "components": {
+      "external_risk": {
+        "score": 25,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 15,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 40
+      },
+      "security_impact": {
+        "score": 60
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年5月",
+        "score": 125
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

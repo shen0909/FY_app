@@ -122,7 +122,7 @@ class TokenInterceptor extends Interceptor {
   // 跳转到登录页
   void _navigateToLogin() {
     // 清除登录数据
-    SharedPreference.clearLoginData();
+    FYSharedPreferenceUtils.clearLoginData();
     
     // 延迟跳转，避免在拦截器中直接调用Get.offAllNamed可能导致的问题
     Future.delayed(const Duration(milliseconds: 100), () {

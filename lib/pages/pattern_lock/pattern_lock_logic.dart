@@ -31,7 +31,7 @@ class PatternLockLogic extends GetxController {
   Future<void> _loadUserInfo() async {
     try {
       // 从SharedPreferences获取用户信息
-      final loginData = await SharedPreference.getLoginData();
+      final loginData = await FYSharedPreferenceUtils.getLoginData();
       if (loginData != null) {
         state.userName.value = loginData.username ?? '';
         _setGreetingMessage();

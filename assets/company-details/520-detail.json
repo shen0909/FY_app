@@ -1,0 +1,254 @@
+{
+  "company_id": "520",
+  "company_info": {
+    "name": "深圳国家基因库",
+    "english_name": "China National GeneBank (CNGB)",
+    "industry": "生物科技、基因研究、科研基础设施",
+    "location": "中国广东省深圳市大鹏新区",
+    "business_scope": "生物样本库、生物信息数据库、数字化平台、合成与编辑平台，覆盖人类健康、农业育种、生态保护等应用方向",
+    "company_type": "事业单位，由深圳国家高技术产业创新中心管理，委托深圳华大生命科学研究院运维",
+    "market_value": "无（非企业性质）",
+    "stock_price": "无（非上市机构）",
+    "established_date": "2016年",
+    "founder": "国家发改委、财政部、工信部、卫健委四部委批复建设",
+    "global_presence": "与100多家国内外机构建立合作，推动基因数据跨境共享与科研转化",
+    "patents": "拥有多项生物信息技术和基因存储相关专利",
+    "rd_investment": "持续投入生物遗传资源存储和基因技术研发",
+    "description": "深圳国家基因库是服务于国家战略的重大科技基础设施，于2016年建成运营。形成'三库两平台'架构（生物样本库、生物信息数据库、生物活体库；数字化平台、合成与编辑平台）。其存储能力达EB级，已与100多家国内外机构建立合作，推动基因数据跨境共享与科研转化。在新冠疫情期间，其发布的生命大数据可信计算平台CODEPLOT为疫苗研发提供了关键支持。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月4日",
+      "content": "美国国立卫生研究院（NIH）发布《实施更新：增强NIH受控访问数据的安全措施》，自当日起禁止中国、俄罗斯等'受关注国家'的机构访问其人类基因型-表型数据库（dbGaP）、基因数据分析云平台AnVIL等核心数据平台。这一措施直接影响了深圳国家基因库等中国科研机构的国际数据获取能力。",
+      "sources": [
+        {
+          "title": "美国宣布对中国等受关注国家关闭核心生物医学数据库",
+          "url": "https://www.sohu.com/a/881250672_121124565",
+          "source": "搜狐网"
+        },
+        {
+          "title": "Enhancing Security Measures for NIH Controlled-Access Data",
+          "url": "https://grants.nih.gov/grants/guide/notice-files/NOT-OD-25-083.html",
+          "source": "美国NIH官网"
+        },
+        {
+          "title": "NIH blocks researchers in China, Russia and other countries from multiple databases",
+          "url": "https://www.fiercebiotech.com/research/nih-bans-researchers-china-russia-and-other-countries-multiple-databases",
+          "source": "Fierce Biotech"
+        }
+      ]
+    },
+    {
+      "date": "2023年3月2日",
+      "content": "美国商务部工业与安全局将深圳华大生命科学研究院、深圳华大法医科技有限公司、香港华大基因科技服务有限公司等华大集团旗下企业列入实体清单。由于华大生命科学研究院是深圳国家基因库的运维单位，此次制裁可能影响基因库的设备采购与国际合作。",
+      "sources": [
+        {
+          "title": "华大集团反对被美国商务部列入'实体清单'",
+          "url": "https://sputniknews.cn/20230305/1048435396.html",
+          "source": "俄罗斯卫星通讯社"
+        },
+        {
+          "title": "声明",
+          "url": "https://www.bgi.com/news/2023030401",
+          "source": "华大基因官网"
+        }
+      ]
+    },
+    {
+      "date": "2021年9月1日",
+      "content": "深圳国家基因库正式启动运营5周年纪念活动，宣布累计存储生物样本超过2000万份，生物信息数据超过40PB，成为全球最大的综合性基因库之一。同时发布了多项重要科研成果，包括万种鸟类基因组计划等。",
+      "sources": [
+        {
+          "title": "深圳国家基因库运营五周年成果发布",
+          "url": "https://www.cngb.org/news/detail/20210901-anniversary",
+          "source": "深圳国家基因库官网"
+        },
+        {
+          "title": "China National GeneBank celebrates 5th anniversary with major milestones",
+          "url": "https://www.genomeweb.com/sequencing/china-national-genebank-celebrates-5th-anniversary-major-milestones",
+          "source": "GenomeWeb"
+        }
+      ]
+    },
+    {
+      "date": "2020年3月20日",
+      "content": "新冠疫情期间，深圳国家基因库紧急启动疫情应急响应机制，发布生命大数据可信计算平台CODEPLOT，为全球疫苗研发和病毒溯源提供数据支持。该平台汇聚了全球新冠病毒基因组数据，支持了多项重要科研工作。",
+      "sources": [
+        {
+          "title": "深圳国家基因库发布新冠疫情数据平台支持全球抗疫",
+          "url": "https://www.cngb.org/news/detail/20200320-covid19-platform",
+          "source": "深圳国家基因库官网"
+        },
+        {
+          "title": "China National GeneBank launches COVID-19 data platform",
+          "url": "https://www.nature.com/articles/d41586-020-00865-w",
+          "source": "Nature"
+        }
+      ]
+    },
+    {
+      "date": "2016年9月22日",
+      "content": "深圳国家基因库正式投入运营，这是继美国、欧盟、日本之后，全球第四个国家级基因库。建设总投资约25亿元，具备存储1000万份生物样本的能力，标志着中国在生物遗传资源保护和利用方面迈入世界先进行列。",
+      "sources": [
+        {
+          "title": "深圳国家基因库正式运营 成为全球第四个国家级基因库",
+          "url": "https://news.sciencenet.cn/htmlnews/2016/9/356789.shtm",
+          "source": "科学网"
+        },
+        {
+          "title": "China National GeneBank officially opens in Shenzhen",
+          "url": "https://www.chinadaily.com.cn/china/2016-09/22/content_26858934.htm",
+          "source": "中国日报"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "深圳国家基因库在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 30,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 10
+      },
+      "security_impact": {
+        "score": 20
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年2月",
+        "score": 0
+      },
+      {
+        "month": "2025年5月",
+        "score": 30
+      }
+    ]
+  },
+  "last_updated": "2025-05-08T18:30:00+08:00"
+}

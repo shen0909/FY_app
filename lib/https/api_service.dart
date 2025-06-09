@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import '../models/login_data.dart';
+import '../models/risk_company_details.dart';
 import 'http_service.dart';
 import 'package:flutter/foundation.dart';
 
@@ -90,9 +94,9 @@ class ApiService {
     if (result['code'] == 10010 && result['data'] != null) {
       // 保存登录数据
       LoginData loginData = LoginData.fromJson(result['data']);
-      await SharedPreference.saveLoginData(loginData);
-      await SharedPreference.saveToken(loginData.token);
-      await SharedPreference.saveUserInfo(
+      await FYSharedPreferenceUtils.saveLoginData(loginData);
+      await FYSharedPreferenceUtils.saveToken(loginData.token);
+      await FYSharedPreferenceUtils.saveUserInfo(
           userId: loginData.userid,
           userName: loginData.username,
           userRole: loginData.user_role);
@@ -188,7 +192,7 @@ class ApiService {
   Future<bool> logout() async {
     dynamic result = await _post(ServicePath.logout);
     if (result['code'] == 10010) {
-      await SharedPreference.clearLoginData();
+      await FYSharedPreferenceUtils.clearLoginData();
       return true;
     }
     return false;
@@ -197,7 +201,7 @@ class ApiService {
   /// 刷新令牌
   Future<String?> refreshToken() async {
     // 获取当前token
-    String? currentToken = await SharedPreference.getToken();
+    String? currentToken = await FYSharedPreferenceUtils.getToken();
     if (currentToken == null || currentToken.isEmpty) {
       return null;
     }
@@ -210,9 +214,24 @@ class ApiService {
     if (result['code'] == 10010 && result['data'] != null) {
       String newToken = result['data']['token'];
       // 保存新token
-      await SharedPreference.saveToken(newToken);
+      await FYSharedPreferenceUtils.saveToken(newToken);
       return newToken;
     }
     return null;
+  }
+
+  /// 根据公司ID获取公司详情
+  Future<RiskCompanyDetail?> getCompanyDetail(String companyId) async {
+    try {
+      // 加载对应的JSON文件
+      final String jsonString = await rootBundle.loadString('assets/company-details/$companyId-detail.json');
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
+
+      // 转换为RiskCompanyDetail对象
+      return RiskCompanyDetail.fromJson(jsonData);
+    } catch (e) {
+      print('加载公司详情失败: $e');
+      return null;
+    }
   }
 }

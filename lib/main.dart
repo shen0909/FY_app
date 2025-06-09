@@ -4,16 +4,32 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/pattern_lock_util.dart';
+import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'models/userDeviceInfo.dart';
+
+late UserDeviceInfo userDeviceInfo;
+Size _designSize = ScreenUtil.defaultSize; // 设计图尺寸
+bool isPad = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 初始化sp
+  await FYSharedPreferenceUtils.initSP();
   // 检查并确保锁屏方式不会冲突
   await _checkLockMethodConflicts();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  String idiom = MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.shortestSide >= 600
+      ? 'pad'
+      : 'phone';
+  if (idiom == 'pad') {
+    isPad = true;
+  }
+  FYSharedPreferenceUtils.saveUserDevice(idiom);
+  userDeviceInfo = UserDeviceInfo(idiom: idiom);
   runApp(const MyApp());
 }
 
@@ -39,8 +55,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!isPad) {
+      _designSize = const Size(375, 812);
+    } else {
+      bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape; // 横屏
+      _designSize = isLandscape ? const Size(1840, 2800) : const Size(2800, 1840);
+    }
     return ScreenUtilInit(
-      designSize: const Size(375, 812),
+      designSize: _designSize,
       minTextAdapt: false,
       splitScreenMode: true,
       builder: (context, child) {

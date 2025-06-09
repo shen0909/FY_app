@@ -30,7 +30,7 @@ class HomeState {
   final int notificationCount = 3;
 
   // 清单更新时间
-  final String listUpdateTime = "2025.05.06";
+  final String listUpdateTime = "2025.06.08";
   List<Map<String, dynamic>> riskType = [];
   List<Map<String, dynamic>> homeItemList = [];
   
@@ -48,7 +48,7 @@ class HomeState {
       {'title': '舆情热点', 'image': FYImages.hotIcon, 'bgColor': FYColors.hotBgGridle},
       {'title': 'AI问答', 'image': FYImages.aiIcon, 'bgColor': FYColors.aiBgGridle},
       {'title': '我的订阅', 'image': FYImages.orderIcon, 'bgColor': FYColors.orderBgGridle},
-      {'title': '系统设置', 'image': FYImages.settingIcon, 'bgColor': FYColors.settingBgGridle},
+      {'title': '安全设置', 'image': FYImages.settingIcon, 'bgColor': FYColors.settingBgGridle},
     ];
     
     _initData();

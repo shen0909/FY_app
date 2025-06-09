@@ -6,7 +6,7 @@ class TokenUtil {
   // 验证token是否有效
   static Future<bool> isTokenValid() async {
     try {
-      String? token = await SharedPreference.getToken();
+      String? token = await FYSharedPreferenceUtils.getToken();
       if (token == null || token.isEmpty) return false;
       
       // 解析JWT token获取过期时间
@@ -34,7 +34,7 @@ class TokenUtil {
   // 如果token即将过期，尝试刷新
   static Future<bool> refreshTokenIfNeeded() async {
     try {
-      String? token = await SharedPreference.getToken();
+      String? token = await FYSharedPreferenceUtils.getToken();
       if (token == null || token.isEmpty) return false;
       
       // 解析token获取过期时间

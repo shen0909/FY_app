@@ -1,0 +1,144 @@
+{
+  "company_id": "708",
+  "company_info": {
+    "name": "罗定微容电子科技有限公司",
+    "english_name": "Luoding Weirong Electronic Technology Co., Ltd.",
+    "industry": "计算机、通信和其他电子设备制造业（MLCC细分领域）",
+    "location": "中国广东省云浮市罗定市",
+    "business_scope": "高端MLCC产品，包括车规级、高容量、超微型MLCC，覆盖消费电子、新能源汽车、通信设备等领域",
+    "company_type": "有限责任公司",
+    "market_value": "未上市，无公开数据",
+    "stock_price": "未上市，无股价信息",
+    "established_date": "2023年4月12日",
+    "founder": "广东微容电子科技股份有限公司的子公司",
+    "global_presence": "目标在2028年实现年产能1.5万亿片，成为全球前三的MLCC制造商",
+    "patents": "专注于片式多层陶瓷电容器（MLCC）的研发与生产，产品性能达到国际先进水平",
+    "rd_investment": "规划总投资120亿元的罗定微容科技园",
+    "description": "罗定微容电子科技有限公司是专注于高端电子元件制造的企业，主要从事片式多层陶瓷电容器（MLCC）的研发与生产。公司是广东微容在罗定市的核心生产基地，依托母公司技术积累，打破国外厂商垄断，实现国产替代。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年12月",
+      "content": "美国再次新增140家实体至清单，仍未提及该公司。美国持续加强对中国半导体及电子元件行业的出口管制，但罗定微容目前未被列入。",
+      "sources": [
+        {
+          "title": "美国商务部实体清单更新",
+          "url": "https://www.commerce.gov/news/press-releases/2024/12",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2024年8月23日",
+      "content": "美国商务部将42家中国实体列入实体清单，涉及芯片半导体产业链领域，但未包括罗定微容。此次制裁反映美国对中国电子元件行业的持续关注。",
+      "sources": [
+        {
+          "title": "美国商务部芯片半导体制裁名单",
+          "url": "https://www.commerce.gov/news/press-releases/2024/08",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2023年",
+      "content": "罗定微容电子科技有限公司成立，作为广东微容在罗定市的核心生产基地，承担MLCC扩产项目。公司依托母公司技术积累，专注于高端MLCC的研发与生产。",
+      "sources": [
+        {
+          "title": "公司成立信息",
+          "url": "https://www.tianyancha.com/",
+          "source": "天眼查"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

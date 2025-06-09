@@ -100,17 +100,17 @@
   ],
   "risk_factors": [
     {
-      "type": "technology-security",
-      "title": "技术安全风险",
-      "level": "medium",
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
       "details": [
         {
-          "title": "军民两用技术敏感性",
-          "description": "散裂中子源技术涉及高能粒子加速器，可能被认为具有军民两用性质，面临技术管制风险"
+          "title": "关键技术依赖",
+          "description": "中国散裂中子源在核心技术方面可能依赖美国或西方国家的技术供应链。"
         },
         {
-          "title": "国际合作限制",
-          "description": "美国等国可能限制与中国在高能物理领域的合作，影响技术交流和设备采购"
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
         }
       ]
     },
@@ -120,53 +120,77 @@
       "level": "medium",
       "details": [
         {
-          "title": "关键设备依赖",
-          "description": "散裂中子源的部分关键设备和精密仪器可能依赖进口，存在供应链中断风险"
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
         },
         {
-          "title": "技术更新限制",
-          "description": "制裁可能影响设备升级和技术更新，影响科研效率"
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
         }
       ]
     },
     {
-      "type": "international-cooperation",
-      "title": "国际合作风险",
-      "level": "low",
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
       "details": [
         {
-          "title": "科研合作受限",
-          "description": "与国际同类机构的合作可能受到政治因素影响"
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
         },
         {
-          "title": "人员交流限制",
-          "description": "科研人员的国际交流可能面临签证和合作限制"
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
         }
       ]
     }
   ],
   "legal_basis": [
     {
-      "category": "dual-use-technology",
-      "title": "军民两用技术管制",
-      "summary": "散裂中子源涉及的高能粒子加速器技术被认为具有军民两用性质，可能面临出口管制。",
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
       "details": {
-        "legal_framework": "《出口管理条例》、《瓦森纳安排》等国际军民两用技术管制机制",
-        "implementation": "限制相关技术和设备的出口，需要获得出口许可",
-        "scope": "涵盖加速器技术、中子源技术、精密测量设备等",
-        "impact": "可能影响设备采购、技术升级和国际合作"
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
     },
     {
-      "category": "research-institution-sanctions",
-      "title": "科研机构制裁机制",
-      "summary": "美国等国可能将中国科研机构列入制裁清单，限制技术获取和国际合作。",
-      "details": {
-        "legal_framework": "实体清单、军工复合体企业清单等",
-        "implementation": "禁止或限制与被制裁机构的技术合作和设备出口",
-        "scope": "涵盖高能物理、核技术等敏感科研领域",
-        "penalties": "违规可能面临刑事起诉和民事处罚"
-      }
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
     }
   ],
   "risk_score": {
@@ -211,9 +235,15 @@
       }
     },
     "trend": [
-      { "month": "2024年4月", "score": 0 },
-      { "month": "2025年5月", "score": 50 }
+      {
+        "month": "2024年4月",
+        "score": 0
+      },
+      {
+        "month": "2025年5月",
+        "score": 50
+      }
     ]
   },
   "last_updated": "2025-05-09T17:00:00+08:00"
-} 
+}

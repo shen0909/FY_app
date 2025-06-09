@@ -8,7 +8,16 @@
     "established_date": "1948年",
     "registered_capital": "50亿元人民币",
     "employees": "8000+",
-    "website": "http://www.cssc-hwwc.com"
+    "website": "http://www.cssc-hwwc.com",
+    "founder": "未公开",
+    "global_presence": "主要业务集中在国内市场",
+    "patents": "具有相关技术专利",
+    "rd_investment": "持续投入研发资金",
+    "business_scope": "高新技术研发、生产和销售",
+    "company_type": "有限责任公司",
+    "market_value": "未公开",
+    "stock_price": "未上市",
+    "description": "一家专注于技术创新的企业"
   },
   "timeline_tracking": [
     {
@@ -74,25 +83,17 @@
   ],
   "risk_factors": [
     {
-      "type": "sanction-risk",
-      "title": "制裁风险",
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
       "level": "high",
       "details": [
         {
-          "title": "CMC清单影响",
-          "description": "被列入美国国防部中国涉军企业清单（CMC），面临美国投资者投资限制，可能影响国际融资渠道。"
+          "title": "关键技术依赖",
+          "description": "中船黄埔文冲船舶有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
         },
         {
-          "title": "实体清单连带影响",
-          "description": "母公司中国船舶集团已被列入实体清单，技术和设备采购受到严格限制。"
-        },
-        {
-          "title": "次级制裁风险",
-          "description": "国际合作伙伴可能因担心美国次级制裁而减少或终止合作。"
-        },
-        {
-          "title": "金融制裁可能性",
-          "description": "存在被列入SDN清单的风险，可能导致美元结算和国际金融服务受限。"
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
         }
       ]
     },
@@ -102,16 +103,12 @@
       "level": "medium",
       "details": [
         {
-          "title": "关键设备依赖",
-          "description": "船舶制造需要的部分高端设备和技术来自欧美供应商，可能面临断供风险。"
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
         },
         {
-          "title": "软件系统限制",
-          "description": "船舶设计和制造使用的CAD/CAM软件可能受到出口管制影响。"
-        },
-        {
-          "title": "认证体系影响",
-          "description": "国际船级社认证可能受到政治因素影响，影响船舶的国际市场准入。"
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
         }
       ]
     },
@@ -121,31 +118,27 @@
       "level": "medium",
       "details": [
         {
-          "title": "国际订单影响",
-          "description": "部分国际客户可能因制裁担忧而减少订单，特别是与美国有业务往来的航运公司。"
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
         },
         {
-          "title": "融资渠道受限",
-          "description": "国际银行可能限制对公司的融资支持，增加资金成本。"
-        },
-        {
-          "title": "保险服务限制",
-          "description": "国际保险公司可能限制或拒绝为公司船舶提供保险服务。"
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
         }
       ]
     },
     {
-      "type": "tech-dependency",
-      "title": "技术依赖风险",
-      "level": "low",
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
       "details": [
         {
-          "title": "军用技术自主",
-          "description": "军用舰船核心技术基本实现自主可控，受外部技术限制影响较小。"
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
         },
         {
-          "title": "民用技术替代",
-          "description": "民用船舶技术有较多替代方案，可通过国产化降低依赖。"
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
         }
       ]
     }
@@ -157,44 +150,28 @@
       "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
       "details": {
         "legal_framework": "《出口管理条例》(EAR)第744.11条",
-        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用'推定拒绝'政策",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
         "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
-        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚"
-      }
-    },
-    {
-      "category": "cmc-list",
-      "title": "中国涉军企业清单(CMC)",
-      "summary": "美国国防部认定的与中国军方有关联的企业清单，主要影响美国投资者的投资行为。",
-      "details": {
-        "legal_framework": "《2021财年国防授权法》第1260H条",
-        "implementation": "禁止美国人购买或出售清单企业的公开交易证券",
-        "scope": "适用于所有美国人，包括美国公民、永久居民、美国境内的任何人、美国法律设立的实体",
-        "penalties": "违规投资可能面临民事和刑事处罚"
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
     },
     {
       "category": "similar-cases",
       "title": "类似案例",
-      "summary": "其他中国造船企业面临的制裁情况和应对措施。",
+      "summary": "其他中国科技企业面临的制裁情况。",
       "cases": [
         {
-          "company": "江南造船（集团）有限责任公司",
-          "date": "2020年12月",
-          "action": "被列入实体清单",
-          "impact": "技术引进受限，但通过加强自主研发保持了业务稳定"
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
         },
         {
-          "company": "大连船舶重工集团",
-          "date": "2020年12月",
-          "action": "被列入实体清单",
-          "impact": "国际合作项目受影响，转向国内市场和友好国家市场"
-        },
-        {
-          "company": "蓬莱巨涛海洋工程",
-          "date": "2024年6月",
-          "action": "被列入SDN清单",
-          "impact": "美元结算完全中断，国际业务严重受损"
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
         }
       ]
     }
@@ -241,10 +218,19 @@
       }
     },
     "trend": [
-      { "month": "2024年8月", "score": 0 },
-      { "month": "2024年12月", "score": 105 },
-      { "month": "2025年1月", "score": 125 }
+      {
+        "month": "2024年8月",
+        "score": 0
+      },
+      {
+        "month": "2024年12月",
+        "score": 105
+      },
+      {
+        "month": "2025年1月",
+        "score": 125
+      }
     ]
   },
   "last_updated": "2025-05-09T15:00:00+08:00"
-} 
+}

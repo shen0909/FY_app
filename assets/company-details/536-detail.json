@@ -1,0 +1,203 @@
+{
+  "company_id": "536",
+  "company_info": {
+    "name": "广州海洋地质调查局",
+    "english_name": "Guangzhou Marine Geological Survey (GMGS)",
+    "industry": "海洋地质科学研究与资源勘探",
+    "location": "广东省广州市南沙区",
+    "business_scope": "海洋油气资源调查、天然气水合物勘探、大洋科学考察、海洋工程地质与灾害地质调查等",
+    "company_type": "政府直属科研事业单位，非企业法人",
+    "market_value": "不适用（非企业实体）",
+    "stock_price": "不适用（非企业实体）",
+    "established_date": "1963年",
+    "founder": "直接隶属于自然资源部中国地质调查局",
+    "global_presence": "拥有7艘专业调查船，与联合国开发计划署、国际海底管理局等机构开展国际合作",
+    "patents": "拥有世界一流的技术装备，包括高分辨率地震采集系统、4500米级'海马'号无人遥控潜水器等",
+    "rd_investment": "参与南海油气资源勘探、天然气水合物试采等国家重大工程，2017年在南海神狐海域实现全球首次天然气水合物试采成功",
+    "description": "广州海洋地质调查局成立于1963年，是自然资源部中国地质调查局直属的正局级公益一类事业单位，承担国家基础性、公益性海洋地质调查和战略性海洋矿产勘查工作。作为中国海洋地质领域的核心科研机构，业务覆盖油气资源、天然气水合物、大洋地质等领域，2022年整体搬迁至广州市南沙区。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月27日",
+      "content": "美国发布行政命令，加速国内海底矿产资源开发，减少对中国稀土等关键矿产的依赖，并强化与盟友在深海采矿领域的合作。这可能间接影响广州海洋地质调查局的国际合作项目。",
+      "sources": [
+        {
+          "title": "美国加速海底矿产资源开发行政命令",
+          "url": "https://www.whitehouse.gov/briefing-room/presidential-actions/2025/04/27/executive-order-on-strengthening-americas-leadership-in-seabed-mining/",
+          "source": "美国白宫"
+        }
+      ]
+    },
+    {
+      "date": "2025年4月17日",
+      "content": "美国贸易代表办公室(USTR)启动《贸易法》第301条调查，针对全球海事、物流及造船领域的'不公平贸易行为'，虽未直接点名中国，但可能影响海洋装备供应链。",
+      "sources": [
+        {
+          "title": "美国启动海事领域301条调查",
+          "url": "https://ustr.gov/about-us/policy-offices/press-office/press-releases/2025/april/ustr-initiates-section-301-investigation",
+          "source": "美国贸易代表办公室"
+        }
+      ]
+    },
+    {
+      "date": "2022年6月29日",
+      "content": "美国商务部将中科院沈阳自动化研究所、中国船舶工业系统工程研究院等涉海机构列入实体清单，理由是'支持军事应用'。虽然广州海洋地质调查局未被直接影响，但反映了美国对中国海洋科研机构的关注。",
+      "sources": [
+        {
+          "title": "美国商务部扩大实体清单",
+          "url": "https://www.bis.doc.gov/index.php/documents/about-bis/newsroom/press-releases/3023-2022-06-29-entity-list/file",
+          "source": "美国商务部"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "广州海洋地质调查局在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 40,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 10,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 10
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 40
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

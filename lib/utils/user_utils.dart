@@ -5,12 +5,12 @@ import 'package:safe_app/utils/shared_prefer.dart';
 class UserUtils {
   /// 获取当前登录用户信息
   static Future<LoginData?> getCurrentUser() async {
-    return await SharedPreference.getLoginData();
+    return await FYSharedPreferenceUtils.getLoginData();
   }
   
   /// 判断用户是否已登录
   static Future<bool> isLoggedIn() async {
-    final token = await SharedPreference.getToken();
+    final token = await FYSharedPreferenceUtils.getToken();
     return token != null && token.isNotEmpty;
   }
   
@@ -52,6 +52,6 @@ class UserUtils {
   
   /// 用户退出登录
   static Future<bool> logout() async {
-    return await SharedPreference.clearAll();
+    return await FYSharedPreferenceUtils.clearAll();
   }
 } 

@@ -1,0 +1,203 @@
+{
+  "company_id": "535",
+  "company_info": {
+    "name": "广汽研究院",
+    "english_name": "Guangzhou Automobile Group Research and Development Center (GAC R&D Center)",
+    "industry": "汽车研发与技术创新",
+    "location": "总部位于中国广州，在上海、洛杉矶、米兰等地设有研发中心",
+    "business_scope": "新能源汽车技术、智能网联系统、自动驾驶技术、动力总成研发，覆盖新能源、智能网联、自动驾驶等领域",
+    "company_type": "广汽集团全资子公司（非独立上市实体）",
+    "market_value": "未独立上市，无公开数据。母公司广汽集团截至2025年5月27日市值约795.37亿元",
+    "stock_price": "不适用（未独立上市）",
+    "established_date": "2006年",
+    "founder": "广州汽车集团股份有限公司",
+    "global_presence": "形成'三国五地'全球研发布局，在硅谷、底特律等海外设有研发中心",
+    "patents": "累计有效专利超20,000件，构建国内最全面的整车试验验证体系",
+    "rd_investment": "2024年研发投入超50亿元，每年试验里程超1700万公里",
+    "description": "广汽研究院成立于2006年，是广汽集团的核心研发机构，专注于整车及核心技术研发。承担自主品牌（如传祺、埃安）产品开发及前瞻技术布局任务，在新能源技术、智能网联、自动驾驶等领域具有领先优势，拥有全球首个集空气动力学、气动声学、热力学于一体的整车风洞实验室。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月14日",
+      "content": "美国商务部发布《保护信息和通信技术与服务供应链：网联汽车》最终规则，分阶段禁止搭载中国技术的智能网联汽车进入美国市场。2027车型年起禁止搭载中国关联企业提供的车载互联系统(VCS)和自动驾驶系统(ADS)软件，2029年1月1日起全面禁止相关硬件组件。",
+      "sources": [
+        {
+          "title": "美国发布网联汽车最终规则",
+          "url": "https://www.commerce.gov/news/press-releases/2025/01/commerce-finalizes-connected-vehicle-rule",
+          "source": "美国商务部官网"
+        }
+      ]
+    },
+    {
+      "date": "2024年9月23日",
+      "content": "美国商务部提议禁止在美国L3级及以上自动驾驶汽车中使用中国开发的软件，涉及广汽研究院等10家中国企业，理由是'数据安全威胁'。该禁令计划于2027年生效。",
+      "sources": [
+        {
+          "title": "美国将'升级'打压中国汽车",
+          "url": "https://m.huanqiu.com/article/4EPvPUZKPO7",
+          "source": "环球网"
+        }
+      ]
+    },
+    {
+      "date": "2024年3月",
+      "content": "美国商务部启动针对中国智能网联汽车的禁令制定程序，9月首次提出禁止搭载中国技术的车辆进入美国市场的具体措施。",
+      "sources": [
+        {
+          "title": "美国启动中国汽车技术禁令程序",
+          "url": "https://www.reuters.com/business/autos-transportation/us-commerce-dept-proposes-ban-chinese-software-autonomous-vehicles-2024-09-23/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "广汽研究院在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 50,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 20,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 10
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 50
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

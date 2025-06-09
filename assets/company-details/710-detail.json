@@ -1,0 +1,144 @@
+{
+  "company_id": "710",
+  "company_info": {
+    "name": "中国人民解放军4804工厂",
+    "english_name": "PLA Navy 4804 Factory",
+    "industry": "船舶制造与维修、军工",
+    "location": "中国广东省湛江市",
+    "business_scope": "船舶修理、制造，压力容器制造，机电设备制造及安装，铸镀件加工等",
+    "company_type": "全民所有制企业",
+    "market_value": "未公开上市，无公开财务数据",
+    "stock_price": "非上市企业，无股价信息",
+    "established_date": "1960年",
+    "founder": "前身为海军第一职业技术学校附属工厂",
+    "global_presence": "中国海军重要的后勤保障单位之一",
+    "patents": "具备较强的船舶改装和制造能力",
+    "rd_investment": "集船舶修理、制造、技术研发于一体的综合性军工企业",
+    "description": "中国人民解放军4804工厂是一家以船舶修理、制造为主的军工企业，隶属于中国人民解放军海军装备部，主要承担海军舰艇及民用船舶的维修、改装和建造任务。工厂位于湛江市，拥有专业的船坞、维修设施及技术团队。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月25日",
+      "content": "美国商务部将54个中国实体列入出口管制实体清单，其中可能涉及4804工厂（未明确名单，但根据行业背景及美国对中国造船业的制裁趋势推测）。",
+      "sources": [
+        {
+          "title": "四川省商务厅 - 贸易摩擦预警",
+          "url": "https://swt.sc.gov.cn/sccom/c25030602/2025/4/2/db84dd498485456ab6b4880433f71c81.shtml",
+          "source": "四川省商务厅"
+        }
+      ]
+    },
+    {
+      "date": "2024年2月1日",
+      "content": "美国国防部依据《2021年国防授权法》第1260H条款，将十多家中企列入'中国军方企业名单'，4804工厂可能在列（未明确点名，但符合美国对中国军工企业的制裁逻辑）。",
+      "sources": [
+        {
+          "title": "澎湃新闻 - 美国将十多家中企列入中国军方企业名单",
+          "url": "https://www.thepaper.cn/newsDetail_forward_26223023",
+          "source": "澎湃新闻"
+        }
+      ]
+    },
+    {
+      "date": "2024年1月",
+      "content": "美国国防部依据《2024财年国防授权法案》第805条，禁止与'中国军事企业'签订新合同，4804工厂可能受影响（未明确点名，但符合美国对中国军工企业的制裁范围）。",
+      "sources": [
+        {
+          "title": "汉坤律师事务所 - 美国对华涉军企业制裁清单简介",
+          "url": "https://hankunlaw.com/portal/article/index/cid/8/id/14930.html",
+          "source": "汉坤律师事务所"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

@@ -1,0 +1,144 @@
+{
+  "company_id": "703",
+  "company_info": {
+    "name": "化学与精细化工广东省实验室",
+    "english_name": "Guangdong Provincial Laboratory of Chemistry and Fine Chemical Industry",
+    "industry": "化学与精细化工科研及技术转化",
+    "location": "总部位于广东省汕头市，潮州、揭阳设有分中心",
+    "business_scope": "主攻碳中和化学与化工（如燃料电池、氢能、二氧化碳转化）、高端精细化学品（如电子化学品、药物中间体）、高端化工装备三大方向",
+    "company_type": "省级事业单位，无独立法人资格，由广东省科技厅主管",
+    "market_value": "非企业性质，无公开市值及股价",
+    "stock_price": "非企业实体，无股价信息",
+    "established_date": "2018年",
+    "founder": "广东省委省政府启动建设，由汕头、潮州、揭阳联合承建",
+    "global_presence": "定位为国内一流、国际有影响的开放性重大创新平台",
+    "patents": "承担国家及省级科研项目10项，突破多项卡脖子技术",
+    "rd_investment": "人员规模超180人，博硕士占比超80%，组建17个科研团队",
+    "description": "化学与精细化工广东省实验室是广东省首批完成登记的省实验室之一，采用核心+网络模式，聚焦化学与精细化工领域的前沿研究与产业应用。实验室建设化学表征与分析中心及化工中试研究中心等公共平台。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年5月22日",
+      "content": "FCC新规限制中国实验室参与美电子设备测试。美国联邦通信委员会（FCC）全票通过新规，禁止被认定与中国军方或政府有关联的实验室参与测试出口到美国的电子设备。FCC称约75%的中国实验室与国资背景有关联，其中168家被列入黑名单。",
+      "sources": [
+        {
+          "title": "网易新闻 - FCC新规限制中国实验室",
+          "url": "https://www.163.com/dy/article/K0LQO5PA0511C3KR.html",
+          "source": "网易新闻"
+        }
+      ]
+    },
+    {
+      "date": "2025年1月16日",
+      "content": "美国商务部对实验室仪器实施出口管制。美国商务部工业与安全局（BIS）发布临时最终规则，对高参数流式细胞仪和特定质谱设备实施出口管制，限制其向中国等目的地出口，理由是防止技术被用于军事相关应用。",
+      "sources": [
+        {
+          "title": "山东外贸职业学院国际贸易系 - 实验室仪器出口管制",
+          "url": "https://gjmy.sdwm.edu.cn/info/1145/13592.htm",
+          "source": "山东外贸职业学院国际贸易系"
+        }
+      ]
+    },
+    {
+      "date": "2023年10月17日",
+      "content": "美国商务部新增13家中国实体至实体清单。BIS将13家中国实体列入实体清单，包括两家先进计算芯片企业，理由是'违反美国国家安全或外交政策利益'。实验室若涉及半导体材料或高端计算技术研究，可能被间接纳入美国技术封锁范围。",
+      "sources": [
+        {
+          "title": "天津市商务局 - 美国商务部实体清单更新",
+          "url": "https://shangwuju.tj.gov.cn/tjsswjzz/ztzl/ztzl/swfzjsgz1/gpmy/hyzc/202311/t20231113_6454610.html",
+          "source": "天津市商务局"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

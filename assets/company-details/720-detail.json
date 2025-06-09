@@ -1,0 +1,155 @@
+{
+  "company_id": "720",
+  "company_info": {
+    "name": "英诺赛科（珠海）科技有限公司",
+    "english_name": "Innoscience (Zhuhai) Technology Company Co., Ltd.",
+    "industry": "半导体行业，细分领域为氮化镓功率器件",
+    "location": "中国广东省珠海市",
+    "business_scope": "芯片设计、外延生长、晶圆制造、测试封装全产业链，产品覆盖30V-700V氮化镓器件，应用于消费电子、数据中心、新能源汽车等领域",
+    "company_type": "港股上市公司（股票代码：02577.HK）",
+    "market_value": "截至2025年6月9日，总市值312.31亿港元",
+    "stock_price": "35.45港元",
+    "established_date": "2015年",
+    "founder": "INNOSCIENCE HOLDING PTE. LTD.",
+    "global_presence": "全球氮化镓分立器件出货量占比42.4%（2023年），市场份额居全球前列",
+    "patents": "拥有自主知识产权的核心技术，全球唯一实现8英寸硅基氮化镓大规模量产",
+    "rd_investment": "采用IDM模式，从芯片设计到制造全流程自主可控",
+    "description": "英诺赛科是全球领先的氮化镓（GaN）功率半导体IDM垂直整合制造商，专注于第三代半导体技术的研发与产业化。公司是全球唯一实现8英寸硅基氮化镓大规模量产的企业，产品性能达到国际先进水平。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月7日",
+      "content": "美国国际贸易委员会（ITC）终裁确认英诺赛科侵犯宜普公司（EPC）核心氮化镓专利（US8,350,294），禁止其相关产品未经授权进口至美国，禁令生效。",
+      "sources": [
+        {
+          "title": "电子工程世界 - ITC终裁英诺赛科侵权案",
+          "url": "https://m.eeworld.com.cn/ic_article/319/688347.html",
+          "source": "电子工程世界"
+        }
+      ]
+    },
+    {
+      "date": "2024年11月9日",
+      "content": "英诺赛科声明ITC终裁不影响客户终端产品进口至美国，已完成规避设计方案。",
+      "sources": [
+        {
+          "title": "东方财富网 - 英诺赛科回应ITC裁决",
+          "url": "https://emwap.eastmoney.com/a/202411093234621569.html",
+          "source": "东方财富网"
+        }
+      ]
+    },
+    {
+      "date": "2024年11月7日",
+      "content": "ITC全体委员会维持初裁，认定英诺赛科侵权，禁止其氮化镓产品进口至美国，需经总统60天审查期（至2025年1月6日）。",
+      "sources": [
+        {
+          "title": "宜普电源转换公司官网 - 胜诉公告",
+          "url": "https://epc-co.com/epc/cn/宜普公司简介/项目及最新消息/新闻/artmid/1654/articleid/3183/宜普电源转换公司胜诉，美国国际贸易委员会终裁确认英诺赛科侵权",
+          "source": "宜普电源转换公司"
+        }
+      ]
+    },
+    {
+      "date": "2024年8月1日",
+      "content": "英飞凌向美国ITC申请对英诺赛科发起337调查，指控其侵犯四项氮化镓专利。",
+      "sources": [
+        {
+          "title": "中国机电产品进出口商会",
+          "url": "https://www.cccme.org.cn/",
+          "source": "中国机电产品进出口商会"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

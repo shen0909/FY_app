@@ -6,7 +6,7 @@ import 'package:safe_app/styles/colors.dart';
 class FYTextStyles {
   static TextStyle getAppTitle({Color color = FYColors.color_1A1A1A}) {
     return TextStyle(
-      color: color,
+      color: const Color(0xffEA5328),
       fontSize: 18.sp,
       fontWeight: FontWeight.bold,
       fontFamily: 'AlibabaPuHuiTi',

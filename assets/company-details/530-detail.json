@@ -1,0 +1,208 @@
+{
+  "company_id": "530",
+  "company_info": {
+    "name": "珠海云洲智能科技股份有限公司",
+    "english_name": "Zhuhai Yunzhou Intelligence Technology Ltd.",
+    "industry": "计算机、通信和其他电子设备制造业",
+    "location": "中国广东省珠海市高新区",
+    "business_scope": "涵盖智慧水域管理、海洋工程、公共安全、科技文旅等领域，产品包括环境监测无人船、海洋测绘无人艇、水面救生机器人等，销往全球50多个国家和地区",
+    "company_type": "股份有限公司（非上市）",
+    "market_value": "截至2025年6月，公司尚未完成上市（2022年终止科创板IPO），无公开市值及股价数据",
+    "stock_price": "不适用（未上市）",
+    "established_date": "2010年4月",
+    "founder": "张云飞（持股22.49%），珠海科创恒瑞投资有限公司持股23.18%",
+    "global_presence": "产品销往全球50多个国家和地区，技术处于国际领先水平",
+    "patents": "拥有多项专利及软件著作权，曾获'国家知识产权示范企业''海洋科学技术奖特等奖'等荣誉",
+    "rd_investment": "以'无人船艇+行业解决方案'为核心模式，技术覆盖自主导航、传感器融合、智能决策等领域",
+    "description": "珠海云洲智能科技股份有限公司成立于2010年4月，是中国领先的无人船艇研发与解决方案提供商，专注于无人船艇及其控制系统、通讯系统等核心技术的研发与应用。其产品参与了南极科考、青藏高原湖泊测绘等国家重大任务，并在天津港爆炸污染应急、河南南阳固体废物污染等环境事件中发挥关键作用。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月28日",
+      "content": "美国商务部工业与安全局（BIS）更新实体清单，新增54家中国实体，但未明确提及云洲智能。截至2025年6月，公开可信的新闻来源中未明确报道云洲智能被美国列入实体清单或其他制裁措施。",
+      "sources": [
+        {
+          "title": "美国商务部更新实体清单新增54家中国实体",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance/entity-list",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2022年7月19日",
+      "content": "云洲智能终止科创板IPO，因持续亏损及监管问询压力。2018-2021年累计亏损超4亿元，经营活动现金流持续为负，但公司继续专注于无人船艇技术研发和市场拓展。",
+      "sources": [
+        {
+          "title": "云洲智能终止科创板IPO申请",
+          "url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/",
+          "source": "上海证券交易所"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "珠海云洲智能科技股份有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 15,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 5
+      },
+      "security_impact": {
+        "score": 10
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 15
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

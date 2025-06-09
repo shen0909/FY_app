@@ -1,0 +1,213 @@
+{
+  "company_id": "528",
+  "company_info": {
+    "name": "中航通用飞机有限责任公司",
+    "english_name": "China Aviation Industry General Aircraft Co., Ltd.",
+    "industry": "通用航空制造业、运营服务业",
+    "location": "中国广东省珠海市金湾区",
+    "business_scope": "主要从事通用航空产品业务、通用航空服务业务和航空零部件业务。产品涵盖大型特殊用途飞机、私人飞机、公务机、多用途飞机、浮空器等；服务包括飞行培训、航空俱乐部、FBO、通航作业、通勤航空、航空旅游等",
+    "company_type": "国有大型企业集团",
+    "market_value": "未整体上市，控股中航重机、中航电测两家国内A股上市公司",
+    "stock_price": "不适用（未整体上市）",
+    "established_date": "2009年2月6日",
+    "founder": "中国航空工业集团有限公司（70%）、广东粤财投资控股有限公司（14%）、广东恒健投资控股有限公司（10%）和珠海格力航空投资有限公司（6%）共同投资设立",
+    "global_presence": "100%控股美国西锐飞机工业公司，在国际市场上开展业务",
+    "patents": "拥有多款飞机型号获得相关资质认证，在通用航空产品研发方面具有雄厚实力",
+    "rd_investment": "注册资本为118.57亿元，建立了覆盖多地的产业基地",
+    "description": "中航通用飞机有限责任公司成立于2009年2月6日，是支撑国家战略发展的通用航空军民融合产业集团，是国内最大的以通用飞机研发制造、运营服务为主业的多元化公司。公司拥有雄厚的研发与制造实力，建立了覆盖多地的产业基地，并100%控股美国西锐飞机工业公司。在通用航空产品研发、生产、销售以及运营服务等方面取得了众多成果。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年6月7日",
+      "content": "美国商务部暂停向中国商飞（COMAC）发放LEAP-1C发动机出口许可证，针对C919客机使用的LEAP-1C发动机实施出口管制，意图遏制中国大飞机产业发展。该事件波及中国航空产业链企业，包括中航工业通飞所属的中航工业集团。",
+      "sources": [
+        {
+          "title": "75架C919面临断供危机？国产'长江-1000A'火线接班",
+          "url": "https://www.kunlunce.com/",
+          "source": "昆仑策网"
+        }
+      ]
+    },
+    {
+      "date": "2024年4月11日",
+      "content": "中国外交部宣布对美国通用原子航空系统公司（General Atomics Aeronautical Systems）、通用动力陆地系统公司（General Dynamics Land Systems）实施反制措施，冻结两家公司在中国境内的动产、不动产及其他财产，禁止高级管理人员入境中国。此举显示中美在航空军工领域的博弈加剧。",
+      "sources": [
+        {
+          "title": "外交部公布关于对美国两家公司采取反制措施的决定",
+          "url": "https://www.chinacourt.org/article/detail/2024/04/id/7127543.shtml",
+          "source": "中国法院网"
+        },
+        {
+          "title": "外交部宣布对美国两公司采取反制措施",
+          "url": "https://www.81.cn/",
+          "source": "解放军新闻传播中心融媒体"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "中航通用飞机有限责任公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 65,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 25,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 15,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 10,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 40
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 65
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

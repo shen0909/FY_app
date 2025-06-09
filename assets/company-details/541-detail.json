@@ -1,0 +1,208 @@
+{
+  "company_id": "541",
+  "company_info": {
+    "name": "仙湖实验室",
+    "english_name": "Foshan Xianhu Laboratory",
+    "industry": "生物科学研究",
+    "location": "广东佛山",
+    "business_scope": "氢能和氢氨融合新能源领域关键材料与核心技术研发及产业化",
+    "company_type": "省级实验室平台，非营利性科研机构",
+    "market_value": "不适用（非营利性科研机构）",
+    "stock_price": "不适用（非营利性科研机构）",
+    "established_date": "2020年",
+    "founder": "广东省政府",
+    "global_presence": "粤港澳大湾区国际科技创新中心的重要组成部分",
+    "patents": "在氢能和氢氨融合新能源领域取得一系列成果，在《Science》上发表原创性研究成果",
+    "rd_investment": "一期建设投资18.8亿元，建成七大支撑平台、八个研发中心",
+    "description": "佛山仙湖实验室是广东省重点建设的省级实验室平台，聚焦氢能和氢氨融合新能源领域关键材料与核心技术的研发及产业化。建有广东省院士工作站、博士后科研工作站，拥有以院士为核心、国家级高端人才为骨干的科研人才队伍，致力于打造该领域关键材料和运输装备及高温工业碳中和领域国家战略科技力量。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年",
+      "content": "美国国会通过《清洁能源供应链安全法案》，禁止向中国出口氢液化设备及相关技术，可能间接影响仙湖实验室的技术获取。",
+      "sources": [
+        {
+          "title": "美国通过清洁能源供应链安全法案",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/4345",
+          "source": "美国国会"
+        }
+      ]
+    },
+    {
+      "date": "2025年",
+      "content": "根据亿欧智库统计，截止2025年，受到相关限制的中国机构、企业和个人已增至1000余家，涉及人工智能、超算、芯片研发等多个高新技术领域。",
+      "sources": [
+        {
+          "title": "中国高新技术企业受制裁统计报告",
+          "url": "https://www.iyiou.com/intelligence/insight126834.html",
+          "source": "亿欧智库"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "仙湖实验室在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 80,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 10,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 50
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 80
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

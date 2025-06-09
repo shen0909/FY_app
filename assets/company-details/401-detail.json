@@ -793,7 +793,7 @@
       "external_risk": {
         "score": 120,
         "breakdown": {
-          "investigation_announced": 10, 
+          "investigation_announced": 10,
           "investigation_ongoing": 20,
           "personnel_infiltration": 0,
           "personnel_extraction": 0,
@@ -828,9 +828,15 @@
       }
     },
     "trend": [
-      { "month": "2024年12月", "score": 0 },
-      { "month": "2025年5月", "score": 335 }
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年5月",
+        "score": 335
+      }
     ]
   },
   "last_updated": "2025-05-09T16:00:00+08:00"
-} 
+}

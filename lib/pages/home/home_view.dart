@@ -317,7 +317,7 @@ class HomePage extends StatelessWidget {
       case '我的订阅':
         logic.goOrder();
         break;
-      case '系统设置':
+      case '安全设置':
         logic.goSetting();
         break;
       default:
@@ -343,7 +343,7 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "清单",
+                  "实体清单",
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,

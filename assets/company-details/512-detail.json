@@ -43,64 +43,119 @@
           "source": "科技日报"
         }
       ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
     }
   ],
   "risk_factors": [
     {
-      "category": "技术封锁风险",
-      "description": "被列入实体清单后，难以获取美国先进技术和设备，可能影响电磁超材料技术的进一步发展",
-      "severity": "high",
-      "sources": ["美国出口管理条例及实体清单机制"]
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "深圳光启尖端技术有限责任公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
     },
     {
-      "category": "市场竞争风险",
-      "description": "超材料市场发展潜力大，会吸引更多企业进入，公司面临市场份额被蚕食风险",
-      "severity": "medium",
-      "sources": ["行业分析报告"]
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
     },
     {
-      "category": "行业依赖风险",
-      "description": "产品主要应用于军工等特定行业，对特定行业依赖度较高，政策变化可能对业绩产生较大影响",
-      "severity": "medium",
-      "sources": ["公司财务报告分析"]
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
     },
     {
-      "category": "技术研发风险",
-      "description": "超材料行业技术迭代快，需大量资金投入研发以保持领先地位",
-      "severity": "medium",
-      "sources": ["行业特点分析"]
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
     }
   ],
-  "legal_basis": {
-    "sanctions_cases": [
-      {
-        "company": "华为",
-        "year": "2019年",
-        "action": "被列入实体清单",
-        "legal_basis": "出口管理条例第744节",
-        "reason": "国家安全风险"
-      },
-      {
-        "company": "中芯国际",
-        "year": "2020年",
-        "action": "被列入实体清单",
-        "legal_basis": "出口管理条例第744节",
-        "reason": "军事最终用途风险"
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
-    ],
-    "kuangchi_specific": [
-      {
-        "mechanism": "实体清单机制",
-        "legal_basis": "出口管理条例第744节",
-        "description": "以业务涉及航空航天等国防领域为由，认定威胁美国国家安全"
-      },
-      {
-        "mechanism": "军事最终用户清单",
-        "legal_basis": "出口管理条例第744.21节",
-        "description": "限制向被认定为军事最终用户的实体出口受管制物项"
-      }
-    ]
-  },
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
   "risk_score": {
     "total_score": 380,
     "risk_level": "high",
@@ -108,7 +163,7 @@
       "external_risk": {
         "score": 120,
         "breakdown": {
-          "investigation_announced": 10, 
+          "investigation_announced": 10,
           "investigation_ongoing": 20,
           "personnel_infiltration": 0,
           "personnel_extraction": 0,
@@ -142,10 +197,26 @@
         "score": 80
       },
       "trend": [
-        { "month": "2024年9月", "score": 0 },
-        { "month": "2025年6月", "score": 205 }
+        {
+          "month": "2024年9月",
+          "score": 0
+        },
+        {
+          "month": "2025年6月",
+          "score": 205
+        }
       ]
-    }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 330
+      },
+      {
+        "month": "2025年6月",
+        "score": 380
+      }
+    ]
   },
   "last_updated": "2025-06-08T16:00:00+08:00"
-} 
+}

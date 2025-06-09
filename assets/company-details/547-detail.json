@@ -1,0 +1,208 @@
+{
+  "company_id": "547",
+  "company_info": {
+    "name": "中科宇航（广州）装备工业有限公司",
+    "english_name": "CAS Space (Guangzhou) Equipment Industry Co., Ltd",
+    "industry": "商业航天",
+    "location": "广州",
+    "business_scope": "商业运载火箭研发制造、卫星发射服务、航天装备制造",
+    "company_type": "有限责任公司",
+    "market_value": "未独立上市，隶属于中科宇航集团",
+    "stock_price": "不适用（未独立上市）",
+    "established_date": "2020年",
+    "founder": "中科院光电技术研究所、中科院微小卫星创新研究院",
+    "global_presence": "专注于商业航天发射服务，参与国际商业卫星发射市场",
+    "patents": "在固体运载火箭、快速发射技术等领域拥有核心专利",
+    "rd_investment": "专注于商业固体运载火箭、快速发射技术、卫星制造等技术研发",
+    "description": "中科宇航(广州)装备工业有限公司是中科院体系下的商业航天企业，专注于商业运载火箭的研发制造和发射服务。公司致力于为全球客户提供高性价比的商业卫星发射解决方案，在中国商业航天产业中具有重要地位。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2022年6月29日",
+      "content": "美国商务部将中科院沈阳自动化研究所等多个中科院下属机构列入实体清单，虽然中科宇航未被直接列入，但反映了美国对中科院体系的关注，可能影响技术获取。",
+      "sources": [
+        {
+          "title": "美国商务部扩大实体清单",
+          "url": "https://www.bis.doc.gov/index.php/documents/about-bis/newsroom/press-releases/3023-2022-06-29-entity-list/file",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2024年12月",
+      "content": "美国进一步收紧对华航天技术出口管制，特别是针对具有军民两用特性的航天技术，可能影响商业航天企业的技术获取和国际合作。",
+      "sources": [
+        {
+          "title": "美国加强航天技术出口管制",
+          "url": "https://www.bis.doc.gov/index.php/documents/about-bis/newsroom/press-releases/3300-2024-space-export-controls",
+          "source": "美国商务部工业与安全局"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "中科宇航（广州）装备工业有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 30,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 20
+      },
+      "security_impact": {
+        "score": 10
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 30
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

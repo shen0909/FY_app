@@ -1,0 +1,144 @@
+{
+  "company_id": "709",
+  "company_info": {
+    "name": "中国热带农业科学院农产品加工研究所",
+    "english_name": "Institute of Agricultural Products Processing, Chinese Academy of Tropical Agricultural Sciences (CATAS-APP)",
+    "industry": "农业科研与技术转化",
+    "location": "广东省湛江市",
+    "business_scope": "天然橡胶深加工、热带特色食品开发、农产品质量安全监测、生物质材料研发（如吸波材料）",
+    "company_type": "中央级公益类科研事业单位",
+    "market_value": "无资本市场估值",
+    "stock_price": "无股价信息",
+    "established_date": "1954年",
+    "founder": "中国热带农业科学院（农业农村部直属正局级科研机构）",
+    "global_presence": "作为中国唯一以热带农产品加工为核心的中央部属科研机构，拥有副局级建制，建有18个国家级和省部级科研平台",
+    "patents": "香蕉茎秆组分分离与利用新技术获海南省技术发明奖一等奖，CoFe₂O₄@CMT杂化材料在超宽频电磁波吸收方面的突破",
+    "rd_investment": "科研仪器设备原值超2亿元",
+    "description": "中国热带农业科学院农产品加工研究所是中国唯一以热带农产品加工为核心的中央部属科研机构，承担天然橡胶加工、食品科学、农产品质量安全等领域的国家级科研任务。建有国家橡胶加工工程技术研究中心等18个科研平台，在高性能特种橡胶加工技术上填补国内空白。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月26日",
+      "content": "美国将54家中国科技实体纳入实体清单，重点针对AI、量子计算和超级计算机领域，仍无农业科研机构入选。此举反映美国对华科技制裁的扩大趋势，尽管暂未涉及农业科研机构，但存在潜在风险。",
+      "sources": [
+        {
+          "title": "美国实体清单最新制裁名单",
+          "url": "https://www.bis.doc.gov/index.php/documents/entity-list",
+          "source": "美国商务部工业与安全局"
+        }
+      ]
+    },
+    {
+      "date": "2025年1月3日",
+      "content": "美国商务部新增11家中国实体至出口管制清单，涉及光电、通信、人工智能等领域，但未包含农业科研机构。该举措表明美国对华科技制裁范围的扩展，虽然暂未直接影响农业科研领域。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制新增清单",
+          "url": "https://www.commerce.gov/news/press-releases/2025/01/03",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2023年",
+      "content": "中国热带农业科学院农产品加工研究所的香蕉茎秆组分分离与利用新技术获海南省技术发明奖一等奖，相关技术实现纤维提取、清洁脱胶等全链条突破，推动热带农业废弃物资源化利用。同时在生物质材料领域取得重要进展。",
+      "sources": [
+        {
+          "title": "海南省技术发明奖获奖名单",
+          "url": "https://www.hainan.gov.cn/",
+          "source": "海南省政府"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

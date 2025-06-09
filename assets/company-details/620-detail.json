@@ -1,0 +1,133 @@
+{
+  "company_id": "620",
+  "company_info": {
+    "name": "伊之密股份有限公司",
+    "english_name": "Guangdong Yizumi Precision Machinery Co.,Ltd.",
+    "industry": "橡胶和塑料制品业",
+    "location": "广东市佛山市顺德区",
+    "business_scope": "",
+    "company_type": "股份有限公司",
+    "market_value": "",
+    "stock_price": "",
+    "established_date": "未公开",
+    "founder": "未公开",
+    "global_presence": "主要在中国境内运营",
+    "patents": "未公开",
+    "rd_investment": "未公开",
+    "description": ""
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月",
+      "content": "美国商务部对生物技术设备实施新出口管制，限制相关设备对华出口。",
+      "sources": [
+        {
+          "title": "美国商务部工业与安全局官方公告",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance/country-guidance",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2024年12月",
+      "content": "美国政府继续加强对中国高科技企业的出口管制政策。",
+      "sources": [
+        {
+          "title": "路透社 - 美国扩大对华出口管制",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+}

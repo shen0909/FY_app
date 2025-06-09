@@ -1,0 +1,144 @@
+{
+  "company_id": "714",
+  "company_info": {
+    "name": "中山先进低温技术研究院",
+    "english_name": "Zhongshan Institute of Advanced Cryogenic Technology (ZIACT)",
+    "industry": "低温技术研发与装备制造",
+    "location": "广东省中山市",
+    "business_scope": "液氦、超流氦、mK温区大型低温技术研发；液氢储存、储能技术及装备研发；低温技术在氢能、半导体、航空航天、量子计算等领域的应用",
+    "company_type": "省级事业单位（非企业性质）",
+    "market_value": "因属事业单位，无上市交易，故无公开市值",
+    "stock_price": "无股价信息",
+    "established_date": "2020年8月",
+    "founder": "中国科学院理化技术研究所（技术主导方）、中山市人民政府（地方支持方）",
+    "global_presence": "聚焦超大型低温制冷装备研制和低温技术研究前沿，目标建成国际领先的技术创新平台",
+    "patents": "承担科技部重大研发项目课题，获科技部2500万元、广东省科技厅近1000万元资金支持",
+    "rd_investment": "拥有液氦、超流氦、mK温区大型低温技术研发基地和配套齐全的低温技术平台",
+    "description": "中山先进低温技术研究院成立于2020年8月，是由广东省中山市人民政府与中国科学院理化技术研究所共同支持的省级事业单位。研究院聚焦超大型低温制冷装备研制和低温技术研究前沿，围绕先进低温、氢能源、氦资源、航天、量子计算等战略必争及产业前沿领域开展研发。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月4日",
+      "content": "中国商务部针对美国'对等关税'计划，对美进口液氢压缩机加征200%关税。液氢压缩机是氢能产业链核心设备，美国此举可能影响其技术输出能力，尤其针对在华合作项目。中山低温院正推进液氢综合性技术研究及试验基地项目，未来或面临供应链风险。",
+      "sources": [
+        {
+          "title": "中美液氢压缩机关税政策",
+          "url": "https://xueqiu.com/1242549795/330203529",
+          "source": "雪球"
+        }
+      ]
+    },
+    {
+      "date": "2024年5月9日",
+      "content": "美国商务部工业与安全局（BIS）以'威胁国家安全'为由，将37家中国实体列入出口管制实体清单，其中22家为量子计算相关机构。尽管未直接涉及中山低温院，但其业务涉及的液氢、液氦技术与量子计算所需的稀释制冷机存在技术关联，可能面临间接限制。",
+      "sources": [
+        {
+          "title": "美国商务部量子计算相关实体制裁",
+          "url": "https://m.163.com/dy/article/J1RI33KN05386WWT.html",
+          "source": "网易手机网"
+        }
+      ]
+    },
+    {
+      "date": "2020年8月",
+      "content": "中山先进低温技术研究院正式成立，由广东省中山市人民政府与中国科学院理化技术研究所共同支持。研究院定位为聚焦超大型低温制冷装备研制和低温技术研究前沿的省级事业单位。",
+      "sources": [
+        {
+          "title": "中山先进低温技术研究院成立",
+          "url": "https://www.cas.cn/",
+          "source": "中国科学院"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

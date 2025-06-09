@@ -1,0 +1,208 @@
+{
+  "company_id": "524",
+  "company_info": {
+    "name": "广东智能无人系统研究院(南沙)",
+    "english_name": "Guangdong Institute of Intelligent Unmanned System (Nansha)",
+    "industry": "智能无人系统研发与海洋高端装备制造",
+    "location": "中国广东省广州市南沙区（中科院明珠科学园内）",
+    "business_scope": "聚焦深海潜水器、水下机器人、无人机等智能无人装备的研发与产业化，涵盖海洋资源勘探、海洋安全保障、海上风电等应用场景",
+    "company_type": "事业单位（新型研发机构）",
+    "market_value": "非上市实体，无公开市值及股价数据",
+    "stock_price": "不适用（非上市机构）",
+    "established_date": "2019年7月",
+    "founder": "中国科学院沈阳自动化研究所、广州市人民政府和广州南沙开发区管委会三方合作共建",
+    "global_presence": "与沈阳自动化研究所形成'南北互动'格局，推动海洋技术装备国产化",
+    "patents": "拥有深海智能无人装备相关专利，包括国内首台6000米级光学探测自主水下机器人（AUV）等",
+    "rd_investment": "依托中国科学院战略性先导科技专项，重点开展深远海大型智能无人海洋装备研发",
+    "description": "广东智能无人系统研究院(南沙)成立于2019年7月，是由中国科学院沈阳自动化研究所、广州市人民政府和广州南沙开发区管委会三方合作共建的省属事业单位。研究院旨在建成国际一流的智能无人系统研发机构，与沈阳自动化研究所形成'南北互动'格局，重点开展深远海大型智能无人海洋装备研发，如国内首台6000米级光学探测自主水下机器人（AUV）'探索6000'、7000米级深海遥控机器人（ROV）'海星7000'等，推动海洋技术装备国产化。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月15日",
+      "content": "美国商务部工业与安全局（BIS）发布拟议规则，对集成到中国'无人机系统'的信息通信技术与服务模块（ICTS）实施国家安全审查，明确将大疆、道通等企业列为重点监控对象。此举表明美国对中国智能无人系统领域的整体打压趋势，研究院作为该领域的核心研发机构，存在潜在被制裁风险。",
+      "sources": [
+        {
+          "title": "美国BIS针对中国无人机系统发布拟议规则",
+          "url": "https://www.bis.doc.gov/index.php/documents/proposed-rule/2025-03-15",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2023年12月15日",
+      "content": "美国国会通过《2025财年国防授权法》，要求对大疆创新、道通智能等中国无人机企业进行国家安全审查，若未通过则列入联邦通信委员会（FCC）'涵盖清单'，禁止其使用美国通信基础设施。该法案体现了美国对中国无人机及智能无人系统领域的系统性限制态度。",
+      "sources": [
+        {
+          "title": "2025财年国防授权法对中国无人机企业影响分析",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/2670",
+          "source": "美国国会"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "广东智能无人系统研究院(南沙)在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 5,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 5,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年5月",
+        "score": 5
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

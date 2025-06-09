@@ -1,0 +1,144 @@
+{
+  "company_id": "704",
+  "company_info": {
+    "name": "汕头大学·香港大学联合病毒学研究所",
+    "english_name": "Shantou University - The University of Hong Kong Joint Virology Institute (STU-HKU JVI)",
+    "industry": "生物医学研究（病毒学与新发传染病领域）",
+    "location": "中国广东省汕头市",
+    "business_scope": "病毒性新发传染病病原的发现及鉴定、重大传染病溯源与进化研究、新型疫苗与药物开发等",
+    "company_type": "非营利性学术研究机构",
+    "market_value": "无公开市值与股价",
+    "stock_price": "非企业实体，无股价信息",
+    "established_date": "2016年",
+    "founder": "前身为2001年成立的汕头大学医学院/香港大学医学院联合流感研究中心",
+    "global_presence": "汕头大学医学院（依托单位）与香港大学新发传染病国家重点实验室（合作单位）",
+    "patents": "配备生物安全三级实验室（BSL-3）和二级实验室（BSL-2）",
+    "rd_investment": "拥有独立科研楼（由李嘉诚基金会捐资建设）",
+    "description": "汕头大学·香港大学联合病毒学研究所是由汕头大学医学院与香港大学新发传染病国家重点实验室共建的国际性科研机构，专注于流感、冠状病毒等呼吸道病毒的研究。研究团队由管轶教授（香港大学终身教授、WHO流感专家组顾问）领导。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月25日",
+      "content": "美国商务部宣布将54个中国实体列入出口管制实体清单，其中包括浪潮集团、中科可控等科技企业，但未明确列出汕头大学·香港大学联合病毒学研究所。此次制裁主要针对人工智能、超级计算机等领域，研究所未被直接点名。",
+      "sources": [
+        {
+          "title": "四川省商务厅 - 美国商务部实体清单更新",
+          "url": "https://swt.sc.gov.cn/sccom/c25030602/2025/4/2/db84dd498485456ab6b4880433f71c81.shtml",
+          "source": "四川省商务厅"
+        }
+      ]
+    },
+    {
+      "date": "2025年1月4日",
+      "content": "美国商务部新增11家中企至实体清单，涉及半导体、光学等领域，仍未提及该研究所。",
+      "sources": [
+        {
+          "title": "新浪财经 - 美国商务部实体清单更新",
+          "url": "http://finance.sina.cn/cj/2025-01-04/detail-inecuivy8003644.d.html",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2023年3月",
+      "content": "美国商务部将华大基因研究院等28家中国实体列入实体清单，理由是'国家安全'。该事件为研究所的病毒学研究可能被美国以'国家安全'为由纳入制裁范围提供了风险预警。",
+      "sources": [
+        {
+          "title": "美国商务部实体清单历史制裁案例",
+          "url": "https://www.commerce.gov/news/press-releases/2023/03",
+          "source": "美国商务部"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

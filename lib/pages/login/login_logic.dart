@@ -38,7 +38,7 @@ class LoginLogic extends GetxController {
   // 加载用户信息
   Future<void> _loadUserInfo() async {
     try {
-      final loginData = await SharedPreference.getLoginData();
+      final loginData = await FYSharedPreferenceUtils.getLoginData();
       if (loginData != null) {
         state.userName.value = loginData.username ?? '';
         _setGreetingMessage();
@@ -77,7 +77,7 @@ class LoginLogic extends GetxController {
 
     try {
       bool hasPatternLock = await PatternLockUtil.isPatternEnabled();
-      bool hasFingerprintLock = await SharedPreference.getFingerprintEnabled();
+      bool hasFingerprintLock = await FYSharedPreferenceUtils.getFingerprintEnabled();
 
       if (hasFingerprintLock) {
         state.loginMethod.value = 2; // 指纹登录
@@ -136,8 +136,8 @@ class LoginLogic extends GetxController {
   // 检查锁定状态
   Future<void> _checkLockStatus() async {
     final failedAttempts =
-        await SharedPreference.getPatternLockFailedAttempts();
-    final timestamp = await SharedPreference.getPatternLockTimestamp();
+        await FYSharedPreferenceUtils.getPatternLockFailedAttempts();
+    final timestamp = await FYSharedPreferenceUtils.getPatternLockTimestamp();
 
     if (failedAttempts >= 5 && timestamp != null) {
       final now = DateTime.now().millisecondsSinceEpoch;
@@ -151,7 +151,7 @@ class LoginLogic extends GetxController {
         // 如果被锁定，切换到密码登录
         // state.loginMethod.value = 0;
       } else {
-        await SharedPreference.resetPatternLockFailedAttempts();
+        await FYSharedPreferenceUtils.resetPatternLockFailedAttempts();
         state.remainingAttempts.value = 5;
         state.isLocked.value = false;
       }
@@ -169,7 +169,7 @@ class LoginLogic extends GetxController {
         state.lockTimeMinutes.value--;
         if (state.lockTimeMinutes.value <= 0) {
           timer.cancel();
-          await SharedPreference.resetPatternLockFailedAttempts();
+          await FYSharedPreferenceUtils.resetPatternLockFailedAttempts();
           state.isLocked.value = false;
           state.remainingAttempts.value = 5;
         }
@@ -197,13 +197,13 @@ class LoginLogic extends GetxController {
       LoginData? loginData = await LoginApi.login(account, password);
 
       if (loginData != null) {
-        await SharedPreference.saveLoginData(loginData);
+        await FYSharedPreferenceUtils.saveLoginData(loginData);
         state.isLogging.value = false;
         
-        bool isFirstLogin = await SharedPreference.isFirstLogin();
+        bool isFirstLogin = await FYSharedPreferenceUtils.isFirstLogin();
         if (isFirstLogin) {
           // 首次登录，需要设置安全锁屏方式
-          await SharedPreference.setNotFirstLogin();
+          await FYSharedPreferenceUtils.setNotFirstLogin();
           ToastUtil.showShort('首次登录需要设置安全锁屏方式');
           Get.offAllNamed(Routers.lockMethodSelection);
         } else {
@@ -237,20 +237,20 @@ class LoginLogic extends GetxController {
     try {
       bool isValid = await PatternLockUtil.verifyPattern(pattern);
       if (isValid) {
-        await SharedPreference.resetPatternLockFailedAttempts();
+        await FYSharedPreferenceUtils.resetPatternLockFailedAttempts();
         state.isLogging.value = false;
         Get.offAllNamed(Routers.home);
       } else {
         final failedAttempts =
-            await SharedPreference.getPatternLockFailedAttempts();
+            await FYSharedPreferenceUtils.getPatternLockFailedAttempts();
         final newFailedAttempts = failedAttempts + 1;
-        await SharedPreference.setPatternLockFailedAttempts(newFailedAttempts);
+        await FYSharedPreferenceUtils.setPatternLockFailedAttempts(newFailedAttempts);
 
         state.remainingAttempts.value = 5 - newFailedAttempts;
         _showError('图案不正确，还可以尝试${state.remainingAttempts.value}次');
 
         if (newFailedAttempts >= 5) {
-          await SharedPreference.setPatternLockTimestamp(DateTime.now().millisecondsSinceEpoch);
+          await FYSharedPreferenceUtils.setPatternLockTimestamp(DateTime.now().millisecondsSinceEpoch);
           await _checkLockStatus();
         }
       }
@@ -283,7 +283,7 @@ class LoginLogic extends GetxController {
   // 检查是否已设置过锁屏方式
   Future<bool> _hasSetupLockMethod() async {
     bool hasPatternLock = await PatternLockUtil.isPatternEnabled();
-    bool hasFingerprintLock = await SharedPreference.getFingerprintEnabled();
+    bool hasFingerprintLock = await FYSharedPreferenceUtils.getFingerprintEnabled();
     return hasPatternLock || hasFingerprintLock;
   }
 }

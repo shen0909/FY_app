@@ -100,36 +100,32 @@
   ],
   "risk_factors": [
     {
-      "type": "geopolitical-risk",
-      "title": "地缘政治风险",
-      "level": "medium",
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
       "details": [
         {
-          "title": "海外项目安全审查",
-          "description": "菲律宾等国以国家安全为由暂停或审查中国电网企业参与的项目，影响南方电网海外业务拓展"
+          "title": "关键技术依赖",
+          "description": "中国南方电网有限责任公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
         },
         {
-          "title": "中美关系影响",
-          "description": "中美贸易摩擦和科技竞争可能影响南方电网在第三国的项目合作和技术交流"
-        },
-        {
-          "title": "关键基础设施敏感性",
-          "description": "电网作为国家关键基础设施，容易成为地缘政治博弈的焦点，面临政治风险"
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
         }
       ]
     },
     {
-      "type": "technology-dependency",
-      "title": "技术依赖风险",
-      "level": "low",
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
       "details": [
         {
-          "title": "核心技术自主可控",
-          "description": "南方电网在特高压、柔性直流等核心电网技术方面已达到世界领先水平，技术依赖风险相对较低"
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
         },
         {
-          "title": "智能电网设备",
-          "description": "部分高端智能电网设备和软件系统可能涉及国外技术，存在一定的技术风险"
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
         }
       ]
     },
@@ -140,52 +136,61 @@
       "details": [
         {
           "title": "海外市场限制",
-          "description": "部分国家对中国国有企业参与电网等关键基础设施项目设置限制或审查"
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
         },
         {
-          "title": "投资审查加强",
-          "description": "各国对外资参与电网投资的审查趋严，可能影响南方电网的海外扩张"
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
         }
       ]
     },
     {
-      "type": "operational-risk",
-      "title": "运营风险",
-      "level": "low",
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
       "details": [
         {
-          "title": "跨境电力贸易政策",
-          "description": "跨境电力贸易受双边政策影响，政策变化可能影响业务稳定性"
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
         },
         {
-          "title": "汇率风险",
-          "description": "海外业务涉及多种货币，汇率波动可能影响收益"
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
         }
       ]
     }
   ],
   "legal_basis": [
     {
-      "category": "investment-review",
-      "title": "外资投资审查机制",
-      "summary": "各国对外资参与关键基础设施投资的审查日趋严格，电网作为国家安全相关领域受到重点关注。",
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
       "details": {
-        "legal_framework": "各国外资投资法、国家安全审查法",
-        "implementation": "通过外国投资委员会等机构对涉及国家安全的投资进行审查",
-        "scope": "覆盖电网、电力等关键基础设施领域的投资和并购",
-        "impact": "可能导致投资被禁止、附加条件或延期审批"
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
     },
     {
-      "category": "critical-infrastructure",
-      "title": "关键基础设施保护法规",
-      "summary": "电网作为国家关键基础设施，各国都有相应的保护法规限制外资参与。",
-      "details": {
-        "legal_framework": "国家安全法、关键基础设施保护法等",
-        "implementation": "限制外资在电网等关键基础设施中的参与程度和控制权",
-        "scope": "涵盖电网建设、运营、维护等各个环节",
-        "penalties": "违规可能面临投资撤销、业务限制等处罚"
-      }
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
     }
   ],
   "risk_score": {
@@ -230,9 +235,15 @@
       }
     },
     "trend": [
-      { "month": "2024年12月", "score": 0 },
-      { "month": "2025年5月", "score": 60 }
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年5月",
+        "score": 60
+      }
     ]
   },
   "last_updated": "2025-05-09T16:45:00+08:00"
-} 
+}

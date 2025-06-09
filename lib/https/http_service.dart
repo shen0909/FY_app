@@ -34,7 +34,7 @@ class HttpService {
     
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        String? token = await SharedPreference.getToken();
+        String? token = await FYSharedPreferenceUtils.getToken();
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }

@@ -1,0 +1,144 @@
+{
+  "company_id": "718",
+  "company_info": {
+    "name": "中山大学天琴中心",
+    "english_name": "Tianqin Center for Gravitational Physics, Sun Yat-sen University",
+    "industry": "基础科学研究（天文学与空间科学）",
+    "location": "中国广东省珠海市（中山大学珠海校区）",
+    "business_scope": "空间引力波探测技术研发、卫星载荷设计、高精度轨道计算、引力场建模等",
+    "company_type": "事业单位（非企业性质），隶属于中山大学物理与天文学院",
+    "market_value": "无市值、股价等企业属性",
+    "stock_price": "非企业实体，无股价信息",
+    "established_date": "2016年4月",
+    "founder": "中山大学",
+    "global_presence": "构建了覆盖地面模拟—卫星试验—空间探测的完整技术链条",
+    "patents": "在高精度空间惯性基准技术领域达到国际领先水平",
+    "rd_investment": "天琴计划分0123四步实施，2030-2035年计划发射三颗无拖曳卫星",
+    "description": "中山大学天琴中心是中国首个专注于空间引力波探测的国家级科研平台，以天琴计划为核心，致力于通过高精度星间激光干涉测量技术，实现对宇宙中低频引力波的探测与研究。研究成果曾获2023年度广东省科学技术奖科技进步一等奖。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月",
+      "content": "美国商务部新增54个中国实体至实体清单，涉及人工智能、超级计算机等领域。天琴中心作为涉及前沿空间技术的科研机构，理论上面临被制裁的潜在风险，但目前尚无直接证据。",
+      "sources": [
+        {
+          "title": "美国商务部实体清单更新",
+          "url": "https://www.commerce.gov/news/press-releases/2025/03",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2023年",
+      "content": "天琴一号技术试验卫星成功发射，验证关键载荷与轨道控制技术。天琴中心研究成果获2023年度广东省科学技术奖科技进步一等奖。",
+      "sources": [
+        {
+          "title": "天琴一号卫星技术验证",
+          "url": "https://physics.sysu.edu.cn/",
+          "source": "中山大学物理与天文学院"
+        }
+      ]
+    },
+    {
+      "date": "2022年8月",
+      "content": "美国商务部将中国航天科技集团第九研究院771所等7家实体列入出口管制清单，理由是'支持中国军事现代化'。此举反映出美国对中国航天科研机构的整体制裁趋势。",
+      "sources": [
+        {
+          "title": "美国商务部航天科研机构制裁",
+          "url": "https://www.commerce.gov/news/press-releases/2022/08",
+          "source": "美国商务部"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

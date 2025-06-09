@@ -58,67 +58,99 @@
   ],
   "risk_factors": [
     {
-      "category": "技术封锁与供应链中断风险",
-      "description": "美国对华科技制裁可能导致深圳中心难以获取先进的高性能芯片、计算组件及相关技术，影响现有超算系统升级和未来E级机研发进度",
-      "severity": "high",
-      "sources": ["美国出口管理条例（EAR）及实体清单机制"]
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "国家超级计算深圳中心在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
     },
     {
-      "category": "国际合作受限风险",
-      "description": "制裁可能削弱深圳中心与国际科研机构的合作，影响其参与全球超算项目、学术交流及技术共享",
-      "severity": "high",
-      "sources": ["美国通过实体清单机制限制中国超算机构的国际协作"]
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
     },
     {
-      "category": "设备更新替代压力",
-      "description": "现有曙光6000系统可能面临零部件供应困难，需要加速国产化替代，但短期内可能面临技术成熟度不足的挑战",
-      "severity": "medium",
-      "sources": ["美国对中科曙光等供应商的制裁影响"]
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
     },
     {
-      "category": "合规与法律风险",
-      "description": "与美国企业或关联方的合作可能触发合规审查，导致合同违约或法律纠纷",
-      "severity": "medium",
-      "sources": ["美国出口管制法律的长臂管辖"]
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
     }
   ],
-  "legal_basis": {
-    "sanctions_cases": [
-      {
-        "company": "中科曙光",
-        "year": "2019年",
-        "action": "被列入实体清单",
-        "legal_basis": "出口管理条例第744节",
-        "reason": "指控参与中国军方超级计算机开发"
-      },
-      {
-        "company": "无锡江南计算技术研究所",
-        "year": "2019年",
-        "action": "被列入实体清单",
-        "legal_basis": "出口管理条例第744节",
-        "reason": "参与违背美国国家安全和外交政策利益的活动"
-      },
-      {
-        "company": "国防科技大学",
-        "year": "2015年",
-        "action": "被列入实体清单",
-        "legal_basis": "出口管理条例第744节",
-        "reason": "与超级计算机军事应用相关"
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
-    ],
-    "potential_risks": [
-      {
-        "mechanism": "实体清单机制",
-        "legal_basis": "出口管理条例第744节",
-        "description": "美国商务部可能以'参与军事现代化'为由将深圳中心列入清单，限制技术出口"
-      },
-      {
-        "mechanism": "先进计算直接产品规则",
-        "legal_basis": "出口管理条例FDP规则",
-        "description": "针对超级计算机相关技术，要求包含美国技术的外国生产设备出口需额外许可"
-      }
-    ]
-  },
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
   "risk_score": {
     "total_score": 50,
     "risk_level": "low",
@@ -126,7 +158,7 @@
       "external_risk": {
         "score": 0,
         "breakdown": {
-          "investigation_announced": 0, 
+          "investigation_announced": 0,
           "investigation_ongoing": 0,
           "personnel_infiltration": 0,
           "personnel_extraction": 0,
@@ -160,10 +192,26 @@
         "score": 30
       },
       "trend": [
-        { "month": "2024年9月", "score": 0 },
-        { "month": "2025年6月", "score": 50 }
+        {
+          "month": "2024年9月",
+          "score": 0
+        },
+        {
+          "month": "2025年6月",
+          "score": 50
+        }
       ]
-    }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 50
+      }
+    ]
   },
   "last_updated": "2025-06-06T16:00:00+08:00"
-} 
+}

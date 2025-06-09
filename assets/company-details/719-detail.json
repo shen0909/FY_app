@@ -1,0 +1,144 @@
+{
+  "company_id": "719",
+  "company_info": {
+    "name": "纳思达股份有限公司",
+    "english_name": "Ninestar Corporation",
+    "industry": "打印耗材、集成电路设计",
+    "location": "中国广东省珠海市",
+    "business_scope": "激光打印机、喷墨打印机、通用打印耗材、耗材芯片、集成电路芯片（如MCU、汽车电子芯片）",
+    "company_type": "股份有限公司（上市）",
+    "market_value": "截至2025年6月9日，总市值322.16亿元",
+    "stock_price": "22.64元",
+    "established_date": "1991年",
+    "founder": "珠海赛纳科技有限公司（控股股东），实际控制人为汪东颖、李东飞、曾阳云",
+    "global_presence": "业务覆盖全球150多个国家和地区，激光打印机市场全球市占率约6.7%，中国市场市占率8.2%",
+    "patents": "拥有格之格、奔图、利盟等知名品牌",
+    "rd_investment": "2024年实现营收264.15亿元，净利润7.49亿元",
+    "description": "纳思达是全球领先的打印显像解决方案提供商，是全球最大的打印耗材制造商之一，也是国内唯一具备打印机全产业链能力的公司。公司通过并购利盟国际、奔图电子等企业，构建了从耗材芯片、通用耗材到打印机整机的完整产业链。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年1月3日",
+      "content": "美国司法部要求法院驳回纳思达的诉讼，并宣称'强迫劳动工作组'将纳思达列入实体清单的'合理理由'符合标准。司法部主张UFLPA的'可反驳推定'条款要求企业自证供应链无强迫劳动，纳思达需承担举证责任。",
+      "sources": [
+        {
+          "title": "环球网 - 中企反击美强迫劳动指控",
+          "url": "http://m.toutiao.com/group/7320373830239781387/?upstream_biz=doubao",
+          "source": "环球网"
+        }
+      ]
+    },
+    {
+      "date": "2023年8月22日",
+      "content": "纳思达及相关子公司在美国国际贸易法院提起诉讼，请求撤销美国国土安全部将其列入UFLPA实体清单的决定，并申请临时禁令禁止执行该决定。公司指控美方行政决定'随意、武断'，违反美国《行政程序法》。",
+      "sources": [
+        {
+          "title": "纳思达官网公告 - 关于在美国提起诉讼并申请禁令的公告",
+          "url": "https://www.ninestargroup.com/news/300.html",
+          "source": "纳思达股份有限公司"
+        }
+      ]
+    },
+    {
+      "date": "2023年6月10日",
+      "content": "美国国土安全部将纳思达及其部分珠海本地子公司列入'维吾尔强迫劳动预防法'（UFLPA）实体清单，限制其产品进入美国市场。受此影响，纳思达股价次日大跌超6%。",
+      "sources": [
+        {
+          "title": "芯智讯 - 纳思达被美国国土安全部列入实体清单",
+          "url": "http://m.toutiao.com/group/7243609037571490365/?upstream_biz=doubao",
+          "source": "芯智讯"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

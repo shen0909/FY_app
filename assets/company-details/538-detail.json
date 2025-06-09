@@ -1,0 +1,208 @@
+{
+  "company_id": "538",
+  "company_info": {
+    "name": "立讯精密工业股份有限公司",
+    "english_name": "Luxshare Precision Industry Co., Ltd.",
+    "industry": "消费电子制造、汽车电子、通信设备",
+    "location": "总部位于广东省东莞市，制造基地分布于中国、越南、墨西哥等地",
+    "business_scope": "消费电子（如智能手机连接器、无线充电模组、声学组件）、汽车电子（如车载连接器、智能座舱系统）、企业通讯（如高速连接器、光模块）",
+    "company_type": "股份有限公司（上市），控股股东为立讯有限公司（持股38.31%）",
+    "market_value": "截至2025年6月6日，总市值2270亿元",
+    "stock_price": "31.32元（2025年6月6日）",
+    "established_date": "2004年5月24日",
+    "founder": "立讯有限公司为控股股东",
+    "global_presence": "在全球拥有超过10万名员工，深度参与苹果、华为等头部品牌的产品制造",
+    "patents": "专利申请量累计超过1.2万项，在高速互连领域具有显著优势",
+    "rd_investment": "研发投入连续三年超过百亿元，2023年汽车互联产品营收同比增长50.46%",
+    "description": "立讯精密成立于2004年，2010年在深圳证券交易所上市（股票代码：002475），是全球领先的精密电子连接器、消费电子模组及智能硬件解决方案提供商。公司深度参与苹果供应链，提供iPhone的Lightning连接器、AirPods的声学组件等，其自研的OptaMax®裸线技术为AI服务器提供低时延、高带宽解决方案，已进入英伟达等国际巨头的供应链。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月10日",
+      "content": "立讯精密在投资者关系活动中回应美国'对等关税'政策影响，称国内制造的成品出口美国比例极少，若客户要求转移产能，公司可在东南亚或墨西哥快速扩产。",
+      "sources": [
+        {
+          "title": "立讯精密回应美国关税政策影响",
+          "url": "https://www.luxshare-ict.com/investor-relations/2025-04-10",
+          "source": "立讯精密官网"
+        }
+      ]
+    },
+    {
+      "date": "2023年12月19日",
+      "content": "美国商务部将富士康旗下两家子公司列入'未经验证清单'(UVL)，立讯精密作为同行业企业，面临类似供应链审查风险。",
+      "sources": [
+        {
+          "title": "美国将富士康子公司列入未经验证清单",
+          "url": "https://www.bis.doc.gov/index.php/documents/about-bis/newsroom/press-releases/3266-2023-12-19-uvl-additions/file",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2021年1月26日",
+      "content": "美国企业向美国国际贸易委员会(ITC)申请对立讯精密发起'337调查'，指控其电气连接器侵犯专利。工信部回应称支持企业积极应对，立讯精密随后发布公告否认侵权。",
+      "sources": [
+        {
+          "title": "美国ITC对立讯精密发起337调查",
+          "url": "https://www.usitc.gov/press_room/news_release/2021/er0126ll1770.htm",
+          "source": "美国国际贸易委员会"
+        },
+        {
+          "title": "立讯精密回应337调查",
+          "url": "https://www.luxshare-ict.com/news/2021-01-26",
+          "source": "立讯精密官网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "立讯精密工业股份有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 80,
+    "risk_level": "low",
+    "components": {
+      "external_risk": {
+        "score": 15,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 40
+      },
+      "security_impact": {
+        "score": 20
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 80
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

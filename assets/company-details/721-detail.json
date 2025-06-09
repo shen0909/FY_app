@@ -1,0 +1,144 @@
+{
+  "company_id": "721",
+  "company_info": {
+    "name": "珠海航宇微科技股份有限公司",
+    "english_name": "Zhuhai Aerospace Microchips Science & Technology Co., Ltd.",
+    "industry": "计算机、通信和其他电子设备制造业",
+    "location": "中国广东省珠海市",
+    "business_scope": "宇航SPARC V8处理器SOC、立体封装SIP宇航微系统、商业卫星星座运营及卫星大数据应用、智能测绘与智慧城市建设",
+    "company_type": "国有控股上市公司（股票代码：300053）",
+    "market_value": "截至2025年6月9日，总市值约91.01亿元",
+    "stock_price": "13.06元",
+    "established_date": "2000年",
+    "founder": "第一大股东为珠海格力金融投资管理有限公司，实际控制人为珠海市国资委",
+    "global_presence": "中国唯一一家进入卫星大数据行业的民营上市公司，运营珠海一号卫星星座",
+    "patents": "自主研发的玉龙系列人工智能芯片已实现国产化替代",
+    "rd_investment": "构建了卫星-地面-应用全产业链布局",
+    "description": "珠海航宇微科技股份有限公司是中国宇航电子领域的标杆企业，专注于宇航电子、卫星星座及大数据、人工智能芯片等领域。公司宇航芯片和微系统技术应用于航天、国防等关键领域，提供遥感大数据服务。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月14日",
+      "content": "航宇微回应投资者称，美国关税政策对公司现有业务及客户不构成重大影响。公司表示美国关税政策对其境内业务影响有限，客户主要为国内实体，未受直接冲击。",
+      "sources": [
+        {
+          "title": "同花顺财经 - 航宇微回应美国关税政策影响",
+          "url": "https://m.10jqka.com.cn/20250414/c667430989.shtml",
+          "source": "同花顺财经"
+        }
+      ]
+    },
+    {
+      "date": "2024年10月18日",
+      "content": "美国以'技术竞争威胁'为由，对航宇微在卫星大数据和星链领域的发展实施制裁，认为其技术实力可能影响美国战略利益。",
+      "sources": [
+        {
+          "title": "东方财富网股吧 - 美国制裁航宇微的原因",
+          "url": "https://mguba.eastmoney.com/mguba/article/0/1472254174",
+          "source": "东方财富网股吧"
+        }
+      ]
+    },
+    {
+      "date": "2022年8月25日",
+      "content": "美国商务部将航宇微列入实体清单，限制其获取美国技术和产品。公司表示将积极应对，保障业务连续性。",
+      "sources": [
+        {
+          "title": "巨潮资讯网 - 关于公司被美国商务部列入实体清单的公告",
+          "url": "http://www.cninfo.com.cn",
+          "source": "巨潮资讯网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

@@ -1,0 +1,212 @@
+{
+  "company_id": "534",
+  "company_info": {
+    "name": "东莞光茂科技有限公司",
+    "english_name": "Dongguan Guangmao Technology Co., Ltd.",
+    "industry": "半导体设备制造与晶圆代工",
+    "location": "中国广东省东莞市",
+    "business_scope": "专注于28-40纳米成熟制程半导体制造与服务，为多媒体、物联网、终端设备等消费品及民用行业提供芯片产品及解决方案",
+    "company_type": "有限责任公司（国有独资）",
+    "market_value": "未独立上市，无公开市值及股价数据",
+    "stock_price": "不适用（未上市）",
+    "established_date": "2023年12月27日",
+    "founder": "东莞市新兴产业投资集团",
+    "global_presence": "以广东省东莞市为核心，致力于粤港澳大湾区半导体产业集群建设",
+    "patents": "拥有28-40纳米成熟制程相关专利技术，与华为海思合作开发特定应用芯片",
+    "rd_investment": "设立产学研合作中心，与中山大学、华南理工大学共建联合实验室，计划2025年下半年实现月产2万片晶圆规模",
+    "description": "东莞光茂科技成立于2023年12月27日，是东莞市属国有独资高新技术企业，专注于28-40纳米成熟制程半导体制造与服务。公司依托国有资本支持，致力于满足智能家居、工业控制、汽车电子等领域对低成本、高可靠性芯片的需求，其研发的物联网芯片已应用于智慧城市传感器节点，支持低功耗长距离通信。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月6日",
+      "content": "美国商务部将140家中国企业列入实体清单，包括半导体设备厂商北方华创、拓荆科技等，虽未直接涉及东莞光茂科技，但反映了美国对中国半导体产业的持续打压趋势。",
+      "sources": [
+        {
+          "title": "美国商务部新增37家中国企业至实体清单",
+          "url": "https://finance.sina.cn/cj/2025-01-07/detail-inexqhft8476621.d.html",
+          "source": "新浪财经"
+        },
+        {
+          "title": "美国扩大对华半导体制裁范围",
+          "url": "https://www.commerce.gov/news/press-releases/2025/01/commerce-adds-entities-export-administration-regulations",
+          "source": "美国商务部"
+        }
+      ]
+    },
+    {
+      "date": "2024年12月3日",
+      "content": "美国商务部将中国半导体设备厂商列入实体清单的举措，凸显了美国对成熟制程芯片制造实施出口管制的趋势。尽管光茂科技专注民用领域，但其设备若使用美国技术可能面临供应链中断风险。",
+      "sources": [
+        {
+          "title": "美国对华半导体设备实施新出口管制",
+          "url": "https://new.qq.com/omn/20241203/20241203A088G200.html",
+          "source": "腾讯新闻"
+        }
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "东莞光茂科技有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 305,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 85,
+        "breakdown": {
+          "investigation_announced": 10,
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 30,
+        "breakdown": {
+          "information_leakage": 10,
+          "personnel_mismanagement": 10,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 5,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 120
+      },
+      "security_impact": {
+        "score": 70
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 305
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

@@ -1,0 +1,144 @@
+{
+  "company_id": "702",
+  "company_info": {
+    "name": "中国石油化工股份有限公司茂名分公司",
+    "english_name": "Sinopec Maoming Company",
+    "industry": "石油化工",
+    "location": "广东省茂名市",
+    "business_scope": "涵盖原油加工、乙烯生产、化工新材料制造等，主要产品包括汽油、柴油、航空煤油、聚乙烯、聚丙烯等",
+    "company_type": "有限责任公司（法人独资）",
+    "market_value": "作为中石化全资子公司，未独立上市，母公司中石化市值为5152.91亿港元",
+    "stock_price": "未独立上市，母公司中石化股价4.25港元",
+    "established_date": "1983年",
+    "founder": "前身为茂名石油工业公司，现为中石化旗下全资子公司",
+    "global_presence": "中国重要的炼化一体化基地，原油一次加工能力达2000万吨/年，乙烯产能110万吨/年",
+    "patents": "拥有完善的产业链布局和先进的生产技术",
+    "rd_investment": "积极推进绿色低碳转型，加大环保投入，提升安全生产水平",
+    "description": "中国石油化工股份有限公司茂名分公司是中国石化集团在华南地区的核心炼化企业，专注于石油炼制、化工产品生产及相关技术研发。公司是中国重要的炼化一体化基地，在华南地区能源供应和化工产品市场中占据重要地位。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年6月",
+      "content": "美国乙烷出口限制波及中国石化行业。美国商务部于2025年5月宣布对纯度≥95%的乙烷实施出口许可证制度，并否决了多批对华乙烷出口申请。茂名石化作为中石化旗下重要化工生产基地，若无法获得稳定乙烷供应，可能面临原料成本上升、装置运行效率下降等风险。",
+      "sources": [
+        {
+          "title": "中国国际石油化工大会 - 稀土管制引发连锁反应，美国乙烷禁售",
+          "url": "http://m.toutiao.com/group/7512496212625621523/?upstream_biz=doubao",
+          "source": "中国国际石油化工大会"
+        }
+      ]
+    },
+    {
+      "date": "2025年3月",
+      "content": "美国制裁中国地炼企业，行业风险升级。美国财政部OFAC于2025年3月将山东胜星化工、山东寿光鲁清石化等中国地炼企业列入SDN清单，理由是其采购伊朗原油。茂名石化虽未直接受制裁，但其所属的中石化集团曾因涉及伊朗石油贸易多次被美国关注。",
+      "sources": [
+        {
+          "title": "中国产业经济信息网 - 美制裁盯上中国地炼企业",
+          "url": "http://www.cinic.org.cn/xw/cjyj/1586487.html",
+          "source": "中国产业经济信息网"
+        }
+      ]
+    },
+    {
+      "date": "2023年6月",
+      "content": "中国对美苯乙烯反倾销措施期终复审。中国商务部于2023年6月发起对原产于美国的进口苯乙烯反倾销措施期终复审，茂名石化作为支持申请企业参与其中。该事件反映中美在化工产品贸易领域的摩擦。",
+      "sources": [
+        {
+          "title": "环球网 - 商务部对美国进口苯乙烯反倾销措施期终复审调查",
+          "url": "http://m.toutiao.com/group/7246949536076333601/?upstream_biz=doubao",
+          "source": "环球网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

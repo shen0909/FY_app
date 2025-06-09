@@ -1,0 +1,144 @@
+{
+  "company_id": "717",
+  "company_info": {
+    "name": "明阳智慧能源集团股份公司",
+    "english_name": "Mingyang Smart Energy Group Limited",
+    "industry": "新能源装备制造（风电为主）",
+    "location": "中国广东省中山市",
+    "business_scope": "风电机组研发与制造、风电场开发运营、光伏组件生产、储能系统集成、氢能技术研发等",
+    "company_type": "中外合资股份有限公司（A+H股上市公司，股票代码：601615.SH，MYSE.L）",
+    "market_value": "截至2025年6月7日，总市值约228.97亿元人民币",
+    "stock_price": "10.22元/股",
+    "established_date": "2006年",
+    "founder": "前身为广东明阳风电技术有限公司",
+    "global_presence": "全球海上风电创新排名第一的企业，2024年全球海上风电新增装机量排名第一",
+    "patents": "拥有自主知识产权的半直驱永磁技术",
+    "rd_investment": "覆盖风电全产业链，产品涵盖陆上和海上风电机组",
+    "description": "明阳智慧能源集团股份公司是中国领先的新能源装备制造企业，专注于风电、光伏、储能、氢能等清洁能源领域的高端装备研发与制造。公司2019年在上交所主板上市，2022年在伦敦证券交易所发行GDR，实现沪伦两地上市。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月",
+      "content": "英国国防部以'国家安全'为由反对明阳智能参与北海Green Volt漂浮式风电项目，但英国财政部最终批准，认为项目对能源转型至关重要。",
+      "sources": [
+        {
+          "title": "新浪财经 - 明阳智能海外项目动态",
+          "url": "https://finance.sina.com.cn/stock/relnews/cn/2025-02-14/doc-inekmitk7543455.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2025年2月",
+      "content": "意大利撒丁岛825MW风电项目因'环境影响'否决明阳智能参与，但同一开发商在意大利其他海域采用明阳机组的2.8GW项目通过环评，被外界质疑存在政治因素。",
+      "sources": [
+        {
+          "title": "新浪财经 - 明阳智能意大利项目",
+          "url": "https://finance.sina.com.cn/stock/relnews/cn/2025-02-14/doc-inekmitk7543455.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2024年7月11日",
+      "content": "欧盟扩大对中国风力涡轮机供应商的反补贴调查，将明阳智能纳入调查范围。欧盟认为中国政府为企业提供廉价融资和补贴，扭曲了欧洲市场竞争。",
+      "sources": [
+        {
+          "title": "新浪财经 - 欧盟反补贴调查",
+          "url": "https://finance.sina.com.cn/stock/relnews/cn/2025-02-14/doc-inekmitk7543455.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

@@ -361,15 +361,15 @@ class _RiskPageState extends State<RiskPage> {
     Color borderColor;
 
     switch (riskLevel) {
-      case '高风险':
+      case 'high':
         backgroundColor = Color(0xFFFFECE9);
         borderColor = Color(0xFFFF6850);
         break;
-      case '中风险':
+      case 'medium':
         backgroundColor = Color(0xFFFFF7E6);
         borderColor = Color(0xFFF6D500);
         break;
-      case '低风险':
+      case 'low':
         backgroundColor = Color(0xFFE7FEF8);
         borderColor = Color(0xFF07CC89);
         break;
@@ -457,7 +457,7 @@ class _RiskPageState extends State<RiskPage> {
                   Row(
                     children: [
                       Text(
-                        '风险等级: ',
+                        '风险等级 ',
                         style: FYTextStyles.commonTextStyle(),
                       ),
                       Container(
@@ -468,12 +468,12 @@ class _RiskPageState extends State<RiskPage> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 6.w),
                         child: Text(
-                          item['riskLevel'],
+                          item['riskLevelText'],
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: riskColor,
                             height: 1,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ),
@@ -499,21 +499,21 @@ class _RiskPageState extends State<RiskPage> {
     Color borderColor;
 
     switch (riskLevel) {
-      case '高风险':
+      case 'high':
         backgroundColor = Color(0xFFFFECE9);
         borderColor = Color(0xFFFF6850);
         break;
-      case '中风险':
+      case 'medium':
         backgroundColor = Color(0xFFFFF7E6);
         borderColor = Color(0xFFF6D500);
         break;
-      case '低风险':
+      case 'low':
         backgroundColor = Color(0xFFE7FEF8);
         borderColor = Color(0xFF07CC89);
         break;
       default:
-        backgroundColor = Color(0xFFE7FEF8);
-        borderColor = Color(0xFF07CC89);
+        backgroundColor = FYColors.whiteColor;
+        borderColor = Colors.grey;
     }
 
     return GestureDetector(
@@ -594,7 +594,7 @@ class _RiskPageState extends State<RiskPage> {
                   Row(
                     children: [
                       Text(
-                        '风险等级: ',
+                        '风险等级 ',
                         style: FYTextStyles.commonTextStyle(),
                       ),
                       Container(
@@ -610,7 +610,7 @@ class _RiskPageState extends State<RiskPage> {
                             fontSize: 12.sp,
                             color: riskColor,
                             height: 1,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ),
@@ -627,7 +627,7 @@ class _RiskPageState extends State<RiskPage> {
 
   // 星云
   Widget _buildRiskItem3(Map<String, dynamic> item) {
-    final String riskLevel = item['riskLevel'];
+    final String? riskLevel = item['riskLevel'];
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
     // 获取关注度数据
@@ -638,16 +638,19 @@ class _RiskPageState extends State<RiskPage> {
     Color attentionColor = Colors.grey;
     Color backgroundColor = Colors.white;
     Color borderColor = Colors.grey.withOpacity(0.4);
+    Color textBg = Colors.grey.withOpacity(0.4);
 
     // 根据关注度级别设置颜色
     if (attentionLevel == 'key_focus') {
       attentionColor = Color(0xFFEF4444);
       backgroundColor = Color(0xFFFEE2E2).withOpacity(0.6);
       borderColor = Color(0xFFF87171).withOpacity(0.4);
+      textBg = FYColors.color_FFD8D2;
     } else if (attentionLevel == 'general_focus') {
       attentionColor = Color(0xFFFF9719);
       backgroundColor = Color(0xFFFFF7E6);
       borderColor = Color(0xFFF6D500);
+      textBg = FYColors.color_CEFFEE;
     }
 
     return GestureDetector(
@@ -726,22 +729,25 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        '风险等级: ',
-                        style: FYTextStyles.commonTextStyle(),
+                  Text(
+                    '风险等级 ',
+                    style: FYTextStyles.commonTextStyle(),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(12.w)),
+                        color: textBg),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.w),
+                    child: Text(
+                      item['attentionLevelText'],
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: riskColor,
+                        height: 1,
+                        fontWeight: FontWeight.w400,
                       ),
-                      attentionLevel == 'key_focus' ?
-                      Row(
-                        children: [
-                          Icon(Icons.star,size: 16.w,color: attentionColor),
-                          Icon(Icons.star,size: 16.w,color: attentionColor),
-                        ],
-                      ):
-                      Icon(Icons.star,size: 16.w,color: attentionColor),
-                    ],
+                    ),
                   ),
                 ],
               ),

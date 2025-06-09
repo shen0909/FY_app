@@ -1,0 +1,203 @@
+{
+  "company_id": "540",
+  "company_info": {
+    "name": "深圳市新凯来技术有限公司",
+    "english_name": "Shenzhen Xinkailai Technology Co., Ltd",
+    "industry": "电子制造",
+    "location": "中国广东省深圳市龙岗区",
+    "business_scope": "刻蚀设备、薄膜沉积设备、检测设备、半导体材料及零部件研发",
+    "company_type": "有限责任公司（国有全资）",
+    "market_value": "未独立上市，无公开数据",
+    "stock_price": "不适用（未上市）",
+    "established_date": "2021年8月",
+    "founder": "深圳市重大产业投资集团",
+    "global_presence": "在上海、北京、西安等地及海外设立研发中心，与华为、中芯国际等企业建立合作",
+    "patents": "累计申请专利超1,200项",
+    "rd_investment": "研发的原子层沉积(ALD)设备、刻蚀机等产品打破国外垄断，实现14nm制程关键设备量产",
+    "description": "深圳市新凯来技术有限公司成立于2021年8月，是深圳市重大产业投资集团全资子公司，专注于半导体装备及零部件、电子制造设备的研发与制造。2024年被美国商务部列入实体清单，成为国产半导体设备自主化的代表性企业。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2024年12月3日",
+      "content": "美国商务部工业与安全局(BIS)将新凯来列入'实体清单'，理由是'涉及军事用途'。该制裁依据《出口管理条例》(EAR)第744条款，限制其获取含美国技术的产品和服务。此次共有140家中国半导体相关企业被列入清单。",
+      "sources": [
+        {
+          "title": "多家A股半导体公司回应美国对华出口管制 产业链'国产替代'提速",
+          "url": "http://m.toutiao.com/group/7444132265086517800/",
+          "source": "经济观察报"
+        }
+      ]
+    },
+    {
+      "date": "2025年3月28日",
+      "content": "新凯来在上海SEMICON China 2025展会上发布6大类31款半导体设备新品，包括外延沉积EPI设备、原子层沉积ALD设备等，覆盖14nm至5nm制程工艺。公司表示，制裁倒逼技术自主化，已实现关键零部件100%国产替代。",
+      "sources": [
+        {
+          "title": "国产芯片突然出圈！新凯来发布31款新设备，多只产业链个股涨超10%",
+          "url": "http://m.toutiao.com/group/7486856561785127461/",
+          "source": "钛媒体APP"
+        }
+      ]
+    },
+    {
+      "date": "2025年4月2日",
+      "content": "美国众议院通过HR 1法案，取消《通货膨胀削减法案》(IRA)中对海上风电供应链建设的资助，间接影响半导体设备出口。新凯来作为新能源设备供应商，其海外业务可能进一步受限。",
+      "sources": [
+        {
+          "title": "美国众议院通过法案调整海上风电支持政策",
+          "url": "https://www.nengyuanjie.net/news/2025/04/02/americas-house-adjusts-offshore-wind-support-policy.html",
+          "source": "能源界"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "深圳市新凯来技术有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "risk_score": {
+    "total_score": 290,
+    "risk_level": "high",
+    "components": {
+      "external_risk": {
+        "score": 95,
+        "breakdown": {
+          "investigation_announced": 10,
+          "investigation_ongoing": 20,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 30,
+          "legal_actions": 0,
+          "reputation_attacks": 5,
+          "decoupling_pressure": 20,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 5,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 120
+      },
+      "security_impact": {
+        "score": 70
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 290
+      }
+    ]
+  },
+  "last_updated": "2025-06-08T16:00:00+08:00"
+}

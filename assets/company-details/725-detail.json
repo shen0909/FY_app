@@ -1,0 +1,155 @@
+{
+  "company_id": "725",
+  "company_info": {
+    "name": "中航工业南部保障中心",
+    "english_name": "Southern Regional Support Center (SRSC)",
+    "industry": "航空航天制造支持服务业",
+    "location": "中国南部（推测位于成都或周边地区）",
+    "business_scope": "航空物流、供应链管理、仓储服务、设备维护",
+    "company_type": "国有企业，隶属于中国航空工业集团有限公司",
+    "market_value": "未上市，无公开财务数据",
+    "stock_price": "未上市，无股价信息",
+    "established_date": "近年设立",
+    "founder": "中国航空工业集团有限公司",
+    "global_presence": "服务于中航工业旗下20余家核心制造企业",
+    "patents": "暂无公开专利信息",
+    "rd_investment": "暂无公开研发投入数据",
+    "description": "中航工业南部保障中心是中国航空工业集团有限公司（AVIC）在南部地区设立的综合性后勤保障机构，主要负责航空制造产业链的仓储物流、供应链管理及配套服务。其业务覆盖航空零部件仓储、物流配送、设备维护等领域，服务于中航工业旗下多家核心制造企业，是中航工业在南部地区的关键后勤枢纽。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年6月12日",
+      "content": "美国商务部工业与安全局（BIS）在《联邦公报》更新实体清单，新增43个实体，其中可能包括中航工业南部保障中心（未明确列出，但根据中航工业整体被制裁趋势推测）。",
+      "sources": [
+        {
+          "title": "ICSPEC - 全球电子元器件交易平台",
+          "url": "https://m.icspec.com/pages/detail/detail?id=2192302",
+          "source": "ICSPEC"
+        }
+      ]
+    },
+    {
+      "date": "2025年5月29日",
+      "content": "美国商务部暂停向中国商飞（COMAC）出口C919大飞机关键零部件，包括发动机、航电系统等。中航工业作为C919的主要供应商之一，其下属机构可能受此影响，南部保障中心或涉及相关供应链管理。",
+      "sources": [
+        {
+          "title": "网易新闻 - 有态度的新闻",
+          "url": "https://c.m.163.com/news/a/K0Q5H3K60552AR2H.html",
+          "source": "网易新闻"
+        }
+      ]
+    },
+    {
+      "date": "2025年3月25日",
+      "content": "美国商务部将54家中国实体纳入实体清单，涉及科技、航空等领域。中航工业集团及部分下属单位可能在此列，但南部保障中心未被明确提及。",
+      "sources": [
+        {
+          "title": "财富小灵通 - 财经资讯",
+          "url": "http://m.toutiao.com/group/7486492762821476901/",
+          "source": "财富小灵通"
+        }
+      ]
+    },
+    {
+      "date": "2020年10月13日",
+      "content": "彭博社报道特朗普政府考虑将中航工业集团列入制裁名单，理由是其与中国军方的关联。南部保障中心作为中航工业下属机构，可能因此被间接波及。",
+      "sources": [
+        {
+          "title": "观察者网 - 全球资讯平台",
+          "url": "http://m.toutiao.com/group/6883440277537686023/",
+          "source": "观察者网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

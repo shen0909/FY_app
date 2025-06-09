@@ -1,24 +1,20 @@
 {
-    "company_id": "508",
+  "company_id": "508",
   "company_info": {
-    "basic": {
-      "company_name": "比亚迪股份有限公司",
-      "english_name": "BYD Company Limited",
-      "establishment_date": "1995年",
-      "headquarters": "广东省深圳市",
-      "business_nature": "上市公司",
-      "parent_company": "比亚迪股份有限公司为独立上市公司，无母公司",
-      "main_business": "新能源汽车制造、动力电池研发与生产、电子制造",
-      "business_scope": "新能源汽车（纯电动、插电混动）、动力电池（刀片电池）、消费电子零部件、储能系统、智能轨道交通（云轨、云巴）",
-      "market_cap_a": "10939亿元人民币",
-      "stock_price_a": "359.96元（A股）",
-      "market_cap_hk": "1.22万亿港元",
-      "stock_price_hk": "403.0港元（港股）",
-      "stock_code": "A股：002594.SZ；港股：01211.HK",
-      "employees": "超过70万人",
-      "patents": "累计专利超4.8万项"
-    },
-    "description": "比亚迪是全球领先的新能源整体解决方案提供商，业务涵盖新能源汽车、动力电池、电子制造、储能系统及轨道交通等领域，拥有全产业链垂直整合能力。从电池业务起步，逐步拓展至新能源汽车、电子制造等领域。2024年新能源汽车销量达427万辆，全球市占率20%，连续两年位居全球榜首。"
+    "description": "比亚迪是全球领先的新能源整体解决方案提供商，业务涵盖新能源汽车、动力电池、电子制造、储能系统及轨道交通等领域，拥有全产业链垂直整合能力。从电池业务起步，逐步拓展至新能源汽车、电子制造等领域。2024年新能源汽车销量达427万辆，全球市占率20%，连续两年位居全球榜首。",
+    "established_date": "1995年",
+    "founder": "未公开",
+    "global_presence": "主要业务集中在国内市场",
+    "patents": "具有相关技术专利",
+    "rd_investment": "持续投入研发资金",
+    "name": "比亚迪股份有限公司",
+    "english_name": "BYD Company Limited",
+    "industry": "高新技术产业",
+    "location": "总部位于中国广东省",
+    "business_scope": "高新技术研发、生产和销售",
+    "company_type": "有限责任公司",
+    "market_value": "10939亿元人民币",
+    "stock_price": "359.96元（A股）|403.0港元（港股）"
   },
   "timeline_tracking": [
     {
@@ -52,87 +48,119 @@
           "source": "澎湃新闻"
         }
       ]
+    },
+    {
+      "date": "2024-03-15",
+      "content": "美国持续加强对华高科技企业的出口管制措施，影响相关产业链企业。",
+      "sources": [
+        {
+          "title": "美国商务部出口管制政策更新",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance",
+          "source": "美国商务部"
+        },
+        {
+          "title": "路透社 - 美国科技制裁升级",
+          "url": "https://www.reuters.com/world/china/",
+          "source": "路透社"
+        }
+      ]
     }
   ],
   "risk_factors": [
     {
-      "category": "国际贸易政策风险",
-      "description": "美国通过反补贴税、采购禁令等措施限制比亚迪电池及汽车产品进入美国市场，可能引发其他国家效仿，导致全球市场准入门槛提高",
-      "severity": "high",
-      "sources": ["美国《国防授权法案》《与依赖外国对手电池脱钩法案》及反补贴调查"]
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "企业在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
     },
     {
-      "category": "供应链中断风险",
-      "description": "美国制裁可能导致比亚迪在美采购关键零部件受阻，如半导体、材料等，影响生产效率和成本控制",
-      "severity": "high",
-      "sources": ["美国《出口管理条例》（EAR）对高科技产品的出口限制"]
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
     },
     {
-      "category": "法律与合规风险",
-      "description": "美国国会及政府机构对比亚迪展开调查（如2025年5月国土安全委员会要求提交文件），可能引发法律诉讼或声誉损害",
-      "severity": "medium",
-      "sources": ["美国《反补贴税法》及行政审查程序"]
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
     },
     {
-      "category": "市场竞争与渠道风险",
-      "description": "美国制裁叠加国内经销商危机（如山东乾城集团停业、南宁经销商跑路），可能导致渠道信任体系崩塌，市场份额流失",
-      "severity": "medium",
-      "sources": ["雪球用户分析及行业报道"]
-    },
-    {
-      "category": "技术封锁风险",
-      "description": "美国可能联合盟友限制对华技术出口，影响比亚迪在电池、智能驾驶等领域的研发进度",
-      "severity": "high",
-      "sources": ["美国《出口管理条例》及技术管制政策"]
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
     }
   ],
-  "legal_basis": {
-    "sanctions_cases": [
-      {
-        "company": "宁德时代",
-        "year": "2025年1月",
-        "action": "被列入美国国防部'中国军事公司'（CMC）清单",
-        "legal_basis": "《国防授权法案》第1260H条",
-        "reason": "指控其参与中国'军民融合'政策"
-      },
-      {
-        "company": "国轩高科",
-        "year": "2025年3月",
-        "action": "被纳入《与依赖外国对手电池脱钩法案》限制范围",
-        "legal_basis": "美国《国防授权法案》第805条",
-        "reason": "禁止国土安全部采购"
-      },
-      {
-        "company": "华为、中兴",
-        "year": "2018-2019年",
-        "action": "被列入美国商务部'实体清单'",
-        "legal_basis": "《出口管理条例》（EAR）第744章",
-        "reason": "以'国家安全'为由实施出口限制"
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
-    ],
-    "byd_specific": [
-      {
-        "mechanism": "《出口管理条例》（EAR）",
-        "legal_basis": "美国商务部用于限制敏感技术出口的核心法规",
-        "description": "适用于实体清单及反补贴调查"
-      },
-      {
-        "mechanism": "《国防授权法案》",
-        "legal_basis": "第805条和第1260H条",
-        "description": "禁止国防部及国土安全部从中国电池企业采购，强化供应链'去中国化'"
-      },
-      {
-        "mechanism": "《反补贴税法》",
-        "legal_basis": "美国商务部用于调查外国企业是否获得政府补贴",
-        "description": "可据此征收反补贴税"
-      },
-      {
-        "mechanism": "《与依赖外国对手电池脱钩法案》",
-        "legal_basis": "进一步扩大对中国电池企业的限制范围",
-        "description": "构建多层次供应链封锁体系"
-      }
-    ]
-  },
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
   "risk_score": {
     "total_score": 235,
     "risk_level": "high",
@@ -140,7 +168,7 @@
       "external_risk": {
         "score": 45,
         "breakdown": {
-          "investigation_announced": 10, 
+          "investigation_announced": 10,
           "investigation_ongoing": 20,
           "personnel_infiltration": 0,
           "personnel_extraction": 0,
@@ -174,9 +202,26 @@
         "score": 50
       },
       "trend": [
-        { "month": "2024年9月", "score": 0 },
-        { "month": "2025年6月", "score": 235 }
+        {
+          "month": "2024年9月",
+          "score": 0
+        },
+        {
+          "month": "2025年6月",
+          "score": 235
+        }
       ]
-    }
-  }
-} 
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 185
+      },
+      {
+        "month": "2025年6月",
+        "score": 235
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

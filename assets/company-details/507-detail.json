@@ -1,21 +1,20 @@
 {
-    "company_id": "507",
-    "company_info": {
-    "basic": {
-      "company_name": "深圳华大基因股份有限公司",
-      "english_name": "BGI Genomics Co., Ltd.",
-      "establishment_date": "2010年",
-      "headquarters": "中国广东省深圳市盐田区",
-      "business_nature": "股份有限公司（上市企业）",
-      "parent_company": "深圳华大基因科技有限公司（华大集团核心子公司）",
-      "main_business": "生物科技/基因测序",
-      "business_scope": "基因检测、肿瘤防控、出生缺陷筛查、微生物研究、农业育种等",
-      "market_cap": "214.06亿元人民币",
-      "stock_info": "深交所创业板上市，股票代码：300676，股价：51.48元",
-      "listing_date": "2017年在深交所创业板上市",
-      "global_presence": "业务覆盖全球100多个国家和地区"
-    },
-    "description": "深圳华大基因股份有限公司是全球领先的生命科学前沿机构，以'产学研'一体化模式推动基因组学研究与应用，业务涵盖基因检测、精准医疗、科研服务等领域，致力于通过基因科技改善人类健康。公司依托华大集团在基因测序领域的技术积累，提供从基因检测设备、试剂到数据分析的全产业链解决方案。"
+  "company_id": "507",
+  "company_info": {
+    "description": "深圳华大基因股份有限公司是全球领先的生命科学前沿机构，以'产学研'一体化模式推动基因组学研究与应用，业务涵盖基因检测、精准医疗、科研服务等领域，致力于通过基因科技改善人类健康。公司依托华大集团在基因测序领域的技术积累，提供从基因检测设备、试剂到数据分析的全产业链解决方案。",
+    "established_date": "2010年",
+    "founder": "未公开",
+    "global_presence": "业务覆盖全球100多个国家和地区",
+    "patents": "具有相关技术专利",
+    "rd_investment": "持续投入研发资金",
+    "name": "深圳华大基因股份有限公司",
+    "english_name": "BGI Genomics Co., Ltd.",
+    "industry": "高新技术产业",
+    "location": "总部位于中国广东省",
+    "business_scope": "高新技术研发、生产和销售",
+    "company_type": "有限责任公司",
+    "market_value": "214.06亿元人民币",
+    "stock_price": "深交所创业板上市，股票代码：300676，股价：51.48元"
   },
   "timeline_tracking": [
     {
@@ -85,67 +84,99 @@
   ],
   "risk_factors": [
     {
-      "category": "国际政治与技术封锁风险",
-      "description": "美国以'国家安全'为由，通过立法限制华大基因获取美国技术及市场准入，可能导致关键设备进口受限、国际合作受阻",
-      "severity": "high",
-      "sources": ["美国《生物安全法案》（H.R.8333号法案）及国会相关声明"]
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "企业在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
     },
     {
-      "category": "供应链中断风险",
-      "description": "基因测序设备核心零部件依赖进口（如光学元件、芯片），若美国扩大制裁范围，可能影响生产连续性",
-      "severity": "high",
-      "sources": ["华大基因2024年年报及行业分析报告"]
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
     },
     {
-      "category": "法律诉讼与合规风险",
-      "description": "美国企业（如因美纳）曾以专利侵权为由对华大智造提起诉讼，未来可能面临更多知识产权纠纷",
-      "severity": "medium",
-      "sources": ["美国特拉华州联邦法院判例（案号：1:22-cv-00543）及华大基因公告"]
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
     },
     {
-      "category": "市场信任与股价波动风险",
-      "description": "制裁事件可能引发投资者担忧，导致股价波动。例如，2025年5月华大基因控股股东质押比例达72.19%，触发'风险'评级",
-      "severity": "medium",
-      "sources": ["华大基因质押公告及鹰眼预警评级模型"]
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
     }
   ],
-  "legal_basis": {
-    "sanctions_cases": [
-      {
-        "company": "药明康德",
-        "year": "2024年",
-        "action": "被美国《生物安全法案》点名",
-        "legal_basis": "美国《出口管理条例》（EAR）第744部分实体清单机制",
-        "reason": "指控其'涉及军事应用'"
-      },
-      {
-        "company": "商汤科技",
-        "year": "2022年",
-        "action": "被列入实体清单",
-        "legal_basis": "EAR第744.11节",
-        "reason": "'支持中国军方现代化'"
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
-    ],
-    "bgi_specific": [
-      {
-        "mechanism": "美国《出口管理条例》（EAR）",
-        "legal_basis": "第744部分：实体清单机制，第744.11节：针对'参与军事现代化'的中国企业",
-        "description": "限制被列名企业获取美国技术及产品"
-      },
-      {
-        "mechanism": "美国《生物安全法案》（H.R.8333）",
-        "legal_basis": "《国家安全法》及《对外贸易法》",
-        "description": "限制中国生物技术公司从美国联邦机构获取基因数据"
-      }
-    ],
-    "china_countermeasures": [
-      {
-        "measure": "不可靠实体清单",
-        "legal_basis": "《对外贸易法》《国家安全法》及《反外国制裁法》",
-        "description": "中国将美国因美纳列入不可靠实体清单，对其采取限制进出口、投资等措施"
-      }
-    ]
-  },
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
   "risk_score": {
     "total_score": 210,
     "risk_level": "high",
@@ -153,7 +184,7 @@
       "external_risk": {
         "score": 75,
         "breakdown": {
-          "investigation_announced": 10, 
+          "investigation_announced": 10,
           "investigation_ongoing": 20,
           "personnel_infiltration": 0,
           "personnel_extraction": 0,
@@ -187,11 +218,34 @@
         "score": 40
       },
       "trend": [
-        { "month": "2024年5月", "score": 0 },
-        { "month": "2024年6月", "score": 150 },
-        { "month": "2024年7月", "score": 190 },
-        { "month": "2025年5月", "score": 210 }
+        {
+          "month": "2024年5月",
+          "score": 0
+        },
+        {
+          "month": "2024年6月",
+          "score": 150
+        },
+        {
+          "month": "2024年7月",
+          "score": 190
+        },
+        {
+          "month": "2025年5月",
+          "score": 210
+        }
       ]
-    }
-  }
-} 
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 160
+      },
+      {
+        "month": "2025年6月",
+        "score": 210
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

@@ -1,18 +1,16 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
-
 import '../../../models/risk_company_details.dart';
-import '../../../services/risk_company_service.dart';
 import 'risk_details_state.dart';
 
 class RiskDetailsLogic extends GetxController {
   final state = RiskDetailsState();
-  final RiskCompanyService _companyService = RiskCompanyService();
 
   @override
   void onInit() {
@@ -33,7 +31,7 @@ class RiskDetailsLogic extends GetxController {
     state.isLoading.value = true;
     
     try {
-      state.riskCompanyDetail.value = await _companyService.getCompanyDetail(companyId);
+      state.riskCompanyDetail.value = await ApiService().getCompanyDetail(companyId);
     } catch (e) {
       print('加载企业详情出错: $e');
     } finally {

@@ -48,7 +48,7 @@ class SplashLogic extends GetxController {
   
   // 检查是否有登录数据
   Future<bool> _hasLoginData() async {
-    String? token = await SharedPreference.getToken();
+    String? token = await FYSharedPreferenceUtils.getToken();
     return token != null && token.isNotEmpty;
   }
 

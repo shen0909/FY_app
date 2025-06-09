@@ -1,0 +1,144 @@
+{
+  "company_id": "715",
+  "company_info": {
+    "name": "广东通宇通讯股份有限公司",
+    "english_name": "Tongyu Communication INC.",
+    "industry": "通信设备制造业",
+    "location": "中国广东省中山市",
+    "business_scope": "基站天线、微波天线、射频器件、光模块、小基站等产品的研发与销售，客户覆盖华为、中兴、诺基亚、爱立信等主流设备商及全球电信运营商",
+    "company_type": "股份有限公司（上市）",
+    "market_value": "截至2025年6月9日，总市值约76.95亿元人民币",
+    "stock_price": "14.73元/股",
+    "established_date": "1996年",
+    "founder": "2016年在深交所上市（股票代码：002792）",
+    "global_presence": "海外业务集中在东南亚、中东、印度等地区，2025年一季度海外业务拓展良好",
+    "patents": "拥有国家级企业技术中心",
+    "rd_investment": "国家火炬计划重点高新技术企业",
+    "description": "广东通宇通讯股份有限公司成立于1996年，是全球领先的通信天线及射频器件供应商。公司产品广泛应用于全球通信网络建设，海外业务重点聚焦一带一路沿线及中东等地区。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月8日",
+      "content": "通宇通讯在互动平台回应投资者称，公司出口美国业务占比很小，美国加征关税对其业务无实质影响。海外业务重点聚焦'一带一路'沿线及中东等地区，一季度海外订单增长显著。",
+      "sources": [
+        {
+          "title": "新浪财经 - 通宇通讯业务动态",
+          "url": "https://finance.sina.com.cn/roll/2025-04-08/doc-inesmras0609120.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2024年3月25日",
+      "content": "美国USConec公司向ITC提起337调查申请，指控5家中国企业光纤连接器产品侵犯其专利。通宇通讯未被明确列入涉案名单，但行业内其他企业面临知识产权诉讼风险。",
+      "sources": [
+        {
+          "title": "东方财富网 - 光纤连接器专利纠纷",
+          "url": "https://mguba.eastmoney.com/mguba/article/0/1411422207",
+          "source": "东方财富网"
+        }
+      ]
+    },
+    {
+      "date": "2023年",
+      "content": "受美国及西方政策影响，部分地区（如澳洲、加拿大）限制中国企业参与通信设备投标，导致海外订单下滑。公司需加大海外投入并考虑设厂以应对地域政策限制。",
+      "sources": [
+        {
+          "title": "年度董事会经营评述",
+          "url": "https://www.cninfo.com.cn/",
+          "source": "巨潮资讯网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

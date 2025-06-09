@@ -1,0 +1,149 @@
+{
+  "company_id": "724",
+  "company_info": {
+    "name": "蓝鲲海洋科技有限公司",
+    "english_name": "BLUEROC",
+    "industry": "科学研究和技术服务业（海洋工程装备制造、人工智能基础软件开发）",
+    "location": "中国广东省珠海市香洲区",
+    "business_scope": "深海探测技术、水声探测阵列、深海潜标、海洋大型浮标、自主航行无人艇研发及生产；海洋数据分析与数字化工程",
+    "company_type": "有限责任公司（非上市企业）",
+    "market_value": "未上市，无公开数据",
+    "stock_price": "未上市，无股价信息",
+    "established_date": "2021年3月",
+    "founder": "崔维成教授（蛟龙号原第一副总设计师）",
+    "global_presence": "业务覆盖海洋工程装备研发、海洋环境监测、生态修复等领域",
+    "patents": "近40项专利及软件著作权",
+    "rd_investment": "暂无公开研发投入数据",
+    "description": "蓝鲲海洋科技有限公司成立于2021年3月，由蛟龙号原第一副总设计师崔维成教授发起创办，核心团队包括海军声学专家、生态修复领域专家等，是国家高新技术企业和广东省'专精特新'中小企业。公司以'服务国防建设，立足海洋领域国产替代'为使命，构建'空天地海'一体化海洋立体观测系统。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年3月27日",
+      "content": "美国商务部进一步将42家中国实体（含量子技术领域企业）纳入实体清单，涉及航天星科技应用有限公司、中国科学院宁波材料技术与工程研究所等。蓝鲲海洋科技虽未被直接列入，但其业务领域属于美国管制范围。",
+      "sources": [
+        {
+          "title": "新浪财经 - 制裁升级报道",
+          "url": "https://finance.sina.com.cn/roll/2025-03-27/doc-inerachq5290404.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2025年3月25日",
+      "content": "美国商务部工业与安全局（BIS）将浪潮集团旗下6家子公司、北京智源人工智能研究院等12家实体列入'实体清单'，理由是'支持中国军事现代化'。此举可能对海洋科技企业产生预警作用。",
+      "sources": [
+        {
+          "title": "网易手机网 - 制裁事件报道",
+          "url": "http://m.163.com/dy/article/JROOM5BD0524K8JC.html",
+          "source": "网易手机网"
+        },
+        {
+          "title": "新浪财经 - 实体清单更新",
+          "url": "https://finance.sina.com.cn/cj/2025-03-26/doc-ineqyern6060533.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2023年",
+      "content": "公司因测绘成果质量不合格被珠海市自然资源局责令整改，可能影响其参与政府项目的资质。",
+      "sources": [
+        {
+          "title": "珠海市自然资源局公告",
+          "url": "http://zrzyj.zhuhai.gov.cn/gkmlpt/content/3/3618/mpost_3618765.html",
+          "source": "珠海市自然资源局"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

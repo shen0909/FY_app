@@ -1,0 +1,144 @@
+{
+  "company_id": "711",
+  "company_info": {
+    "name": "湛江聚鑫新能源有限公司",
+    "english_name": "Zhanjiang Juxin New Energy Co., Ltd.",
+    "industry": "新能源材料制造业",
+    "location": "中国广东省湛江市坡头区官渡工业园",
+    "business_scope": "球形石墨纯化、包覆、筛分及相关环保设施建设，锂离子电池负极材料生产",
+    "company_type": "有限责任公司，隶属于东岛新能源旗下企业",
+    "market_value": "未上市，无公开交易数据",
+    "stock_price": "无股价信息",
+    "established_date": "2006年",
+    "founder": "东岛新能源（广东东岛新能源股份有限公司）",
+    "global_presence": "国内锂离子电池碳负极材料用球形石墨领域的龙头企业，工信部认定的专精特新小巨人企业，粤西地区唯一获此殊荣的新能源材料企业",
+    "patents": "拥有国内第一条球形石墨自动化生产线，在球形石墨纯化、包覆、筛分等核心工艺方面的技术突破",
+    "rd_investment": "年产能达3万吨，2023年扩建纯化项目配套建设5000m³/d污水处理站",
+    "description": "湛江聚鑫新能源有限公司是国内锂离子电池碳负极材料用球形石墨领域的龙头企业，专注于天然石墨负极材料的纯化、包覆、烧成等核心工艺。公司是工信部认定的专精特新小巨人企业，市场占有率稳居全国前三，产品被宁德时代、比亚迪等头部电池厂商广泛采用。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年4月21日",
+      "content": "美国商务部对柬埔寨、马来西亚、泰国、越南四国光伏产品作出双反终裁，税率最高达3500%，涉及晶科、晶澳等中企海外产能。此举反映美国对中国新能源产业供应链的持续打压，可能影响锂电池材料行业的国际合作。",
+      "sources": [
+        {
+          "title": "美国对东南亚光伏产品反倾销终裁",
+          "url": "http://m.toutiao.com/group/7496123434229842472/",
+          "source": "澎湃新闻"
+        }
+      ]
+    },
+    {
+      "date": "2025年1月14日",
+      "content": "美国国土安全部将37家中企列入UFLPA实体清单，包括5家光伏企业，指控其采购新疆硅料。此举显示美国对中国新能源产业链的制裁扩大，湛江聚鑫作为锂电材料企业需关注相关风险。",
+      "sources": [
+        {
+          "title": "美国将37家中企列入UFLPA实体清单",
+          "url": "https://finance.sina.com.cn/roll/2025-01-15/doc-inefaiqt7602035.shtml",
+          "source": "新浪财经"
+        }
+      ]
+    },
+    {
+      "date": "2024年12月4日",
+      "content": "美国ITC对TOPCon太阳能电池启动337调查，涉及天合光能、阿特斯等中企。此案例反映美国对中国新能源技术的贸易保护措施，可能影响整个新能源材料供应链。",
+      "sources": [
+        {
+          "title": "美国ITC对TOPCon太阳能电池启动337调查",
+          "url": "https://swt.sc.gov.cn/sccom/c25030602/2025/3/12/63cb9a1d0e93438dac1802899293f7a0.shtml",
+          "source": "四川省商务厅"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

@@ -1,0 +1,262 @@
+{
+  "company_id": "549",
+  "company_info": {
+    "name": "广船国际有限公司",
+    "english_name": "Guangzhou Shipyard International Company Limited",
+    "region": "中国广东省广州市",
+    "industry": "船舶制造与海洋工程（细分领域：LNG双燃料客滚船、化学品船、军辅船）",
+    "type": "国有控股上市公司，隶属于中国船舶集团有限公司（CSSC）",
+    "stock_code": "600685.SH，港股代码：00317.HK",
+    "market_info": {
+      "market_cap": "8448.59万元人民币（2025年5月14日）",
+      "stock_price": "3.30元，当日涨幅1.54%"
+    },
+    "description": "广船国际成立于1954年，是中国船舶集团旗下核心造船企业，专注于高端船舶建造与海洋工程装备研发。公司以绿色船舶技术为核心竞争力，2025年4月与瑞士地中海航运（MSC）签署46亿元人民币订单，建造LNG双燃料客滚船，交付期排至2028年。其产品涵盖化学品船、汽车运输船、军辅船等，手持订单总量达497.69万载重吨，国际市场份额位居全球前十。",
+    "established_date": "未公开",
+    "founder": "未公开",
+    "global_presence": "主要业务集中在国内市场",
+    "patents": "具有相关技术专利",
+    "rd_investment": "持续投入研发资金",
+    "location": "总部位于中国广东省",
+    "business_scope": "高新技术研发、生产和销售",
+    "company_type": "有限责任公司",
+    "market_value": "未公开",
+    "stock_price": "未上市"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025-01-06",
+      "content": "美国国防部更新\"中国涉军企业清单\"（CMC清单），将中国船舶集团及旗下广州文冲船厂等子公司列入，但未明确包含广船国际。此次制裁依据《2021财年国防授权法案》第1260H条，限制美国政府与受制裁企业签订合同。",
+      "sources": [
+        {
+          "title": "国防部根据《国防授权法》第1260H条公布中国军事公司名单",
+          "url": "https://www.defense.gov/News/Releases/Release/Article/4023145/dod-releases-list-of-chinese-military-companies-in-accordance-with-section-1260/",
+          "source": "美国国防部"
+        },
+        {
+          "title": "中国军工企业指定名单公布",
+          "url": "https://www.federalregister.gov/documents/2025/01/08/2025-00168/self-regulatory-organizations-investors-exchange-llc-notice-of-filing-and-immediate-effectiveness-of",
+          "source": "美国联邦公报"
+        }
+      ]
+    },
+    {
+      "date": "2024-06-19",
+      "content": "美国财政部将蓬莱巨涛海洋工程重工有限公司列入SDN清单，制裁依据为\"为俄罗斯Arctic LNG 2项目提供关键技术支持\"。蓬莱巨涛是中国首个因涉俄项目被制裁的海工船厂，其案例反映美国对船舶企业涉俄业务的敏感态度。",
+      "sources": [
+        {
+          "title": "国际海洋工程网报道",
+          "url": "https://www.worldoe.com/html/2024/Shipyards_0618/204002.html",
+          "source": "国际海洋工程网"
+        },
+        {
+          "title": "财新网分析报道",
+          "url": "https://companies.caixin.com/2024-06-19/102207478.html",
+          "source": "财新网"
+        }
+      ]
+    },
+    {
+      "date": "2024-02-08",
+      "content": "日本商船三井因美国制裁退出俄罗斯Arctic LNG 2项目租船合同，涉及广船国际建造的破冰型成品油船。尽管广船国际未被直接制裁，但其参与的俄罗斯项目面临供应链中断风险。",
+      "sources": [
+        {
+          "title": "国际船舶网报道",
+          "url": "http://m.toutiao.com/group/7333107879946043938/?upstream_biz=doubao",
+          "source": "国际船舶网"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-27",
+      "content": "美国商务部以\"参与南海岛礁建设\"为由，将中国船舶集团旗下3家科研机构（第722研究所、武汉迈力特通信有限公司、北京环佳通信技术有限公司）列入实体清单。广船国际未被直接制裁，但其母公司的制裁可能对供应链产生间接影响。",
+      "sources": [
+        {
+          "title": "国际船舶网相关报道",
+          "url": "http://wap.eworldship.com/index.php/eworldship/news/article?id=162950",
+          "source": "国际船舶网"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "广船国际有限公司在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
+    },
+    {
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
+    }
+  ],
+  "legal_precedent_basis": {
+    "similar_cases": {
+      "title": "同行业制裁案例",
+      "content": [
+        {
+          "subtitle": "蓬莱巨涛（2024年SDN清单）",
+          "text": "制裁依据：美国第14024号行政命令（2021年），认定其为俄罗斯Arctic LNG 2项目提供\"实质援助\"。影响：被冻结在美资产，禁止与美国实体交易，国际合作伙伴（如日本商船三井）终止合作。"
+        },
+        {
+          "subtitle": "中国船舶集团子公司（2020年实体清单）",
+          "text": "制裁依据：《2021财年国防授权法案》第1260H条，指控其参与南海军事化建设。影响：受限获取美国技术，部分国际订单转移至韩国船厂。"
+        }
+      ]
+    },
+    "legal_basis": {
+      "title": "相关法律与政策",
+      "content": [
+        {
+          "subtitle": "《2021财年国防授权法案》第1260H条",
+          "text": "授权美国国防部制定\"中国涉军企业清单\"（CMC清单），限制政府合同与投资。"
+        },
+        {
+          "subtitle": "《1974年贸易法》第301条",
+          "text": "美国对中国造船业发起\"301调查\"，实施阶梯式港口收费和技术封锁。"
+        },
+        {
+          "subtitle": "第14024号行政命令（2021年）",
+          "text": "针对\"恶意外国活动\"实施制裁，包括冻结资产和禁止交易。"
+        }
+      ]
+    }
+  },
+  "risk_score": {
+    "total_score": 105,
+    "risk_level": "medium",
+    "components": {
+      "external_risk": {
+        "score": 20,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 10,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 10,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 5,
+        "breakdown": {
+          "information_leakage": 5,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 80
+      }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 105
+      }
+    ]
+  },
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
+      }
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
+  "last_updated": "2025-06-09T15:20:08+08:00"
+}

@@ -1,0 +1,144 @@
+{
+  "company_id": "723",
+  "company_info": {
+    "name": "广东智联航空科技有限公司",
+    "english_name": "Guangdong Zhilian Aviation Technology Co., Ltd.",
+    "industry": "航空航天装备制造业（无人机细分领域）",
+    "location": "中国广东省江门市江海区",
+    "business_scope": "核心产品为纯电及油电混合动力无人机，涵盖发动机研发、无人机整机生产及行业应用方案设计，产品应用于物流、农业、应急救援等领域",
+    "company_type": "有限责任公司（自然人投资或控股的法人独资）",
+    "market_value": "未上市，无公开市值及股价数据",
+    "stock_price": "未上市，无股价信息",
+    "established_date": "2021年5月",
+    "founder": "启维工程",
+    "global_presence": "积极拓展国内外市场，在物流和农业领域已有成熟应用案例",
+    "patents": "自主研发的油电混合动力系统航空增程器",
+    "rd_investment": "暂无公开研发投入数据",
+    "description": "广东智联航空科技有限公司是国内少数集无人机动力系统研发、整机制造与行业解决方案于一体的企业。其核心技术为自主研发的油电混合动力系统'航空增程器'，可显著提升无人机续航能力，产品在2025年世界无人机大会上展示了16公斤级、45公斤级、80公斤级载重机型。"
+  },
+  "timeline_tracking": [
+    {
+      "date": "2025年1月",
+      "content": "美国商务部发布拟议规则，对中国无人机的信息通信技术模块（ICTS）实施国家安全审查，要求对大疆、道通智能等企业进行评估，若判定风险将列入联邦通信委员会（FCC）'涵盖清单'，禁止使用美国通信基础设施。",
+      "sources": [
+        {
+          "title": "腾讯新闻 - 美国商务部无人机拟议规则",
+          "url": "https://news.qq.com/rain/a/20250103A0273Q00",
+          "source": "腾讯新闻"
+        }
+      ]
+    },
+    {
+      "date": "2024年10月",
+      "content": "中国外交部对参与对台军售的美国军工企业（如斯凯迪奥公司）实施反制措施，冻结其在华资产并禁止交易，反映出中美在无人机领域的博弈加剧。",
+      "sources": [
+        {
+          "title": "外交部反制措施公告",
+          "url": "https://www.fmprc.gov.cn/mfa_eng/",
+          "source": "中国外交部"
+        }
+      ]
+    },
+    {
+      "date": "2023年2月",
+      "content": "美国以'监视气球'事件为由，将6家中国飞艇相关企业列入实体清单，包括广州天海翔航空科技有限公司等，凸显对航空科技企业的打压趋势。",
+      "sources": [
+        {
+          "title": "美国商务部实体清单更新",
+          "url": "https://www.commerce.gov/news/press-releases/2023/02",
+          "source": "美国商务部"
+        }
+      ]
+    }
+  ],
+  "risk_factors": [
+    {
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "关键技术设备依赖",
+          "description": "可能依赖美国技术设备或软件，面临供应链中断风险。"
+        },
+        {
+          "title": "国际合作受限",
+          "description": "美国制裁政策可能影响国际合作项目和技术交流。"
+        }
+      ]
+    },
+    {
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "low",
+      "details": [
+        {
+          "title": "美国市场限制",
+          "description": "可能面临美国市场准入限制或业务往来限制。"
+        }
+      ]
+    }
+  ],
+  "legal_basis": [
+    {
+      "category": "export-control",
+      "title": "出口管制风险",
+      "summary": "美国出口管制法规可能影响相关技术和设备的获取。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)",
+        "implementation": "通过实体清单等机制限制技术转移",
+        "scope": "涵盖关键技术设备和软件",
+        "penalties": "违规可能面临法律制裁"
+      }
+    }
+  ],
+  "risk_score": {
+    "total_score": 0,
+    "risk_level": "",
+    "components": {
+      "external_risk": {
+        "score": 0,
+        "breakdown": {
+          "investigation_announced": 0,
+          "investigation_ongoing": 0,
+          "personnel_infiltration": 0,
+          "personnel_extraction": 0,
+          "technical_attacks": 0,
+          "sanctions_implemented": 0,
+          "legal_actions": 0,
+          "reputation_attacks": 0,
+          "decoupling_pressure": 0,
+          "foreign_infiltration": 0
+        }
+      },
+      "internal_risk": {
+        "score": 0,
+        "breakdown": {
+          "information_leakage": 0,
+          "personnel_mismanagement": 0,
+          "network_mismanagement": 0,
+          "facility_mismanagement": 0,
+          "information_mismanagement": 0,
+          "employee_whistleblowing": 0,
+          "technology_outflow": 0,
+          "negative_publicity": 0,
+          "institutional_deficiency": 0,
+          "compliance_operations": 0
+        }
+      },
+      "operational_impact": {
+        "score": 0
+      },
+      "security_impact": {
+        "score": 0
+      }
+    },
+    "trend": [
+      {
+        "month": "2025年6月",
+        "score": 0
+      }
+    ]
+  },
+  "last_updated": "2025-06-09T19:57:50+08:00"
+} 

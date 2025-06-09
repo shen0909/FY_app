@@ -58,54 +58,99 @@
   ],
   "risk_factors": [
     {
-      "category": "技术封锁与供应链中断风险",
-      "description": "美国对华科技制裁可能导致电子五所无法获取先进检测设备、软件工具及关键零部件，影响其技术研发和检测能力",
-      "severity": "high",
-      "sources": ["美国出口管理条例（EAR）及FCC的国家安全审查机制"]
+      "type": "tech-dependency",
+      "title": "技术依赖风险",
+      "level": "high",
+      "details": [
+        {
+          "title": "关键技术依赖",
+          "description": "工业和信息化部电子第五研究所在核心技术方面可能依赖美国或西方国家的技术供应链。"
+        },
+        {
+          "title": "设备供应链风险",
+          "description": "关键生产设备和原材料可能受到出口管制影响。"
+        }
+      ]
     },
     {
-      "category": "国际合作受限风险",
-      "description": "被纳入实体清单或遭受其他制裁后，电子五所可能被排除在国际标准化组织的合作之外，削弱其在全球技术标准制定中的话语权",
-      "severity": "high",
-      "sources": ["美国商务部实体清单机制及FCC对'国资背景'实验室的限制"]
+      "type": "supply-chain",
+      "title": "供应链风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "上游供应商风险",
+          "description": "关键供应商可能因制裁措施而中断供货。"
+        },
+        {
+          "title": "国际供应链中断",
+          "description": "全球供应链可能因地缘政治因素受到影响。"
+        }
+      ]
     },
     {
-      "category": "业务合规风险",
-      "description": "美国可能以'军民融合'或'支持军事应用'为由，对电子五所的检测项目进行追溯审查，要求其披露客户信息或停止特定领域服务",
-      "severity": "medium",
-      "sources": ["美国国际紧急经济权力法（IEEPA）及BIS的'军事最终用户'审查规则"]
+      "type": "market-access",
+      "title": "市场准入风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "海外市场限制",
+          "description": "可能面临海外市场准入限制，影响国际业务拓展。"
+        },
+        {
+          "title": "技术标准壁垒",
+          "description": "国际技术标准可能对中国企业设置更高门槛。"
+        }
+      ]
+    },
+    {
+      "type": "legal-compliance",
+      "title": "法律合规风险",
+      "level": "medium",
+      "details": [
+        {
+          "title": "出口管制合规",
+          "description": "需要确保业务活动符合各国出口管制法规要求。"
+        },
+        {
+          "title": "数据安全合规",
+          "description": "需要遵守各国数据保护和网络安全法律法规。"
+        }
+      ]
     }
   ],
-  "legal_basis": {
-    "sanctions_cases": [
-      {
-        "company": "华为",
-        "year": "2019年",
-        "action": "被列入实体清单",
-        "legal_basis": "出口管理条例第744节",
-        "reason": "指控其危害美国国家安全"
-      },
-      {
-        "company": "中兴通讯",
-        "year": "2018年",
-        "action": "违反美国对伊朗出口禁令被制裁",
-        "legal_basis": "出口管理条例及国际紧急经济权力法",
-        "reason": "违反对伊朗制裁"
+  "legal_basis": [
+    {
+      "category": "entity-list",
+      "title": "实体清单机制",
+      "summary": "美国商务部工业与安全局(BIS)管理的出口管制清单，限制美国企业向清单实体出口、再出口或转让受管制物项。",
+      "details": {
+        "legal_framework": "《出口管理条例》(EAR)第744.11条",
+        "implementation": "需要获得BIS许可证才能出口受管制物项，许可证申请采用推定拒绝政策",
+        "scope": "涵盖美国原产物项、含有超过最低限度美国成分的外国产品、使用美国技术或软件的直接产品",
+        "penalties": "违规可能面临刑事起诉、民事罚款、出口特权撤销等处罚",
+        "impact_assessment": "对中国高科技企业的技术获取和国际合作造成重大影响"
       }
-    ],
-    "potential_risks": [
-      {
-        "mechanism": "实体清单机制",
-        "legal_basis": "出口管理条例第744节",
-        "description": "美国商务部可能以'危害国家安全'为由将电子五所列入清单，限制技术出口"
-      },
-      {
-        "mechanism": "FCC认证限制",
-        "legal_basis": "美国通信法第303节",
-        "description": "FCC可能禁止中国实验室参与输美电子设备测试，依据通信法及相关规则"
-      }
-    ]
-  },
+    },
+    {
+      "category": "similar-cases",
+      "title": "类似案例",
+      "summary": "其他中国科技企业面临的制裁情况。",
+      "cases": [
+        {
+          "company": "华为技术有限公司",
+          "date": "2019年",
+          "action": "被列入实体清单，限制其获取美国技术和零部件",
+          "impact": "对全球5G发展和中美科技竞争产生深远影响"
+        },
+        {
+          "company": "中芯国际",
+          "date": "2020年",
+          "action": "被列入实体清单，限制其获取10nm及以下先进芯片生产技术",
+          "impact": "直接影响了中国半导体制造业的发展进程"
+        }
+      ]
+    }
+  ],
   "risk_score": {
     "total_score": 10,
     "risk_level": "low",
@@ -113,7 +158,7 @@
       "external_risk": {
         "score": 10,
         "breakdown": {
-          "investigation_announced": 0, 
+          "investigation_announced": 0,
           "investigation_ongoing": 0,
           "personnel_infiltration": 0,
           "personnel_extraction": 10,
@@ -147,10 +192,26 @@
         "score": 0
       },
       "trend": [
-        { "month": "2024年9月", "score": 0 },
-        { "month": "2025年6月", "score": 10 }
+        {
+          "month": "2024年9月",
+          "score": 0
+        },
+        {
+          "month": "2025年6月",
+          "score": 10
+        }
       ]
-    }
+    },
+    "trend": [
+      {
+        "month": "2024年12月",
+        "score": 0
+      },
+      {
+        "month": "2025年6月",
+        "score": 10
+      }
+    ]
   },
   "last_updated": "2025-06-06T16:00:00+08:00"
-} 
+}

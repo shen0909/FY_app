@@ -19,7 +19,7 @@ class SettingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FYColors.whiteColor,
-      appBar: FYAppBar(title: '系统设置'),
+      appBar: FYAppBar(title: '安全设置'),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +99,7 @@ class SettingPage extends StatelessWidget {
           ),
           Spacer(),
           Text(
-            '版本号：${state.userInfo['version']}',
+            '版本号：v.0.0.1',
             style: TextStyle(
               fontSize: 14.sp,
               color: FYColors.color_666666,
