@@ -27,6 +27,8 @@ class RiskLogic extends GetxController {
 
       print("数据数据:${jsonData}");
       state.riskyData.value = RiskyData.fromJson(jsonData);
+      // 从RiskyData中获取城市列表
+      _updateCitiesList();
       _updateCurrentUnitData();
       _updateCurrentRiskList();
       
@@ -35,7 +37,14 @@ class RiskLogic extends GetxController {
         _updateCurrentUnitData();
         _updateCurrentRiskList();
       });
+      
+      // 监听城市选择变化
+      ever(state.selectedCity, (_) {
+        _updateCurrentRiskList();
+      });
+      
       ever(state.riskyData, (_) {
+        _updateCitiesList();
         _updateCurrentUnitData();
         _updateCurrentRiskList();
       });
@@ -69,6 +78,36 @@ class RiskLogic extends GetxController {
         },
       };
       state.currentRiskList.clear();
+    }
+  }
+
+  // 从RiskyData中更新城市列表
+  void _updateCitiesList() {
+    if (state.riskyData.value != null && state.riskyData.value!.location.cities.isNotEmpty) {
+      // 始终保留"全部"选项作为第一个
+      List<String> priority = [];
+      List<String> others = [];
+      
+      // 从数据中提取城市名称
+      for (var city in state.riskyData.value!.location.cities) {
+        // // 判断是否是优先城市
+        // if (["guangzhou", "shenzhen", "zhuhai"].contains(city.code)) {
+        //   // 广州、深圳、珠海等重要城市放在优先列表
+        //   priority.add(city.name);
+        // } else if (city.code != "all") {
+        //   others.add(city.name);
+        // }
+        others.add(city.name);
+      }
+      // 更新状态中的城市列表
+      state.priorityCities.clear();
+      // state.priorityCities.add("全部");
+      state.priorityCities.addAll(priority);
+      
+      state.otherCities.clear();
+      state.otherCities.addAll(others);
+      
+      print("城市列表更新完成 - 优先城市: ${state.priorityCities}, 其他城市: ${state.otherCities}");
     }
   }
 
@@ -169,13 +208,16 @@ class RiskLogic extends GetxController {
 
     final companies = state.riskyData.value!.companies;
     List<Map<String, dynamic>> newList = [];
+    String unitType = "";
 
     switch (state.chooseUint.value) {
       case 0:
+        unitType = "烽云一号";
         if (companies.containsKey('fengyun_1')) {
           newList = companies['fengyun_1']!.map((company) => {
             'id': company.id,
             'name': company.name,
+            'city': company.city,
             'englishName': company.englishName,
             'description': company.description,
             'riskLevel': company.riskLevel,
@@ -186,13 +228,27 @@ class RiskLogic extends GetxController {
             'unreadCount': company.unreadCount,
             'isRead': false,
           }).toList();
+          
+          // 如果选择了特定城市，则过滤列表
+          if (state.selectedCity.value != "全部") {
+            final selectedCityCode = _getCityCodeByName(state.selectedCity.value);
+            print("城市筛选 - 单位类型: $unitType, 选择城市: ${state.selectedCity.value}, 城市代码: $selectedCityCode");
+            
+            final beforeCount = newList.length;
+            newList = newList.where((item) => 
+              (item['city'] as String) == selectedCityCode
+            ).toList();
+            print("筛选结果 - 筛选前: $beforeCount, 筛选后: ${newList.length}");
+          }
         }
         break;
       case 1:
+        unitType = "烽云二号";
         if (companies.containsKey('fengyun_2')) {
           newList = companies['fengyun_2']!.map((company) => {
             'id': company.id,
             'name': company.name,
+            'city': company.city,
             'englishName': company.englishName,
             'description': company.description,
             'riskLevel': company.riskLevel,
@@ -203,9 +259,22 @@ class RiskLogic extends GetxController {
             'unreadCount': company.unreadCount,
             'isRead': false,
           }).toList();
+          
+          // 如果选择了特定城市，则过滤列表
+          if (state.selectedCity.value != "全部") {
+            final selectedCityCode = _getCityCodeByName(state.selectedCity.value);
+            print("城市筛选 - 单位类型: $unitType, 选择城市: ${state.selectedCity.value}, 城市代码: $selectedCityCode");
+            
+            final beforeCount = newList.length;
+            newList = newList.where((item) => 
+              (item['city'] as String) == selectedCityCode
+            ).toList();
+            print("筛选结果 - 筛选前: $beforeCount, 筛选后: ${newList.length}");
+          }
         }
         break;
       case 2:
+        unitType = "星云";
         if (companies.containsKey('xingyun')) {
           newList = companies['xingyun']!.map((company) => {
             'id': company.id,
@@ -220,12 +289,26 @@ class RiskLogic extends GetxController {
             'isRead': false,
             'attentionLevel': company.attentionLevel,
             'attentionLevelText': company.attentionLevelText,
+            'city': company.city,
           }).toList();
+          
+          // 如果选择了特定城市，则过滤列表
+          if (state.selectedCity.value != "全部") {
+            final selectedCityCode = _getCityCodeByName(state.selectedCity.value);
+            print("城市筛选 - 单位类型: $unitType, 选择城市: ${state.selectedCity.value}, 城市代码: $selectedCityCode");
+            
+            final beforeCount = newList.length;
+            newList = newList.where((item) => 
+              (item['city'] as String) == selectedCityCode
+            ).toList();
+            print("筛选结果 - 筛选前: $beforeCount, 筛选后: ${newList.length}");
+          }
         }
         break;
     }
 
     state.currentRiskList.assignAll(newList);
+    print("风险列表更新完成 - 单位类型: $unitType, 列表长度: ${newList.length}");
   }
 
   // 获取风险等级对应的颜色
@@ -385,6 +468,7 @@ class RiskLogic extends GetxController {
   // 构建城市选择浮层
   Widget _buildCityOverlay(Offset position, Size size) {
     final scrollController = ScrollController();
+    // 确保优先城市和其他城市列表以正确的顺序显示
     final List<String> allCities = [...state.priorityCities, ...state.otherCities];
     
     return Material(
@@ -441,7 +525,13 @@ class RiskLogic extends GetxController {
                           return InkWell(
                             onTap: () {
                               state.selectedCity.value = city;
-                              state.location.value = "广东省$city";
+                              // 更新显示的地点名称
+                              if (city == "全部") {
+                                state.location.value = "广东省全部";
+                              } else {
+                                state.location.value = "广东省$city";
+                              }
+                              // 更新列表后隐藏浮层
                               hideOverlay();
                             },
                             child: Container(
@@ -469,6 +559,20 @@ class RiskLogic extends GetxController {
         ],
       ),
     );
+  }
+
+  // 根据城市名称获取城市代码
+  String _getCityCodeByName(String cityName) {
+    // 风险预警数据为空，筛选代码返回null
+    if (state.riskyData.value == null) return "all";
+    // 查找对应的城市代码
+    for (var city in state.riskyData.value!.location.cities) {
+      if (city.name == cityName) {
+        return city.code;
+      }
+    }
+    // 没有对应代码返回全部
+    return 'all';
   }
 }
 

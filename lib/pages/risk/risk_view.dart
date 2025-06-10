@@ -336,16 +336,18 @@ class _RiskPageState extends State<RiskPage> {
     return Expanded(
       child: Obx(() {
         final currentList = state.currentRiskList;
-        return ListView.builder(
-          itemCount: currentList.length,
-          itemBuilder: (context, index) {
-            return state.chooseUint.value == 0
-                ? _buildRiskItem1(currentList[index]) // 一类单位
-                : state.chooseUint.value == 1
-                    ? _buildRiskItem2(currentList[index])
-                    : _buildRiskItem3(currentList[index]);
-          },
-        );
+        return state.currentRiskList.isEmpty
+            ? FYWidget.buildEmptyContent()
+            : ListView.builder(
+                itemCount: currentList.length,
+                itemBuilder: (context, index) {
+                  return state.chooseUint.value == 0
+                      ? _buildRiskItem1(currentList[index]) // 一类单位
+                      : state.chooseUint.value == 1
+                          ? _buildRiskItem2(currentList[index])
+                          : _buildRiskItem3(currentList[index]);
+                },
+              );
       }),
     );
   }

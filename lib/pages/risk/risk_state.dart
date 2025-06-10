@@ -17,11 +17,6 @@ class RiskState {
 
   // 城市选择相关
   final RxString selectedCity = "全部".obs;
-  final List<String> priorityCities = ["全部", "广州市", "深圳市", "珠海市"];
-  final List<String> otherCities = [
-    "汕头市", "佛山市", "韶关市", "湛江市", "肇庆市", 
-    "江门市", "茂名市", "惠州市", "梅州市", "汕尾市", 
-    "河源市", "阳江市", "清远市", "东莞市", "中山市", 
-    "潮州市", "揭阳市", "云浮市"
-  ];
+  final RxList<String> priorityCities = RxList<String>(["全部"]); // 优先显示的城市
+  final RxList<String> otherCities = RxList<String>([]); // 其他城市
 }
