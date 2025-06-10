@@ -13,7 +13,7 @@ class RiskState {
   final RxList<Map<String, dynamic>> currentUnreadMessages = RxList<Map<String, dynamic>>([]); // 当前未读消息列表
 
   // 地区
-  RxString location = "广东省广州市".obs;
+  RxString location = "广东省全部".obs;
 
   // 城市选择相关
   final RxString selectedCity = "全部".obs;

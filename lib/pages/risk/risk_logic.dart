@@ -441,11 +441,7 @@ class RiskLogic extends GetxController {
                           return InkWell(
                             onTap: () {
                               state.selectedCity.value = city;
-                              if (city == "全部") {
-                                state.location.value = "广东省广州市";
-                              } else {
-                                state.location.value = "广东省$city";
-                              }
+                              state.location.value = "广东省$city";
                               hideOverlay();
                             },
                             child: Container(

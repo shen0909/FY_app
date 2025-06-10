@@ -133,26 +133,6 @@ class CompanyInfo {
       website: json['website'],
     );
   }
-
-  factory CompanyInfo.mock() => CompanyInfo(
-    name: "中船黄埔文冲船舶有限公司",
-    englishName: "CSSC Huangpu Wenchong Shipbuilding Company Limited",
-    industry: "船舶制造业",
-    location: "广东省广州市",
-    establishedDate: "1948年",
-    registeredCapital: "50亿元人民币",
-    employees: "8000+",
-    website: "http://www.cssc-hwwc.com",
-    // 新增字段
-    businessScope: "军用、民用各类船舶的设计、建造与维修",
-    companyType: "国有企业，中国船舶集团有限公司下属企业",
-    marketValue: "非上市公司",
-    stockPrice: "非上市公司",
-    patents: "拥有数百项专利技术",
-    globalRanking: "全球知名船舶制造企业",
-    financialPerformance: "年产值约100亿元人民币",
-    description: "中船黄埔文冲船舶有限公司是中国船舶集团有限公司下属的大型现代化造船企业，具有悠久的历史和丰富的造船经验。公司主要从事军用、民用各类船舶的设计、建造与维修，包括军舰、海警船、海洋工程船舶等。"
-  );
 }
 
 class TimelineEvent {
