@@ -725,7 +725,7 @@ class DetailListPage extends StatelessWidget {
                     LineChartBarData(
                       spots: List.generate(state.yearlyStats.length, (index) {
                         return FlSpot(index.toDouble(),
-                            state.yearlyStats[index].totalCount.toDouble());
+                            state.yearlyStats[index].newCount.toDouble());
                       }),
                       isCurved: true,
                       color: Color(0xFF3361FE),
@@ -814,9 +814,9 @@ class DetailListPage extends StatelessWidget {
     double maxNew = 0;
 
     for (var stat in state.yearlyStats) {
-      if (stat.totalCount > maxTotal) {
-        maxTotal = stat.totalCount.toDouble();
-      }
+      // if (stat.totalCount > maxTotal) {
+      //   maxTotal = stat.totalCount.toDouble();
+      // }
       if (stat.newCount > maxNew) {
         maxNew = stat.newCount.toDouble();
       }
