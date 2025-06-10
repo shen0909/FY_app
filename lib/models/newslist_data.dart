@@ -44,8 +44,8 @@ class NewsItem {
       'google_keyword': googleKeyword,
       'publish_time': publishTime,
       'news_summary': newsSummary,
-      if (newsSourceUrl != null) 'news_source_url': newsSourceUrl,
-      if (region != null) 'region': region,
+      'news_source_url': newsSourceUrl ?? '',
+      'region': region ?? '',
     };
   }
 }
