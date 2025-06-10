@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
-import 'package:safe_app/widgets/widgets.dart';
 import '../../widgets/custom_app_bar.dart';
 import 'hot_pot_logic.dart';
 import 'hot_pot_state.dart';

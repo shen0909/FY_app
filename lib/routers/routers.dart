@@ -4,7 +4,6 @@ import 'package:safe_app/pages/fingerprint_auth/fingerprint_auth_view.dart';
 import 'package:safe_app/pages/home/home_view.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_view.dart';
 import 'package:safe_app/pages/hot_pot/hot_pot_view.dart';
-import 'package:safe_app/pages/lock_method_selection/lock_method_selection_view.dart';
 import 'package:safe_app/pages/login/login_view.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/pages/risk/risk_view.dart';
@@ -19,6 +18,7 @@ import 'package:safe_app/pages/setting/privacy_safe/privacy_safe_view.dart';
 import 'package:safe_app/pages/setting/pattern_setup/pattern_setup_view.dart';
 import 'package:safe_app/pages/pattern_lock/pattern_lock_view.dart';
 import 'package:safe_app/pages/setting/user_analysis/user_analysis_view.dart';
+import '../pages/login/lock_method_selection/lock_method_selection_view.dart';
 import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
 
