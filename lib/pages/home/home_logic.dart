@@ -66,30 +66,30 @@ class HomeLogic extends GetxController {
   // 处理轮播图点击
   void onBannerTap(int index) async {
     final item = state.carouselItems[index];
-    try {
-      if (await canLaunchUrlString(item.linkUrl)) {
-        await launchUrlString(
-          item.linkUrl,
-          mode: LaunchMode.externalApplication, // 使用外部浏览器打开
-          webViewConfiguration: const WebViewConfiguration(
-            enableJavaScript: true,
-            enableDomStorage: true,
-          ),
-        );
-      } else {
-        Get.snackbar(
-          '提示',
-          '无法打开链接',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        '提示',
-        '链接打开失败: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
+    // try {
+    //   if (await canLaunchUrlString(item.linkUrl)) {
+    //     await launchUrlString(
+    //       item.linkUrl,
+    //       mode: LaunchMode.externalApplication, // 使用外部浏览器打开
+    //       webViewConfiguration: const WebViewConfiguration(
+    //         enableJavaScript: true,
+    //         enableDomStorage: true,
+    //       ),
+    //     );
+    //   } else {
+    //     Get.snackbar(
+    //       '提示',
+    //       '无法打开链接',
+    //       snackPosition: SnackPosition.BOTTOM,
+    //     );
+    //   }
+    // } catch (e) {
+    //   Get.snackbar(
+    //     '提示',
+    //     '链接打开失败: ${e.toString()}',
+    //     snackPosition: SnackPosition.BOTTOM,
+    //   );
+    // }
   }
 
   // 去风险预警页
