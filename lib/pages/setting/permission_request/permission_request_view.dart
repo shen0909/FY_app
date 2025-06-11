@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 
 import 'permission_request_logic.dart';
@@ -132,184 +133,182 @@ class PermissionRequestPage extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final dialogHeight = screenHeight * 0.8;
     
-    Get.bottomSheet(
-      Container(
-        width: 375.w,
-        height: dialogHeight,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.r),
-            topRight: Radius.circular(16.r),
+    FYDialogUtils.showBottomSheet(
+        Container(
+          height: dialogHeight,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            // 弹窗标题栏
-            Container(
-              height: 48.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  topRight: Radius.circular(16.r),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '申请详情',
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: FYColors.color_1A1A1A,
-                    ),
+          child: Column(
+            children: [
+              // 弹窗标题栏
+              Container(
+                height: 48.h,
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 24.w,
-                      height: 24.h,
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.close,
-                        size: 20.sp,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '申请详情',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
                         color: FYColors.color_1A1A1A,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            // 用户信息
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              child: Row(
-                children: [
-                  // 用户头像
-                  Container(
-                    width: 48.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      size: 30.sp,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
-                  // 用户信息
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '刘晓龙',
-                        style: TextStyle(
-                          fontSize: 16.sp,
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 24.w,
+                        height: 24.h,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.close,
+                          size: 20.sp,
                           color: FYColors.color_1A1A1A,
                         ),
                       ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        '用户名：ZQP001',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_1A1A1A,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  // 批准状态
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE7FEF8),
-                      borderRadius: BorderRadius.circular(12.5.r),
                     ),
-                    child: Text(
-                      '已批准',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF07CC89),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // 申请信息
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  children: [
-                    // 申请编号
-                    _buildInfoItem('申请编号', 'REO-2024-0301'),
-
-                    // 申请时间
-                    _buildInfoItem('申请时间', '2024-05-03 09:15'),
-
-                    // 申请权限
-                    _buildInfoItem('申请权限', approvedRequest.permissionType),
-
-                    // 批准时间
-                    _buildInfoItem('批准时间', approvedRequest.approveTime ?? ''),
-
-                    // 申请原因
-                    _buildReasonItem(
-                      '申请原因',
-                      '部门新增员工，需要创建新的普通用户账号用于系统访问和日常工作。',
-                    ),
-
-                    // 批准备注
-                    _buildReasonItem(
-                      '批准备注',
-                      '用户已完成相关培训，符合权限授予条件。已向用户发送权限使用指南。',
-                    ),
-
-                    SizedBox(height: 20.h),
                   ],
                 ),
               ),
-            ),
+              // 用户信息
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                child: Row(
+                  children: [
+                    // 用户头像
+                    Container(
+                      width: 48.w,
+                      height: 48.h,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.person,
+                        size: 30.sp,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    // 用户信息
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '刘晓龙',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: FYColors.color_1A1A1A,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          '用户名：ZQP001',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: FYColors.color_1A1A1A,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    // 批准状态
+                    Container(
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE7FEF8),
+                        borderRadius: BorderRadius.circular(12.5.r),
+                      ),
+                      child: Text(
+                        '已批准',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: const Color(0xFF07CC89),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // 申请信息
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    children: [
+                      // 申请编号
+                      _buildInfoItem('申请编号', 'REO-2024-0301'),
 
-            // 底部按钮
-            Container(
-              height: 72.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3361FE),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
+                      // 申请时间
+                      _buildInfoItem('申请时间', '2024-05-03 09:15'),
+
+                      // 申请权限
+                      _buildInfoItem('申请权限', approvedRequest.permissionType),
+
+                      // 批准时间
+                      _buildInfoItem('批准时间', approvedRequest.approveTime ?? ''),
+
+                      // 申请原因
+                      _buildReasonItem(
+                        '申请原因',
+                        '部门新增员工，需要创建新的普通用户账号用于系统访问和日常工作。',
+                      ),
+
+                      // 批准备注
+                      _buildReasonItem(
+                        '批准备注',
+                        '用户已完成相关培训，符合权限授予条件。已向用户发送权限使用指南。',
+                      ),
+
+                      SizedBox(height: 20.h),
+                    ],
                   ),
-                  elevation: 0,
-                  minimumSize: Size(double.infinity, 48.h),
                 ),
-                child: Text(
-                  '关闭',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
+              ),
+
+              // 底部按钮
+              Container(
+                height: 72.h,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3361FE),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    elevation: 0,
+                    minimumSize: Size(double.infinity, 48.h),
+                  ),
+                  child: Text(
+                    '关闭',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true, // 允许弹窗内容滚动
+            ],
+          ),
+        )
     );
   }
 
@@ -348,6 +347,7 @@ class PermissionRequestPage extends StatelessWidget {
   // 构建多行文本项
   Widget _buildReasonItem(String label, String content) {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 14.h),
       margin: EdgeInsets.only(bottom: 8.h),
       decoration: BoxDecoration(

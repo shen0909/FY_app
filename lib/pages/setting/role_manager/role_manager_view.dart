@@ -457,14 +457,14 @@ class RoleManagerPage extends StatelessWidget {
               ],
             ),
           ),
-          
           // 新的表格实现
           Expanded(
             child: Row(
               children: [
                 // 固定的首列
-                Container(
-                  width: 80.w,
+                Expanded(
+                  flex: 1,
+                  // width: 80.w,
                   child: Column(
                     children: [
                       // 首列表头
@@ -530,6 +530,7 @@ class RoleManagerPage extends StatelessWidget {
                 ),
                 // 右侧可滚动部分
                 Expanded(
+                  flex: 6,
                   child: Stack(
                     children: [
                       // 滚动内容
@@ -537,7 +538,7 @@ class RoleManagerPage extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         controller: logic.horizontalScrollController,
                         child: SizedBox(
-                          width: 400.w, // 设置足够的宽度让内容可以滚动
+                          width: MediaQuery.of(Get.context!).size.width, // 设置足够的宽度让内容可以滚动
                           child: Column(
                             children: [
                               // 表头行
@@ -546,10 +547,10 @@ class RoleManagerPage extends StatelessWidget {
                                 color: FYColors.color_F0F5FF,
                                 child: Row(
                                   children: [
-                                    _buildTableHeader('角色', width: 70.w),
-                                    _buildTableHeader('状态', width: 70.w),
-                                    _buildTableHeader('最后登录时间', width: 140.w),
-                                    _buildTableHeader('操作', width: 30.w),
+                                    _buildTableHeader('角色', flex: 1),
+                                    _buildTableHeader('状态', flex: 1),
+                                    _buildTableHeader('最后登录时间', flex: 2),
+                                    _buildTableHeader('操作', flex:1),
                                   ],
                                 ),
                               ),
@@ -571,19 +572,19 @@ class RoleManagerPage extends StatelessWidget {
                                       ),
                                       child: Row(
                                         children: [
-                                          Container(
-                                            width: 70.w,
+                                          Expanded(
+                                            flex: 1,
                                             child: _buildRoleBadge(user.role),
                                           ),
-                                          Container(
-                                            width: 70.w,
+                                          Expanded(
+                                            flex: 1,
                                             child: _buildStatusBadge(user.status),
                                           ),
-                                          Container(
-                                            width: 140.w,
-                                            alignment: Alignment.centerLeft,
+                                          Expanded(
+                                            flex: 2,
                                             child: Text(
                                               user.lastLoginTime,
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 color: FYColors.color_1A1A1A,
                                                 fontSize: 12.sp,
@@ -592,13 +593,12 @@ class RoleManagerPage extends StatelessWidget {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          Container(
-                                            width: 60.w,
-                                            alignment: Alignment.center,
+                                          Expanded(
+                                            flex: 1,
                                             child: IconButton(
                                               icon: Icon(
-                                                Icons.edit, 
-                                                color: FYColors.color_3361FE, 
+                                                Icons.edit,
+                                                color: FYColors.color_3361FE,
                                                 size: 16.w
                                               ),
                                               onPressed: () => logic.editUser(user),
@@ -651,12 +651,12 @@ class RoleManagerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTableHeader(String text, {required double width}) {
-    return Container(
-      width: width,
-      alignment: Alignment.centerLeft,
+  Widget _buildTableHeader(String text, {required int flex}) {
+    return Expanded(
+      flex: flex,
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           color: FYColors.color_3361FE,
           fontSize: 12.sp,
@@ -725,7 +725,7 @@ class RoleManagerPage extends StatelessWidget {
     }
 
     return Container(
-      margin: EdgeInsets.only(top: 10.h, bottom: 10.h, right: 12.w),
+      margin: EdgeInsets.only(top: 10.h, bottom: 10.h,),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(4.r),

@@ -226,11 +226,8 @@ class _RiskPageState extends State<RiskPage> {
         color: const Color(0xffF4F4F4),
         borderRadius: BorderRadius.circular(8.w),
       ),
-      // elevation: 0,
+      width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
       padding: EdgeInsets.all(10.w),
-      // color: Colors.red,
-      width: 168.w,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -297,7 +294,7 @@ class _RiskPageState extends State<RiskPage> {
       padding: EdgeInsets.all(10.r),
       // color: Colors.red,
       height: 64.w,
-      width: 168.w,
+      width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -273,7 +273,7 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => _handleMenuItemClick(item['title']),
       child: Container(
-        width: 170.w,
+        width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
         height: 80.h,
         decoration: BoxDecoration(
           gradient: LinearGradient(

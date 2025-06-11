@@ -396,10 +396,16 @@ class RiskLogic extends GetxController {
 
       state.currentUnreadMessages.assignAll(messages);
 
-      Get.bottomSheet(
-        UnreadMessageDialog(
-          messages: state.currentUnreadMessages,
-          onClose: () => Get.back(),
+      showModalBottomSheet(
+        builder: (_){
+          return UnreadMessageDialog(
+            messages: state.currentUnreadMessages,
+            onClose: () => Get.back(),
+          );
+        },
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(Get.context!).size.width, // 强制宽度为屏幕宽度
+          minWidth: MediaQuery.of(Get.context!).size.width, // 防止最小宽度限制
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -409,6 +415,7 @@ class RiskLogic extends GetxController {
         shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
         ),
+        context: Get.context!,
       );
     } catch (e) {
       print("显示消息弹窗出错: $e");

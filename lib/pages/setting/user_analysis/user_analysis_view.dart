@@ -582,7 +582,6 @@ class UserAnalysisPage extends StatelessWidget {
     ];
 
     return Container(
-      height: 280.h,
       child: Stack(
         children: [
           Center(
@@ -929,7 +928,7 @@ class UserAnalysisPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = state.userBehaviors[index];
                       return Container(
-                        height: 64.h,
+                        // height: 64.h,
                         decoration: BoxDecoration(
                           color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
                           border: Border(
@@ -1002,7 +1001,7 @@ class UserAnalysisPage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final item = state.userBehaviors[index];
                           return Container(
-                            height: 64.h,
+                            // height: 64.h,
                             decoration: BoxDecoration(
                               color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
                               border: Border(

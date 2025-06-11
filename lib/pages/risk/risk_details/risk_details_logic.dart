@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
 import '../../../models/risk_company_details.dart';
@@ -89,84 +90,72 @@ class RiskDetailsLogic extends GetxController {
   }
 
   void showRiskScoreDetails() {
-    Get.bottomSheet(
-      Container(
-        color: Colors.transparent,
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(Get.context!).size.height * 0.9),
-        child: SingleChildScrollView(
-          child: RiskDetailsPage().buildRiskScoreDialog(),
-        ),
-      ),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-    );
+    FYDialogUtils.showBottomSheet(
+        hasMaxHeightConstraint: true,
+        heightMaxFactor: 0.9,
+        SingleChildScrollView(
+      child: RiskDetailsPage().buildRiskScoreDialog(),
+    ));
   }
 
   showNewsResource(List<Source> listSource, String newsDate) {
     final news = listSource;
     if (news.isEmpty) return;
-
-    Get.bottomSheet(
-      Container(
-        color: Colors.transparent,
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding:
-                    EdgeInsets.only(top: 17, left: 16, right: 16, bottom: 13),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    FYDialogUtils.showBottomSheet(Container(
+      color: Colors.transparent,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 17.w, left: 16.w, right: 16.w, bottom: 13.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    newsDate,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFF0F0F0),
+                      ),
+                      child:
+                          Icon(Icons.close, color: Color(0xFF666666), size: 16.w),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              constraints: BoxConstraints(maxHeight: Get.height * 0.6),
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Text(
-                      newsDate,
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF333333),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFF0F0F0),
-                        ),
-                        child: Icon(Icons.close,
-                            color: Color(0xFF666666), size: 16),
-                      ),
-                    ),
+                    ...news.map((item) => _buildNewsItem(item)).toList(),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),
-              Container(
-                constraints: BoxConstraints(maxHeight: Get.height * 0.6),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      ...news.map((item) => _buildNewsItem(item)).toList(),
-                      SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-      isScrollControlled: true,
-      backgroundColor: Colors.black54,
-    );
+    ));
   }
 
   Widget _buildNewsItem(Source news) {
@@ -205,8 +194,7 @@ class RiskDetailsLogic extends GetxController {
   }
 
   void companyDetail() {
-    Get.bottomSheet(
-      Container(
+    FYDialogUtils.showBottomSheet(Container(
         width: double.infinity,
         height: 605.w,
         decoration: BoxDecoration(
@@ -228,7 +216,7 @@ class RiskDetailsLogic extends GetxController {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 342.w,
+                      // width: 342.w,
                       height: 211.w,
                       decoration: BoxDecoration(
                           color: FYColors.color_F9FBFF,
@@ -255,6 +243,7 @@ class RiskDetailsLogic extends GetxController {
                     ),
                     SizedBox(height: 16.w),
                     Container(
+                      width: double.infinity,
                       // width: 342.w,
                       // height: 211.w,
                       decoration: BoxDecoration(
@@ -262,10 +251,10 @@ class RiskDetailsLogic extends GetxController {
                           borderRadius: BorderRadius.all(Radius.circular(8.w))),
                       padding: EdgeInsets.all(16.w),
                       child: Text(
-                          state.riskCompanyDetail.value!.companyInfo.description ?? '无',
-                          style: TextStyle(
-                              fontSize: 14.sp, fontWeight: FontWeight.w400),
-                          ),
+                        state.riskCompanyDetail.value!.companyInfo.description ?? '无',
+                        style: TextStyle(
+                            fontSize: 14.sp, fontWeight: FontWeight.w400),
+                      ),
                     ),
                   ],
                 ),
@@ -273,11 +262,7 @@ class RiskDetailsLogic extends GetxController {
             ),
           ],
         ),
-      ),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      isDismissible: true,
-      enableDrag: true,
+      )
     );
   }
 

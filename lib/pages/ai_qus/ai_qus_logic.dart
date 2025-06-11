@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:side_sheet/side_sheet.dart';
 
 import 'ai_qus_state.dart';
@@ -75,7 +76,10 @@ class AiQusLogic extends GetxController {
     }
     SideSheet.left(
       context: Get.context!,
-      width: MediaQuery.of(Get.context!).size.width * 0.8,
+      width: MediaQuery
+          .of(Get.context!)
+          .size
+          .width * 0.8,
       // 内容部分
       body: SafeArea(
         child: Container(
@@ -131,12 +135,13 @@ class AiQusLogic extends GetxController {
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 12.w),
                   itemCount: state.chatHistory.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 1.w,
-                    color: const Color(0xFFEFEFEF),
-                    indent: 16.w,
-                    endIndent: 16.w,
-                  ),
+                  separatorBuilder: (context, index) =>
+                      Divider(
+                        height: 1.w,
+                        color: const Color(0xFFEFEFEF),
+                        indent: 16.w,
+                        endIndent: 16.w,
+                      ),
                   itemBuilder: (context, index) {
                     final history = state.chatHistory[index];
                     return ListTile(
@@ -170,84 +175,88 @@ class AiQusLogic extends GetxController {
                           // 显示确认对话框
                           showDialog(
                             context: Get.context!,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                '确定要清空当前对话吗？',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  color: const Color(0xFF1A1A1A),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.w),
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 24.w, horizontal: 16.w),
-                              actionsPadding: EdgeInsets.zero,
-                              buttonPadding: EdgeInsets.zero,
-                              actions: [
-                                // 分割线
-                                Container(
-                                  height: 1.w,
-                                  color: const Color(0xFFEFEFEF),
-                                ),
-                                // 按钮区域
-                                Row(
-                                  children: [
-                                    // 取消按钮
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () => Navigator.pop(context),
-                                        child: Container(
-                                          height: 44.w,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              right: BorderSide(
-                                                color: const Color(0xFFEFEFEF),
-                                                width: 1.w,
+                            builder: (context) =>
+                                AlertDialog(
+                                  content: Text(
+                                    '确定要清空当前对话吗？',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
+                                      color: const Color(0xFF1A1A1A),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.w),
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 24.w, horizontal: 16.w),
+                                  actionsPadding: EdgeInsets.zero,
+                                  buttonPadding: EdgeInsets.zero,
+                                  actions: [
+                                    // 分割线
+                                    Container(
+                                      height: 1.w,
+                                      color: const Color(0xFFEFEFEF),
+                                    ),
+                                    // 按钮区域
+                                    Row(
+                                      children: [
+                                        // 取消按钮
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () => Navigator.pop(context),
+                                            child: Container(
+                                              height: 44.w,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  right: BorderSide(
+                                                    color: const Color(
+                                                        0xFFEFEFEF),
+                                                    width: 1.w,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                '取消',
+                                                style: TextStyle(
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color(
+                                                      0xFF1A1A1A),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                          child: Text(
-                                            '取消',
-                                            style: TextStyle(
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: const Color(0xFF1A1A1A),
+                                        ),
+                                        // 确定按钮
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () {
+                                              // 确认后删除记录
+                                              state.chatHistory.removeAt(index);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              height: 44.w,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                '确定',
+                                                style: TextStyle(
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color(
+                                                      0xFF3361FE),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    // 确定按钮
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () {
-                                          // 确认后删除记录
-                                          state.chatHistory.removeAt(index);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Container(
-                                          height: 44.w,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '确定',
-                                            style: TextStyle(
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: const Color(0xFF3361FE),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
                           );
                         },
                         child: Image.asset(
@@ -274,83 +283,84 @@ class AiQusLogic extends GetxController {
                     // 显示确认对话框
                     showDialog(
                       context: Get.context!,
-                      builder: (context) => AlertDialog(
-                        content: Text(
-                          '确定要清空当前对话吗？',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: const Color(0xFF1A1A1A),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.w),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 24.w, horizontal: 16.w),
-                        actionsPadding: EdgeInsets.zero,
-                        buttonPadding: EdgeInsets.zero,
-                        actions: [
-                          // 分割线
-                          Container(
-                            height: 1.w,
-                            color: const Color(0xFFEFEFEF),
-                          ),
-                          // 按钮区域
-                          Row(
-                            children: [
-                              // 取消按钮
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => Navigator.pop(context),
-                                  child: Container(
-                                    height: 44.w,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(
-                                          color: const Color(0xFFEFEFEF),
-                                          width: 1.w,
+                      builder: (context) =>
+                          AlertDialog(
+                            content: Text(
+                              '确定要清空当前对话吗？',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: const Color(0xFF1A1A1A),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.w),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 24.w, horizontal: 16.w),
+                            actionsPadding: EdgeInsets.zero,
+                            buttonPadding: EdgeInsets.zero,
+                            actions: [
+                              // 分割线
+                              Container(
+                                height: 1.w,
+                                color: const Color(0xFFEFEFEF),
+                              ),
+                              // 按钮区域
+                              Row(
+                                children: [
+                                  // 取消按钮
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () => Navigator.pop(context),
+                                      child: Container(
+                                        height: 44.w,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: const Color(0xFFEFEFEF),
+                                              width: 1.w,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '取消',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: const Color(0xFF1A1A1A),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      '取消',
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: const Color(0xFF1A1A1A),
+                                  ),
+                                  // 确定按钮
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () {
+                                        // 确认后执行操作
+                                        Navigator.pop(context);
+                                        Navigator.pop(Get.context!);
+                                        createNewConversation();
+                                      },
+                                      child: Container(
+                                        height: 44.w,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '确定',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: const Color(0xFF3361FE),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              // 确定按钮
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    // 确认后执行操作
-                                    Navigator.pop(context);
-                                    Navigator.pop(Get.context!);
-                                    createNewConversation();
-                                  },
-                                  child: Container(
-                                    height: 44.w,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      '确定',
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: const Color(0xFF3361FE),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
                     );
                   },
                   child: Container(
@@ -397,153 +407,151 @@ class AiQusLogic extends GetxController {
 
   // 显示提示词模板
   void showPromptTemplates() {
-    Get.bottomSheet(
-      Container(
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '自定义提示词模板',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+    FYDialogUtils.showBottomSheet(
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '自定义提示词模板',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Get.back(),
-                  ),
-                ],
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Get.back(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('创建您自己的提示词模板，以便在对话中快速使用。'),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.add_circle, color: Colors.blue.shade700),
-                        const SizedBox(width: 10),
-                        const Text(
-                          '创建新模板',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('创建您自己的提示词模板，以便在对话中快速使用。'),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.add_circle, color: Colors.blue.shade700),
+                          const SizedBox(width: 10),
+                          const Text(
+                            '创建新模板',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    '模板标题',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: '例如：行业分析',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    '提示词内容',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: '输入您的提示词模板内容...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 20),
+                    const Text(
+                      '模板标题',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: '例如：行业分析',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                    maxLines: 5,
+                    const SizedBox(height: 20),
+                    const Text(
+                      '提示词内容',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: '输入您的提示词模板内容...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      maxLines: 5,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    const Text('我的模板'),
+                    const Icon(Icons.list),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: state.promptTemplates.length,
+                  itemBuilder: (context, index) {
+                    final template = state.promptTemplates[index];
+                    return ListTile(
+                      title: Text(template['title']),
+                      subtitle: Text(
+                        template['content'],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: const Text('保存模板'),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  const Text('我的模板'),
-                  const Icon(Icons.list),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: state.promptTemplates.length,
-                itemBuilder: (context, index) {
-                  final template = state.promptTemplates[index];
-                  return ListTile(
-                    title: Text(template['title']),
-                    subtitle: Text(
-                      template['content'],
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_forward),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Text('保存模板'),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
-      enableDrag: true,
+            ],
+          ),
+        )
     );
   }
 
@@ -714,329 +722,309 @@ class AiQusLogic extends GetxController {
   void showTipTemplateDialog(BuildContext context) {
     // 首先确保当前焦点被移除
     FocusScope.of(context).unfocus();
-
-    // 状态控制
-    bool showTemplateForm = false;
-
     // 更新状态UI，添加半透明蒙层
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.75,
+    FYDialogUtils.showBottomSheet(Container(
+      height: MediaQuery.of(context).size.height * 0.75,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16.r), topRight: Radius.circular(16.r)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 头部标题栏
+          Container(
+            height: 48.w,
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.w),
                 topRight: Radius.circular(16.w),
               ),
+              color: Colors.white,
+              border: Border(
+                bottom: BorderSide(color: const Color(0xFFEFEFEF), width: 1.w),
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // 头部标题栏
-                Container(
-                  height: 48.w,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.w),
-                      topRight: Radius.circular(16.w),
-                    ),
-                    color: Colors.white,
-                    border: Border(
-                      bottom: BorderSide(
-                          color: const Color(0xFFEFEFEF), width: 1.w),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '自定义提示词模板',
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // 关闭弹窗并确保移除焦点
-                          Navigator.pop(context);
-                          FocusScope.of(context).unfocus();
-                        },
-                        child: Container(
-                          width: 24.w,
-                          height: 24.w,
-                          child: Icon(
-                            Icons.close,
-                            size: 20.w,
-                            color: const Color(0xFF1A1A1A),
-                          ),
-                        ),
-                      ),
-                    ],
+                Text(
+                  '自定义提示词模板',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1A1A1A),
                   ),
                 ),
                 GestureDetector(
-                  behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    setState(() {
-                      showTemplateForm = !showTemplateForm;
-                    });
+                    // 关闭弹窗并确保移除焦点
+                    Navigator.pop(context);
+                    FocusScope.of(context).unfocus();
                   },
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
-                    child: Row(
-                      children: [
-                        Container(
-                            width: 24.w,
-                            height: 24.w,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              FYImages.add_tip_mock,
-                              width: 24.w,
-                              height: 24.w,
-                              fit: BoxFit.contain,
-                            )),
-                        SizedBox(width: 8.w),
-                        Text(
-                          '创建新模板',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1A1A1A),
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(
-                          showTemplateForm
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          size: 20.w,
-                          color: const Color(0xFF1A1A1A),
-                        )
-                      ],
+                    width: 24.w,
+                    height: 24.w,
+                    child: Icon(
+                      Icons.close,
+                      size: 20.w,
+                      color: const Color(0xFF1A1A1A),
                     ),
                   ),
-                ),
-
-                // 创建新模板表单
-                if (showTemplateForm)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 模板标题
-                        Text(
-                          '模板标题',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: const Color(0xFF1A1A1A),
-                          ),
-                        ),
-                        SizedBox(height: 8.w),
-                        Container(
-                          height: 44.w,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(4.w),
-                          ),
-                          child: TextField(
-                            controller: state.titleController,
-                            decoration: InputDecoration(
-                              hintText: '例如:行业标题',
-                              hintStyle: TextStyle(
-                                fontSize: 14.sp,
-                                color: const Color(0xFFA6A6A6),
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4.w),
-                                borderSide: BorderSide.none,
-                              ),
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 12.w),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 16.w),
-
-                        // 提示词内容
-                        Text(
-                          '提示词内容',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: const Color(0xFF1A1A1A),
-                          ),
-                        ),
-                        SizedBox(height: 8.w),
-                        Container(
-                          // height: 100.w,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(4.w),
-                          ),
-                          child: TextField(
-                            controller: state.contentController,
-                            decoration: InputDecoration(
-                              hintText: '输入您的提示词模板内容',
-                              hintStyle: TextStyle(
-                                fontSize: 14.sp,
-                                color: const Color(0xFFA6A6A6),
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4.w),
-                                borderSide: BorderSide.none,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12.w, vertical: 12.w),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 16.w),
-
-                        // 保存按钮
-                        GestureDetector(
-                          onTap: () {
-                            // 添加模板到列表
-                            if (state.titleController.text.isNotEmpty &&
-                                state.contentController.text.isNotEmpty) {
-                              state.promptTemplates.add({
-                                'title': state.titleController.text,
-                                'content': state.contentController.text,
-                              });
-                              // 清空输入框
-                              state.titleController.clear();
-                              state.contentController.clear();
-                              // 收起表单
-                              setState(() {
-                                showTemplateForm = false;
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: 48.w,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(4.w),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              '保存模板',
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 16.w),
-                      ],
-                    ),
-                  ),
-
-                // 分割线
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16.w),
-                  height: 1.w,
-                  color: const Color(0xFFD8D8D8),
-                ),
-
-                // 我的模板标题
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
-                  child: Row(
-                    children: [
-                      Image.asset(FYImages.my_mock,
-                          width: 20.w, height: 20.w, fit: BoxFit.contain),
-                      SizedBox(width: 8.w),
-                      Text(
-                        '我的模板',
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // 模板列表
-                Expanded(
-                  child: Obx(() => ListView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        itemCount: state.promptTemplates.length,
-                        itemBuilder: (context, index) {
-                          final template = state.promptTemplates[index];
-                          return GestureDetector(
-                            onTap: () {
-                              // 使用该模板
-                              state.messageController.text =
-                                  template['content'];
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 10.w),
-                              padding: EdgeInsets.all(12.w),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF9F9F9),
-                                borderRadius: BorderRadius.circular(8.w),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    template['title'],
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF1A1A1A),
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.w),
-                                  Text(
-                                    template['content'],
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: const Color(0xFFA6A6A6),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      )),
                 ),
               ],
             ),
-          );
-        },
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              print('模版:${state.showTemplateForm.value}');
+              state.showTemplateForm.value = !state.showTemplateForm.value;
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
+              child: Row(
+                children: [
+                  Container(
+                      width: 24.w,
+                      height: 24.w,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        FYImages.add_tip_mock,
+                        width: 24.w,
+                        height: 24.w,
+                        fit: BoxFit.contain,
+                      )),
+                  SizedBox(width: 8.w),
+                  Text(
+                    '创建新模板',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1A1A1A),
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    state.showTemplateForm.value
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 20.w,
+                    color: const Color(0xFF1A1A1A),
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          // 创建新模板表单
+          Obx(() {
+            return Visibility(
+              visible: state.showTemplateForm.value,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 模板标题
+                    Text(
+                      '模板标题',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    SizedBox(height: 8.w),
+                    Container(
+                      height: 44.w,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(4.w),
+                      ),
+                      child: TextField(
+                        controller: state.titleController,
+                        decoration: InputDecoration(
+                          hintText: '例如:行业标题',
+                          hintStyle: TextStyle(
+                            fontSize: 14.sp,
+                            color: const Color(0xFFA6A6A6),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4.w),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12.w),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16.w),
+                    // 提示词内容
+                    Text(
+                      '提示词内容',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    SizedBox(height: 8.w),
+                    Container(
+                      // height: 100.w,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(4.w),
+                      ),
+                      child: TextField(
+                        controller: state.contentController,
+                        decoration: InputDecoration(
+                          hintText: '输入您的提示词模板内容',
+                          hintStyle: TextStyle(
+                            fontSize: 14.sp,
+                            color: const Color(0xFFA6A6A6),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4.w),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.w, vertical: 12.w),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16.w),
+
+                    // 保存按钮
+                    GestureDetector(
+                      onTap: () {
+                        // 添加模板到列表
+                        if (state.titleController.text.isNotEmpty &&
+                            state.contentController.text.isNotEmpty) {
+                          state.promptTemplates.add({
+                            'title': state.titleController.text,
+                            'content': state.contentController.text,
+                          });
+                          // 清空输入框
+                          state.titleController.clear();
+                          state.contentController.clear();
+                          // 收起表单
+                          state.showTemplateForm.value = false;
+                        }
+                      },
+                      child: Container(
+                        height: 48.w,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(4.w),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '保存模板',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16.w),
+                  ],
+                ),
+              ),
+            );
+          }),
+
+          // 分割线
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
+            height: 1.w,
+            color: const Color(0xFFD8D8D8),
+          ),
+
+          // 我的模板标题
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
+            child: Row(
+              children: [
+                Image.asset(FYImages.my_mock,
+                    width: 20.w, height: 20.w, fit: BoxFit.contain),
+                SizedBox(width: 8.w),
+                Text(
+                  '我的模板',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 模板列表
+          Expanded(
+            child: Obx(() => ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  itemCount: state.promptTemplates.length,
+                  itemBuilder: (context, index) {
+                    final template = state.promptTemplates[index];
+                    return GestureDetector(
+                      onTap: () {
+                        // 使用该模板
+                        state.messageController.text = template['content'];
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10.w),
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF9F9F9),
+                          borderRadius: BorderRadius.circular(8.w),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              template['title'],
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1A1A1A),
+                              ),
+                            ),
+                            SizedBox(height: 8.w),
+                            Text(
+                              template['content'],
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: const Color(0xFFA6A6A6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )),
+          ),
+        ],
       ),
-    );
+    ));
   }
 
   // 显示模型选择弹窗
@@ -1048,7 +1036,7 @@ class AiQusLogic extends GetxController {
 
     // 获取按钮的位置和大小
     final RenderBox? renderBox =
-        modelKey.currentContext?.findRenderObject() as RenderBox?;
+    modelKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
     final Size size = renderBox.size;
@@ -1056,89 +1044,95 @@ class AiQusLogic extends GetxController {
 
     // 创建浮层
     final overlayEntry = OverlayEntry(
-      builder: (context) => Stack(
-        children: [
-          // 背景遮罩，点击后关闭浮层
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: hideModelSelection,
-              child: Container(
-                color: Colors.transparent,
+      builder: (context) =>
+          Stack(
+            children: [
+              // 背景遮罩，点击后关闭浮层
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: hideModelSelection,
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
+                ),
               ),
-            ),
-          ),
-          // 下拉菜单内容
-          Positioned(
-            top: position.dy + size.height + 4,
-            left: position.dx - 120,
-            right: 16.w,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 0,
-                      blurRadius: 8,
-                      offset: const Offset(0, 8),
+              // 下拉菜单内容
+              Positioned(
+                top: position.dy + size.height + 4,
+                left: position.dx - 120,
+                right: 16.w,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 0,
+                          blurRadius: 8,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: state.modelList.map((model) {
-                    return Obx(() => GestureDetector(
-                          onTap: () => selectModel(model['name'].toString()),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: model['name'] == state.selectedModel.value
-                                  ? const Color(0xFFF0F6FF)
-                                  : Colors.white,
-                            ),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 80.w,
-                                  child: Text(
-                                    model['name'].toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF1A1A1A),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: state.modelList.map((model) {
+                        return Obx(() =>
+                            GestureDetector(
+                              onTap: () =>
+                                  selectModel(model['name'].toString()),
+                              child: Container(
+                                height: 40,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12),
+                                decoration: BoxDecoration(
+                                  color: model['name'] ==
+                                      state.selectedModel.value
+                                      ? const Color(0xFFF0F6FF)
+                                      : Colors.white,
+                                ),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 80.w,
+                                      child: Text(
+                                        model['name'].toString(),
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: const Color(0xFF1A1A1A),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      model['description'].toString(),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: const Color(0xFFA6A6A6),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    if (model['name'] ==
+                                        state.selectedModel.value)
+                                      Icon(
+                                        Icons.check,
+                                        size: 20,
+                                        color: FYColors.color_3361FE,
+                                      ),
+                                  ],
                                 ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  model['description'].toString(),
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: const Color(0xFFA6A6A6),
-                                  ),
-                                ),
-                                const Spacer(),
-                                if (model['name'] == state.selectedModel.value)
-                                  Icon(
-                                    Icons.check,
-                                    size: 20,
-                                    color: FYColors.color_3361FE,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ));
-                  }).toList(),
+                              ),
+                            ));
+                      }).toList(),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
     );
 
     state.modelOverlayEntry.value = overlayEntry;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:safe_app/styles/colors.dart';
 
 class UnreadMessageDialog extends StatelessWidget {
@@ -47,9 +49,7 @@ class UnreadMessageDialog extends StatelessWidget {
     return Container(
       height: 48.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.vertical(top: Radius.circular(16.r))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

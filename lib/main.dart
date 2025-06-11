@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
       _designSize = const Size(375, 812);
     } else {
       bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape; // 横屏
-      _designSize = isLandscape ? const Size(1840, 2800) : const Size(2800, 1840);
+      _designSize = isLandscape ? const Size(906, 600) : const Size(600, 960);
     }
     return ScreenUtilInit(
       designSize: _designSize,

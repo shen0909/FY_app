@@ -182,49 +182,51 @@ class LoginLogic extends GetxController {
     String account = state.accountController.text;
     String password = state.passwordController.text;
     
-    if (account.isEmpty) {
-      ToastUtil.showError('请输入账号');
-      return;
-    }
-    if (password.isEmpty) {
-      ToastUtil.showError('请输入密码');
-      return;
-    }
+    // if (account.isEmpty) {
+    //   ToastUtil.showError('请输入账号');
+    //   return;
+    // }
+    // if (password.isEmpty) {
+    //   ToastUtil.showError('请输入密码');
+    //   return;
+    // }
+    //
+    // state.isLogging.value = true;
+    //
+    // try {
+    //   LoginData? loginData = await LoginApi.login(account, password);
+    //
+    //   if (loginData != null) {
+    //     await FYSharedPreferenceUtils.saveLoginData(loginData);
+    //     state.isLogging.value = false;
+    //
+    //     bool isFirstLogin = await FYSharedPreferenceUtils.isFirstLogin();
+    //     if (isFirstLogin) {
+    //       // 首次登录，需要设置安全锁屏方式
+    //       await FYSharedPreferenceUtils.setNotFirstLogin();
+    //       ToastUtil.showShort('首次登录需要设置安全锁屏方式');
+    //       Get.offAllNamed(Routers.lockMethodSelection);
+    //     } else {
+    //       // 非首次登录，检查是否已设置锁屏方式
+    //       bool hasSetupLockMethod = await _hasSetupLockMethod();
+    //       if (!hasSetupLockMethod) {
+    //         // 如果还没设置过锁屏方式，引导用户设置
+    //         ToastUtil.showShort('请设置安全锁屏方式');
+    //         Get.offAllNamed(Routers.lockMethodSelection);
+    //       } else {
+    //         Get.offAllNamed(Routers.home);
+    //       }
+    //     }
+    //   } else {
+    //     state.isLogging.value = false;
+    //     ToastUtil.showError('登录失败，请检查账号密码');
+    //   }
+    // } catch (e) {
+    //   state.isLogging.value = false;
+    //   ToastUtil.showError('登录失败: ${e.toString()}');
+    // }
+    Get.offAllNamed(Routers.home);
 
-    state.isLogging.value = true;
-
-    try {
-      LoginData? loginData = await LoginApi.login(account, password);
-
-      if (loginData != null) {
-        await FYSharedPreferenceUtils.saveLoginData(loginData);
-        state.isLogging.value = false;
-        
-        bool isFirstLogin = await FYSharedPreferenceUtils.isFirstLogin();
-        if (isFirstLogin) {
-          // 首次登录，需要设置安全锁屏方式
-          await FYSharedPreferenceUtils.setNotFirstLogin();
-          ToastUtil.showShort('首次登录需要设置安全锁屏方式');
-          Get.offAllNamed(Routers.lockMethodSelection);
-        } else {
-          // 非首次登录，检查是否已设置锁屏方式
-          bool hasSetupLockMethod = await _hasSetupLockMethod();
-          if (!hasSetupLockMethod) {
-            // 如果还没设置过锁屏方式，引导用户设置
-            ToastUtil.showShort('请设置安全锁屏方式');
-            Get.offAllNamed(Routers.lockMethodSelection);
-          } else {
-            Get.offAllNamed(Routers.home);
-          }
-        }
-      } else {
-        state.isLogging.value = false;
-        ToastUtil.showError('登录失败，请检查账号密码');
-      }
-    } catch (e) {
-      state.isLogging.value = false;
-      ToastUtil.showError('登录失败: ${e.toString()}');
-    }
   }
 
   // 执行划线登录
