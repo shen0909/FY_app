@@ -4,6 +4,7 @@ import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 
 /// Token拦截器
 /// 用于处理token过期和刷新
@@ -51,35 +52,109 @@ class TokenInterceptor extends Interceptor {
       _isRefreshing = true;
       
       try {
-        // 刷新token
-        String? newToken = await ApiService().refreshToken();
-        
-        if (newToken != null && newToken.isNotEmpty) {
-          if (kDebugMode) {
-            print('$_tag Token刷新成功，处理队列中的请求');
+        // 根据请求路径判断使用哪种刷新方式
+        if (options.path == '/send_channel_event') {
+          // 应用内接口可能需要重新登录应用
+          // 先尝试刷新外层token
+          bool refreshed = await _refreshOuterToken(options);
+          
+          if (!refreshed) {
+            // 如果外层token刷新失败，需要重新登录
+            if (kDebugMode) {
+              print('$_tag 应用内接口刷新Token失败，需要重新登录');
+            }
+            _pendingRequests.clear();
+            _navigateToLogin();
+            handler.next(err);
+            return;
           }
           
-          // 使用新token重试当前请求
-          options.headers["Authorization"] = "Bearer $newToken";
+          // 重新尝试应用内登录
+          bool innerLoginSuccess = await ApiService().reLoginInnerApp();
+          
+          if (!innerLoginSuccess) {
+            if (kDebugMode) {
+              print('$_tag 应用内重新登录失败，需要重新登录');
+            }
+            _pendingRequests.clear();
+            _navigateToLogin();
+            handler.next(err);
+            return;
+          }
+          
+          // 获取新的内层token
+          String? innerToken = await FYSharedPreferenceUtils.getInnerAccessToken();
           
           // 处理之前加入队列的请求
           for (RequestOptions request in _pendingRequests) {
-            request.headers["Authorization"] = "Bearer $newToken";
+            // 更新应用内请求参数中的token
+            if (request.path == '/send_channel_event' && request.data is Map) {
+              Map<String, dynamic> data = Map<String, dynamic>.from(request.data);
+              if (data.containsKey('param_string')) {
+                try {
+                  Map<String, dynamic> paramData = Map<String, dynamic>.from(
+                    data['param_string'] is String 
+                        ? jsonDecode(data['param_string']) 
+                        : data['param_string']
+                  );
+                  paramData['当前请求用户UUID'] = innerToken;
+                  data['param_string'] = jsonEncode(paramData);
+                  request.data = data;
+                } catch (e) {
+                  if (kDebugMode) {
+                    print('$_tag 更新请求参数中的token失败: $e');
+                  }
+                }
+              }
+            }
             _dio.fetch(request);
           }
           _pendingRequests.clear();
+          
+          // 更新当前请求参数中的token
+          if (options.data is Map) {
+            Map<String, dynamic> data = Map<String, dynamic>.from(options.data);
+            if (data.containsKey('param_string')) {
+              try {
+                Map<String, dynamic> paramData = Map<String, dynamic>.from(
+                  data['param_string'] is String 
+                      ? jsonDecode(data['param_string']) 
+                      : data['param_string']
+                );
+                paramData['当前请求用户UUID'] = innerToken;
+                data['param_string'] = jsonEncode(paramData);
+                options.data = data;
+              } catch (e) {
+                if (kDebugMode) {
+                  print('$_tag 更新请求参数中的token失败: $e');
+                }
+              }
+            }
+          }
           
           // 重试当前请求
           final response = await _dio.fetch(options);
           handler.resolve(response);
         } else {
-          // 刷新失败，需要重新登录
-          if (kDebugMode) {
-            print('$_tag Token刷新失败，需要重新登录');
+          // 外层接口，刷新外层token
+          bool refreshed = await _refreshOuterToken(options);
+          
+          if (refreshed) {
+            // 处理之前加入队列的请求
+            for (RequestOptions request in _pendingRequests) {
+              _dio.fetch(request);
+            }
+            _pendingRequests.clear();
+            
+            // 重试当前请求
+            final response = await _dio.fetch(options);
+            handler.resolve(response);
+          } else {
+            // 刷新失败，需要重新登录
+            _pendingRequests.clear();
+            _navigateToLogin();
+            handler.next(err);
           }
-          _pendingRequests.clear();
-          _navigateToLogin();
-          handler.next(err);
         }
       } catch (e) {
         if (kDebugMode) {
@@ -97,6 +172,22 @@ class TokenInterceptor extends Interceptor {
     }
   }
   
+  /// 刷新外层token
+  Future<bool> _refreshOuterToken(RequestOptions options) async {
+    String? newToken = await ApiService().refreshOuterToken();
+    
+    if (newToken != null && newToken.isNotEmpty) {
+      if (kDebugMode) {
+        print('$_tag 外层Token刷新成功');
+      }
+      
+      // 更新请求头
+      options.headers["Authorization"] = "Bearer $newToken";
+      return true;
+    }
+    return false;
+  }
+  
   // 判断是否是token过期错误
   bool _isTokenExpiredError(DioException err) {
     // 这里根据实际后端返回的错误码判断
@@ -111,6 +202,26 @@ class TokenInterceptor extends Interceptor {
     // 判断后端自定义错误码
     if (err.response?.data is Map) {
       final data = err.response?.data as Map;
+      // 外层token过期
+      if (data.containsKey('error_code') && data['error_code'] == 401) {
+        return true;
+      }
+      
+      // 内层token过期
+      if (data.containsKey('is_success') && 
+          data.containsKey('result_string') && 
+          data['result_string'] is String) {
+        try {
+          Map<String, dynamic> resultData = jsonDecode(data['result_string']);
+          if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
+            return true;
+          }
+        } catch (e) {
+          // 解析错误，不处理
+        }
+      }
+      
+      // 兼容旧接口
       if (data.containsKey('code') && (data['code'] == 401 || data['code'] == 10011)) {
         return true;
       }

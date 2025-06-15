@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safe_app/https/api_service.dart';
 
 import 'detail_list_state.dart';
 
@@ -20,8 +21,9 @@ class DetailListLogic extends GetxController {
   final GlobalKey cityKey = GlobalKey();
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    await ApiService().getSanctionList();
     // 初始化滚动控制器
     yearlyStatsController = ScrollController();
     leftVerticalController = ScrollController();

@@ -6,10 +6,11 @@ import 'package:safe_app/https/token_interceptor.dart';
 class HttpService {
   static final HttpService _instance = HttpService._internal();
   static const String _tag = 'FYHttp';
-  static const String baseUrl = 'http://180.97.221.196:2032';
+  static const String baseUrl = 'http://180.97.221.196:2033';
   
   factory HttpService() => _instance;
   late Dio dio;
+  late Dio innerDio; // 用于应用内统一请求的Dio实例
 
   /// 基础请求头
   static Map<String, dynamic> _baseHeaders() {
@@ -20,6 +21,7 @@ class HttpService {
   }
 
   HttpService._internal() {
+    // 外层请求的Dio配置
     BaseOptions options = BaseOptions(
       baseUrl: baseUrl,
       headers: _baseHeaders(),
@@ -34,7 +36,7 @@ class HttpService {
     
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        String? token = await FYSharedPreferenceUtils.getToken();
+        String? token = await FYSharedPreferenceUtils.getOuterAccessToken();
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
@@ -62,9 +64,56 @@ class HttpService {
       },
     ));
     
+    // 内层请求的Dio配置（与外层使用相同baseUrl，但有不同的拦截器逻辑）
+    BaseOptions innerOptions = BaseOptions(
+      baseUrl: baseUrl,
+      headers: _baseHeaders(),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
+      contentType: 'application/json',
+      responseType: ResponseType.json,
+    );
+    
+    innerDio = Dio(innerOptions);
+    
+    innerDio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        String? outerToken = await FYSharedPreferenceUtils.getOuterAccessToken();
+        if (outerToken != null && outerToken.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $outerToken';
+        }
+         
+        if (kDebugMode) {
+          print('$_tag 内层请求: ${options.uri}');
+          print('$_tag 内层请求头: ${options.headers}');
+          print('$_tag 内层请求参数: ${options.data}');
+        }
+         
+        return handler.next(options);
+      },
+      onResponse: (response, handler) {
+        if (kDebugMode) {
+          print('$_tag 内层响应: ${response.statusCode}');
+          print('$_tag 内层响应数据: ${response.data}');
+        }
+        return handler.next(response);
+      },
+      onError: (DioException e, handler) {
+        if (kDebugMode) {
+          print('$_tag 内层错误: ${formatError(e)}');
+        }
+        return handler.next(e);
+      },
+    ));
+    
     final tokenInterceptor = TokenInterceptor();
     tokenInterceptor.setDio(dio);
     dio.interceptors.add(tokenInterceptor);
+    
+    final innerTokenInterceptor = TokenInterceptor();
+    innerTokenInterceptor.setDio(innerDio);
+    innerDio.interceptors.add(innerTokenInterceptor);
   }
 
   /// 格式化错误信息
@@ -82,7 +131,7 @@ class HttpService {
     }
   }
 
-  /// POST请求
+  /// POST请求 - 外层接口
   Future post<T>(
     String path, {
     Map<String, dynamic>? data,
@@ -127,6 +176,49 @@ class HttpService {
         }
       }
     } on DioException catch (e) {
+      _handleError(errorCallback, formatError(e));
+    }
+  }
+  
+  /// 应用内统一请求接口
+  Future sendChannelEvent<T>(
+    Map<String, dynamic> data, {
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('$_tag 发起应用内统一请求');
+      }
+      
+      Response response = await innerDio.post(
+        '/send_channel_event',
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      
+      if (response.statusCode != 200) {
+        _handleError(errorCallback, '网络请求错误,状态码:${response.statusCode}');
+        return;
+      }
+      
+      if (successCallback != null) {
+        if (response.data != null) {
+          if (kDebugMode) {
+            print('$_tag 应用内统一请求结果: $response');
+          }
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '应用内统一请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('$_tag 应用内统一请求失败: ${formatError(e)}');
+      }
       _handleError(errorCallback, formatError(e));
     }
   }

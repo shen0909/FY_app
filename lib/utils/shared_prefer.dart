@@ -53,6 +53,11 @@ class FYSharedPreferenceUtils {
   static const String PATTERN_LOCK_TIMESTAMP = 'pattern_lock_timestamp';
   static const String PATTERN_LOCK_ENABLED = 'pattern_lock_enabled';
   static const String IS_FIRST_LOGIN = 'is_first_login';
+  
+  // 新增外层和内层token相关的key
+  static const String OUTER_ACCESS_TOKEN_KEY = 'outer_access_token';
+  static const String OUTER_REFRESH_TOKEN_KEY = 'outer_refresh_token';
+  static const String INNER_ACCESS_TOKEN_KEY = 'inner_access_token';
 
   // 初始化sp
   static Future initSP() async {
@@ -113,6 +118,38 @@ class FYSharedPreferenceUtils {
   static Future<bool> removeToken() async {
     return remove(TOKEN_KEY);
   }
+  
+  // 保存外层访问令牌
+  static Future<bool> saveOuterAccessToken(String token) async {
+    return setString(OUTER_ACCESS_TOKEN_KEY, token);
+  }
+  
+  // 获取外层访问令牌
+  static Future<String?> getOuterAccessToken() async {
+    return getString(OUTER_ACCESS_TOKEN_KEY);
+  }
+  
+  // 保存外层刷新令牌
+  static Future<bool> saveOuterRefreshToken(String token) async {
+    return setString(OUTER_REFRESH_TOKEN_KEY, token);
+  }
+  
+  // 获取外层刷新令牌
+  static Future<String?> getOuterRefreshToken() async {
+    return getString(OUTER_REFRESH_TOKEN_KEY);
+  }
+  
+  // 保存内层访问令牌
+  static Future<bool> saveInnerAccessToken(String token) async {
+    // 同时保存到旧的TOKEN_KEY，保持兼容性
+    await setString(TOKEN_KEY, token);
+    return setString(INNER_ACCESS_TOKEN_KEY, token);
+  }
+  
+  // 获取内层访问令牌
+  static Future<String?> getInnerAccessToken() async {
+    return getString(INNER_ACCESS_TOKEN_KEY);
+  }
 
   // 保存用户信息
   static Future<bool> saveUserInfo({
@@ -146,7 +183,10 @@ class FYSharedPreferenceUtils {
     await remove(USER_ID_KEY);
     await remove(USER_NAME_KEY);
     await remove(USER_ROLE_KEY);
-    return remove(USER_DATA_KEY);
+    await remove(USER_DATA_KEY);
+    await remove(OUTER_ACCESS_TOKEN_KEY);
+    await remove(OUTER_REFRESH_TOKEN_KEY);
+    return remove(INNER_ACCESS_TOKEN_KEY);
   }
 
   // 清除所有数据
