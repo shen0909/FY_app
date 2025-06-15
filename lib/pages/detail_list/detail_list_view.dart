@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
+import 'package:safe_app/widgets/widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'detail_list_logic.dart';
@@ -215,7 +216,7 @@ class DetailListPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Obx(() => Text(
-            "${state.companyList.length} 条结果",
+            "${state.sanctionList.length} 条结果",
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF3361FE),
@@ -230,8 +231,18 @@ class DetailListPage extends StatelessWidget {
     return Container(
       height: 400.h, // 设置一个固定高度
       child: Obx(() {
+        // 加载状态
         if (state.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
+            ),
+          );
+        }
+
+        // 数据为空时显示暂无数据
+        if (state.sanctionList.isEmpty) {
+          return FYWidget.buildEmptyContent();
         }
 
         // 计算每列需要的最大宽度
@@ -247,12 +258,15 @@ class DetailListPage extends StatelessWidget {
         TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
         // 为每个制裁类型计算所需宽度
-        for (var item in state.companyList) {
+        for (var item in state.sanctionList) {
+          // 获取制裁类型
+          final sanctionType = item.getSanctionType(state.sanctionTypes);
+          
           // 计算每个制裁类型标签所需的总宽度
           // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2)
 
           // 计算文本宽度
-          textPainter.text = TextSpan(text: item.sanctionType.name, style: sanctionTextStyle);
+          textPainter.text = TextSpan(text: sanctionType.name, style: sanctionTextStyle);
           textPainter.layout();
           double totalWidth =
               textPainter.width + 14.w + 4.w + 16.w + 20.w; // 额外添加10.w作为缓冲
@@ -302,7 +316,7 @@ class DetailListPage extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       controller: logic.leftVerticalController,
-                      itemCount: state.companyList.length,
+                      itemCount: state.sanctionList.length,
                       itemBuilder: (context, index) {
                         final isOdd = index % 2 == 1;
                         return Container(
@@ -413,10 +427,12 @@ class DetailListPage extends StatelessWidget {
                           Expanded(
                             child: ListView.builder(
                               controller: logic.rightVerticalController,
-                              itemCount: state.companyList.length,
+                              itemCount: state.sanctionList.length,
                               itemBuilder: (context, index) {
-                                final item = state.companyList[index];
+                                final item = state.sanctionList[index];
                                 final isOdd = index % 2 == 1;
+                                final sanctionType = item.getSanctionType(state.sanctionTypes);
+                                
                                 return Container(
                                   height: 44.h,
                                   color:
@@ -428,7 +444,7 @@ class DetailListPage extends StatelessWidget {
                                         child: Padding(
                                           padding: EdgeInsets.only(left: 8.w),
                                           child: Text(
-                                            item.name,
+                                            item.displayName,
                                             textAlign: TextAlign.start,
                                             style: TextStyle(
                                               fontSize: 12.sp,
@@ -445,14 +461,13 @@ class DetailListPage extends StatelessWidget {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8.w),
                                         child: IntrinsicWidth(
-                                          child: _buildSanctionTypeTag(
-                                              item.sanctionType),
+                                          child: _buildSanctionTypeTag(sanctionType),
                                         ),
                                       ),
                                       SizedBox(
                                         width: maxRegionWidth,
                                         child: Text(
-                                          item.region,
+                                          item.displayRegion,
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             color: Color(0xFF1A1A1A),
@@ -462,7 +477,7 @@ class DetailListPage extends StatelessWidget {
                                       SizedBox(
                                         width: timeWidth,
                                         child: Text(
-                                          item.time,
+                                          item.displaySanctionTime,
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             color: Color(0xFF1A1A1A),
@@ -472,7 +487,7 @@ class DetailListPage extends StatelessWidget {
                                       SizedBox(
                                         width: removalTimeWidth,
                                         child: Text(
-                                          item.removalTime,
+                                          item.displayRemoveTime,
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             color: Color(0xFF1A1A1A),
@@ -496,7 +511,7 @@ class DetailListPage extends StatelessWidget {
                     bottom: 0,
                     child: Obx(() {
                       // 当没有数据时不显示指示器
-                      if (state.companyList.isEmpty) {
+                      if (state.sanctionList.isEmpty) {
                         return SizedBox();
                       }
                       return Container(

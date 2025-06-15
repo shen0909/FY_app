@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:safe_app/models/detail_list_data.dart';
 
 // 制裁类型数据模型
 class SanctionType {
@@ -316,11 +317,11 @@ class DetailListState {
   // 是否正在加载数据
   var isLoading = false.obs;
   
-  // 企业清单数据
-  var companyList = <CompanyItem>[].obs;
+  // 企业清单数据 - 直接使用SanctionEntity
+  var sanctionList = <SanctionEntity>[].obs;
   
   // 总数量
-  var totalCount = 10.obs;
+  var totalCount = 0.obs;
 
   // 年度统计数据
   var yearlyStats = <YearlyStats>[].obs;
@@ -349,25 +350,6 @@ class DetailListState {
       YearlyStats(year: '2025(截至5月)', newCount: 54, totalCount: 917),
     ]);
   }
-}
-
-// 企业清单项目
-class CompanyItem {
-  final int id;
-  final String name;
-  final SanctionType sanctionType;
-  final String region; // 地区
-  final String time; // 时间
-  final String removalTime; // 移除时间
-  
-  CompanyItem({
-    required this.id,
-    required this.name,
-    required this.sanctionType,
-    required this.region,
-    required this.time,
-    required this.removalTime,
-  });
 }
 
 // 年度统计数据

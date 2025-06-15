@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/models/detail_list_data.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
 
 import 'detail_list_state.dart';
 
@@ -23,7 +25,6 @@ class DetailListLogic extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    ApiService().getSanctionList();
     // 初始化滚动控制器
     yearlyStatsController = ScrollController();
     leftVerticalController = ScrollController();
@@ -69,71 +70,67 @@ class DetailListLogic extends GetxController {
   }
 
   // 加载清单数据
-  void loadData() {
+  Future<void> loadData() async {
     state.isLoading.value = true;
 
-    // 模拟网络请求延迟
-    Future.delayed(const Duration(milliseconds: 800), () {
-      // 模拟数据 - 实际项目中应从API获取
-      List<CompanyItem> allCompanies = _getMockData();
-      
-      // 过滤数据
-      if (state.typeFilter.value.isNotEmpty) {
-        SanctionType? selectedType = getSanctionTypeByName(state.typeFilter.value);
-        if (selectedType != null) {
-          allCompanies = allCompanies.where((company) =>
-            company.sanctionType.code == selectedType.code).toList();
-        }
-      }
+    try {
+      // 构建搜索参数
+      String sanctionTypeParam = state.typeFilter.value.isNotEmpty ? state.typeFilter.value : "全部";
+      String provinceParam = state.provinceFilter.value.isNotEmpty ? state.provinceFilter.value : "全部";
+      String cityParam = state.cityFilter.value.isNotEmpty ? state.cityFilter.value : "全部";
+      String searchParam = state.searchText.value;
 
-      if (state.provinceFilter.value.isNotEmpty) {
-        allCompanies = allCompanies.where((company) =>
-            company.region == state.provinceFilter.value).toList();
-      }
+      // 调用API获取数据
+      SanctionListResponse? response = await ApiService().getSanctionList(
+        currentPage: 1,
+        pageSize: 50, // 可以根据需要调整页面大小
+        sanctionType: sanctionTypeParam,
+        province: provinceParam,
+        city: cityParam,
+        search: searchParam,
+      );
 
-      if (state.cityFilter.value.isNotEmpty) {
-        allCompanies = allCompanies.where((company) =>
-            company.region == state.cityFilter.value).toList();
+      if (response != null && response.success && response.data != null) {
+        // 直接使用SanctionEntity数据
+        state.sanctionList.value = response.data!.entities;
+        state.totalCount.value = response.data!.allCount;
+      } else {
+        // API调用失败，清空数据
+        print('API调用失败: ${response?.message ?? "响应为空"}');
+        state.sanctionList.clear();
+        state.totalCount.value = 0;
       }
-
-      if (state.searchText.value.isNotEmpty) {
-        final keyword = state.searchText.value.toLowerCase();
-        allCompanies = allCompanies.where((company) =>
-            company.name.toLowerCase().contains(keyword)).toList();
-      }
-
-      state.companyList.value = allCompanies;
-      state.totalCount.value = state.companyList.length;
+    } catch (e) {
+      print('加载数据时发生错误: $e');
+      // 发生错误时清空数据
+      state.sanctionList.clear();
+      state.totalCount.value = 0;
+    } finally {
       state.isLoading.value = false;
-    });
+    }
   }
 
   // 搜索
   void search(String keyword) {
     state.searchText.value = keyword;
-    // 实际应用中这里应该调用API搜索
-    // 这里简单模拟过滤本地数据
     loadData();
   }
 
   // 设置类型筛选
   void setTypeFilter(String typeName) {
     state.typeFilter.value = typeName;
-    // 重新加载数据
     loadData();
   }
 
   // 设置省份筛选
   void setProvinceFilter(String province) {
     state.provinceFilter.value = province;
-    // 重新加载数据
     loadData();
   }
 
   // 设置城市筛选
   void setCityFilter(String city) {
     state.cityFilter.value = city;
-    // 重新加载数据
     loadData();
   }
 
@@ -143,70 +140,7 @@ class DetailListLogic extends GetxController {
     state.provinceFilter.value = '';
     state.cityFilter.value = '';
     state.searchText.value = '';
-    // 重新加载数据
-    loadData();
-  }
-
-  // 模拟数据
-  List<CompanyItem> _getMockData() {
-    return [
-      CompanyItem(
-          id: 1,
-          name: '中芯国际集成电路制造有限公司',
-          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0],
-          region: '上海',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 2,
-          name: '字节跳动有限公司',
-          sanctionType: getSanctionTypeByCode('NS-CMIC') ?? state.sanctionTypes[1],
-          region: '北京',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 3,
-          name: '大疆创新科技有限公司',
-          sanctionType: getSanctionTypeByCode('CMC') ?? state.sanctionTypes[2],
-          region: '广东',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 4,
-          name: '海康威视数字技术股份有限公司',
-          sanctionType: getSanctionTypeByCode('Non-SDN CMIC') ?? state.sanctionTypes[3],
-          region: '浙江',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 5,
-          name: '科大讯飞股份有限公司',
-          sanctionType: getSanctionTypeByCode('SSI') ?? state.sanctionTypes[4],
-          region: '安徽',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 6,
-          name: '商汤科技有限公司',
-          sanctionType: getSanctionTypeByCode('EL') ?? state.sanctionTypes[0],
-          region: '香港',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 7,
-          name: '旷视科技有限公司',
-          sanctionType: getSanctionTypeByCode('UVL') ?? state.sanctionTypes[5],
-          region: '北京',
-          time: '2023.05',
-          removalTime: '-'),
-      CompanyItem(
-          id: 8,
-          name: '深信服科技股份有限公司',
-          sanctionType: getSanctionTypeByCode('DPL') ?? state.sanctionTypes[6],
-          region: '广东',
-          time: '2023.05',
-          removalTime: '-'),
-    ];
+    loadData(); // 使用真实API调用
   }
 
   // 显示筛选器浮层
@@ -239,14 +173,14 @@ class DetailListLogic extends GetxController {
   // 构建浮层内容
   Widget _buildOverlayContent(String filterType, Offset position, Size size) {
     List<String> options = [];
-    double maxHeight = 300.0;
+    double maxHeight = 300.0.w;
     // 根据筛选类型设置宽度
-    double overlayWidth = 200.0;
+    double overlayWidth = 200.0.w;
 
     // 根据不同筛选类型获取选项
     if (filterType == "类型") {
       options = getTypeOptions();
-      overlayWidth = 200.0; // 类型筛选器保持现有宽度
+      overlayWidth = 200.0.w; // 类型筛选器保持现有宽度
     } else if (filterType == "省份") {
       options = getProvinceOptions();
       overlayWidth = size.width; // 与上方筛选框宽度一致
@@ -389,6 +323,7 @@ class DetailListLogic extends GetxController {
   // 获取城市选项
   List<String> getCityOptions() {
     return [
+      "全部",
       "广州",
       "深圳",
       "北京",
@@ -433,10 +368,7 @@ class DetailListLogic extends GetxController {
   void showSanctionDetailOverlay(SanctionType sanctionType) {
     // 获取制裁类型详情数据
     SanctionTypeDetail detail = SanctionTypeDetail.getDetailByCode(sanctionType.code);
-
-    // 使用Get.dialog显示弹窗
-    Get.bottomSheet(
-      // 弹窗内容
+    FYDialogUtils.showBottomSheet(
       Container(
         width: double.infinity,
         height: MediaQuery.of(Get.context!).size.height * 0.5,
@@ -524,8 +456,7 @@ class DetailListLogic extends GetxController {
             ),
           ],
         ),
-      ),
-      backgroundColor: Colors.black54,
+      )
     );
   }
 }
