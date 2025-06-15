@@ -20,7 +20,7 @@ class DetailListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FYColors.whiteColor,
-      appBar: FYAppBar(title: '实体清单'),
+      appBar: const FYAppBar(title: '实体清单'),
       body: SingleChildScrollView(
         controller: logic.yearlyStatsController,
         child: Column(
@@ -142,7 +142,7 @@ class DetailListPage extends StatelessWidget {
   // 筛选标签区域
   Widget _buildFilterChips(BuildContext context) {
     return Container(
-      height: 56,
+      height: 56.w,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -188,14 +188,16 @@ class DetailListPage extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                hasValue ? filter.value : title,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+              Expanded(
+                child: Text(
+                  hasValue ? filter.value : title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
               Icon(
                 hasValue ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                 size: 16.w,
@@ -308,7 +310,7 @@ class DetailListPage extends StatelessWidget {
                           color: isOdd ? Colors.white : Color(0xFFF9F9F9),
                           alignment: Alignment.center,
                           child: Text(
-                            "${state.companyList[index].id}",
+                            "${index+1}",
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Color(0xFF1A1A1A),
