@@ -47,6 +47,9 @@ class DetailListLogic extends GetxController {
       if (leftVerticalController.offset != rightVerticalController.offset) {
         leftVerticalController.jumpTo(rightVerticalController.offset);
       }
+      
+      // 检测是否滑动到底部，触发加载更多
+      _checkIfNeedLoadMore();
     });
   }
 
@@ -70,8 +73,15 @@ class DetailListLogic extends GetxController {
   }
 
   // 加载清单数据
-  Future<void> loadData() async {
-    state.isLoading.value = true;
+  Future<void> loadData({bool isRefresh = false}) async {
+    // 如果是刷新，重置分页状态
+    if (isRefresh) {
+      state.isRefreshing.value = true;
+      state.currentPage.value = 1;
+      state.hasMoreData.value = true;
+    } else {
+      state.isLoading.value = true;
+    }
 
     try {
       // 构建搜索参数
@@ -82,8 +92,8 @@ class DetailListLogic extends GetxController {
 
       // 调用API获取数据
       SanctionListResponse? response = await ApiService().getSanctionList(
-        currentPage: 1,
-        pageSize: 50, // 可以根据需要调整页面大小
+        currentPage: state.currentPage.value,
+        pageSize: state.pageSize.value,
         sanctionType: sanctionTypeParam,
         province: provinceParam,
         city: cityParam,
@@ -91,47 +101,64 @@ class DetailListLogic extends GetxController {
       );
 
       if (response != null && response.success && response.data != null) {
-        // 直接使用SanctionEntity数据
-        state.sanctionList.value = response.data!.entities;
+        final newEntities = response.data!.entities;
+        if (isRefresh || state.currentPage.value == 1) {
+          // 刷新或首次加载：替换数据
+          state.sanctionList.value = newEntities;
+        } else {
+          state.sanctionList.addAll(newEntities);
+        }
+        
         state.totalCount.value = response.data!.allCount;
+        
+        // 检查是否还有更多数据
+        final totalPages = (response.data!.allCount / state.pageSize.value).ceil();
+        state.hasMoreData.value = state.currentPage.value < totalPages;
+        
       } else {
-        // API调用失败，清空数据
+        // API调用失败
         print('API调用失败: ${response?.message ?? "响应为空"}');
-        state.sanctionList.clear();
-        state.totalCount.value = 0;
+        if (isRefresh || state.currentPage.value == 1) {
+          state.sanctionList.clear();
+          state.totalCount.value = 0;
+        }
+        state.hasMoreData.value = false;
       }
     } catch (e) {
       print('加载数据时发生错误: $e');
-      // 发生错误时清空数据
-      state.sanctionList.clear();
-      state.totalCount.value = 0;
+      if (isRefresh || state.currentPage.value == 1) {
+        state.sanctionList.clear();
+        state.totalCount.value = 0;
+      }
+      state.hasMoreData.value = false;
     } finally {
       state.isLoading.value = false;
+      state.isRefreshing.value = false;
     }
   }
 
   // 搜索
   void search(String keyword) {
     state.searchText.value = keyword;
-    loadData();
+    refreshData();
   }
 
   // 设置类型筛选
   void setTypeFilter(String typeName) {
     state.typeFilter.value = typeName;
-    loadData();
+    refreshData();
   }
 
   // 设置省份筛选
   void setProvinceFilter(String province) {
     state.provinceFilter.value = province;
-    loadData();
+    refreshData();
   }
 
   // 设置城市筛选
   void setCityFilter(String city) {
     state.cityFilter.value = city;
-    loadData();
+    refreshData();
   }
 
   // 清除所有筛选条件
@@ -140,7 +167,7 @@ class DetailListLogic extends GetxController {
     state.provinceFilter.value = '';
     state.cityFilter.value = '';
     state.searchText.value = '';
-    loadData(); // 使用真实API调用
+    refreshData();
   }
 
   // 显示筛选器浮层
@@ -458,6 +485,42 @@ class DetailListLogic extends GetxController {
         ),
       )
     );
+  }
+
+  // 检测是否需要加载更多数据
+  void _checkIfNeedLoadMore() {
+    if (state.isLoadingMore.value || !state.hasMoreData.value) return;
+    
+    final maxScroll = rightVerticalController.position.maxScrollExtent;
+    final currentScroll = rightVerticalController.position.pixels;
+    
+    // 当滚动到距离底部100像素时开始加载更多
+    if (maxScroll - currentScroll <= 100) {
+      loadMoreData();
+    }
+  }
+
+  // 加载更多数据
+  Future<void> loadMoreData() async {
+    if (state.isLoadingMore.value || !state.hasMoreData.value) return;
+    
+    state.isLoadingMore.value = true;
+    state.currentPage.value++;
+    
+    try {
+      await loadData();
+    } catch (e) {
+      // 加载失败时回退页码
+      state.currentPage.value--;
+      print('加载更多数据失败: $e');
+    } finally {
+      state.isLoadingMore.value = false;
+    }
+  }
+
+  // 刷新数据
+  Future<void> refreshData() async {
+    await loadData(isRefresh: true);
   }
 }
 

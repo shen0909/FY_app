@@ -232,8 +232,8 @@ class DetailListPage extends StatelessWidget {
       height: 400.h, // 设置一个固定高度
       child: Obx(() {
         // 加载状态
-        if (state.isLoading.value) {
-          return const Center(
+        if (state.isLoading.value && state.sanctionList.isEmpty) {
+          return Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
             ),
@@ -241,7 +241,7 @@ class DetailListPage extends StatelessWidget {
         }
 
         // 数据为空时显示暂无数据
-        if (state.sanctionList.isEmpty) {
+        if (state.sanctionList.isEmpty && !state.isLoading.value) {
           return FYWidget.buildEmptyContent();
         }
 
@@ -280,9 +280,6 @@ class DetailListPage extends StatelessWidget {
         maxSanctionTypeWidth =
             maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
 
-        // 保留动态计算的宽度，不再强制设置固定值
-        // maxSanctionTypeWidth = 240.w;
-
         // 计算总宽度
         double totalTableWidth = maxNameWidth +
             maxSanctionTypeWidth +
@@ -290,79 +287,124 @@ class DetailListPage extends StatelessWidget {
             timeWidth +
             removalTimeWidth;
 
-        return Row(
-          children: [
-            // 固定的首列（序号列）
-            Container(
-              width: 50.w,
-              child: Column(
-                children: [
-                  // 首列表头
-                  Container(
-                    height: 28.h,
-                    color: Color(0xFFF0F5FF),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "序号",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Color(0xFF3361FE),
-                        fontWeight: FontWeight.normal,
+        return RefreshIndicator(
+          onRefresh: logic.refreshData,
+          color: Color(0xFF3361FE),
+          child: Row(
+            children: [
+              // 固定的首列（序号列）
+              Container(
+                width: 50.w,
+                child: Column(
+                  children: [
+                    // 首列表头
+                    Container(
+                      height: 28.h,
+                      color: Color(0xFFF0F5FF),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "序号",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Color(0xFF3361FE),
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // 首列数据
-                  Expanded(
-                    child: ListView.builder(
-                      controller: logic.leftVerticalController,
-                      itemCount: state.sanctionList.length,
-                      itemBuilder: (context, index) {
-                        final isOdd = index % 2 == 1;
-                        return Container(
-                          height: 44.h,
-                          color: isOdd ? Colors.white : Color(0xFFF9F9F9),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "${index+1}",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xFF1A1A1A),
+                    // 首列数据
+                    Expanded(
+                      child: ListView.builder(
+                        controller: logic.leftVerticalController,
+                        itemCount: state.sanctionList.length + (state.hasMoreData.value ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          // 显示加载更多指示器
+                          if (index == state.sanctionList.length) {
+                            return Container(
+                              height: 44.h,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "${index + 1}",
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Color(0xFF1A1A1A),
+                                ),
+                              ),
+                            );
+                          }
+                          
+                          final isOdd = index % 2 == 1;
+                          return Container(
+                            height: 44.h,
+                            color: isOdd ? Colors.white : Color(0xFFF9F9F9),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "${index+1}",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Color(0xFF1A1A1A),
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // 右侧可滚动部分
-            Expanded(
-              child: Stack(
-                children: [
-                  // 滚动内容
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller: logic.horizontalScrollController,
-                    child: SizedBox(
-                      // 设置足够的宽度让内容可以滚动
-                      width: totalTableWidth,
-                      child: Column(
-                        children: [
-                          // 表头行
-                          Container(
-                            height: 28.h,
-                            color: Color(0xFFF0F5FF),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: maxNameWidth,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 8.w),
+              // 右侧可滚动部分
+              Expanded(
+                child: Stack(
+                  children: [
+                    // 滚动内容
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      controller: logic.horizontalScrollController,
+                      child: SizedBox(
+                        // 设置足够的宽度让内容可以滚动
+                        width: totalTableWidth,
+                        child: Column(
+                          children: [
+                            // 表头行
+                            Container(
+                              height: 28.h,
+                              color: Color(0xFFF0F5FF),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: maxNameWidth,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 8.w),
+                                      child: Text(
+                                        "名称",
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Color(0xFF3361FE),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: maxSanctionTypeWidth,
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 8.w),
+                                      child: Text(
+                                        "制裁类型",
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Color(0xFF3361FE),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: maxRegionWidth,
                                     child: Text(
-                                      "名称",
+                                      "地区",
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Color(0xFF3361FE),
@@ -370,14 +412,10 @@ class DetailListPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: maxSanctionTypeWidth,
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.w),
+                                  SizedBox(
+                                    width: timeWidth,
                                     child: Text(
-                                      "制裁类型",
+                                      "时间",
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Color(0xFF3361FE),
@@ -385,154 +423,185 @@ class DetailListPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: maxRegionWidth,
-                                  child: Text(
-                                    "地区",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
+                                  SizedBox(
+                                    width: removalTimeWidth,
+                                    child: Text(
+                                      "移除时间",
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Color(0xFF3361FE),
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: timeWidth,
-                                  child: Text(
-                                    "时间",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: removalTimeWidth,
-                                  child: Text(
-                                    "移除时间",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
 
-                          // 表格数据行
-                          Expanded(
-                            child: ListView.builder(
-                              controller: logic.rightVerticalController,
-                              itemCount: state.sanctionList.length,
-                              itemBuilder: (context, index) {
-                                final item = state.sanctionList[index];
-                                final isOdd = index % 2 == 1;
-                                final sanctionType = item.getSanctionType(state.sanctionTypes);
-                                
-                                return Container(
-                                  height: 44.h,
-                                  color:
-                                      isOdd ? Colors.white : Color(0xFFF9F9F9),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: maxNameWidth,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 8.w),
+                            // 表格数据行
+                            Expanded(
+                              child: ListView.builder(
+                                controller: logic.rightVerticalController,
+                                itemCount: state.sanctionList.length + (state.hasMoreData.value || state.isLoadingMore.value ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  // 显示加载更多指示器
+                                  if (index == state.sanctionList.length) {
+                                    return Container(
+                                      height: 44.h,
+                                      color: index % 2 == 1 ? Colors.white : Color(0xFFF9F9F9),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Center(
+                                              child: state.isLoadingMore.value
+                                                  ? Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 16.w,
+                                                          height: 16.w,
+                                                          child: CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 8.w),
+                                                        Text(
+                                                          "加载中...",
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: Color(0xFF3361FE),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : state.hasMoreData.value
+                                                      ? Text(
+                                                          "滑动到底部加载更多",
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: Color(0xFFA6A6A6),
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          "没有更多数据了",
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: Color(0xFFA6A6A6),
+                                                          ),
+                                                        ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  
+                                  final item = state.sanctionList[index];
+                                  final isOdd = index % 2 == 1;
+                                  final sanctionType = item.getSanctionType(state.sanctionTypes);
+                                  
+                                  return Container(
+                                    height: 44.h,
+                                    color:
+                                        isOdd ? Colors.white : Color(0xFFF9F9F9),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: maxNameWidth,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 8.w),
+                                            child: Text(
+                                              item.displayName,
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                color: Color(0xFF1A1A1A),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: maxSanctionTypeWidth,
+                                          alignment: Alignment.centerLeft,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.w),
+                                          child: IntrinsicWidth(
+                                            child: _buildSanctionTypeTag(sanctionType),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: maxRegionWidth,
                                           child: Text(
-                                            item.displayName,
-                                            textAlign: TextAlign.start,
+                                            item.displayRegion,
                                             style: TextStyle(
                                               fontSize: 12.sp,
                                               color: Color(0xFF1A1A1A),
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
                                           ),
                                         ),
-                                      ),
-                                      Container(
-                                        width: maxSanctionTypeWidth,
-                                        alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8.w),
-                                        child: IntrinsicWidth(
-                                          child: _buildSanctionTypeTag(sanctionType),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: maxRegionWidth,
-                                        child: Text(
-                                          item.displayRegion,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Color(0xFF1A1A1A),
+                                        SizedBox(
+                                          width: timeWidth,
+                                          child: Text(
+                                            item.displaySanctionTime,
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: Color(0xFF1A1A1A),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: timeWidth,
-                                        child: Text(
-                                          item.displaySanctionTime,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Color(0xFF1A1A1A),
+                                        SizedBox(
+                                          width: removalTimeWidth,
+                                          child: Text(
+                                            item.displayRemoveTime,
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: Color(0xFF1A1A1A),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: removalTimeWidth,
-                                        child: Text(
-                                          item.displayRemoveTime,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Color(0xFF1A1A1A),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  // 右侧滑动指示阴影
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Obx(() {
-                      // 当没有数据时不显示指示器
-                      if (state.sanctionList.isEmpty) {
-                        return SizedBox();
-                      }
-                      return Container(
-                        width: 16.w,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.1),
-                            ],
+                    // 右侧滑动指示阴影
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Obx(() {
+                        // 当没有数据时不显示指示器
+                        if (state.sanctionList.isEmpty) {
+                          return SizedBox();
+                        }
+                        return Container(
+                          width: 16.w,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.1),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
+                        );
+                      }),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );
