@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/styles/colors.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
 
 import 'order_state.dart';
 
@@ -33,7 +34,7 @@ class OrderLogic extends GetxController {
   
   // 显示订阅管理弹窗
   void showSubscriptionManage() {
-    Get.bottomSheet(
+    FYDialogUtils.showBottomSheet(
       Container(
         height: 500.w,
         decoration: BoxDecoration(
@@ -76,10 +77,10 @@ class OrderLogic extends GetxController {
                 ],
               ),
             ),
-            
+
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
+                child: Obx(() => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 我的订阅部分
@@ -95,19 +96,11 @@ class OrderLogic extends GetxController {
                               fontWeight: FontWeight.w500,
                               color: FYColors.color_1A1A1A,
                             ),
-                          ),
-                          Text(
-                            '点击进入订阅',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400,
-                              color: FYColors.color_1A1A1A,
-                            ),
-                          ),
+                          )
                         ],
                       ),
                     ),
-                    
+
                     // 我的订阅内容
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -117,7 +110,7 @@ class OrderLogic extends GetxController {
                         children: _buildMySubscriptionItems(),
                       ),
                     ),
-                    
+
                     // 全部订阅部分
                     Padding(
                       padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 8.h),
@@ -143,7 +136,7 @@ class OrderLogic extends GetxController {
                         ],
                       ),
                     ),
-                    
+
                     // 全部订阅内容
                     Padding(
                       padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 50.h),
@@ -154,15 +147,12 @@ class OrderLogic extends GetxController {
                       ),
                     ),
                   ],
-                ),
+                )),
               ),
             ),
           ],
         ),
       ),
-      backgroundColor: Colors.black.withOpacity(0.7),
-      isScrollControlled: true,
-      enableDrag: true,
     );
   }
   
@@ -173,22 +163,23 @@ class OrderLogic extends GetxController {
         .toList();
         
     return mySubscriptions.map((item) {
-      return Container(
-        width: 80.w,
-        height: 46.h,
-        decoration: BoxDecoration(
-          color: FYColors.color_F9F9F9,
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          item['title'],
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-            color: FYColors.color_1A1A1A,
+      return IntrinsicWidth(
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+          decoration: BoxDecoration(
+            color: FYColors.color_F9F9F9,
+            borderRadius: BorderRadius.circular(8.r),
           ),
-          textAlign: TextAlign.center,
+          alignment: Alignment.center,
+          child: Text(
+            item['title'],
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: FYColors.color_1A1A1A,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }).toList();
@@ -198,76 +189,71 @@ class OrderLogic extends GetxController {
   List<Widget> _buildAllSubscriptionItems() {
     return state.allSubscriptionCategories.map((item) {
       final bool isSubscribed = item['isSubscribed'] == true;
-      
-      return Container(
-        width: 80.w,
-        height: 46.h,
-        decoration: BoxDecoration(
-          color: FYColors.color_F9F9F9,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-            color: isSubscribed ? FYColors.color_3361FE.withOpacity(0.2) : Colors.transparent,
-            width: isSubscribed ? 1 : 0,
-          ),
-        ),
-        child: Stack(
-          children: [
-            // 标题
-            Center(
-              child: Text(
-                item['title'],
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: FYColors.color_1A1A1A,
+      return Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 12.w),
+            decoration: BoxDecoration(
+              color: FYColors.color_F9F9F9,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: IntrinsicWidth(
+              child: Center(
+                child: Text(
+                  item['title'],
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: FYColors.color_1A1A1A,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
-            
-            // 关注按钮（只在未订阅时显示）
-            if (!isSubscribed)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: InkWell(
-                  onTap: () => toggleSubscription(item),
-                  child: Container(
-                    width: 45.w,
-                    height: 18.h,
-                    decoration: BoxDecoration(
-                      color: FYColors.color_3361FE,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(8.r),
-                        topRight: Radius.circular(8.r),
-                      ),
+          ),
+          // 关注按钮（只在未订阅时显示）
+          if (!isSubscribed)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () => toggleSubscription(item),
+                child: Container(
+                  width: 45.w,
+                  height: 18.h,
+                  decoration: BoxDecoration(
+                    color: FYColors.color_3361FE,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(8.r),
+                      topRight: Radius.circular(8.r),
                     ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '加关注',
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: Colors.white,
-                      ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '加关注',
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       );
     }).toList();
   }
   
   // 切换订阅状态
   void toggleSubscription(Map<String, dynamic> item) {
+    print('点击了加关注按钮，项目: ${item['title']}');
     final index = state.allSubscriptionCategories.indexWhere(
       (e) => e['title'] == item['title']
     );
     
     if (index != -1) {
-      state.allSubscriptionCategories[index]['isSubscribed'] = 
-        !state.allSubscriptionCategories[index]['isSubscribed'];
+      final oldStatus = state.allSubscriptionCategories[index]['isSubscribed'];
+      state.allSubscriptionCategories[index]['isSubscribed'] = !oldStatus;
       state.allSubscriptionCategories.refresh();
     }
   }

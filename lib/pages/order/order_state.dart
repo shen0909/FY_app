@@ -109,16 +109,64 @@ class OrderState {
         'isSubscribed': false
       },
       {
-        'title': '网络安全',
-        'isSubscribed': true
+        'title': '文化安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '社会安全',
+        'isSubscribed': false
       },
       {
         'title': '科技安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '网络安全',
         'isSubscribed': true
       },
       {
         'title': '粮食安全',
         'isSubscribed': true
+      },
+      {
+        'title': '生态安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '资源安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '核安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '海外利益安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '太空安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '深海安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '极地安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '生物安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '人工智能安全',
+        'isSubscribed': false
+      },
+      {
+        'title': '数据安全',
+        'isSubscribed': false
       }
     ]);
     

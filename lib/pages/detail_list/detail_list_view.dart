@@ -90,7 +90,7 @@ class DetailListPage extends StatelessWidget {
           Text(
             "筛选条件",
             style: TextStyle(
-              fontSize: 18.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w500,
               color: FYColors.color_1A1A1A,
             ),
@@ -151,11 +151,11 @@ class DetailListPage extends StatelessWidget {
           Expanded(
               child: _buildFilterChip(
                   context, "类型", state.typeFilter, logic.typeKey)),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
               child: _buildFilterChip(
                   context, "省份", state.provinceFilter, logic.provinceKey)),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
               child: _buildFilterChip(
                   context, "城市", state.cityFilter, logic.cityKey)),
@@ -176,11 +176,11 @@ class DetailListPage extends StatelessWidget {
           logic.showFilterOverlay(context, title, key);
         },
         child: Container(
-          height: 36,
+          height: 36.h,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             color: hasValue ? Color(0xFFF0F5FF) : Color(0xFFF9F9F9),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r),
             border: hasValue
                 ? Border.all(color: Color(0xFF3361FE), width: 1)
                 : null,
@@ -191,14 +191,14 @@ class DetailListPage extends StatelessWidget {
               Text(
                 hasValue ? filter.value : title,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
                 ),
               ),
               const Spacer(),
               Icon(
                 hasValue ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                size: 16,
+                size: 16.w,
                 color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
               ),
             ],
@@ -215,7 +215,7 @@ class DetailListPage extends StatelessWidget {
       child: Obx(() => Text(
             "${state.companyList.length} 条结果",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 12.sp,
               color: Color(0xFF3361FE),
               fontWeight: FontWeight.normal,
             ),
@@ -542,7 +542,7 @@ class DetailListPage extends StatelessWidget {
               Text(
                 sanctionType.name,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   color: Color(sanctionType.color),
                 ),
               ),
@@ -659,7 +659,7 @@ class DetailListPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 30,
+                        reservedSize: 30.h,
                         getTitlesWidget: (value, meta) {
                           // 年份标签
                           if (value.toInt() >= 0 &&
@@ -687,7 +687,7 @@ class DetailListPage extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: 40,
+                        interval: 40.h,
                         getTitlesWidget: (value, meta) {
                           if (value == 0) return const SizedBox();
                           return Padding(
@@ -701,13 +701,11 @@ class DetailListPage extends StatelessWidget {
                             ),
                           );
                         },
-                        reservedSize: 30,
+                        reservedSize: 30.w,
                       ),
                     ),
                     rightTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -735,16 +733,14 @@ class DetailListPage extends StatelessWidget {
                         show: true,
                         getDotPainter: (spot, percent, barData, index) {
                           return FlDotCirclePainter(
-                            radius: 4,
+                            radius: 4.r,
                             color: Color(0xFF3361FE),
-                            strokeWidth: 2,
+                            strokeWidth: 2.w,
                             strokeColor: Colors.white,
                           );
                         },
                       ),
-                      belowBarData: BarAreaData(
-                        show: false,
-                      ),
+                      belowBarData: BarAreaData(show: false),
                     ),
                   ],
                 ),
