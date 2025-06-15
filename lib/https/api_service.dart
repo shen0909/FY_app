@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:safe_app/models/login_response.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
+import '../models/detail_list_data.dart';
 import '../models/risk_company_details.dart';
 import 'http_service.dart';
 import 'package:flutter/foundation.dart';
@@ -298,7 +299,6 @@ class ApiService {
     };
     
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {
         // 解析result_string
