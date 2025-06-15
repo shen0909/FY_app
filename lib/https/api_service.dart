@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:safe_app/models/login_response.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
-import '../models/login_data.dart';
 import '../models/risk_company_details.dart';
 import 'http_service.dart';
 import 'package:flutter/foundation.dart';
@@ -86,10 +84,19 @@ class ApiService {
   }
 
   /// 底层应用内统一请求封装
-  Future<dynamic> _sendChannelEvent(
-      {required Map<String, dynamic> data, Options? options}) async {
+  Future<dynamic> _sendChannelEvent({required Map<String, dynamic> paramData, Options? options}) async {
     dynamic response;
-    await HttpService().sendChannelEvent(data, options: options,
+    // 统一接口请求参数
+    Map<String, dynamic> requestData = {
+      "marker": "",
+      "param_string": jsonEncode(paramData),
+      "service_category": "comb_business_listen_plate",
+      "service_name": "comb_business_listen_channel",
+      "target_hall_name": "",
+      "timeout_milliseconds": 100000,
+      "wait_return": true
+    };
+    await HttpService().sendChannelEvent(requestData, options: options,
         successCallback: (data) {
       response = data;
     }, errorCallback: (error) {
@@ -143,19 +150,7 @@ class ApiService {
         "PassBase64": passBase64
       }
     };
-
-    // 统一接口请求参数
-    Map<String, dynamic> requestData = {
-      "marker": "",
-      "param_string": jsonEncode(paramData),
-      "service_category": "comb_business_listen_plate",
-      "service_name": "comb_business_listen_channel",
-      "target_hall_name": "",
-      "timeout_milliseconds": 100000,
-      "wait_return": true
-    };
-    
-    dynamic result = await _sendChannelEvent(data: requestData);
+    dynamic result = await _sendChannelEvent(paramData: paramData);
     
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {
@@ -302,18 +297,7 @@ class ApiService {
       }
     };
     
-    // 统一接口请求参数
-    Map<String, dynamic> requestData = {
-      "marker": "",
-      "param_string": jsonEncode(paramData),
-      "service_category": "comb_business_listen_plate",
-      "service_name": "comb_business_listen_channel",
-      "target_hall_name": "",
-      "timeout_milliseconds": 100000,
-      "wait_return": true
-    };
-    
-    dynamic result = await _sendChannelEvent(data: requestData);
+    dynamic result = await _sendChannelEvent(paramData: paramData);
     
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {

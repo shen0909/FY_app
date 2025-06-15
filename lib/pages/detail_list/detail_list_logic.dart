@@ -23,7 +23,7 @@ class DetailListLogic extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    await ApiService().getSanctionList();
+    ApiService().getSanctionList();
     // 初始化滚动控制器
     yearlyStatsController = ScrollController();
     leftVerticalController = ScrollController();
