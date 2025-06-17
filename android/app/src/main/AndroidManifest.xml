@@ -8,7 +8,7 @@
         android:name="${applicationName}"
         android:extractNativeLibs="true"
         android:screenOrientation="portrait"
-        android:icon="@mipmap/launch_icon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
