@@ -41,6 +41,7 @@ void main() async {
   }
   FYSharedPreferenceUtils.saveUserDevice(idiom);
   userDeviceInfo = UserDeviceInfo(idiom: idiom);
+  await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
