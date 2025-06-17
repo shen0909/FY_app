@@ -316,7 +316,7 @@ class ApiService {
   }
 
   /// 发送AI对话
-  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history,String robotUID) async {
+  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history, String robotUID) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -328,14 +328,26 @@ class ApiService {
     // 内容转Base64
     final contentBase64 = base64Encode(utf8.encode(content));
     
+    // 转换历史对话为新的JSON结构
+    List<Map<String, dynamic>> historyJson = history.map((item) {
+      String role = item['role'] ?? (item['isUser'] == true ? 'user' : 'assistant');
+      String content = item['content']?.toString() ?? '';
+      String contentBase64 = base64Encode(utf8.encode(content));
+      
+      return {
+        'role': role,
+        'content_base64': contentBase64,
+      };
+    }).toList();
+    
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "流任务-执行机器人流对话",
       "当前请求用户UUID": token,
       "命令具体内容": {
         "对话内容Base64": contentBase64,
-        "历史对话json队列": [],
-        "对话RobotUID":"robotUID"
+        "历史对话json队列": historyJson,
+        "对话RobotUID": robotUID
       }
     };
     

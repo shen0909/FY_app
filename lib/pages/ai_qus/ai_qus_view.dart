@@ -58,6 +58,7 @@ class AiQusPage extends StatelessWidget {
                   // 聊天内容区域
                   Expanded(
                     child: Obx(() => ListView.builder(
+                          controller: state.scrollController,
                           padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 0),
                           itemCount: state.messages.length,
                           itemBuilder: (context, index) {
@@ -101,6 +102,9 @@ class AiQusPage extends StatelessWidget {
 
   Widget _buildMessageItem(Map<String, dynamic> message, int index) {
     final bool isUser = message['isUser'] ?? false;
+    final bool isLoading = message['isLoading'] ?? false;
+    final bool isStreaming = message['isStreaming'] ?? false;
+    final bool isError = message['isError'] ?? false;
 
     return Obx(() => Container(
       margin: EdgeInsets.only(bottom: 16.w),
@@ -135,15 +139,33 @@ class AiQusPage extends StatelessWidget {
                 gradient: !isUser
                     ? null
                     : const LinearGradient(colors: FYColors.loginBtn),
-                color: isUser ? null : FYColors.color_F9F9F9,
+                color: isUser ? null : (isError ? const Color(0xFFFFECE9) : FYColors.color_F9F9F9),
                 borderRadius: BorderRadius.circular(8.w),
+                border: isError ? Border.all(color: const Color(0xFFFF6850), width: 1) : null,
               ),
-              child: Text(
-                message['content'],
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isUser ? FYColors.whiteColor : FYColors.color_1A1A1A,
-                    fontWeight: FontWeight.w400),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 消息内容
+                  if (message['content'].toString().isNotEmpty)
+                    Text(
+                      message['content'],
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          color: isUser ? FYColors.whiteColor : (isError ? const Color(0xFFFF3B30) : FYColors.color_1A1A1A),
+                          fontWeight: FontWeight.w400),
+                    ),
+                  // Loading状态指示器
+                  if (isLoading && !isUser)
+                    SizedBox(
+                      width: 16.w,
+                      height: 16.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+                      ),
+                    ),
+                ],
               ),
             ),
           )

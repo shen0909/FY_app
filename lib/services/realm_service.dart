@@ -43,6 +43,50 @@ class RealmService {
     }
   }
   
+  /// 将UI消息格式转换为标准存储格式
+  List<Map<String, dynamic>> _convertToStandardFormat(List<Map<String, dynamic>> messages) {
+    return messages.map((message) {
+      String role;
+      if (message.containsKey('role')) {
+        role = message['role'];
+      } else {
+        role = message['isUser'] == true ? 'user' : 'assistant';
+      }
+      
+      String content = message['content']?.toString() ?? '';
+      String contentBase64 = base64Encode(utf8.encode(content));
+      
+      return {
+        'role': role,
+        'content_base64': contentBase64,
+      };
+    }).toList();
+  }
+  
+  /// 将标准存储格式转换为UI消息格式
+  List<Map<String, dynamic>> _convertToUIFormat(List<Map<String, dynamic>> standardMessages) {
+    return standardMessages.map((message) {
+      String content = '';
+      if (message['content_base64'] != null) {
+        try {
+          content = utf8.decode(base64Decode(message['content_base64']));
+        } catch (e) {
+          if (kDebugMode) {
+            print('$_tag Base64解码失败: $e');
+          }
+          content = message['content_base64'] ?? '';
+        }
+      }
+      
+      return {
+        'isUser': message['role'] == 'user',
+        'content': content,
+        'timestamp': DateTime.now().toIso8601String(),
+        if (message['role'] == 'assistant') 'aiModel': 'DeepSeek',
+      };
+    }).toList();
+  }
+  
   // =================== 聊天历史管理 ===================
   
   /// 保存聊天历史
@@ -55,7 +99,10 @@ class RealmService {
     _ensureInitialized();
     
     final now = DateTime.now();
-    final messagesJson = jsonEncode(messages);
+    
+    // 转换为标准存储格式
+    final standardMessages = _convertToStandardFormat(messages);
+    final messagesJson = jsonEncode(standardMessages);
     
     // 生成最后一条消息预览
     String? lastMessage;
@@ -98,7 +145,9 @@ class RealmService {
     final chatHistory = _realm!.find<ChatHistory>(id);
     if (chatHistory == null) return;
     
-    final messagesJson = jsonEncode(messages);
+    // 转换为标准存储格式
+    final standardMessages = _convertToStandardFormat(messages);
+    final messagesJson = jsonEncode(standardMessages);
     
     // 生成最后一条消息预览
     String? lastMessage;
@@ -135,7 +184,7 @@ class RealmService {
     return _realm!.find<ChatHistory>(id);
   }
   
-  /// 获取聊天历史的消息列表
+  /// 获取聊天历史的消息列表（UI格式）
   List<Map<String, dynamic>> getChatMessages(String id) {
     _ensureInitialized();
     
@@ -143,8 +192,29 @@ class RealmService {
     if (chatHistory == null) return [];
     
     try {
-      final List<dynamic> messages = jsonDecode(chatHistory.messagesJson);
-      return messages.cast<Map<String, dynamic>>();
+      final List<dynamic> standardMessages = jsonDecode(chatHistory.messagesJson);
+      final List<Map<String, dynamic>> standardMessagesList = standardMessages.cast<Map<String, dynamic>>();
+      
+      // 转换为UI格式
+      return _convertToUIFormat(standardMessagesList);
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 解析消息JSON失败: $e');
+      }
+      return [];
+    }
+  }
+  
+  /// 获取聊天历史的消息列表（API格式，用于发送给接口）
+  List<Map<String, dynamic>> getChatMessagesForAPI(String id) {
+    _ensureInitialized();
+    
+    final chatHistory = _realm!.find<ChatHistory>(id);
+    if (chatHistory == null) return [];
+    
+    try {
+      final List<dynamic> standardMessages = jsonDecode(chatHistory.messagesJson);
+      return standardMessages.cast<Map<String, dynamic>>();
     } catch (e) {
       if (kDebugMode) {
         print('$_tag 解析消息JSON失败: $e');

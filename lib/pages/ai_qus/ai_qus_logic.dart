@@ -29,11 +29,36 @@ class AiQusLogic extends GetxController {
     state.messageController.dispose();
     state.titleController.dispose();
     state.contentController.dispose();
+    state.scrollController.dispose();
     // 确保在页面销毁前清理浮层
     _safeHideModelSelection();
     // 清理定时器
     _pollTimer?.cancel();
     super.onClose();
+  }
+
+  /// 自动滚动到底部
+  void _scrollToBottom({bool animated = true}) {
+    if (state.scrollController.hasClients) {
+      if (animated) {
+        state.scrollController.animateTo(
+          state.scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      } else {
+        state.scrollController.jumpTo(
+          state.scrollController.position.maxScrollExtent,
+        );
+      }
+    }
+  }
+
+  /// 延迟滚动到底部（用于等待UI更新）
+  Future<void> _scrollToBottomDelayed(
+      {bool animated = true, int delayMs = 100}) async {
+    await Future.delayed(Duration(milliseconds: delayMs));
+    _scrollToBottom(animated: animated);
   }
 
   // 发送消息
@@ -49,122 +74,230 @@ class AiQusLogic extends GetxController {
     };
     state.messages.add(userMessage);
 
+    // 滚动到底部显示用户消息
+    _scrollToBottomDelayed();
+
     // 清空输入框
     state.messageController.clear();
+
+    // 立即创建或更新聊天记录到数据库
+    await _createOrUpdateChatSession(text);
 
     // 设置加载状态
     state.isLoading.value = true;
     state.resetStreamingState();
 
+    // 立即添加AI消息占位符，显示loading状态
+    final aiMessageIndex = state.messages.length;
+    state.messages.add({
+      'isUser': false,
+      'content': '',
+      'isStreaming': true,
+      'isLoading': true, // 添加loading标识
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+
+    // 滚动到底部显示AI消息占位符
+    _scrollToBottomDelayed(delayMs: 150);
+
     try {
+      // 准备历史对话数据（转换为新格式）
+      final historyForAPI = _prepareHistoryForAPI();
+
       // 发送AI对话请求
       final chatUuid = await ApiService().sendAIChat(
-        text, 
-        state.conversationHistory.toList(),
-        state.selectedModel.value
+          text,
+          historyForAPI,
+          state.selectedModel.value
       );
+
       // 添加到对话历史
       state.addToConversationHistory('user', text);
       if (chatUuid != null) {
         state.currentChatUuid = chatUuid;
         state.isStreamingReply.value = true;
-        
-        final aiMessageIndex = state.messages.length;
-        state.messages.add({
+
+        // 更新AI消息，移除loading状态
+        state.messages[aiMessageIndex] = {
           'isUser': false,
           'content': '',
           'isStreaming': true,
+          'isLoading': false,
           'timestamp': DateTime.now().toIso8601String(),
-        });
+        };
+
         // 开始轮询获取回复
         _startPollingForReply(aiMessageIndex);
       } else {
         state.isLoading.value = false;
-        _addErrorMessage("发送消息失败，请重试");
+        // 更新AI消息为错误状态
+        state.messages[aiMessageIndex] = {
+          'isUser': false,
+          'content': "发送消息失败，请重试",
+          'isError': true,
+          'isStreaming': false,
+          'timestamp': DateTime.now().toIso8601String(),
+        };
+        // 错误消息也需要滚动到底部
+        _scrollToBottomDelayed();
       }
     } catch (e) {
       state.isLoading.value = false;
       print('发送AI消息失败: $e');
-      _addErrorMessage("发送消息时出现错误: $e");
+      // 更新AI消息为错误状态
+      state.messages[aiMessageIndex] = {
+        'isUser': false,
+        'content': "发送消息时出现错误: $e",
+        'isError': true,
+        'isStreaming': false,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+      // 错误消息也需要滚动到底部
+      _scrollToBottomDelayed();
     }
+  }
+
+  /// 创建或更新聊天会话
+  Future<void> _createOrUpdateChatSession(String userMessage) async {
+    try {
+      if (state.currentConversationId == null) {
+        // 创建新的聊天会话
+        String title = userMessage.length > 20 ? userMessage.substring(0, 20) +
+            "..." : userMessage;
+
+        final chatHistory = await _realmService.saveChatHistory(
+          title: title,
+          messages: state.messages,
+          chatUuid: state.currentChatUuid,
+          modelName: state.selectedModel.value,
+        );
+        state.currentConversationId = chatHistory.id;
+
+        // 刷新聊天历史列表
+        await loadConversations();
+
+        print('✅ 创建新聊天会话: $title');
+      } else {
+        // 更新现有聊天会话
+        await _realmService.updateChatHistory(
+          id: state.currentConversationId!,
+          messages: state.messages,
+
+        );
+        print('✅ 更新聊天会话: ${state.currentConversationId}');
+      }
+    } catch (e) {
+      print('创建/更新聊天会话失败: $e');
+    }
+  }
+
+  /// 准备发送给API的历史对话数据
+  List<Map<String, dynamic>> _prepareHistoryForAPI() {
+    List<Map<String, dynamic>> apiHistory = [];
+
+    for (var message in state.messages) {
+      // 跳过错误消息、系统消息和当前正在输入的消息
+      if (message['isError'] == true ||
+          message['isSystem'] == true ||
+          message['isStreaming'] == true) {
+        continue;
+      }
+
+      String role = message['isUser'] == true ? 'user' : 'assistant';
+      String content = message['content']?.toString() ?? '';
+
+      if (content.isNotEmpty) {
+        apiHistory.add({
+          'role': role,
+          'content': content,
+        });
+      }
+    }
+
+    return apiHistory;
   }
 
   /// 开始轮询获取AI回复
   void _startPollingForReply(int messageIndex) {
     state.pollCount = 0;
     state.currentAiReply.value = "";
-    
-    _pollTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) async {
-      if (state.currentChatUuid == null) {
-        timer.cancel();
-        return;
-      }
 
-      try {
-        final reply = await ApiService().getAIChatReply(state.currentChatUuid!);
-        
-        if (reply != null) {
-          final content = reply['content'];
-          final isEmpty = reply['isEmpty'] ?? false;
-          
-          // 累积回复内容
-          if (content != null && content.isNotEmpty) {
-            state.currentAiReply.value += content;
-            
-            // 更新UI中的消息
-            if (messageIndex < state.messages.length) {
-              state.messages[messageIndex] = {
-                'isUser': false,
-                'content': state.currentAiReply.value,
-                'isStreaming': true,
-                'timestamp': DateTime.now().toIso8601String(),
-              };
-            }
+    _pollTimer =
+        Timer.periodic(const Duration(milliseconds: 200), (timer) async {
+          if (state.currentChatUuid == null) {
+            timer.cancel();
+            return;
           }
-          
-          // 检查是否完成（根据文档建议，通过内容为空且计数判断）
-          // 连续10次返回空内容认为完成
-          if (isEmpty) {
-            state.pollCount++;
-            if (state.pollCount >= 10) {
-              _finishStreaming(messageIndex);
-              timer.cancel();
+
+          try {
+            final reply = await ApiService().getAIChatReply(
+                state.currentChatUuid!);
+
+            if (reply != null) {
+              final content = reply['content'];
+              final isEmpty = reply['isEmpty'] ?? false;
+
+              // 累积回复内容
+              if (content != null && content.isNotEmpty) {
+                state.currentAiReply.value += content;
+
+                // 更新UI中的消息
+                if (messageIndex < state.messages.length) {
+                  state.messages[messageIndex] = {
+                    'isUser': false,
+                    'content': state.currentAiReply.value,
+                    'isStreaming': true,
+                    'timestamp': DateTime.now().toIso8601String(),
+                  };
+
+                  // 流式回复时自动滚动到底部，跟随新内容
+                  _scrollToBottom(animated: false); // 使用非动画滚动，避免频繁动画
+                }
+              }
+
+              // 检查是否完成（根据文档建议，通过内容为空且计数判断）
+              // 连续10次返回空内容认为完成
+              if (isEmpty) {
+                state.pollCount++;
+                if (state.pollCount >= 10) {
+                  _finishStreaming(messageIndex);
+                  timer.cancel();
+                }
+              } else {
+                state.pollCount = 0; // 重置计数器
+              }
+
+              // 超时保护
+              if (state.pollCount >= state.maxPollCount) {
+                _finishStreaming(messageIndex);
+                timer.cancel();
+              }
+            } else {
+              state.pollCount++;
+              if (state.pollCount >= state.maxPollCount) {
+                _finishStreaming(messageIndex);
+                timer.cancel();
+              }
             }
-          } else {
-            state.pollCount = 0; // 重置计数器
-          }
-          
-          // 超时保护
-          if (state.pollCount >= state.maxPollCount) {
+          } catch (e) {
+            print('轮询AI回复失败: $e');
             _finishStreaming(messageIndex);
             timer.cancel();
           }
-        } else {
-          state.pollCount++;
-          if (state.pollCount >= state.maxPollCount) {
-            _finishStreaming(messageIndex);
-            timer.cancel();
-          }
-        }
-      } catch (e) {
-        print('轮询AI回复失败: $e');
-        _finishStreaming(messageIndex);
-        timer.cancel();
-      }
-    });
+        });
   }
 
   /// 完成流式回复
   void _finishStreaming(int messageIndex) {
     state.isLoading.value = false;
     state.isStreamingReply.value = false;
-    
+
     // 最终更新消息
     if (messageIndex < state.messages.length) {
-      final finalContent = state.currentAiReply.value.isEmpty 
+      final finalContent = state.currentAiReply.value.isEmpty
           ? "抱歉，我现在无法回答您的问题，请稍后再试。"
           : state.currentAiReply.value;
-          
+
       state.messages[messageIndex] = {
         'isUser': false,
         'content': finalContent,
@@ -172,64 +305,35 @@ class AiQusLogic extends GetxController {
         'timestamp': DateTime.now().toIso8601String(),
         'aiModel': state.selectedModel.value,
       };
-      
+
       // 添加到对话历史
       state.addToConversationHistory('assistant', finalContent);
+
+      // 立即更新数据库记录
+      _updateChatHistoryInDB();
     }
-    
+
     // 重置状态
     state.resetStreamingState();
-    
-    // 自动保存聊天记录到Realm
-    _autoSaveChatHistoryToRealm();
   }
 
-  /// 自动保存聊天记录到Realm数据库
-  Future<void> _autoSaveChatHistoryToRealm() async {
+  /// 更新数据库中的聊天记录
+  Future<void> _updateChatHistoryInDB() async {
     try {
-      if (state.messages.length >= 2) { // 至少有用户消息+AI回复
-        // 生成标题（使用第一个用户消息的前20个字符）
-        String title = "新对话";
-        for (var message in state.messages) {
-          if (message['isUser'] == true) {
-            final content = message['content'] as String;
-            title = content.length > 20 ? content.substring(0, 20) + "..." : content;
-            break;
-          }
-        }
-        
-        // 检查是否已有会话ID，如果没有则创建新会话
-        if (state.currentConversationId == null) {
-          final chatHistory = await _realmService.saveChatHistory(
-            title: title,
-            messages: state.messages,
-            chatUuid: state.currentChatUuid,
-            modelName: state.selectedModel.value,
-          );
-          state.currentConversationId = chatHistory.id;
-        } else {
-          // 如果已有会话，更新现有记录
-          await _realmService.updateChatHistory(
-            id: state.currentConversationId!,
-            messages: state.messages,
-          );
-        }
-        
-        print('✅ 聊天记录已保存到Realm数据库');
+      if (state.currentConversationId != null) {
+        await _realmService.updateChatHistory(
+          id: state.currentConversationId!,
+          messages: state.messages,
+        );
+
+        // 刷新聊天历史列表以更新最后消息预览
+        await loadConversations();
+
+        print('✅ 数据库聊天记录已更新');
       }
     } catch (e) {
-      print('自动保存聊天记录到Realm失败: $e');
+      print('更新数据库聊天记录失败: $e');
     }
-  }
-
-  /// 添加错误消息
-  void _addErrorMessage(String errorMsg) {
-    state.messages.add({
-      'isUser': false,
-      'content': errorMsg,
-      'isError': true,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
   }
 
   // 显示聊天历史
@@ -245,213 +349,216 @@ class AiQusLogic extends GetxController {
           .size
           .width * 0.8,
       // 内容部分
-      body: SafeArea(
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 头部标题栏
-              Container(
-                height: 48.w,
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: const Color(0xFFEFEFEF),
-                      width: 1.w,
+      body: Obx(() {
+        return SafeArea(
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 头部标题栏
+                Container(
+                  height: 48.w,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: const Color(0xFFEFEFEF),
+                        width: 1.w,
+                      ),
                     ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '聊天记录',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1A1A1A),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // 关闭弹窗并确保移除焦点
-                        Navigator.pop(Get.context!);
-                        FocusScope.of(Get.context!).unfocus();
-                      },
-                      child: Container(
-                        width: 24.w,
-                        height: 24.w,
-                        child: Icon(
-                          Icons.close,
-                          size: 20.w,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // 聊天记录列表
-              Expanded(
-                child: state.chatHistory.isEmpty
-                    ? FYWidget.buildEmptyContent()
-                    : ListView.separated(
-                  padding: EdgeInsets.only(top: 12.w),
-                  itemCount: state.chatHistory.length,
-                  separatorBuilder: (context, index) =>
-                      Divider(
-                        height: 1.w,
-                        color: const Color(0xFFEFEFEF),
-                        indent: 16.w,
-                        endIndent: 16.w,
-                      ),
-                  itemBuilder: (context, index) {
-                    final history = state.chatHistory[index];
-                    return ListTile(
-                      leading: Image.asset(
-                        FYImages.messenge_icon,
-                        width: 24.w,
-                        height: 24.w,
-                        fit: BoxFit.contain,
-                      ),
-                      title: Text(
-                        history['title'],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '聊天记录',
                         style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
                           color: const Color(0xFF1A1A1A),
                         ),
                       ),
-                      subtitle: Padding(
-                        padding: EdgeInsets.only(top: 4.w),
-                        child: Text(
-                          history['time'],
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: const Color(0xFFA6A6A6),
+                      GestureDetector(
+                        onTap: () {
+                          // 关闭弹窗并确保移除焦点
+                          Navigator.pop(Get.context!);
+                          FocusScope.of(Get.context!).unfocus();
+                        },
+                        child: Container(
+                          width: 24.w,
+                          height: 24.w,
+                          child: Icon(
+                            Icons.close,
+                            size: 20.w,
+                            color: const Color(0xFF1A1A1A),
                           ),
                         ),
                       ),
-                      trailing: GestureDetector(
-                        onTap: () {
-                          print('删除');
-                          // 显示确认对话框
-                          showDialog(
-                            context: Get.context!,
-                            builder: (context) =>
-                                AlertDialog(
-                                  content: Text(
-                                    '确定要删除当前对话吗？',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: const Color(0xFF1A1A1A),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.w),
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 24.w, horizontal: 16.w),
-                                  actionsPadding: EdgeInsets.zero,
-                                  buttonPadding: EdgeInsets.zero,
-                                  actions: [
-                                    // 分割线
-                                    Container(
-                                      height: 1.w,
-                                      color: const Color(0xFFEFEFEF),
-                                    ),
-                                    // 按钮区域
-                                    Row(
-                                      children: [
-                                        // 取消按钮
-                                        Expanded(
-                                          child: InkWell(
-                                            onTap: () => Navigator.pop(context),
-                                            child: Container(
-                                              height: 44.w,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  right: BorderSide(
-                                                    color: const Color(
-                                                        0xFFEFEFEF),
-                                                    width: 1.w,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: Text(
-                                                '取消',
-                                                style: TextStyle(
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: const Color(
-                                                      0xFF1A1A1A),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        // 确定按钮
-                                        Expanded(
-                                          child: InkWell(
-                                            onTap: () async {
-                                              // 确认后删除记录
-                                              await _deleteChatRecord(index);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Container(
-                                              height: 44.w,
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                '确定',
-                                                style: TextStyle(
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: const Color(
-                                                      0xFF3361FE),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                          );
-                        },
-                        child: Image.asset(
-                          FYImages.cancle_cion,
+                    ],
+                  ),
+                ),
+                // 聊天记录列表
+                Expanded(
+                  child: state.chatHistory.isEmpty
+                      ? FYWidget.buildEmptyContent()
+                      : ListView.separated(
+                    padding: EdgeInsets.only(top: 12.w),
+                    itemCount: state.chatHistory.length,
+                    separatorBuilder: (context, index) =>
+                        Divider(
+                          height: 1.w,
+                          color: const Color(0xFFEFEFEF),
+                          indent: 16.w,
+                          endIndent: 16.w,
+                        ),
+                    itemBuilder: (context, index) {
+                      final history = state.chatHistory[index];
+                      return ListTile(
+                        leading: Image.asset(
+                          FYImages.messenge_icon,
                           width: 24.w,
                           height: 24.w,
                           fit: BoxFit.contain,
                         ),
-                      ),
-                      onTap: () {
-                        // 加载对话
-                        loadConversation(history['title']);
-                        Navigator.pop(Get.context!);
-                      },
-                    );
-                  },
-                ),
-              ),
-              // 底部按钮
-              state.chatHistory.isEmpty
-                  ? Container()
-                  : Container(
-                      padding: EdgeInsets.all(16.w),
-                      child: GestureDetector(
+                        title: Text(
+                          history['title'],
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: EdgeInsets.only(top: 4.w),
+                          child: Text(
+                            history['time'],
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: const Color(0xFFA6A6A6),
+                            ),
+                          ),
+                        ),
+                        trailing: GestureDetector(
+                          onTap: () {
+                            print('删除');
+                            // 显示确认对话框
+                            showDialog(
+                              context: Get.context!,
+                              builder: (context) =>
+                                  AlertDialog(
+                                    content: Text(
+                                      '确定要删除当前对话吗？',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        color: const Color(0xFF1A1A1A),
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.w),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 24.w, horizontal: 16.w),
+                                    actionsPadding: EdgeInsets.zero,
+                                    buttonPadding: EdgeInsets.zero,
+                                    actions: [
+                                      // 分割线
+                                      Container(
+                                        height: 1.w,
+                                        color: const Color(0xFFEFEFEF),
+                                      ),
+                                      // 按钮区域
+                                      Row(
+                                        children: [
+                                          // 取消按钮
+                                          Expanded(
+                                            child: InkWell(
+                                              onTap: () =>
+                                                  Navigator.pop(context),
+                                              child: Container(
+                                                height: 44.w,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    right: BorderSide(
+                                                      color: const Color(
+                                                          0xFFEFEFEF),
+                                                      width: 1.w,
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  '取消',
+                                                  style: TextStyle(
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w400,
+                                                    color:
+                                                    const Color(0xFF1A1A1A),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // 确定按钮
+                                          Expanded(
+                                            child: InkWell(
+                                              onTap: () async {
+                                                // 确认后删除记录
+                                                await _deleteChatRecord(index);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Container(
+                                                height: 44.w,
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  '确定',
+                                                  style: TextStyle(
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w400,
+                                                    color:
+                                                    const Color(0xFF3361FE),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                            );
+                          },
+                          child: Image.asset(
+                            FYImages.cancle_cion,
+                            width: 24.w,
+                            height: 24.w,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                         onTap: () {
-                          // 显示确认对话框
-                          showDialog(
-                            context: Get.context!,
-                            builder: (context) => AlertDialog(
+                          // 加载对话
+                          loadConversation(history['title']);
+                          Navigator.pop(Get.context!);
+                        },
+                      );
+                    },
+                  ),
+                ),
+                // 底部按钮
+                state.chatHistory.isEmpty
+                    ? Container()
+                    : Container(
+                  padding: EdgeInsets.all(16.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      // 显示确认对话框
+                      showDialog(
+                        context: Get.context!,
+                        builder: (context) =>
+                            AlertDialog(
                               content: Text(
                                 '确定要清空当前对话吗？',
                                 textAlign: TextAlign.center,
@@ -529,42 +636,43 @@ class AiQusLogic extends GetxController {
                                 ),
                               ],
                             ),
-                          );
-                        },
-                        child: Container(
-                          height: 48.w,
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFFFECE9),
-                              borderRadius: BorderRadius.circular(4.w),
-                              border: Border.all(
-                                color: const Color(0xFFFF6850),
-                              )),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                FYImages.cancel_red,
-                                width: 24.w,
-                                height: 24.w,
-                                fit: BoxFit.contain,
-                              ),
-                              Text(
-                                '删除所有历史',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  color: const Color(0xFFFF3B30),
-                                ),
-                              ),
-                            ],
+                      );
+                    },
+                    child: Container(
+                      height: 48.w,
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFFFECE9),
+                          borderRadius: BorderRadius.circular(4.w),
+                          border: Border.all(
+                            color: const Color(0xFFFF6850),
+                          )),
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            FYImages.cancel_red,
+                            width: 24.w,
+                            height: 24.w,
+                            fit: BoxFit.contain,
                           ),
-                        ),
+                          Text(
+                            '删除所有历史',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: const Color(0xFFFF3B30),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-            ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     ).then((_) {
       // 确保在弹窗关闭后移除焦点
       if (Get.context != null) {
@@ -764,7 +872,7 @@ class AiQusLogic extends GetxController {
           'chatUuid': history.chatUuid,
         });
       }
-      
+
       print('✅ 已从Realm加载 ${chatHistories.length} 条聊天记录');
     } catch (e) {
       print('从Realm加载聊天记录失败: $e');
@@ -782,22 +890,29 @@ class AiQusLogic extends GetxController {
       if (chatHistory != null) {
         // 加载聊天历史的所有消息
         final messages = _realmService.getChatMessages(chatHistory.id);
-        
+
         state.messages.clear();
         state.messages.addAll(messages);
-        
+
         // 重建对话历史（用于API调用）
         state.clearConversationHistory();
         for (var message in messages) {
           if (message['isUser'] == true) {
-            state.addToConversationHistory('user', message['content']?.toString() ?? '');
-          } else if (message['isError'] != true && message['isSystem'] != true) {
-            state.addToConversationHistory('assistant', message['content']?.toString() ?? '');
+            state.addToConversationHistory(
+                'user', message['content']?.toString() ?? '');
+          } else
+          if (message['isError'] != true && message['isSystem'] != true) {
+            state.addToConversationHistory(
+                'assistant', message['content']?.toString() ?? '');
           }
         }
-        
+
         state.currentConversationId = chatHistory.id;
         state.currentChatUuid = chatHistory.chatUuid;
+
+        // 加载完成后自动滚动到底部
+        _scrollToBottomDelayed(animated: true, delayMs: 200);
+
         print('✅ 已从Realm加载聊天记录: $title');
       } else {
         // 如果找不到记录，创建新对话
@@ -816,14 +931,20 @@ class AiQusLogic extends GetxController {
       // 获取要删除的聊天记录
       final chatToDelete = state.chatHistory[index];
       final sessionId = chatToDelete['id'];
-      
+
       if (sessionId != null) {
         // 从Realm数据库删除聊天记录
         final success = await _realmService.deleteChatHistory(sessionId);
-        
+
         if (success) {
-          // 更新状态中的聊天历史
+          // 立即更新状态中的聊天历史
           state.chatHistory.removeAt(index);
+
+          // 如果删除的是当前对话，则创建新对话
+          if (state.currentConversationId == sessionId) {
+            createNewConversation();
+          }
+
           Get.snackbar("删除成功", "聊天记录已删除");
           print('✅ 聊天记录已从Realm删除: $sessionId');
         } else {
@@ -841,10 +962,10 @@ class AiQusLogic extends GetxController {
     try {
       // 从Realm数据库清空所有聊天记录
       await _realmService.clearAllChatHistory();
-      
-      // 更新状态中的聊天历史
+
+      // 立即更新状态中的聊天历史
       state.chatHistory.clear();
-      
+
       Get.snackbar("清空成功", "所有聊天记录已清空");
       print('✅ 所有聊天记录已从Realm清空');
     } catch (e) {
@@ -857,11 +978,13 @@ class AiQusLogic extends GetxController {
   String _formatTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays == 0) {
-      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
+          .toString().padLeft(2, '0')}';
     } else if (difference.inDays == 1) {
-      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
+          .toString().padLeft(2, '0')}';
     } else if (difference.inDays < 7) {
       return '${difference.inDays}天前';
     } else {
@@ -977,10 +1100,14 @@ class AiQusLogic extends GetxController {
     FocusScope.of(context).unfocus();
     // 更新状态UI，添加半透明蒙层
     FYDialogUtils.showBottomSheet(Container(
-      height: MediaQuery.of(context).size.height * 0.75,
+      height: MediaQuery
+          .of(context)
+          .size
+          .height * 0.75,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16.r), topRight: Radius.circular(16.r)),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.r), topRight: Radius.circular(16.r)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1116,7 +1243,7 @@ class AiQusLogic extends GetxController {
                             borderSide: BorderSide.none,
                           ),
                           contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12.w),
+                          EdgeInsets.symmetric(horizontal: 12.w),
                         ),
                       ),
                     ),
@@ -1232,7 +1359,8 @@ class AiQusLogic extends GetxController {
 
           // 模板列表
           Expanded(
-            child: Obx(() => ListView.builder(
+            child: Obx(() =>
+                ListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   itemCount: state.promptTemplates.length,
                   itemBuilder: (context, index) {
@@ -1351,7 +1479,7 @@ class AiQusLogic extends GetxController {
                                     SizedBox(
                                       width: 80.w,
                                       child: Text(
-                                        model['name'].toString(),
+                                        "${model['name'].toString()} +",
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -1389,7 +1517,7 @@ class AiQusLogic extends GetxController {
     );
 
     state.modelOverlayEntry.value = overlayEntry;
-    
+
     // 安全地插入浮层
     try {
       Overlay.of(context).insert(overlayEntry);

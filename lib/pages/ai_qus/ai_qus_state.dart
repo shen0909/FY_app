@@ -17,6 +17,9 @@ class AiQusState {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   
+  // 消息列表滚动控制器
+  final ScrollController scrollController = ScrollController();
+  
   // 当前会话ID
   String? currentConversationId;
   
