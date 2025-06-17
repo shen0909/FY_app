@@ -5,6 +5,7 @@ import 'package:safe_app/models/login_response.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import '../models/detail_list_data.dart';
 import '../models/risk_company_details.dart';
+import '../services/realm_service.dart';
 import 'http_service.dart';
 import 'package:flutter/foundation.dart';
 
@@ -314,6 +315,211 @@ class ApiService {
     return null;
   }
 
+  /// 发送AI对话
+  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history,String robotUID) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 发送AI对话失败：内层token为空');
+      }
+      return null;
+    }
+    // 内容转Base64
+    final contentBase64 = base64Encode(utf8.encode(content));
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "流任务-执行机器人流对话",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "对话内容Base64": contentBase64,
+        "历史对话json队列": [],
+        "对话RobotUID":"robotUID"
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
+          return resultData['返回数据']['uuid'];
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析AI对话响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取AI对话回复内容
+  Future<Map<String, dynamic>?> getAIChatReply(String chatUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取AI回复失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "流任务-查询机器人流对话回复内容",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "对话UUID": chatUuid,
+        "最多等待毫秒": 200
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
+          final returnData = resultData['返回数据'];
+          
+          // Base64解码内容
+          final contentBase64 = returnData['内容Base64'];
+          String? content;
+          if (contentBase64 != null && contentBase64.isNotEmpty) {
+            try {
+              content = utf8.decode(base64Decode(contentBase64));
+            } catch (e) {
+              if (kDebugMode) {
+                print('$_tag Base64解码失败: $e');
+              }
+            }
+          }
+          
+          return {
+            'content': content,
+            'isComplete': returnData['是否完成'] ?? false,
+            'isEmpty': contentBase64 == null || contentBase64.isEmpty,
+          };
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析AI回复响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 保存聊天记录到Realm数据库
+  Future<bool> saveChatHistoryToRealm(String title, List<Map<String, dynamic>> messages, String? chatUuid) async {
+    try {
+      final realmService = RealmService();
+      
+      // 创建新的聊天历史记录
+      await realmService.saveChatHistory(
+        title: title,
+        messages: messages,
+        chatUuid: chatUuid,
+        modelName: 'DeepSeek', // 可以从state中获取当前模型
+      );
+      
+      print('✅ 聊天记录已保存到Realm数据库');
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 保存聊天记录到Realm失败: $e');
+      }
+      return false;
+    }
+  }
+
+  /// 从Realm获取聊天记录列表
+  Future<List<Map<String, dynamic>>> getChatHistoryFromRealm() async {
+    try {
+      final realmService = RealmService();
+      final chatHistories = realmService.getAllChatHistory();
+      
+      final historyList = <Map<String, dynamic>>[];
+      
+      for (var history in chatHistories) {
+        historyList.add({
+          'id': history.id,
+          'title': history.title,
+          'time': _formatTime(history.updatedAt),
+          'createdAt': history.createdAt.toIso8601String(),
+          'messageCount': history.messageCount,
+          'lastMessage': history.lastMessage ?? '',
+          'chatUuid': history.chatUuid,
+        });
+      }
+      
+      return historyList;
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 从Realm获取聊天记录失败: $e');
+      }
+      return [];
+    }
+  }
+
+  /// 从Realm获取特定会话的消息
+  Future<List<Map<String, dynamic>>?> getChatMessagesFromRealm(String sessionId) async {
+    try {
+      final realmService = RealmService();
+      return realmService.getChatMessages(sessionId);
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 从Realm获取消息失败: $e');
+      }
+      return null;
+    }
+  }
+
+  /// 删除Realm中的聊天记录
+  Future<bool> deleteChatHistoryFromRealm(String sessionId) async {
+    try {
+      final realmService = RealmService();
+      return await realmService.deleteChatHistory(sessionId);
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 从Realm删除聊天记录失败: $e');
+      }
+      return false;
+    }
+  }
+
+  /// 清空Realm中的所有聊天记录
+  Future<bool> clearAllChatHistoryFromRealm() async {
+    try {
+      final realmService = RealmService();
+      await realmService.clearAllChatHistory();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 清空Realm聊天记录失败: $e');
+      }
+      return false;
+    }
+  }
+
+  /// 获取Realm统计信息
+  Future<Map<String, dynamic>> getRealmStatistics() async {
+    try {
+      final realmService = RealmService();
+      return realmService.getStatistics();
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 获取Realm统计信息失败: $e');
+      }
+      return {};
+    }
+  }
+
   /// 获取地区参数
   Future<dynamic> getRegion() async {
     return await _get(ServicePath.getRegion);
@@ -440,6 +646,22 @@ class ApiService {
     } catch (e) {
       print('加载公司详情失败: $e');
       return null;
+    }
+  }
+
+  /// 格式化时间显示
+  String _formatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+    
+    if (difference.inDays == 0) {
+      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays == 1) {
+      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}天前';
+    } else {
+      return '${dateTime.month}月${dateTime.day}日';
     }
   }
 }

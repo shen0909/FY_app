@@ -7,6 +7,7 @@ import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/userDeviceInfo.dart';
+import 'services/realm_service.dart';
 
 late UserDeviceInfo userDeviceInfo;
 Size _designSize = ScreenUtil.defaultSize; // 设计图尺寸
@@ -14,8 +15,18 @@ bool isPad = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // 初始化sp
+  
+  // 初始化SharedPreferences
   await FYSharedPreferenceUtils.initSP();
+  
+  // 初始化Realm数据库
+  try {
+    await RealmService().initialize();
+    print('✅ Realm数据库初始化成功');
+  } catch (e) {
+    print('❌ Realm数据库初始化失败: $e');
+  }
+  
   // 检查并确保锁屏方式不会冲突
   await _checkLockMethodConflicts();
   SystemChrome.setPreferredOrientations([

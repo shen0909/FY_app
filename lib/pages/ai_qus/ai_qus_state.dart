@@ -16,6 +16,7 @@ class AiQusState {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+  
   // 当前会话ID
   String? currentConversationId;
   
@@ -29,7 +30,7 @@ class AiQusState {
   final RxBool isLoading = false.obs;
   
   // 当前选择的模型
-  final RxString selectedModel = "Perplexity +".obs;
+  final RxString selectedModel = "Hunyuan".obs;
 
   final RxBool isBatchCheck = false.obs;
   final RxBool showTemplateForm = false.obs; // 自定义提示词模版弹窗是否关闭
@@ -46,21 +47,42 @@ class AiQusState {
   final modelOverlayEntry = Rx<OverlayEntry?>(null);
   final modelList = [
     {
-      'name': 'Perplexity +',
+      'name': 'Perplexity',
       'description': '境外舆情信息检索融合',
       'isSelected': false.obs,
     },
     {
-      'name': 'Deepseek +',
+      'name': 'Deepseek',
       'description': '中文深度思考',
       'isSelected': false.obs,
     },
     {
-      'name': 'Hunyuan +',
+      'name': 'Hunyuan',
       'description': '大数据分析处理',
       'isSelected': false.obs,
     },
   ].obs;
+
+  // ===== AI对话相关状态 =====
+  
+  // 当前对话UUID（用于轮询获取回复）
+  String? currentChatUuid;
+  
+  // 对话历史记录（用于上下文）
+  final RxList<Map<String, dynamic>> conversationHistory = <Map<String, dynamic>>[].obs;
+  
+  // 流式回复状态
+  final RxBool isStreamingReply = false.obs;
+  
+  // 当前正在接收的AI回复内容
+  final RxString currentAiReply = "".obs;
+  
+  // 轮询计数器（用于检测超时）
+  int pollCount = 0;
+  final int maxPollCount = 50; // 最大轮询次数（约10秒）
+  
+  // 登录状态
+  final RxBool isLoggedIn = false.obs;
 
   AiQusState() {
     ///Initialize variables
@@ -94,5 +116,33 @@ class AiQusState {
         'content': '请分析【XX国】对【XX实体】制裁的原因，对其上下游产业链、海外资金安全等的影响，并提供【XX实体】在应对制裁的对策建议和反制策略。'
       }
     ]);
+  }
+  
+  // ===== AI对话相关方法 =====
+  
+  /// 添加消息到对话历史（用于API调用）
+  void addToConversationHistory(String role, String content) {
+    conversationHistory.add({
+      'role': role, // 'user' 或 'assistant'
+      'content': content,
+    });
+    
+    // 限制历史记录长度，避免token过多
+    if (conversationHistory.length > 20) {
+      conversationHistory.removeRange(0, conversationHistory.length - 20);
+    }
+  }
+  
+  /// 清空对话历史
+  void clearConversationHistory() {
+    conversationHistory.clear();
+  }
+  
+  /// 重置流式回复状态
+  void resetStreamingState() {
+    currentChatUuid = null;
+    isStreamingReply.value = false;
+    currentAiReply.value = "";
+    pollCount = 0;
   }
 }

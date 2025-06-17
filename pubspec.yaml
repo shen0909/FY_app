@@ -45,6 +45,8 @@ dependencies:
   url_launcher: ^6.2.5
   flutter_launcher_icons: ^0.14.4
 
+  realm: ^3.4.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

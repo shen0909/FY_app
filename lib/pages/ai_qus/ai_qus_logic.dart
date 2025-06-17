@@ -4,12 +4,17 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
+import 'package:safe_app/widgets/widgets.dart';
 import 'package:side_sheet/side_sheet.dart';
-
+import 'dart:async';
 import 'ai_qus_state.dart';
+import '../../https/api_service.dart';
+import '../../services/realm_service.dart';
 
 class AiQusLogic extends GetxController {
   final AiQusState state = AiQusState();
+  Timer? _pollTimer;
+  final RealmService _realmService = RealmService();
 
   @override
   void onReady() {
@@ -26,47 +31,204 @@ class AiQusLogic extends GetxController {
     state.contentController.dispose();
     // 确保在页面销毁前清理浮层
     _safeHideModelSelection();
+    // 清理定时器
+    _pollTimer?.cancel();
     super.onClose();
   }
 
   // 发送消息
-  void sendMessage() {
+  Future<void> sendMessage() async {
     final text = state.messageController.text.trim();
     if (text.isEmpty) return;
 
     // 添加用户消息
-    state.messages.add({
+    final userMessage = {
       'isUser': true,
       'content': text,
-    });
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+    state.messages.add(userMessage);
 
     // 清空输入框
     state.messageController.clear();
 
-    // 模拟发送请求
+    // 设置加载状态
     state.isLoading.value = true;
+    state.resetStreamingState();
 
-    // 模拟接收响应
-    Future.delayed(const Duration(seconds: 1), () {
-      state.isLoading.value = false;
-
-      // 模拟AI回复
-      if (text.contains('行业') || text.contains('碳排放')) {
+    try {
+      // 发送AI对话请求
+      final chatUuid = await ApiService().sendAIChat(
+        text, 
+        state.conversationHistory.toList(),
+        state.selectedModel.value
+      );
+      // 添加到对话历史
+      state.addToConversationHistory('user', text);
+      if (chatUuid != null) {
+        state.currentChatUuid = chatUuid;
+        state.isStreamingReply.value = true;
+        
+        final aiMessageIndex = state.messages.length;
         state.messages.add({
           'isUser': false,
-          'title': '行业的影响',
-          'content': '''的影响主要表现在以下几个方面：
-          
-1. 成本上升: 钢铁和铝材等船舶制造原材料的关税增加，导致全球造船成本上升10-15%。特别是使用美国进口钢材的亚洲造船厂受影响最为明显。
-
-2. 贸易流量变化：关税政策导致...''',
+          'content': '',
+          'isStreaming': true,
+          'timestamp': DateTime.now().toIso8601String(),
         });
+        // 开始轮询获取回复
+        _startPollingForReply(aiMessageIndex);
       } else {
-        state.messages.add({
-          'isUser': false,
-          'content': '您好，我已收到您的问题。请问有什么可以帮到您的？',
-        });
+        state.isLoading.value = false;
+        _addErrorMessage("发送消息失败，请重试");
       }
+    } catch (e) {
+      state.isLoading.value = false;
+      print('发送AI消息失败: $e');
+      _addErrorMessage("发送消息时出现错误: $e");
+    }
+  }
+
+  /// 开始轮询获取AI回复
+  void _startPollingForReply(int messageIndex) {
+    state.pollCount = 0;
+    state.currentAiReply.value = "";
+    
+    _pollTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) async {
+      if (state.currentChatUuid == null) {
+        timer.cancel();
+        return;
+      }
+
+      try {
+        final reply = await ApiService().getAIChatReply(state.currentChatUuid!);
+        
+        if (reply != null) {
+          final content = reply['content'];
+          final isEmpty = reply['isEmpty'] ?? false;
+          
+          // 累积回复内容
+          if (content != null && content.isNotEmpty) {
+            state.currentAiReply.value += content;
+            
+            // 更新UI中的消息
+            if (messageIndex < state.messages.length) {
+              state.messages[messageIndex] = {
+                'isUser': false,
+                'content': state.currentAiReply.value,
+                'isStreaming': true,
+                'timestamp': DateTime.now().toIso8601String(),
+              };
+            }
+          }
+          
+          // 检查是否完成（根据文档建议，通过内容为空且计数判断）
+          // 连续10次返回空内容认为完成
+          if (isEmpty) {
+            state.pollCount++;
+            if (state.pollCount >= 10) {
+              _finishStreaming(messageIndex);
+              timer.cancel();
+            }
+          } else {
+            state.pollCount = 0; // 重置计数器
+          }
+          
+          // 超时保护
+          if (state.pollCount >= state.maxPollCount) {
+            _finishStreaming(messageIndex);
+            timer.cancel();
+          }
+        } else {
+          state.pollCount++;
+          if (state.pollCount >= state.maxPollCount) {
+            _finishStreaming(messageIndex);
+            timer.cancel();
+          }
+        }
+      } catch (e) {
+        print('轮询AI回复失败: $e');
+        _finishStreaming(messageIndex);
+        timer.cancel();
+      }
+    });
+  }
+
+  /// 完成流式回复
+  void _finishStreaming(int messageIndex) {
+    state.isLoading.value = false;
+    state.isStreamingReply.value = false;
+    
+    // 最终更新消息
+    if (messageIndex < state.messages.length) {
+      final finalContent = state.currentAiReply.value.isEmpty 
+          ? "抱歉，我现在无法回答您的问题，请稍后再试。"
+          : state.currentAiReply.value;
+          
+      state.messages[messageIndex] = {
+        'isUser': false,
+        'content': finalContent,
+        'isStreaming': false,
+        'timestamp': DateTime.now().toIso8601String(),
+        'aiModel': state.selectedModel.value,
+      };
+      
+      // 添加到对话历史
+      state.addToConversationHistory('assistant', finalContent);
+    }
+    
+    // 重置状态
+    state.resetStreamingState();
+    
+    // 自动保存聊天记录到Realm
+    _autoSaveChatHistoryToRealm();
+  }
+
+  /// 自动保存聊天记录到Realm数据库
+  Future<void> _autoSaveChatHistoryToRealm() async {
+    try {
+      if (state.messages.length >= 2) { // 至少有用户消息+AI回复
+        // 生成标题（使用第一个用户消息的前20个字符）
+        String title = "新对话";
+        for (var message in state.messages) {
+          if (message['isUser'] == true) {
+            final content = message['content'] as String;
+            title = content.length > 20 ? content.substring(0, 20) + "..." : content;
+            break;
+          }
+        }
+        
+        // 检查是否已有会话ID，如果没有则创建新会话
+        if (state.currentConversationId == null) {
+          final chatHistory = await _realmService.saveChatHistory(
+            title: title,
+            messages: state.messages,
+            chatUuid: state.currentChatUuid,
+            modelName: state.selectedModel.value,
+          );
+          state.currentConversationId = chatHistory.id;
+        } else {
+          // 如果已有会话，更新现有记录
+          await _realmService.updateChatHistory(
+            id: state.currentConversationId!,
+            messages: state.messages,
+          );
+        }
+        
+        print('✅ 聊天记录已保存到Realm数据库');
+      }
+    } catch (e) {
+      print('自动保存聊天记录到Realm失败: $e');
+    }
+  }
+
+  /// 添加错误消息
+  void _addErrorMessage(String errorMsg) {
+    state.messages.add({
+      'isUser': false,
+      'content': errorMsg,
+      'isError': true,
+      'timestamp': DateTime.now().toIso8601String(),
     });
   }
 
@@ -134,7 +296,9 @@ class AiQusLogic extends GetxController {
               ),
               // 聊天记录列表
               Expanded(
-                child: ListView.separated(
+                child: state.chatHistory.isEmpty
+                    ? FYWidget.buildEmptyContent()
+                    : ListView.separated(
                   padding: EdgeInsets.only(top: 12.w),
                   itemCount: state.chatHistory.length,
                   separatorBuilder: (context, index) =>
@@ -180,7 +344,7 @@ class AiQusLogic extends GetxController {
                             builder: (context) =>
                                 AlertDialog(
                                   content: Text(
-                                    '确定要清空当前对话吗？',
+                                    '确定要删除当前对话吗？',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 18.sp,
@@ -235,9 +399,9 @@ class AiQusLogic extends GetxController {
                                         // 确定按钮
                                         Expanded(
                                           child: InkWell(
-                                            onTap: () {
+                                            onTap: () async {
                                               // 确认后删除记录
-                                              state.chatHistory.removeAt(index);
+                                              await _deleteChatRecord(index);
                                               Navigator.pop(context);
                                             },
                                             child: Container(
@@ -278,123 +442,125 @@ class AiQusLogic extends GetxController {
                 ),
               ),
               // 底部按钮
-              Container(
-                padding: EdgeInsets.all(16.w),
-                child: GestureDetector(
-                  onTap: () {
-                    // 显示确认对话框
-                    showDialog(
-                      context: Get.context!,
-                      builder: (context) =>
-                          AlertDialog(
-                            content: Text(
-                              '确定要清空当前对话吗？',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                color: const Color(0xFF1A1A1A),
-                                fontWeight: FontWeight.w500,
+              state.chatHistory.isEmpty
+                  ? Container()
+                  : Container(
+                      padding: EdgeInsets.all(16.w),
+                      child: GestureDetector(
+                        onTap: () {
+                          // 显示确认对话框
+                          showDialog(
+                            context: Get.context!,
+                            builder: (context) => AlertDialog(
+                              content: Text(
+                                '确定要清空当前对话吗？',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: const Color(0xFF1A1A1A),
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.w),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 24.w, horizontal: 16.w),
-                            actionsPadding: EdgeInsets.zero,
-                            buttonPadding: EdgeInsets.zero,
-                            actions: [
-                              // 分割线
-                              Container(
-                                height: 1.w,
-                                color: const Color(0xFFEFEFEF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.w),
                               ),
-                              // 按钮区域
-                              Row(
-                                children: [
-                                  // 取消按钮
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () => Navigator.pop(context),
-                                      child: Container(
-                                        height: 44.w,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: const Color(0xFFEFEFEF),
-                                              width: 1.w,
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 24.w, horizontal: 16.w),
+                              actionsPadding: EdgeInsets.zero,
+                              buttonPadding: EdgeInsets.zero,
+                              actions: [
+                                // 分割线
+                                Container(
+                                  height: 1.w,
+                                  color: const Color(0xFFEFEFEF),
+                                ),
+                                // 按钮区域
+                                Row(
+                                  children: [
+                                    // 取消按钮
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () => Navigator.pop(context),
+                                        child: Container(
+                                          height: 44.w,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              right: BorderSide(
+                                                color: const Color(0xFFEFEFEF),
+                                                width: 1.w,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '取消',
+                                            style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: const Color(0xFF1A1A1A),
                                             ),
                                           ),
                                         ),
-                                        child: Text(
-                                          '取消',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: const Color(0xFF1A1A1A),
+                                      ),
+                                    ),
+                                    // 确定按钮
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          // 确认后执行操作
+                                          Navigator.pop(context);
+                                          Navigator.pop(Get.context!);
+                                          await _clearAllChatHistory();
+                                          createNewConversation();
+                                        },
+                                        child: Container(
+                                          height: 44.w,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '确定',
+                                            style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: const Color(0xFF3361FE),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  // 确定按钮
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {
-                                        // 确认后执行操作
-                                        Navigator.pop(context);
-                                        Navigator.pop(Get.context!);
-                                        createNewConversation();
-                                      },
-                                      child: Container(
-                                        height: 44.w,
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          '确定',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: const Color(0xFF3361FE),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Container(
+                          height: 48.w,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFFFECE9),
+                              borderRadius: BorderRadius.circular(4.w),
+                              border: Border.all(
+                                color: const Color(0xFFFF6850),
+                              )),
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                FYImages.cancel_red,
+                                width: 24.w,
+                                height: 24.w,
+                                fit: BoxFit.contain,
+                              ),
+                              Text(
+                                '删除所有历史',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: const Color(0xFFFF3B30),
+                                ),
                               ),
                             ],
                           ),
-                    );
-                  },
-                  child: Container(
-                    height: 48.w,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFFECE9),
-                        borderRadius: BorderRadius.circular(4.w),
-                        border: Border.all(
-                          color: const Color(0xFFFF6850),
-                        )),
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          FYImages.cancel_red,
-                          width: 24.w,
-                          height: 24.w,
-                          fit: BoxFit.contain,
                         ),
-                        Text(
-                          '删除所有历史',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: const Color(0xFFFF3B30),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -559,63 +725,148 @@ class AiQusLogic extends GetxController {
 
   // 创建新的对话
   void createNewConversation() {
+    // 清理定时器
+    _pollTimer?.cancel();
+    
+    // 重置所有状态
+    state.resetStreamingState();
+    state.clearConversationHistory();
+    
+    // 清空消息列表
     state.messages.clear();
+    
+    // 添加欢迎消息
     state.messages.add({
       'isUser': false,
       'content': 'Hi~ 我是您身边的智能助手，可以为您答疑解惑、精读文档、尽情创作，让科技助你轻松工作，多点生活',
     });
+    
     state.currentConversationId = null;
-  }
-
-  // 加载对话
-  void loadConversation(String title) {
-    // 模拟加载对话
-    state.messages.clear();
-
-    if (title == '行业分析报告') {
-      state.messages.addAll([
-        {
-          'isUser': false,
-          'content': 'Hi~ 我是您身边的智能助手，有什么可以帮助您？',
-        },
-        {
-          'isUser': true,
-          'content': '分析船舶行业碳排放政策影响',
-        },
-        {
-          'isUser': false,
-          'title': '行业的影响',
-          'content': '''的影响主要表现在以下几个方面：
-          
-1. 成本上升: 钢铁和铝材等船舶制造原材料的关税增加，导致全球造船成本上升10-15%。特别是使用美国进口钢材的亚洲造船厂受影响最为明显。
-
-2. 贸易流量变化：关税政策导致...''',
-        },
-      ]);
-    } else {
-      state.messages.addAll([
-        {
-          'isUser': false,
-          'content': 'Hi~ 我是您身边的智能助手，有什么可以帮助您？',
-        },
-        {
-          'isUser': true,
-          'content': title,
-        },
-        {
-          'isUser': false,
-          'content': '已收到您的问题，正在为您分析...',
-        },
-      ]);
-    }
-
-    state.currentConversationId = title;
+    state.isLoading.value = false;
   }
 
   // 加载所有对话
-  void loadConversations() {
-    // 模拟从服务器加载对话列表
-    // 实际项目中应该从API获取
+  Future<void> loadConversations() async {
+    try {
+      // 从Realm数据库加载聊天记录
+      final chatHistories = _realmService.getAllChatHistory();
+      
+      // 更新状态中的聊天历史
+      state.chatHistory.clear();
+      for (var history in chatHistories) {
+        state.chatHistory.add({
+          'id': history.id,
+          'title': history.title,
+          'time': _formatTime(history.updatedAt),
+          'createdAt': history.createdAt.toIso8601String(),
+          'messageCount': history.messageCount,
+          'lastMessage': history.lastMessage ?? '',
+          'chatUuid': history.chatUuid,
+        });
+      }
+      
+      print('✅ 已从Realm加载 ${chatHistories.length} 条聊天记录');
+    } catch (e) {
+      print('从Realm加载聊天记录失败: $e');
+      // 如果Realm加载失败，保持空状态，不加载模拟数据
+      state.chatHistory.clear();
+    }
+  }
+
+  /// 加载指定对话
+  Future<void> loadConversation(String title) async {
+    try {
+      // 根据title查找对应的聊天历史
+      final chatHistory = _realmService.getChatHistoryByTitle(title);
+
+      if (chatHistory != null) {
+        // 加载聊天历史的所有消息
+        final messages = _realmService.getChatMessages(chatHistory.id);
+        
+        state.messages.clear();
+        state.messages.addAll(messages);
+        
+        // 重建对话历史（用于API调用）
+        state.clearConversationHistory();
+        for (var message in messages) {
+          if (message['isUser'] == true) {
+            state.addToConversationHistory('user', message['content']?.toString() ?? '');
+          } else if (message['isError'] != true && message['isSystem'] != true) {
+            state.addToConversationHistory('assistant', message['content']?.toString() ?? '');
+          }
+        }
+        
+        state.currentConversationId = chatHistory.id;
+        state.currentChatUuid = chatHistory.chatUuid;
+        print('✅ 已从Realm加载聊天记录: $title');
+      } else {
+        // 如果找不到记录，创建新对话
+        print('未找到聊天记录: $title，创建新对话');
+        createNewConversation();
+      }
+    } catch (e) {
+      print('从Realm加载指定聊天记录失败: $e');
+      createNewConversation();
+    }
+  }
+
+  /// 删除单个聊天记录
+  Future<void> _deleteChatRecord(int index) async {
+    try {
+      // 获取要删除的聊天记录
+      final chatToDelete = state.chatHistory[index];
+      final sessionId = chatToDelete['id'];
+      
+      if (sessionId != null) {
+        // 从Realm数据库删除聊天记录
+        final success = await _realmService.deleteChatHistory(sessionId);
+        
+        if (success) {
+          // 更新状态中的聊天历史
+          state.chatHistory.removeAt(index);
+          Get.snackbar("删除成功", "聊天记录已删除");
+          print('✅ 聊天记录已从Realm删除: $sessionId');
+        } else {
+          Get.snackbar("删除失败", "无法删除聊天记录");
+        }
+      }
+    } catch (e) {
+      print('从Realm删除聊天记录失败: $e');
+      Get.snackbar("删除失败", "删除聊天记录时出现错误");
+    }
+  }
+
+  /// 清空所有聊天记录
+  Future<void> _clearAllChatHistory() async {
+    try {
+      // 从Realm数据库清空所有聊天记录
+      await _realmService.clearAllChatHistory();
+      
+      // 更新状态中的聊天历史
+      state.chatHistory.clear();
+      
+      Get.snackbar("清空成功", "所有聊天记录已清空");
+      print('✅ 所有聊天记录已从Realm清空');
+    } catch (e) {
+      print('从Realm清空聊天记录失败: $e');
+      Get.snackbar("清空失败", "清空聊天记录时出现错误");
+    }
+  }
+
+  /// 格式化时间显示
+  String _formatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+    
+    if (difference.inDays == 0) {
+      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays == 1) {
+      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}天前';
+    } else {
+      return '${dateTime.month}月${dateTime.day}日';
+    }
   }
 
   // 显示AI助手
@@ -1084,7 +1335,7 @@ class AiQusLogic extends GetxController {
                         return Obx(() =>
                             GestureDetector(
                               onTap: () =>
-                                  selectModel(model['name'].toString()),
+                                  selectModel("${model['name'].toString()} +"),
                               child: Container(
                                 height: 40,
                                 padding: const EdgeInsets.symmetric(
