@@ -286,7 +286,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(item['image'], width: 32.w, height: 32.h),
+              Image.asset(item['image'], width: 40.w, height: 40.w),
               SizedBox(height: 8.h),
               Text(
                 item['title'],

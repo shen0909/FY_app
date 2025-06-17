@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget {
       designSize: _designSize,
       minTextAdapt: false,
       splitScreenMode: true,
+      rebuildFactor: RebuildFactors.orientation,
       builder: (context, child) {
         return GetMaterialApp(
           getPages: Routers.pages,
