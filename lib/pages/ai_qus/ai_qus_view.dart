@@ -18,79 +18,83 @@ class AiQusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: FYColors.whiteColor,
-        appBar: FYAppBar(
-          title: 'AI智能问答',
-          actions: [
-            GestureDetector(
-              onTap: () => logic.createNewConversation(),
-              child: Container(
-                margin: EdgeInsets.only(right: 8.w),
-                child: Image.asset(FYImages.addAI,
-                    width: 24.w, height: 24.w, fit: BoxFit.contain),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => logic.showChatHistory(),
-              child: Container(
-                margin: EdgeInsets.only(right: 16.w),
-                child: Image.asset(FYImages.history_icon,
-                    width: 24.w, height: 24.w, fit: BoxFit.contain),
-              ),
-            ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                // 新增的顶部操作区域
-                _buildTopActionBar(context),
-                // 提示信息区域
-                _buildNotificationBar(),
-                SizedBox(height: 10.w),
-                // 聊天内容区域
-                Expanded(
-                  child: Obx(() => ListView.builder(
-                        padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 0),
-                        itemCount: state.messages.length,
-                        itemBuilder: (context, index) {
-                          final message = state.messages[index];
-                          return _buildMessageItem(message, index);
-                        },
-                      )),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => logic.canPopFunction(didPop),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: FYColors.whiteColor,
+          appBar: FYAppBar(
+            title: 'AI智能问答',
+            actions: [
+              GestureDetector(
+                onTap: () => logic.createNewConversation(),
+                child: Container(
+                  margin: EdgeInsets.only(right: 8.w),
+                  child: Image.asset(FYImages.addAI,
+                      width: 24.w, height: 24.w, fit: BoxFit.contain),
                 ),
-                Obx(() => state.isBatchCheck.value ? SizedBox() : _buildInputArea()),
-              ],
-            ),
-            // 底部操作栏 - 批量选择模式
-            Obx(() => state.isBatchCheck.value 
-                ? Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: _buildBatchSelectionBar(),
-                  )
-                : const SizedBox()),
-            // 导出弹窗
-            _buildExportDialog(),
-          ],
-        ),
-        floatingActionButton: Obx(() => !state.isBatchCheck.value ? Container(
-          margin: EdgeInsets.only(bottom: 80.w),
-          child: GestureDetector(
-            onTap: () => logic.showTipTemplateDialog(context),
-            child: Image.asset(
-              FYImages.addTip,
-              width: 57.w,
-              height: 57.w,
-              fit: BoxFit.contain,
-            ),
+              ),
+              GestureDetector(
+                onTap: () => logic.showChatHistory(),
+                child: Container(
+                  margin: EdgeInsets.only(right: 16.w),
+                  child: Image.asset(FYImages.history_icon,
+                      width: 24.w, height: 24.w, fit: BoxFit.contain),
+                ),
+              ),
+            ],
           ),
-        ) : const SizedBox()),
+          body: Stack(
+            children: [
+              Column(
+                children: [
+                  // 新增的顶部操作区域
+                  _buildTopActionBar(context),
+                  // 提示信息区域
+                  _buildNotificationBar(),
+                  SizedBox(height: 10.w),
+                  // 聊天内容区域
+                  Expanded(
+                    child: Obx(() => ListView.builder(
+                          padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 0),
+                          itemCount: state.messages.length,
+                          itemBuilder: (context, index) {
+                            final message = state.messages[index];
+                            return _buildMessageItem(message, index);
+                          },
+                        )),
+                  ),
+                  Obx(() => state.isBatchCheck.value ? SizedBox() : _buildInputArea()),
+                ],
+              ),
+              // 底部操作栏 - 批量选择模式
+              Obx(() => state.isBatchCheck.value 
+                  ? Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: _buildBatchSelectionBar(),
+                    )
+                  : const SizedBox()),
+              // 导出弹窗
+              _buildExportDialog(),
+            ],
+          ),
+          floatingActionButton: Obx(() => !state.isBatchCheck.value ? Container(
+            margin: EdgeInsets.only(bottom: 80.w),
+            child: GestureDetector(
+              onTap: () => logic.showTipTemplateDialog(context),
+              child: Image.asset(
+                FYImages.addTip,
+                width: 57.w,
+                height: 57.w,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ) : const SizedBox()),
+        ),
       ),
     );
   }

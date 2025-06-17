@@ -24,6 +24,8 @@ class AiQusLogic extends GetxController {
     state.messageController.dispose();
     state.titleController.dispose();
     state.contentController.dispose();
+    // 确保在页面销毁前清理浮层
+    _safeHideModelSelection();
     super.onClose();
   }
 
@@ -1136,19 +1138,38 @@ class AiQusLogic extends GetxController {
     );
 
     state.modelOverlayEntry.value = overlayEntry;
-    Overlay.of(context).insert(overlayEntry);
+    
+    // 安全地插入浮层
+    try {
+      Overlay.of(context).insert(overlayEntry);
+    } catch (e) {
+      print('插入模型选择浮层时出现异常: $e');
+      state.modelOverlayEntry.value = null;
+    }
   }
 
   // 隐藏模型选择弹窗
   void hideModelSelection() {
-    state.modelOverlayEntry.value?.remove();
-    state.modelOverlayEntry.value = null;
+    _safeHideModelSelection();
+  }
+
+  // 安全地隐藏模型选择弹窗
+  void _safeHideModelSelection() {
+    try {
+      if (state.modelOverlayEntry.value != null) {
+        state.modelOverlayEntry.value?.remove();
+        state.modelOverlayEntry.value = null;
+      }
+    } catch (e) {
+      state.modelOverlayEntry.value = null;
+      print('清理模型选择浮层时出现异常: $e');
+    }
   }
 
   // 选择模型
   void selectModel(String modelName) {
     state.selectedModel.value = modelName;
-    hideModelSelection();
+    _safeHideModelSelection();
   }
 
   // 关闭导出弹窗
@@ -1169,5 +1190,17 @@ class AiQusLogic extends GetxController {
     // TODO: 实现下载功能
     Get.snackbar('提示', '文件已开始下载');
     closeExportDialog();
+  }
+
+  canPopFunction(bool didPop) {
+    if (didPop) return;
+
+    // 如果有模型选择弹窗显示，优先关闭弹窗
+    if (state.modelOverlayEntry.value != null) {
+      hideModelSelection();
+      return;
+    }
+    // 否则正常返回
+    Get.back();
   }
 }
