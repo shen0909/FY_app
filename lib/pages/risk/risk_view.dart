@@ -23,20 +23,24 @@ class _RiskPageState extends State<RiskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FYColors.whiteColor,
-      appBar: FYAppBar(
-        title: '风险预警',
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildLocationSection(),
-          _buildUnitTypeSelector(),
-          _buildRiskStatCards(),
-          SizedBox(height: 14.w),
-          _buildRiskList(),
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => logic.canPopFunction(didPop),
+      child: Scaffold(
+        backgroundColor: FYColors.whiteColor,
+        appBar: FYAppBar(
+          title: '风险预警',
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLocationSection(),
+            _buildUnitTypeSelector(),
+            _buildRiskStatCards(),
+            SizedBox(height: 14.w),
+            _buildRiskList(),
+          ],
+        ),
       ),
     );
   }

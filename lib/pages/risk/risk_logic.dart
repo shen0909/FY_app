@@ -347,8 +347,7 @@ class RiskLogic extends GetxController {
 
   @override
   void onClose() {
-    hideOverlay();
-    // TODO: implement onClose
+    _safeHideOverlay();
     super.onClose();
   }
 
@@ -468,8 +467,21 @@ class RiskLogic extends GetxController {
 
   // 隐藏浮层
   void hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+    _safeHideOverlay();
+  }
+
+  // 安全地隐藏浮层
+  void _safeHideOverlay() {
+    try {
+      if (_overlayEntry != null) {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
+      }
+    } catch (e) {
+      // 如果移除过程中出现异常（比如上下文已失效），直接置空引用
+      _overlayEntry = null;
+      print('清理城市选择浮层时出现异常: $e');
+    }
   }
 
   // 构建城市选择浮层
@@ -580,6 +592,20 @@ class RiskLogic extends GetxController {
     }
     // 没有对应代码返回全部
     return 'all';
+  }
+
+  // 处理物理返回按钮事件
+  canPopFunction(bool didPop) {
+    if (didPop) return;
+
+    // 如果有城市选择浮层显示，优先关闭浮层
+    if (_overlayEntry != null) {
+      hideOverlay();
+      return;
+    }
+    
+    // 否则正常返回
+    Get.back();
   }
 }
 
