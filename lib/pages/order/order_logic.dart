@@ -139,7 +139,7 @@ class OrderLogic extends GetxController {
 
                     // 全部订阅内容
                     Padding(
-                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 50.h),
+                      padding: EdgeInsets.fromLTRB(16.w, 0, 6.w, 50.h),
                       child: Wrap(
                         spacing: 8.w,
                         runSpacing: 10.h,
