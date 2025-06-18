@@ -859,28 +859,7 @@ class DetailListPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              SizedBox(width: 24.w),
-              Row(
-                children: [
-                  Container(
-                    width: 16.w,
-                    height: 3.h,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF3361FE),
-                      borderRadius: BorderRadius.circular(1.5.r),
-                    ),
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    "累计总数",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                  ),
-                ],
-              ),
+              )
             ],
           ),
         ],
