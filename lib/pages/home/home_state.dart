@@ -64,13 +64,13 @@ class HomeState {
         linkUrl: 'https://www.mofcom.gov.cn/syxwfb/art/2025/art_8232e23dd3cb49bcb70634eb0c65ecea.html',
       ),
       CarouselItem(
-        imageUrl:  FYImages.lunbo2,
+        imageUrl:  FYImages.lunbo3,
         title: '有迹象表明特朗普可能准备撤回关税措施',
         date: '2025.04.27',
         linkUrl: 'https://www.bbc.com/zhongwen/articles/c5ylzv95nj3o/simp',
       ),
       CarouselItem(
-        imageUrl:  FYImages.lunbo3,
+        imageUrl:  FYImages.lunbo2,
         title: '美国商务部进一步限制中国AI和先进算力',
         date: '2025.03.31',
         linkUrl: 'https://www.state.gov/translations/chinese/20250325-commerce-further-restricts-chinas-artificial-intelligence-and-advanced-computing-capabilities-chinese/',
