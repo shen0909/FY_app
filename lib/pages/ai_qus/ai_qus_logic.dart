@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
+import 'package:safe_app/utils/toast_util.dart';
 import 'package:safe_app/widgets/widgets.dart';
 import 'package:side_sheet/side_sheet.dart';
 import 'dart:async';
@@ -1585,16 +1586,7 @@ class AiQusLogic extends GetxController {
     if (content.trim().isEmpty) return;
     
     Clipboard.setData(ClipboardData(text: content));
-    Get.snackbar(
-      '复制成功',
-      '消息内容已复制到剪贴板',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: Duration(seconds: 2),
-      backgroundColor: Colors.black87,
-      colorText: Colors.white,
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.w,
-    );
+    // ToastUtil.showShort("消息内容已复制到剪贴板");
   }
 
   canPopFunction(bool didPop) {
