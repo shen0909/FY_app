@@ -11,6 +11,8 @@ import 'ai_qus_state.dart';
 import '../../https/api_service.dart';
 import '../../services/realm_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 class AiQusLogic extends GetxController {
   final AiQusState state = AiQusState();
@@ -1574,6 +1576,23 @@ class AiQusLogic extends GetxController {
     // TODO: 实现下载功能
     Get.snackbar('提示', '文件已开始下载');
     closeExportDialog();
+  }
+
+  // 复制消息内容
+  void copyContent(String content) {
+    if (content.trim().isEmpty) return;
+    
+    Clipboard.setData(ClipboardData(text: content));
+    Get.snackbar(
+      '复制成功',
+      '消息内容已复制到剪贴板',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: Duration(seconds: 2),
+      backgroundColor: Colors.black87,
+      colorText: Colors.white,
+      margin: EdgeInsets.all(16.w),
+      borderRadius: 8.w,
+    );
   }
 
   canPopFunction(bool didPop) {
