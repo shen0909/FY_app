@@ -1470,7 +1470,7 @@ class AiQusLogic extends GetxController {
                         return Obx(() =>
                             GestureDetector(
                               onTap: () =>
-                                  selectModel("${model['name'].toString()} +"),
+                                  selectModel(model['name'].toString()),
                               child: Container(
                                 height: 40,
                                 padding: const EdgeInsets.symmetric(
@@ -1483,16 +1483,14 @@ class AiQusLogic extends GetxController {
                                 ),
                                 child: Row(
                                   children: [
-                                    SizedBox(
-                                      width: 80.w,
-                                      child: Text(
-                                        "${model['name'].toString()} +",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color(0xFF1A1A1A),
-                                        ),
+                                    Text(
+                                      "${model['name'].toString()} +",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF1A1A1A),
                                       ),
+                                      maxLines: 1,
                                     ),
                                     SizedBox(width: 8.w),
                                     Text(
