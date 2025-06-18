@@ -193,7 +193,7 @@ class LoginLogic extends GetxController {
 
     try {
       LoginData? loginData = await LoginApi.login(account, password);
-
+      print("登录排查:${loginData?.token}");
       if (loginData != null) {
         await FYSharedPreferenceUtils.saveLoginData(loginData);
         state.isLogging.value = false;

@@ -99,7 +99,7 @@ class SettingPage extends StatelessWidget {
           ),
           Spacer(),
           Text(
-            '版本号：v.0.0.1',
+            '版本号：v.0.0.2',
             style: TextStyle(
               fontSize: 14.sp,
               color: FYColors.color_666666,
