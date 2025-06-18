@@ -36,9 +36,9 @@ class HotPotPage extends StatelessWidget {
             top: 36.h,
             left: 0,
             right: 0,
-            child: Obx(() => 
-              state.showFilterOptions.value 
-                ? _buildFilterOptionsOverlay() 
+            child: Obx(() =>
+            state.showFilterOptions.value
+                ? _buildFilterOptionsOverlay()
                 : const SizedBox.shrink()
             ),
           ),
@@ -49,33 +49,38 @@ class HotPotPage extends StatelessWidget {
 
   // 构建筛选工具栏
   Widget _buildFilterBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, ),
-      color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildFilterOption("类型", state.selectedNewsType.value),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: _buildFilterOption("地区", state.selectedRegion.value),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: _buildFilterOption("时间", state.timeRangeNames[state.selectedTimeRange.value] ?? state.selectedTimeRange.value),
-          ),
-          SizedBox(width: 9.w),
-          GestureDetector(
-            onTap: () {
-              state.activeTabIndex.value = 3; // 设置为日期选择模式
-              state.toggleFilterOptions();
-            },
-            child: Image.asset(FYImages.calendar_black, width: 24.w, height: 24.w),
-          )
-        ],
-      ),
-    );
+    return Obx(() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w,),
+        color: Colors.white,
+        child: Row(
+          children: [
+            Expanded(
+              child: _buildFilterOption("类型", state.selectedNewsType.value),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: _buildFilterOption("地区", state.selectedRegion.value),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: _buildFilterOption("时间",
+                  state.timeRangeNames[state.selectedTimeRange.value] ??
+                      state.selectedTimeRange.value),
+            ),
+            SizedBox(width: 9.w),
+            GestureDetector(
+              onTap: () {
+                state.activeTabIndex.value = 3; // 设置为日期选择模式
+                state.toggleFilterOptions();
+              },
+              child: Image.asset(
+                  FYImages.calendar_black, width: 24.w, height: 24.w),
+            )
+          ],
+        ),
+      );
+    });
   }
 
   // 构建搜索栏
@@ -125,6 +130,20 @@ class HotPotPage extends StatelessWidget {
 
   // 构建单个筛选选项
   Widget _buildFilterOption(String title, String selectedValue) {
+    // 根据标题判断使用哪个状态变量
+    bool isSelected = false;
+    switch (title) {
+      case "类型":
+        isSelected = state.isSelectedNewsType.value;
+        break;
+      case "地区":
+        isSelected = state.isSelectedRegion.value;
+        break;
+      case "时间":
+        isSelected = state.isSelectedTimeRange.value;
+        break;
+    }
+    
     return InkWell(
       onTap: () {
         switch (title) {
@@ -151,19 +170,22 @@ class HotPotPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF1A1A1A),
+            Expanded(
+              child: Text(
+                isSelected ? selectedValue : title,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF1A1A1A),
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Transform.rotate(
               angle: 90 * 3.14159 / 180,
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_right,
-                color: Color(0xFF1A1A1A),
-                size: 20,
+                color: const Color(0xFF1A1A1A),
+                size: 20.sp,
               ),
             ),
           ],
@@ -258,112 +280,116 @@ class HotPotPage extends StatelessWidget {
   
   // 构建日期范围选择器
   Widget _buildDateRangeSelector() {
-    return Obx(() => Container(
-      padding: EdgeInsets.all(10.w),
-      width: double.infinity,
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => logic.selectDate(Get.context!, true),
-              child: Container(
-                height: 32.h,
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        logic.formatDate(state.startDate.value),
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      const Spacer(),
-                      Image.asset(
-                        FYImages.calendar_black,
-                        width: 24.w,
-                        height: 24.w,
-                        fit: BoxFit.contain,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Text(
-            "至",
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => logic.selectDate(Get.context!, false),
-              child: Container(
-                height: 32.h,
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      logic.formatDate(state.endDate.value),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Color(0xFF1A1A1A),
+    return Obx(() =>
+        Container(
+          padding: EdgeInsets.all(10.w),
+          width: double.infinity,
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.selectDate(Get.context!, true),
+                  child: Container(
+                    height: 32.h,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            logic.formatDate(state.startDate.value),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                          ),
+                          const Spacer(),
+                          Image.asset(
+                            FYImages.calendar_black,
+                            width: 24.w,
+                            height: 24.w,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
                       ),
                     ),
-                    const Spacer(),
-                    Image.asset(
-                      FYImages.calendar_black,
-                      width: 24.w,
-                      height: 24.w,
-                      fit: BoxFit.contain,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 11.w),
-          GestureDetector(
-            onTap: () => logic.applyFilters(),
-            child: Container(
-              width: 56.w,
-              height: 32.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-                color: Color(0xFF3361FE),
-              ),
-              child: Center(
-                child: Text(
-                  "应用",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14.sp,
                   ),
                 ),
               ),
-            ),
+              SizedBox(width: 12.w),
+              Text(
+                "至",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.selectDate(Get.context!, false),
+                  child: Container(
+                    height: 32.h,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          logic.formatDate(state.endDate.value),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        const Spacer(),
+                        Image.asset(
+                          FYImages.calendar_black,
+                          width: 24.w,
+                          height: 24.w,
+                          fit: BoxFit.contain,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 11.w),
+              GestureDetector(
+                onTap: () {
+                  state.isSelectedTimeRange.value = true; // 标记已选择时间范围
+                  logic.applyFilters();
+                },
+                child: Container(
+                  width: 56.w,
+                  height: 32.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4.r),
+                    color: Color(0xFF3361FE),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "应用",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
   // 构建单个新闻卡片
@@ -387,7 +413,8 @@ class HotPotPage extends StatelessWidget {
           onTap: () => logic.navigateToDetails(index),
           borderRadius: BorderRadius.circular(8.r),
           child: Padding(
-            padding: EdgeInsets.only(top: 16.0.w,bottom: 12.w,left: 16.w,right: 16.w),
+            padding: EdgeInsets.only(
+                top: 16.0.w, bottom: 12.w, left: 16.w, right: 16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -449,21 +476,25 @@ class HotPotPage extends StatelessWidget {
         switch (state.activeTabIndex.value) {
           case 0: // 新闻类型
             logic.selectNewsType(type);
+            state.isSelectedNewsType.value = true; // 标记已选择
             logic.showFilterOptions(); // 选择后自动关闭弹窗
             logic.applyFilters(); // 选择后立即应用筛选
             break;
           case 1: // 地区
             logic.selectRegion(type);
+            state.isSelectedRegion.value = true; // 标记已选择
             logic.showFilterOptions(); // 选择后自动关闭弹窗
             logic.applyFilters(); // 选择后立即应用筛选
             break;
           case 2: // 时间
-            // 对于时间，需要将显示名称转回实际值
+          // 对于时间，需要将显示名称转回实际值
             final actualTimeValue = state.timeRanges.firstWhere(
-              (timeRange) => (state.timeRangeNames[timeRange] ?? timeRange) == type,
-              orElse: () => type
+                    (timeRange) =>
+                (state.timeRangeNames[timeRange] ?? timeRange) == type,
+                orElse: () => type
             );
             logic.selectTimeRange(actualTimeValue);
+            state.isSelectedTimeRange.value = true; // 标记已选择
             logic.showFilterOptions(); // 选择后自动关闭弹窗
             logic.applyFilters(); // 选择后立即应用筛选
             break;
@@ -522,7 +553,7 @@ class HotPotPage extends StatelessWidget {
       if (state.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
-      
+
       // 发生错误
       if (state.errorMessage.value.isNotEmpty) {
         return Center(
@@ -539,7 +570,7 @@ class HotPotPage extends StatelessWidget {
           ),
         );
       }
-      
+
       // 数据为空
       if (state.newsList.isEmpty) {
         return Column(
@@ -556,7 +587,7 @@ class HotPotPage extends StatelessWidget {
           ],
         );
       }
-      
+
       // 显示列表
       return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
@@ -575,20 +606,21 @@ class HotPotPage extends StatelessWidget {
           itemBuilder: (context, index) {
             // 如果是最后一项且还有更多数据，显示加载中
             if (index == state.newsList.length) {
-              return Obx(() => state.isLoadingMore.value
-                ? Container(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator(),
-                  )
-                : Container(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    alignment: Alignment.center,
-                    child: Text('上拉加载更多', style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey,
-                    )),
-                  )
+              return Obx(() =>
+              state.isLoadingMore.value
+                  ? Container(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(),
+              )
+                  : Container(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                alignment: Alignment.center,
+                child: Text('上拉加载更多', style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey,
+                )),
+              )
               );
             }
             return _buildNewsCard(state.newsList[index], index);

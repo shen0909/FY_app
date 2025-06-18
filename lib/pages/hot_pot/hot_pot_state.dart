@@ -16,6 +16,9 @@ class HotPotState {
   
   // 筛选参数
   final RxString selectedRegion = "全部".obs;
+  final RxBool isSelectedRegion = false.obs;
+  final RxBool isSelectedNewsType = false.obs;
+  final RxBool isSelectedTimeRange = false.obs;
   final RxString selectedNewsType = "全部".obs;
   final RxString selectedTimeRange = "全部".obs;
   final RxBool showFilterOptions = false.obs;
