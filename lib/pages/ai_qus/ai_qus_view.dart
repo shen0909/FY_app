@@ -59,7 +59,7 @@ class AiQusPage extends StatelessWidget {
                   Expanded(
                     child: Obx(() => ListView.builder(
                           controller: state.scrollController,
-                          padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 0),
+                          padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
                           itemCount: state.messages.length,
                           itemBuilder: (context, index) {
                             final message = state.messages[index];
@@ -67,7 +67,34 @@ class AiQusPage extends StatelessWidget {
                           },
                         )),
                   ),
-                  Obx(() => state.isBatchCheck.value ? SizedBox() : _buildInputArea()),
+                  // 提示词按钮和输入框组合区域
+                  Obx(() => state.isBatchCheck.value 
+                      ? SizedBox() 
+                      : Column(
+                          children: [
+                            // 提示词按钮区域
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.only(right: 16.w, bottom: 8.w),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => logic.showTipTemplateDialog(context),
+                                    child: Image.asset(
+                                      FYImages.addTip,
+                                      width: 57.w,
+                                      height: 57.w,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // 输入框
+                            _buildInputArea(),
+                          ],
+                        )),
                 ],
               ),
               // 底部操作栏 - 批量选择模式
@@ -83,18 +110,6 @@ class AiQusPage extends StatelessWidget {
               _buildExportDialog(),
             ],
           ),
-          floatingActionButton: Obx(() => !state.isBatchCheck.value ? Container(
-            margin: EdgeInsets.only(bottom: 80.w),
-            child: GestureDetector(
-              onTap: () => logic.showTipTemplateDialog(context),
-              child: Image.asset(
-                FYImages.addTip,
-                width: 57.w,
-                height: 57.w,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ) : const SizedBox()),
         ),
       ),
     );
