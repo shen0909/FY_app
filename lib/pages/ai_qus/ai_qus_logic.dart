@@ -543,6 +543,7 @@ class AiQusLogic extends GetxController {
                         ),
                         onTap: () {
                           // 加载对话
+                          state.messageController.clear();
                           loadConversation(history['title']);
                           Navigator.pop(Get.context!);
                         },
@@ -842,7 +843,8 @@ class AiQusLogic extends GetxController {
     // 重置所有状态
     state.resetStreamingState();
     state.clearConversationHistory();
-    
+    state.messageController.clear();
+
     // 清空消息列表
     state.messages.clear();
     
