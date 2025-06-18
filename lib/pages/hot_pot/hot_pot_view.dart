@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 import '../../widgets/custom_app_bar.dart';
 import 'hot_pot_logic.dart';
 import 'hot_pot_state.dart';
@@ -92,8 +93,10 @@ class HotPotPage extends StatelessWidget {
         child: TextField(
           onChanged: (value) => logic.setSearchKeyword(value),
           onSubmitted: (value) {
-            // 当用户按下回车键时应用筛选
-            logic.applyFilters();
+            // 显示建设中提示
+            DialogUtils.showUnderConstructionDialog();
+            // 注释掉原有逻辑
+            // logic.applyFilters();
           },
           decoration: InputDecoration(
             hintText: '搜索关键词',
@@ -101,7 +104,13 @@ class HotPotPage extends StatelessWidget {
               fontSize: 14,
               color: Color(0xFFA6A6A6),
             ),
-            prefixIcon: Icon(Icons.search, size: 20, color: Color(0xFF3A3A3A)),
+            prefixIcon: GestureDetector(
+              onTap: () {
+                // 显示建设中提示
+                DialogUtils.showUnderConstructionDialog();
+              },
+              child: Icon(Icons.search, size: 20, color: Color(0xFF3A3A3A)),
+            ),
             border: InputBorder.none,
             contentPadding: EdgeInsets.symmetric(vertical: 9.h),
           ),

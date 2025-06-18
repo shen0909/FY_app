@@ -10,6 +10,7 @@ import 'dart:async';
 import 'ai_qus_state.dart';
 import '../../https/api_service.dart';
 import '../../services/realm_service.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 class AiQusLogic extends GetxController {
   final AiQusState state = AiQusState();
@@ -1287,19 +1288,23 @@ class AiQusLogic extends GetxController {
                     // 保存按钮
                     GestureDetector(
                       onTap: () {
-                        // 添加模板到列表
-                        if (state.titleController.text.isNotEmpty &&
-                            state.contentController.text.isNotEmpty) {
-                          state.promptTemplates.add({
-                            'title': state.titleController.text,
-                            'content': state.contentController.text,
-                          });
-                          // 清空输入框
-                          state.titleController.clear();
-                          state.contentController.clear();
-                          // 收起表单
-                          state.showTemplateForm.value = false;
-                        }
+                        // 显示建设中提示
+                        DialogUtils.showUnderConstructionDialog();
+                        
+                        // 注释掉原有逻辑
+                        // // 添加模板到列表
+                        // if (state.titleController.text.isNotEmpty &&
+                        //     state.contentController.text.isNotEmpty) {
+                        //   state.promptTemplates.add({
+                        //     'title': state.titleController.text,
+                        //     'content': state.contentController.text,
+                        //   });
+                        //   // 清空输入框
+                        //   state.titleController.clear();
+                        //   state.contentController.clear();
+                        //   // 收起表单
+                        //   state.showTemplateForm.value = false;
+                        // }
                       },
                       child: Container(
                         height: 48.w,

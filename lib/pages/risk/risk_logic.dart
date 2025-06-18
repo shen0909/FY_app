@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/widgets/unread_message_dialog.dart';
+import 'package:safe_app/models/risk_data.dart';
+import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import '../../models/risk_company_details.dart';
 import '../../models/risk_data.dart';
@@ -358,67 +361,72 @@ class RiskLogic extends GetxController {
   
   // 显示未读消息弹窗
   void showMessageDialog(String companyId) {
-    if (state.riskyData.value == null) return;
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    return;
+    
+    // 注释掉原有逻辑
+    // if (state.riskyData.value == null) return;
 
-    try {
-      // 获取当前单位类型对应的key
-      String unitKey;
-      switch (state.chooseUint.value) {
-        case 0:
-          unitKey = 'fengyun_1';
-          break;
-        case 1:
-          unitKey = 'fengyun_2';
-          break;
-        case 2:
-          unitKey = 'xingyun';
-          break;
-        default:
-          return;
-      }
+    // try {
+    //   // 获取当前单位类型对应的key
+    //   String unitKey;
+    //   switch (state.chooseUint.value) {
+    //     case 0:
+    //       unitKey = 'fengyun_1';
+    //       break;
+    //     case 1:
+    //       unitKey = 'fengyun_2';
+    //       break;
+    //     case 2:
+    //       unitKey = 'xingyun';
+    //       break;
+    //     default:
+    //       return;
+    //   }
 
-      // 从riskyData中获取对应公司的未读消息
-      final unreadMessages = state.riskyData.value!.unreadMessages[companyId];
-      if (unreadMessages == null || unreadMessages.isEmpty) return;
+    //   // 从riskyData中获取对应公司的未读消息
+    //   final unreadMessages = state.riskyData.value!.unreadMessages[companyId];
+    //   if (unreadMessages == null || unreadMessages.isEmpty) return;
 
-      // 转换未读消息格式
-      final messages = unreadMessages.map((msg) => {
-        'title': msg.title,
-        'date': msg.date,
-        'content': msg.content,
-        'company': msg.sourceName,
-        'isRead': msg.read,
-        'category': msg.category,
-        'severity': msg.severity,
-        'tags': msg.tags,
-      }).toList();
+    //   // 转换未读消息格式
+    //   final messages = unreadMessages.map((msg) => {
+    //     'title': msg.title,
+    //     'date': msg.date,
+    //     'content': msg.content,
+    //     'company': msg.sourceName,
+    //     'isRead': msg.read,
+    //     'category': msg.category,
+    //     'severity': msg.severity,
+    //     'tags': msg.tags,
+    //   }).toList();
 
-      state.currentUnreadMessages.assignAll(messages);
+    //   state.currentUnreadMessages.assignAll(messages);
 
-      showModalBottomSheet(
-        builder: (_){
-          return UnreadMessageDialog(
-            messages: state.currentUnreadMessages,
-            onClose: () => Get.back(),
-          );
-        },
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(Get.context!).size.width, // 强制宽度为屏幕宽度
-          minWidth: MediaQuery.of(Get.context!).size.width, // 防止最小宽度限制
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        isDismissible: true,
-        enableDrag: true,
-        isScrollControlled: true,
-        shape:  RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-        ),
-        context: Get.context!,
-      );
-    } catch (e) {
-      print("显示消息弹窗出错: $e");
-    }
+    //   showModalBottomSheet(
+    //     builder: (_){
+    //       return UnreadMessageDialog(
+    //         messages: state.currentUnreadMessages,
+    //         onClose: () => Get.back(),
+    //       );
+    //     },
+    //     constraints: BoxConstraints(
+    //       maxWidth: MediaQuery.of(Get.context!).size.width, // 强制宽度为屏幕宽度
+    //       minWidth: MediaQuery.of(Get.context!).size.width, // 防止最小宽度限制
+    //     ),
+    //     backgroundColor: Colors.transparent,
+    //     elevation: 0,
+    //     isDismissible: true,
+    //     enableDrag: true,
+    //     isScrollControlled: true,
+    //     shape:  RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+    //     ),
+    //     context: Get.context!,
+    //   );
+    // } catch (e) {
+    //   print("显示消息弹窗出错: $e");
+    // }
   }
   
   // 关闭未读消息弹窗

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/routers/routers.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import 'home_state.dart';
 
@@ -65,7 +66,11 @@ class HomeLogic extends GetxController {
 
   // 处理轮播图点击
   void onBannerTap(int index) async {
-    final item = state.carouselItems[index];
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    
+    // 注释掉原有逻辑
+    // final item = state.carouselItems[index];
     // try {
     //   if (await canLaunchUrlString(item.linkUrl)) {
     //     await launchUrlString(
@@ -109,7 +114,8 @@ class HomeLogic extends GetxController {
 
   // 导航到订阅管理页面
   void goOrder() {
-    Get.toNamed(Routers.order);
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.order);
   }
 
   // 导航到系统设置页面

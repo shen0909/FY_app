@@ -5,6 +5,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 import 'package:safe_app/widgets/custom_switch.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import 'setting_logic.dart';
 import 'setting_state.dart';
@@ -629,7 +630,10 @@ class SettingPage extends StatelessWidget {
               ),
               Spacer(),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  // 显示建设中提示
+                  DialogUtils.showUnderConstructionDialog();
+                },
                 child: Row(
                   children: [
                     Text(

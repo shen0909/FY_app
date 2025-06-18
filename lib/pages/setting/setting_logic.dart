@@ -9,6 +9,7 @@ import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import 'setting_state.dart';
 
@@ -218,193 +219,216 @@ class SettingLogic extends GetxController {
 
   // 清除缓存
   void clearCache() {
-    showDialog(
-      context: Get.context!,
-      builder: (context) => AlertDialog(
-        backgroundColor: FYColors.whiteColor,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '确认清除缓存吗？',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18.sp,
-                color: const Color(0xFF1A1A1A),
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              '确定要清除系统缓存吗？此操作可能需要重新加载系统数据。',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: FYColors.color_A6A6A6,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
-        contentPadding: EdgeInsets.symmetric(vertical: 24.w, horizontal: 16.w),
-        actionsPadding: EdgeInsets.zero,
-        buttonPadding: EdgeInsets.zero,
-        actions: [
-          // 分割线
-          Container(
-            height: 1.w,
-            color: const Color(0xFFEFEFEF),
-          ),
-          // 按钮区域
-          Row(
-            children: [
-              // 取消按钮
-              Expanded(
-                child: InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    height: 44.w,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border(
-                        right: BorderSide(
-                          color: const Color(0xFFEFEFEF),
-                          width: 1.w,
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      '取消',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF1A1A1A),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // 确定按钮
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 44.w,
-                    alignment: Alignment.center,
-                    child: Text(
-                      '确定',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF3361FE),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    
+    // 注释掉原有逻辑
+    // showDialog(
+    //   context: Get.context!,
+    //   builder: (context) => AlertDialog(
+    //     backgroundColor: FYColors.whiteColor,
+    //     content: Column(
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: [
+    //         Text(
+    //           '确认清除缓存吗？',
+    //           textAlign: TextAlign.center,
+    //           style: TextStyle(
+    //             fontSize: 18.sp,
+    //             color: const Color(0xFF1A1A1A),
+    //             fontWeight: FontWeight.w400,
+    //           ),
+    //         ),
+    //         SizedBox(height: 8.h),
+    //         Text(
+    //           '确定要清除系统缓存吗？此操作可能需要重新加载系统数据。',
+    //           textAlign: TextAlign.center,
+    //           style: TextStyle(
+    //             fontSize: 14.sp,
+    //             color: FYColors.color_A6A6A6,
+    //             fontWeight: FontWeight.w400,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+    //     contentPadding: EdgeInsets.symmetric(vertical: 24.w, horizontal: 16.w),
+    //     actionsPadding: EdgeInsets.zero,
+    //     buttonPadding: EdgeInsets.zero,
+    //     actions: [
+    //       // 分割线
+    //       Container(
+    //         height: 1.w,
+    //         color: const Color(0xFFEFEFEF),
+    //       ),
+    //       // 按钮区域
+    //       Row(
+    //         children: [
+    //           // 取消按钮
+    //           Expanded(
+    //             child: InkWell(
+    //               onTap: () => Navigator.pop(context),
+    //               child: Container(
+    //                 height: 44.w,
+    //                 alignment: Alignment.center,
+    //                 decoration: BoxDecoration(
+    //                   border: Border(
+    //                     right: BorderSide(
+    //                       color: const Color(0xFFEFEFEF),
+    //                       width: 1.w,
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 child: Text(
+    //                   '取消',
+    //                   style: TextStyle(
+    //                     fontSize: 16.sp,
+    //                     fontWeight: FontWeight.w400,
+    //                     color: const Color(0xFF1A1A1A),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //           // 确定按钮
+    //           Expanded(
+    //             child: InkWell(
+    //               onTap: () {
+    //                 Navigator.pop(context);
+    //               },
+    //               child: Container(
+    //                 height: 44.w,
+    //                 alignment: Alignment.center,
+    //                 child: Text(
+    //                   '确定',
+    //                   style: TextStyle(
+    //                     fontSize: 16.sp,
+    //                     fontWeight: FontWeight.w400,
+    //                     color: const Color(0xFF3361FE),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   // 前往使用教程页面
   void goToUseTutorial() {
-    Get.toNamed(Routers.useTutorial);
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.useTutorial);
   }
 
   // 前往隐私保护页面
   void goToPrivacySafe() {
-    Get.toNamed(Routers.privacySafe);
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.privacySafe);
   }
 
   // 前往用户反馈页面
   void goToFeedback() {
-    Get.toNamed(Routers.feedback);
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.feedback);
   }
 
   // 前往用户行为分析页面
   void goToUserAnalysis() {
-    Get.toNamed('/user_analysis');
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed('/user_analysis');
   }
 
   // 前往角色管理页面
   void goToRoleManagement() {
-    Get.toNamed(Routers.role_manager);
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.role_manager);
   }
 
   // 前往权限申请列表页面
   void goToPermissionRequests() {
-    Get.toNamed(Routers.permissionRequest);
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.permissionRequest);
   }
 
   // 添加新用户
   void addNewUser() {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController idController = TextEditingController();
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    
+    // 注释掉原有逻辑
+    // final TextEditingController nameController = TextEditingController();
+    // final TextEditingController idController = TextEditingController();
 
-    Get.dialog(
-      AlertDialog(
-        title: const Text('添加用户'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: '用户名',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: idController,
-              decoration: const InputDecoration(
-                labelText: '用户ID',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (nameController.text.isNotEmpty &&
-                  idController.text.isNotEmpty) {
-                state.userList.add({
-                  'name': nameController.text,
-                  'id': idController.text,
-                  'role': '普通用户',
-                  'status': '在线',
-                  'lastLoginTime': DateTime.now().toString().substring(0, 16)
-                });
-                Get.back();
-                Get.snackbar('提示', '用户已添加');
-              }
-            },
-            child: const Text('添加'),
-          ),
-        ],
-      ),
-    );
+    // Get.dialog(
+    //   AlertDialog(
+    //     title: const Text('添加用户'),
+    //     content: Column(
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: [
+    //         TextField(
+    //           controller: nameController,
+    //           decoration: const InputDecoration(
+    //             labelText: '用户名',
+    //             border: OutlineInputBorder(),
+    //           ),
+    //         ),
+    //         const SizedBox(height: 16),
+    //         TextField(
+    //           controller: idController,
+    //           decoration: const InputDecoration(
+    //             labelText: '用户ID',
+    //             border: OutlineInputBorder(),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //     actions: [
+    //       TextButton(
+    //         onPressed: () => Get.back(),
+    //         child: const Text('取消'),
+    //       ),
+    //       TextButton(
+    //         onPressed: () {
+    //           if (nameController.text.isNotEmpty &&
+    //               idController.text.isNotEmpty) {
+    //             state.userList.add({
+    //               'name': nameController.text,
+    //               'id': idController.text,
+    //               'role': '普通用户',
+    //               'status': '在线',
+    //               'lastLoginTime': DateTime.now().toString().substring(0, 16)
+    //             });
+    //             Get.back();
+    //             Get.snackbar('提示', '用户已添加');
+    //           }
+    //         },
+    //         child: const Text('添加'),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   // 搜索用户
   void searchUser(String keyword) {
-    // 实际项目中应该进行用户搜索
-    Get.snackbar('提示', '正在搜索: $keyword');
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.snackbar('提示', '正在搜索: $keyword');
   }
 
   // 前往用户日志页面
   void goToUserLogs() {
-    Get.toNamed(Routers.userLoginData);
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
+    // Get.toNamed(Routers.userLoginData);
   }
 }

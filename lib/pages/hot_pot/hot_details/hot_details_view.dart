@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:safe_app/models/news_detail_data.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/styles/text_styles.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_logic.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import '../../../widgets/custom_app_bar.dart';
 
@@ -580,20 +582,26 @@ class HotDetailsView extends StatelessWidget {
                 SizedBox(height: 16.w),
                 Row(
                   children: [
-                    Container(
-                      width: 96.w,
-                      height: 32.w,
-                      decoration: BoxDecoration(
-                        color: FYColors.color_F5F5F5,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(FYImages.report_icon,width: 16.w,height: 16.w,fit: BoxFit.contain,),
-                          SizedBox(width: 8.w),
-                          Text('查看原文',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.sp),),
-                        ],
+                    GestureDetector(
+                      onTap: () {
+                        // 显示建设中提示
+                        DialogUtils.showUnderConstructionDialog();
+                      },
+                      child: Container(
+                        width: 96.w,
+                        height: 32.w,
+                        decoration: BoxDecoration(
+                          color: FYColors.color_F5F5F5,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(FYImages.report_icon,width: 16.w,height: 16.w,fit: BoxFit.contain,),
+                            SizedBox(width: 8.w),
+                            Text('查看原文',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.sp),),
+                          ],
+                        ),
                       ),
                     ),
                     const Spacer(),

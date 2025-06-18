@@ -6,6 +6,7 @@ import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 import '../../../models/risk_company_details.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/widgets.dart';
@@ -28,11 +29,17 @@ class RiskDetailsPage extends StatelessWidget {
         fontSize: 18,
         titleColor: Colors.black,
         actions: [
-          Image.asset(
-            FYImages.download_icon,
-            width: 24.w,
-            height: 24.w,
-            fit: BoxFit.contain,
+          GestureDetector(
+            onTap: () {
+              // 显示建设中提示
+              DialogUtils.showUnderConstructionDialog();
+            },
+            child: Image.asset(
+              FYImages.download_icon,
+              width: 24.w,
+              height: 24.w,
+              fit: BoxFit.contain,
+            ),
           ),
           SizedBox(width: 12.w),
           Container(

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/news_detail_data.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
+import 'package:safe_app/models/newslist_data.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 class HotDetailsLogic extends GetxController {
   final HotDetailsState state = HotDetailsState();
@@ -79,12 +81,8 @@ class HotDetailsLogic extends GetxController {
 
   // 下载相关文件
   void downloadFile() {
-    // 实际应用中这里会实现文件下载功能
-    Get.snackbar(
-      '下载提示',
-      '文件下载功能已触发',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    // 显示建设中提示
+    DialogUtils.showUnderConstructionDialog();
   }
 
   // 复制内容
