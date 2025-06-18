@@ -1374,6 +1374,8 @@ class AiQusLogic extends GetxController {
                       onTap: () {
                         // 使用该模板
                         state.messageController.text = template['content'];
+                        state.showTemplateForm.value = !state.showTemplateForm.value;
+                        Get.back();
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 10.w),
