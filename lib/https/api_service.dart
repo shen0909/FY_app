@@ -159,15 +159,16 @@ class ApiService {
 
     return null;
   }
-  
+
   /// 应用内登录接口
   Future<InnerLoginResponse?> innerLogin({
     required String username,
     required String password,
   }) async {
-    String username = 'user0611';
+    print('$_tag 开始应用内登录，用户名: $username');
+
     // 将密码转为base64
-    var bytes = utf8.encode('fNj12CT1TA');
+    var bytes = utf8.encode(password);
     String passBase64 = base64.encode(bytes);
     // 构造请求参数
     Map<String, dynamic> paramData = {
@@ -179,56 +180,88 @@ class ApiService {
       }
     };
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    
+
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
         InnerLoginResponse response = InnerLoginResponse.fromJson(resultData);
-        
+
         if (response.success && response.statusCode == 10010 && response.data != null) {
           // 保存内层token
           String innerToken = response.data!['access_token'];
           await FYSharedPreferenceUtils.saveInnerAccessToken(innerToken);
+
+          if (kDebugMode) {
+            print('$_tag 应用内登录成功，已保存内层token');
+          }
         }
-        
+
         return response;
       } catch (e) {
         if (kDebugMode) {
           print('$_tag 解析应用内登录响应失败: $e');
         }
       }
+    } else {
+      if (kDebugMode) {
+        print('$_tag 应用内登录失败，响应: $result');
+      }
     }
-    
+
     return null;
   }
-  
-  /// 两层登录流程
+
+  /// 两层登录流程 - 按照接口文档的固定参数设计
   Future<dynamic> login({
     required String username,
     required String password,
   }) async {
-    // 外层登录
+    if (kDebugMode) {
+      print('$_tag 开始执行两层登录流程');
+    }
+
+    // 第一层：外层登录 - 使用接口文档固定参数
     OuterLoginResponse? outerResponse = await outerLogin(
-      username: username,
-      password: password,
+      username: 'test4',  // 接口文档固定参数
+      password: 'test4',  // 接口文档固定参数
     );
+
     if (outerResponse == null || !outerResponse.isSuccess) {
+      if (kDebugMode) {
+        print('$_tag 外层登录失败: ${outerResponse?.errorMessage}');
+      }
       return {
         'code': 0,
         'msg': outerResponse?.errorMessage ?? '外层登录失败',
       };
     }
-    // 应用内登录
-    InnerLoginResponse? innerResponse = await innerLogin(username: username, password: password);
+
+    if (kDebugMode) {
+      print('$_tag 外层登录成功，开始应用内登录');
+    }
+
+    // 第二层：应用内登录 - 使用接口文档固定参数
+    InnerLoginResponse? innerResponse = await innerLogin(
+      username: 'user0611',    // 接口文档固定参数
+      password: 'fNj12CT1TA',  // 接口文档固定参数
+    );
+
     if (innerResponse == null || !innerResponse.success || innerResponse.statusCode != 10010) {
+      if (kDebugMode) {
+        print('$_tag 应用内登录失败: ${innerResponse?.message}');
+      }
       return {
         'code': 0,
         'msg': innerResponse?.message ?? '应用内登录失败',
       };
     }
-    
-    // 3. 构造统一的登录成功响应
+
+    if (kDebugMode) {
+      print('$_tag 两层登录全部成功');
+    }
+
+    // 构造统一的登录成功响应
     return {
       'code': 10010,
       'msg': '登录成功',
@@ -244,7 +277,7 @@ class ApiService {
       }
     };
   }
-  
+
   /// 刷新外层令牌
   Future<String?> refreshOuterToken() async {
     // 获取当前外层刷新token
@@ -252,15 +285,15 @@ class ApiService {
     if (refreshToken == null || refreshToken.isEmpty) {
       return null;
     }
-    
+
     var data = {'refresh_token': refreshToken};
-    
+
     dynamic result = await _post(ServicePath.outerRefreshToken, data: data);
-    
+
     if (result != null) {
       try {
         RefreshTokenResponse response = RefreshTokenResponse.fromJson(result);
-        
+
         if (response.isSuccess) {
           // 保存新的访问令牌
           await FYSharedPreferenceUtils.saveOuterAccessToken(response.accessToken);
@@ -272,26 +305,42 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
-  
+
   /// 重新登录应用内系统
   Future<bool> reLoginInnerApp() async {
-    // 获取用户名
-    String? username = await FYSharedPreferenceUtils.getUserName();
-    if (username == null || username.isEmpty) {
+    if (kDebugMode) {
+      print('$_tag 开始重新登录应用内系统');
+    }
+
+    try {
+      // 使用接口文档中的固定用户名和密码重新登录
+      InnerLoginResponse? response = await innerLogin(
+        username: 'user0611',    // 接口文档固定参数
+        password: 'fNj12CT1TA',  // 接口文档固定参数
+      );
+
+      if (response != null && response.success && response.statusCode == 10010) {
+        if (kDebugMode) {
+          print('$_tag 应用内重新登录成功');
+        }
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('$_tag 应用内重新登录失败: ${response?.message ?? '未知错误'}');
+        }
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag 应用内重新登录异常: $e');
+      }
       return false;
     }
-    // 这里假设密码加密已经在之前登录时存储，实际项目中可能需要用户重新输入密码
-    // 简化处理，使用固定密码重新登录
-    InnerLoginResponse? response = await innerLogin(
-      username: username,
-      password: 'fNj12CT1TA', // 使用接口文档中的示例密码
-    );
-    
-    return response != null && response.success && response.statusCode == 10010;
   }
+
 
   /// 获取制裁清单
   Future<SanctionListResponse?> getSanctionList({

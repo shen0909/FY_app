@@ -4,9 +4,11 @@ import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
-import 'package:safe_app/models/login_data.dart';
 import 'package:safe_app/pages/login/api/login_api.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/models/login_data.dart';
 
 import 'login_state.dart';
 
@@ -119,7 +121,8 @@ class LoginLogic extends GetxController {
       );
 
       if (didAuthenticate) {
-        Get.offAllNamed(Routers.home);
+        // 指纹验证成功，执行真正的登录流程
+        await _performServerLogin();
       } else {
         // 指纹验证失败后切换到密码登录
         state.loginMethod.value = 0;
@@ -130,6 +133,64 @@ class LoginLogic extends GetxController {
       state.loginMethod.value = 0;
     } finally {
       state.isBiometricAuthenticating.value = false;
+    }
+  }
+
+  /// 执行服务器端登录（用于指纹和划线登录）
+  Future<void> _performServerLogin() async {
+    try {
+      state.isLogging.value = true;
+      
+      // 获取用户界面上的用户名，如果没有则使用默认值
+      String username = state.accountController.text.isNotEmpty 
+          ? state.accountController.text 
+          : 'defaultUser';
+      String password = 'defaultPassword'; // 这里可以根据需要调整
+      
+      if (kDebugMode) {
+        print('生物认证成功，开始执行服务器登录，用户名: $username');
+      }
+      
+      // 执行两层登录流程 (内部会使用固定参数连接服务器)
+      var result = await ApiService().login(
+        username: username,  // 传入用户界面的用户名，用于显示
+        password: password,  // 传入密码（实际服务器验证使用固定参数）
+      );
+      
+      if (result['code'] == 10010) {
+        // 登录成功，保存登录数据
+        LoginData loginData = LoginData(
+          token: result['data']['token'] ?? '',
+          userid: result['data']['userid'] ?? '',
+          username: result['data']['username'] ?? '',
+          province: result['data']['province'] ?? '',
+          city: result['data']['city'] ?? '',
+          county_level_city: result['data']['county_level_city'] ?? '',
+          user_role: result['data']['user_role'] ?? 0,
+          nickname: result['data']['nickname'] ?? '',
+        );
+        
+        await FYSharedPreferenceUtils.saveLoginData(loginData);
+        await FYSharedPreferenceUtils.setNotFirstLogin();
+        
+        if (kDebugMode) {
+          print('生物认证登录成功');
+        }
+        
+        Get.offAllNamed(Routers.home);
+      } else {
+        // 登录失败
+        ToastUtil.showError(result['msg'] ?? '登录失败');
+        // 登录失败时切换到密码登录
+        state.loginMethod.value = 0;
+      }
+    } catch (e) {
+      print('服务器登录失败: $e');
+      ToastUtil.showError('登录失败，请重试');
+      // 出错时切换到密码登录
+      state.loginMethod.value = 0;
+    } finally {
+      state.isLogging.value = false;
     }
   }
 
@@ -236,8 +297,8 @@ class LoginLogic extends GetxController {
       bool isValid = await PatternLockUtil.verifyPattern(pattern);
       if (isValid) {
         await FYSharedPreferenceUtils.resetPatternLockFailedAttempts();
-        state.isLogging.value = false;
-        Get.offAllNamed(Routers.home);
+        // 划线验证成功，执行真正的登录流程
+        await _performServerLogin();
       } else {
         final failedAttempts =
             await FYSharedPreferenceUtils.getPatternLockFailedAttempts();
@@ -256,7 +317,9 @@ class LoginLogic extends GetxController {
       print('划线登录失败: $e');
       ToastUtil.showError('划线登录失败，请重试');
     } finally {
-      state.isLogging.value = false;
+      if (!state.isLogging.value) {
+        state.isLogging.value = false;
+      }
     }
   }
 
