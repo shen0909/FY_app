@@ -7,9 +7,11 @@ class HttpService {
   static final HttpService _instance = HttpService._internal();
   static const String _tag = 'FYHttp';
   static const String baseUrl = 'http://180.97.221.196:2033';
-  
+  static const String baseUrl1 = 'http://180.97.221.196:2032';
+
   factory HttpService() => _instance;
   late Dio dio;
+  late Dio preDio; // 之前的dio
   late Dio innerDio; // 用于应用内统一请求的Dio实例
 
   /// 基础请求头
@@ -21,6 +23,21 @@ class HttpService {
   }
 
   HttpService._internal() {
+    BaseOptions preOptions = BaseOptions(
+      baseUrl: baseUrl1,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        "X-API-KEY": "sk-asdg21324tdfhbgh4-2sfg21fsdgsefhg2fsgh2dfh4-tcg34df24cg45d23rFGWT23sd-gsgwerJDSFwqesdR-WDD43224dfgergdy"
+      },
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
+      contentType: 'application/json',
+      responseType: ResponseType.json,
+    );
+    preDio = Dio(preOptions);
+
     // 外层请求的Dio配置
     BaseOptions options = BaseOptions(
       baseUrl: baseUrl,
@@ -179,6 +196,54 @@ class HttpService {
       _handleError(errorCallback, formatError(e));
     }
   }
+
+  Future prePost<T>(
+    String path, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+    bool isForm = false,
+  }) async {
+    try {
+      Response response;
+      if (isForm) {
+        // 如果是表单提交
+        response = await preDio.post(
+          path,
+          data: data,
+          options: options,
+          cancelToken: cancelToken,
+        );
+      } else {
+        // 默认是URL参数提交
+        response = await dio.post(
+          path,
+          queryParameters: data ?? queryParameters,
+          options: options,
+          cancelToken: cancelToken,
+        );
+      }
+
+      if (response.statusCode != 200) {
+        _handleError(errorCallback, '网络请求错误,状态码:${response.statusCode}');
+        return;
+      }
+
+      // 返回结果处理
+      if (successCallback != null) {
+        if (response.data != null) {
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '$path, 数据请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      _handleError(errorCallback, formatError(e));
+    }
+  }
   
   /// 应用内统一请求接口
   Future sendChannelEvent<T>(
@@ -288,6 +353,44 @@ class HttpService {
         cancelToken: cancelToken,
       );
       
+      if (successCallback != null) {
+        if (response.data != null) {
+          if (kDebugMode) {
+            print('$_tag $path, GET请求结果: $response');
+          }
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '$path, GET数据请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('$_tag GET请求失败: ${formatError(e)}');
+      }
+      _handleError(errorCallback, formatError(e));
+    }
+  }
+
+  Future preGet<T>(
+    String path, {
+    Map<String, dynamic>? params,
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('$_tag 发起GET请求: $path');
+      }
+
+      Response response = await preDio.get(
+        path,
+        queryParameters: params,
+        options: options,
+        cancelToken: cancelToken,
+      );
+
       if (successCallback != null) {
         if (response.data != null) {
           if (kDebugMode) {

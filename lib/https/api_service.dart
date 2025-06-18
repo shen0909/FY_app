@@ -46,11 +46,37 @@ class ApiService {
     return response;
   }
 
+  Future<dynamic> _prePost(String path,
+      {Map<String, dynamic>? data,
+      bool isForm = false,
+      Options? options}) async {
+    dynamic response;
+    await HttpService().prePost(path, data: data, options: options, isForm: isForm,
+        successCallback: (data) {
+      response = data;
+    }, errorCallback: (error) {
+      response = {'code': 0, 'msg': error.toString()};
+    });
+    return response;
+  }
+
   /// 底层GET封装，统一处理请求和错误
   Future<dynamic> _get(String path,
       {Map<String, dynamic>? params, Options? options}) async {
     dynamic response;
     await HttpService().get(path, params: params, options: options,
+        successCallback: (data) {
+      response = data;
+    }, errorCallback: (error) {
+      response = {'code': 0, 'msg': error.toString()};
+    });
+    return response;
+  }
+
+  Future<dynamic> _preGet(String path,
+      {Map<String, dynamic>? params, Options? options}) async {
+    dynamic response;
+    await HttpService().preGet(path, params: params, options: options,
         successCallback: (data) {
       response = data;
     }, errorCallback: (error) {
@@ -534,7 +560,7 @@ class ApiService {
 
   /// 获取地区参数
   Future<dynamic> getRegion() async {
-    return await _get(ServicePath.getRegion);
+    return await _preGet(ServicePath.getRegion);
   }
 
   /// 添加地区参数
@@ -585,12 +611,12 @@ class ApiService {
       data['search'] = search;
     }
 
-    return await _post(ServicePath.getNewsList, data: data,isForm: true);
+    return await _prePost(ServicePath.getNewsList, data: data,isForm: true);
   }
 
   /// 获取新闻详情
   Future<dynamic> getNewsDetail({required String newsId}) async {
-    return await _get(ServicePath.getNewsDetail, params: {'news_id': newsId});
+    return await _preGet(ServicePath.getNewsDetail, params: {'news_id': newsId});
   }
 
   /// 导出新闻报告
@@ -601,7 +627,7 @@ class ApiService {
         followRedirects: false,
         receiveTimeout: const Duration(minutes: 2),
       );
-      return await HttpService().dio.get(
+      return await HttpService().preDio.get(
         ServicePath.getNewsReport,
         queryParameters: {'news_id': newsId},
         options: options,
