@@ -144,6 +144,40 @@ class LoginPage extends StatelessWidget {
                 ),
               );
             }
+            
+            // 如果正在进行划线登录验证，显示loading状态
+            if (state.isPatternAuthenticating.value) {
+              return Container(
+                width: 300.w,
+                height: 300.w,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 40.w,
+                      height: 40.w,
+                      child: CircularProgressIndicator(
+                        color: FYColors.color_3361FE,
+                        strokeWidth: 3.w,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      '正在验证...',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: FYColors.color_1A1A1A,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            
             // 布局准备好后，显示图案锁
             return PatternLockWidget(
               size: 300.w,
@@ -179,16 +213,18 @@ class LoginPage extends StatelessWidget {
           // 使用密码登录选项
           Padding(
             padding: EdgeInsets.only(top: 24.h),
-            child: GestureDetector(
-              onTap: () => logic.switchToPasswordLogin(),
+            child: Obx(() => GestureDetector(
+              onTap: state.isPatternAuthenticating.value ? null : () => logic.switchToPasswordLogin(),
               child: Text(
                 '使用密码登录',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: FYColors.text1Color,
+                  color: state.isPatternAuthenticating.value 
+                      ? FYColors.color_A6A6A6 
+                      : FYColors.text1Color,
                 ),
               ),
-            ),
+            )),
           ),
         ],
       ),

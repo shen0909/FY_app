@@ -104,6 +104,7 @@ class LoginLogic extends GetxController {
 
     try {
       state.isBiometricAuthenticating.value = true;
+      state.isLogging.value = true;
 
       bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
       if (!canCheckBiometrics) {
@@ -133,14 +134,14 @@ class LoginLogic extends GetxController {
       state.loginMethod.value = 0;
     } finally {
       state.isBiometricAuthenticating.value = false;
+      state.isLogging.value = false;
     }
   }
 
   /// 执行服务器端登录（用于指纹和划线登录）
+  /// 注意：loading状态由调用方管理，这个方法只执行登录逻辑
   Future<void> _performServerLogin() async {
     try {
-      state.isLogging.value = true;
-      
       // 获取用户界面上的用户名，如果没有则使用默认值
       String username = state.accountController.text.isNotEmpty 
           ? state.accountController.text 
@@ -189,8 +190,6 @@ class LoginLogic extends GetxController {
       ToastUtil.showError('登录失败，请重试');
       // 出错时切换到密码登录
       state.loginMethod.value = 0;
-    } finally {
-      state.isLogging.value = false;
     }
   }
 
@@ -292,7 +291,12 @@ class LoginLogic extends GetxController {
       return;
     }
 
+    // 设置划线登录专用的loading状态，并清除之前的错误信息
+    state.isPatternAuthenticating.value = true;
     state.isLogging.value = true;
+    state.isError.value = false;
+    state.errorMessage.value = '';
+    
     try {
       bool isValid = await PatternLockUtil.verifyPattern(pattern);
       if (isValid) {
@@ -317,9 +321,9 @@ class LoginLogic extends GetxController {
       print('划线登录失败: $e');
       ToastUtil.showError('划线登录失败，请重试');
     } finally {
-      if (!state.isLogging.value) {
-        state.isLogging.value = false;
-      }
+      // 确保loading状态被正确清除
+      state.isPatternAuthenticating.value = false;
+      state.isLogging.value = false;
     }
   }
 

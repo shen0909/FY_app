@@ -11,6 +11,9 @@ class LoginState {
   // 是否正在使用生物识别
   final RxBool isBiometricAuthenticating = false.obs;
   
+  // 是否正在进行划线登录验证
+  final RxBool isPatternAuthenticating = false.obs;
+  
   // 是否显示密码
   final RxBool showPassword = false.obs;
   
