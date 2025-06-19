@@ -52,7 +52,7 @@ class SettingPage extends StatelessWidget {
   }
 
   Widget _buildUserInfoCard() {
-    return Container(
+    return Obx(() => Container(
       width: double.infinity,
       height: 110.h,
       color: FYColors.whiteColor,
@@ -67,15 +67,7 @@ class SettingPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                state.userInfo['name'] ?? '',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                '用户名：${state.userInfo['username']}',
+                '用户名：${state.userInfo['username'] ?? '未知用户'}',
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: FYColors.color_1A1A1A,
@@ -89,7 +81,7 @@ class SettingPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Text(
-                  state.userInfo['department'] ?? '',
+                  state.userInfo['department'] ?? '未知地区',
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: FYColors.color_3361FE,
@@ -100,7 +92,7 @@ class SettingPage extends StatelessWidget {
           ),
           Spacer(),
           Text(
-            '版本号：v.0.0.2',
+            '版本号：v.0.0.3',
             style: TextStyle(
               fontSize: 14.sp,
               color: FYColors.color_666666,
@@ -108,7 +100,7 @@ class SettingPage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildAvatar() {
@@ -453,98 +445,100 @@ class SettingPage extends StatelessWidget {
   }
 
   Widget _buildStatisticsSection() {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '统计信息',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: FYColors.color_1A1A1A,
+    return Obx(() {
+      return Container(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '统计信息',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: FYColors.color_1A1A1A,
+                  ),
                 ),
-              ),
-              Text(
-                '(仅管理员可见)',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
+                Text(
+                  '(仅管理员可见)',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  '今日访问',
-                  '${state.statistics['todayVisits']}',
-                  state.statistics['visitTrend'],
-                  true,
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    '今日访问',
+                    '${state.statistics['todayVisits'] ?? 0}',
+                    (state.statistics['visitTrend'] as int?) ?? 0,
+                    true,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: _buildStatCard(
-                  '预警数量',
-                  '${state.statistics['predictionCount']}',
-                  state.statistics['predictionTrend'].abs(),
-                  false,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: _buildStatCard(
+                    '预警数量',
+                    '${state.statistics['predictionCount'] ?? 0}',
+                    ((state.statistics['predictionTrend'] as int?) ?? 0).abs(),
+                    false,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  '订阅数量',
-                  '${state.statistics['subscriptionCount']}',
-                  state.statistics['subscriptionTrend'],
-                  true,
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    '订阅数量',
+                    '${state.statistics['subscriptionCount'] ?? 0}',
+                    (state.statistics['subscriptionTrend'] as int?) ?? 0,
+                    true,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: _buildRegionCard('区域统计', state.statistics['region']),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          GestureDetector(
-            onTap: logic.goToUserAnalysis,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 10.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '查看完整用户行为分析',
-                    style: TextStyle(
-                      fontSize: 12.sp,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: _buildRegionCard('区域统计', state.statistics['region'] ?? '未知地区'),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            GestureDetector(
+              onTap: logic.goToUserAnalysis,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '查看完整用户行为分析',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12.sp,
                       color: FYColors.color_3361FE,
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12.sp,
-                    color: FYColors.color_3361FE,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildStatCard(

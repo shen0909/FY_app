@@ -43,6 +43,7 @@ class LoginLogic extends GetxController {
       final loginData = await FYSharedPreferenceUtils.getLoginData();
       if (loginData != null) {
         state.userName.value = loginData.username ?? '';
+        state.userUid.value = loginData.userid ?? '';
         _setGreetingMessage();
       }
     } catch (e) {
@@ -142,14 +143,12 @@ class LoginLogic extends GetxController {
   /// 注意：loading状态由调用方管理，这个方法只执行登录逻辑
   Future<void> _performServerLogin() async {
     try {
-      // 获取用户界面上的用户名，如果没有则使用默认值
-      String username = state.accountController.text.isNotEmpty 
-          ? state.accountController.text 
-          : 'defaultUser';
+      // 获取用户界面上的用户UID，如果没有则使用默认值
+      String username = state.userUid.value.isNotEmpty ? state.userUid.value : '用户';
       String password = 'defaultPassword'; // 这里可以根据需要调整
       
       if (kDebugMode) {
-        print('生物认证成功，开始执行服务器登录，用户名: $username');
+        print('生物认证成功，开始执行服务器登录，用户UID: $username');
       }
       
       // 执行两层登录流程 (内部会使用固定参数连接服务器)
