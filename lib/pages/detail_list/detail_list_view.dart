@@ -15,7 +15,9 @@ class DetailListPage extends StatelessWidget {
   DetailListPage({Key? key}) : super(key: key);
 
   final DetailListLogic logic = Get.put(DetailListLogic());
-  final DetailListState state = Get.find<DetailListLogic>().state;
+  final DetailListState state = Get
+      .find<DetailListLogic>()
+      .state;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class DetailListPage extends StatelessWidget {
             _buildFilterChips(context),
             _buildResultCount(),
             _buildTable(),
+            _buildPagination(),
           ],
         ),
       ),
@@ -166,8 +169,8 @@ class DetailListPage extends StatelessWidget {
   }
 
   // 筛选按钮
-  Widget _buildFilterChip(
-      BuildContext context, String title, Rx<String> filter, GlobalKey key) {
+  Widget _buildFilterChip(BuildContext context, String title, Rx<String> filter,
+      GlobalKey key) {
     return Obx(() {
       final bool hasValue = filter.value.isNotEmpty;
 
@@ -215,7 +218,8 @@ class DetailListPage extends StatelessWidget {
   Widget _buildResultCount() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Obx(() => Text(
+      child: Obx(() =>
+          Text(
             "${state.sanctionList.length} 条结果",
             style: TextStyle(
               fontSize: 12.sp,
@@ -228,69 +232,72 @@ class DetailListPage extends StatelessWidget {
 
   // 表格实现
   Widget _buildTable() {
-    return Container(
-      height: 400.h, // 设置一个固定高度
-      child: Obx(() {
-        // 加载状态
-        if (state.isLoading.value && state.sanctionList.isEmpty) {
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
-            ),
-          );
-        }
-
-        // 数据为空时显示暂无数据
-        if (state.sanctionList.isEmpty && !state.isLoading.value) {
-          return FYWidget.buildEmptyContent();
-        }
-
-        // 计算每列需要的最大宽度
-        double maxNameWidth = 150.w; // 名称列最小宽度
-        double maxSanctionTypeWidth = 0; // 制裁类型列，需要计算最大宽度
-        double maxRegionWidth = 100.w; // 地区列最小宽度
-        double timeWidth = 80.w; // 时间列
-        double removalTimeWidth = 80.w; // 移除时间列
-
-        // 测量每个制裁类型的宽度
-        TextStyle sanctionTextStyle =
-            TextStyle(fontSize: 12.sp, color: Colors.black);
-        TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
-
-        // 为每个制裁类型计算所需宽度
-        for (var item in state.sanctionList) {
-          // 获取制裁类型
-          final sanctionType = item.getSanctionType(state.sanctionTypes);
-          
-          // 计算每个制裁类型标签所需的总宽度
-          // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2)
-
-          // 计算文本宽度
-          textPainter.text = TextSpan(text: sanctionType.name, style: sanctionTextStyle);
-          textPainter.layout();
-          double totalWidth =
-              textPainter.width + 14.w + 4.w + 16.w + 20.w; // 额外添加10.w作为缓冲
-
-          if (totalWidth > maxSanctionTypeWidth) {
-            maxSanctionTypeWidth = totalWidth;
+    return Obx(() {
+      return Container(
+        constraints: BoxConstraints(
+          maxHeight: state.sanctionList.isEmpty ? 100.h : state.sanctionList
+              .length * 44.h + 28.h,
+        ),
+        child: Obx(() {
+          // 加载状态
+          if (state.isLoading.value && state.sanctionList.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
+              ),
+            );
           }
-        }
 
-        // 确保制裁类型宽度至少有一个最小值
-        maxSanctionTypeWidth =
-            maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
+          // 数据为空时显示暂无数据
+          if (state.sanctionList.isEmpty && !state.isLoading.value) {
+            return FYWidget.buildEmptyContent();
+          }
 
-        // 计算总宽度
-        double totalTableWidth = maxNameWidth +
-            maxSanctionTypeWidth +
-            maxRegionWidth +
-            timeWidth +
-            removalTimeWidth;
+          // 计算每列需要的最大宽度
+          double maxNameWidth = 150.w; // 名称列最小宽度
+          double maxSanctionTypeWidth = 0; // 制裁类型列，需要计算最大宽度
+          double maxRegionWidth = 100.w; // 地区列最小宽度
+          double timeWidth = 80.w; // 时间列
+          double removalTimeWidth = 80.w; // 移除时间列
 
-        return RefreshIndicator(
-          onRefresh: logic.refreshData,
-          color: Color(0xFF3361FE),
-          child: Row(
+          // 测量每个制裁类型的宽度
+          TextStyle sanctionTextStyle =
+          TextStyle(fontSize: 12.sp, color: Colors.black);
+          TextPainter textPainter = TextPainter(
+              textDirection: TextDirection.ltr);
+
+          // 为每个制裁类型计算所需宽度
+          for (var item in state.sanctionList) {
+            // 获取制裁类型
+            final sanctionType = item.getSanctionType(state.sanctionTypes);
+
+            // 计算每个制裁类型标签所需的总宽度
+            // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2)
+
+            // 计算文本宽度
+            textPainter.text =
+                TextSpan(text: sanctionType.name, style: sanctionTextStyle);
+            textPainter.layout();
+            double totalWidth =
+                textPainter.width + 14.w + 4.w + 16.w + 20.w; // 额外添加10.w作为缓冲
+
+            if (totalWidth > maxSanctionTypeWidth) {
+              maxSanctionTypeWidth = totalWidth;
+            }
+          }
+
+          // 确保制裁类型宽度至少有一个最小值
+          maxSanctionTypeWidth =
+          maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
+
+          // 计算总宽度
+          double totalTableWidth = maxNameWidth +
+              maxSanctionTypeWidth +
+              maxRegionWidth +
+              timeWidth +
+              removalTimeWidth;
+
+          return Row(
             children: [
               // 固定的首列（序号列）
               Container(
@@ -316,30 +323,16 @@ class DetailListPage extends StatelessWidget {
                     Expanded(
                       child: ListView.builder(
                         controller: logic.leftVerticalController,
-                        itemCount: state.sanctionList.length + (state.hasMoreData.value ? 1 : 0),
+                        itemCount: state.sanctionList.length,
                         itemBuilder: (context, index) {
-                          // 显示加载更多指示器
-                          if (index == state.sanctionList.length) {
-                            return Container(
-                              height: 44.h,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "${index + 1}",
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Color(0xFF1A1A1A),
-                                ),
-                              ),
-                            );
-                          }
-                          
                           final isOdd = index % 2 == 1;
                           return Container(
                             height: 44.h,
                             color: isOdd ? Colors.white : Color(0xFFF9F9F9),
                             alignment: Alignment.center,
                             child: Text(
-                              "${index+1}",
+                              "${(state.currentPage.value - 1) *
+                                  state.pageSize.value + index + 1}",
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: Color(0xFF1A1A1A),
@@ -390,7 +383,7 @@ class DetailListPage extends StatelessWidget {
                                     width: maxSanctionTypeWidth,
                                     child: Padding(
                                       padding:
-                                          EdgeInsets.symmetric(horizontal: 8.w),
+                                      EdgeInsets.symmetric(horizontal: 8.w),
                                       child: Text(
                                         "制裁类型",
                                         style: TextStyle(
@@ -442,69 +435,18 @@ class DetailListPage extends StatelessWidget {
                             Expanded(
                               child: ListView.builder(
                                 controller: logic.rightVerticalController,
-                                itemCount: state.sanctionList.length + (state.hasMoreData.value || state.isLoadingMore.value ? 1 : 0),
+                                itemCount: state.sanctionList.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
                                 itemBuilder: (context, index) {
-                                  // 显示加载更多指示器
-                                  if (index == state.sanctionList.length) {
-                                    return Container(
-                                      height: 44.h,
-                                      color: index % 2 == 1 ? Colors.white : Color(0xFFF9F9F9),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Center(
-                                              child: state.isLoadingMore.value
-                                                  ? Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 16.w,
-                                                          height: 16.w,
-                                                          child: CircularProgressIndicator(
-                                                            strokeWidth: 2,
-                                                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 8.w),
-                                                        Text(
-                                                          "加载中...",
-                                                          style: TextStyle(
-                                                            fontSize: 12.sp,
-                                                            color: Color(0xFF3361FE),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : state.hasMoreData.value
-                                                      ? Text(
-                                                          "滑动到底部加载更多",
-                                                          style: TextStyle(
-                                                            fontSize: 12.sp,
-                                                            color: Color(0xFFA6A6A6),
-                                                          ),
-                                                        )
-                                                      : Text(
-                                                          "没有更多数据了",
-                                                          style: TextStyle(
-                                                            fontSize: 12.sp,
-                                                            color: Color(0xFFA6A6A6),
-                                                          ),
-                                                        ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                  
                                   final item = state.sanctionList[index];
                                   final isOdd = index % 2 == 1;
                                   final sanctionType = item.getSanctionType(state.sanctionTypes);
-                                  
+
                                   return Container(
                                     height: 44.h,
                                     color:
-                                        isOdd ? Colors.white : Color(0xFFF9F9F9),
+                                    isOdd ? Colors.white : Color(0xFFF9F9F9),
                                     child: Row(
                                       children: [
                                         SizedBox(
@@ -529,7 +471,8 @@ class DetailListPage extends StatelessWidget {
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8.w),
                                           child: IntrinsicWidth(
-                                            child: _buildSanctionTypeTag(sanctionType),
+                                            child: _buildSanctionTypeTag(
+                                                sanctionType),
                                           ),
                                         ),
                                         SizedBox(
@@ -601,10 +544,10 @@ class DetailListPage extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        );
-      }),
-    );
+          );
+        }),
+      );
+    });
   }
 
   // 构建制裁类型标签
@@ -676,7 +619,7 @@ class DetailListPage extends StatelessWidget {
                 },
                 child: Container(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                   decoration: BoxDecoration(
                     color: Color(0xFFF9F9F9),
                     borderRadius: BorderRadius.circular(16.r),
@@ -885,5 +828,174 @@ class DetailListPage extends StatelessWidget {
 
     // 向上取整到最接近的40的倍数
     return (((maxTotal > maxNew ? maxTotal : maxNew) ~/ 40) + 1) * 40.0;
+  }
+
+  // 添加分页按钮组件
+  Widget _buildPagination() {
+    return Obx(() {
+      if(state.sanctionList.isEmpty)
+        return Container();
+      // 计算总页数
+      int totalPages = (state.totalCount / state.pageSize.value).ceil();
+      if (totalPages == 0) totalPages = 1;
+
+      // 当前页码
+      int currentPage = state.currentPage.value;
+
+      // 构建页码按钮列表
+      List<Widget> pageButtons = [];
+
+      // 上一页按钮
+      pageButtons.add(
+        _buildPageButton(
+          icon: Icons.chevron_left,
+          onTap: currentPage > 1 ? () => logic.goToPage(currentPage - 1) : null,
+          isDisabled: currentPage <= 1,
+        ),
+      );
+
+      // 显示的页码范围
+      int startPage = 1;
+      int endPage = totalPages;
+
+      // 如果总页数大于5，则显示部分页码
+      if (totalPages > 5) {
+        if (currentPage <= 3) {
+          // 当前页靠前，显示前5页
+          endPage = 5;
+        } else if (currentPage >= totalPages - 2) {
+          // 当前页靠后，显示后5页
+          startPage = totalPages - 4;
+        } else {
+          // 当前页在中间，显示当前页及其前后各2页
+          startPage = currentPage - 2;
+          endPage = currentPage + 2;
+        }
+      }
+
+      // 添加第一页按钮（如果不在显示范围内）
+      if (startPage > 1) {
+        pageButtons.add(_buildPageButton(
+          text: "1",
+          onTap: () => logic.goToPage(1),
+          isActive: currentPage == 1,
+        ));
+
+        // 添加省略号（如果第一页和起始页之间有间隔）
+        if (startPage > 2) {
+          pageButtons.add(_buildEllipsis());
+        }
+      }
+
+      // 添加页码按钮
+      for (int i = startPage; i <= endPage; i++) {
+        pageButtons.add(_buildPageButton(
+          text: "$i",
+          onTap: () => logic.goToPage(i),
+          isActive: currentPage == i,
+        ));
+      }
+
+      // 添加最后一页按钮（如果不在显示范围内）
+      if (endPage < totalPages) {
+        // 添加省略号（如果结束页和最后一页之间有间隔）
+        if (endPage < totalPages - 1) {
+          pageButtons.add(_buildEllipsis());
+        }
+
+        pageButtons.add(_buildPageButton(
+          text: "$totalPages",
+          onTap: () => logic.goToPage(totalPages),
+          isActive: currentPage == totalPages,
+        ));
+      }
+
+      // 下一页按钮
+      pageButtons.add(
+        _buildPageButton(
+          icon: Icons.chevron_right,
+          onTap: currentPage < totalPages ? () =>
+              logic.goToPage(currentPage + 1) : null,
+          isDisabled: currentPage >= totalPages,
+        ),
+      );
+
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 16.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: pageButtons,
+        ),
+      );
+    });
+  }
+
+  // 构建页码按钮
+  Widget _buildPageButton({
+    String? text,
+    IconData? icon,
+    VoidCallback? onTap,
+    bool isActive = false,
+    bool isDisabled = false,
+  }) {
+    final Color activeColor = Color(0xFF3361FE);
+    final Color inactiveColor = Color(0xFF1A1A1A);
+    final Color disabledColor = Color(0xFFA6A6A6);
+
+    return GestureDetector(
+      onTap: isDisabled ? null : onTap,
+      child: Container(
+        width: 32.w,
+        height: 32.w,
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
+        decoration: BoxDecoration(
+          color: isActive ? activeColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(4.r),
+          border: isActive
+              ? null
+              : Border.all(
+            color: isDisabled ? disabledColor : inactiveColor,
+            width: 1,
+          ),
+        ),
+        child: Center(
+          child: icon != null
+              ? Icon(
+            icon,
+            size: 16.sp,
+            color: isDisabled
+                ? disabledColor
+                : (isActive ? Colors.white : inactiveColor),
+          )
+              : Text(
+            text!,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: isDisabled
+                  ? disabledColor
+                  : (isActive ? Colors.white : inactiveColor),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 构建省略号
+  Widget _buildEllipsis() {
+    return Container(
+      width: 32.w,
+      height: 32.w,
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      child: Center(
+        child: Text(
+          "...",
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+      ),
+    );
   }
 }
