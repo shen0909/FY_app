@@ -3,10 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
-import 'package:safe_app/styles/text_styles.dart';
-import 'package:safe_app/widgets/widgets.dart';
-
 import '../../widgets/custom_app_bar.dart';
+import '../../widgets/markdown_message_widget.dart';
 import 'ai_qus_logic.dart';
 import 'ai_qus_state.dart';
 
@@ -121,6 +119,7 @@ class AiQusPage extends StatelessWidget {
     final bool isStreaming = message['isStreaming'] ?? false;
     final bool isError = message['isError'] ?? false;
     final String content = message['content']?.toString() ?? '';
+    final bool isMarkdown = message['isMarkdown'] ?? !isUser; // AI消息默认使用Markdown
 
     return Obx(() => Container(
       margin: EdgeInsets.only(bottom: 16.w),
@@ -146,46 +145,51 @@ class AiQusPage extends StatelessWidget {
               ),
             ),
           Flexible(
-            child: GestureDetector(
-              onTap: () => logic.copyContent(content),
-              child: Container(
-                padding: EdgeInsets.all(12.w),
-                margin: EdgeInsets.only(
-                    right: isUser ? 17.w : 57.w,
-                    left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
-                decoration: BoxDecoration(
-                  gradient: !isUser
-                      ? null
-                      : const LinearGradient(colors: FYColors.loginBtn),
-                  color: isUser ? null : (isError ? const Color(0xFFFFECE9) : FYColors.color_F9F9F9),
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: isError ? Border.all(color: const Color(0xFFFF6850), width: 1) : null,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 消息内容
-                    if (message['content'].toString().isNotEmpty)
-                      Text(
-                        message['content'],
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            color: isUser ? FYColors.whiteColor : (isError ? const Color(0xFFFF3B30) : FYColors.color_1A1A1A),
-                            fontWeight: FontWeight.w400),
+            child: Container(
+              margin: EdgeInsets.only(
+                  right: isUser ? 17.w : 57.w,
+                  left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
+              child: isMarkdown && !isUser
+                  ? MarkdownMessageWidget(
+                      content: message['content']?.toString() ?? '',
+                      isUser: isUser,
+                      isStreaming: isStreaming,
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        gradient: !isUser
+                            ? null
+                            : const LinearGradient(colors: FYColors.loginBtn),
+                        color: isUser ? null : (isError ? const Color(0xFFFFECE9) : FYColors.color_F9F9F9),
+                        borderRadius: BorderRadius.circular(8.w),
+                        border: isError ? Border.all(color: const Color(0xFFFF6850), width: 1) : null,
                       ),
-                    // Loading状态指示器
-                    if (isLoading && !isUser)
-                      SizedBox(
-                        width: 16.w,
-                        height: 16.w,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 消息内容
+                          if (message['content'].toString().isNotEmpty)
+                            Text(
+                              message['content'],
+                              style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: isUser ? FYColors.whiteColor : (isError ? const Color(0xFFFF3B30) : FYColors.color_1A1A1A),
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          // Loading状态指示器
+                          if (isLoading && !isUser)
+                            SizedBox(
+                              width: 16.w,
+                              height: 16.w,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+                              ),
+                            ),
+                        ],
                       ),
-                  ],
-                ),
-              ),
+                    ),
             ),
           )
         ],
@@ -361,7 +365,8 @@ class AiQusPage extends StatelessWidget {
                   fontSize: 14.sp,
                   color: FYColors.color_1A1A1A,
                 ),
-                maxLines: null,
+                maxLines: 4,
+                minLines: 1,
                 keyboardType: TextInputType.multiline,
               ),
             ),
