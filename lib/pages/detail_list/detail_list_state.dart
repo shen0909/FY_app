@@ -40,6 +40,13 @@ class SanctionType {
   static List<SanctionType> mockSanctionType (){
     return [
       SanctionType(
+        name: '全部',
+        code: 'all',
+        description: '全部',
+        color: 0xFFFF2A08,
+        bgColor: 0xFFFFECE9,
+      ),
+      SanctionType(
         name: '实体清单(EL)',
         code: 'EL',
         description: '实体清单',

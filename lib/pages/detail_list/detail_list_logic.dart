@@ -327,6 +327,7 @@ class DetailListLogic extends GetxController {
   // 获取省份选项
   List<String> getProvinceOptions() {
     return [
+      "全部",
       "广东",
       "北京",
       "上海",
