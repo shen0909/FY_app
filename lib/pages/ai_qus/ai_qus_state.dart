@@ -95,8 +95,22 @@ class AiQusState {
   final GlobalKey inputBoxKey = GlobalKey(); // 用于获取输入框实际高度
   
   // 性能优化相关
-  Timer? _heightUpdateTimer; // 防抖定时器
-  double _lastKnownHeight = 60.0; // 缓存上次的高度值
+  Timer? heightUpdateTimer; // 防抖定时器
+  double lastKnownHeight = 60.0; // 缓存上次的高度值
+  
+  // 预设位置方案（可选）- 极致性能
+  final RxInt inputLines = 1.obs; // 当前输入行数
+  
+  // 预设的按钮位置（基于行数）
+  double getButtonBottomByLines(int lines) {
+    switch (lines) {
+      case 1: return 80.w;
+      case 2: return 100.w;
+      case 3: return 120.w;
+      case 4: return 140.w;
+      default: return 140.w;
+    }
+  }
 
   AiQusState() {
     ///Initialize variables
@@ -158,14 +172,5 @@ class AiQusState {
     isStreamingReply.value = false;
     currentAiReply.value = "";
     pollCount = 0;
-  }
-  
-  /// 清理资源
-  void dispose() {
-    _heightUpdateTimer?.cancel();
-    messageController.dispose();
-    titleController.dispose();
-    contentController.dispose();
-    scrollController.dispose();
   }
 }

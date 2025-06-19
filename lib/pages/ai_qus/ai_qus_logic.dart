@@ -38,6 +38,11 @@ class AiQusLogic extends GetxController {
     _safeHideModelSelection();
     // 清理定时器
     _pollTimer?.cancel();
+    state.heightUpdateTimer?.cancel();
+    state.messageController.dispose();
+    state.titleController.dispose();
+    state.contentController.dispose();
+    state.scrollController.dispose();
     super.onClose();
   }
 
@@ -1599,5 +1604,18 @@ class AiQusLogic extends GetxController {
     }
     // 否则正常返回
     Get.back();
+  }
+
+  // 更新 输入框的高度
+  void updateInputBoxHeightOptimized() {
+    final RenderBox? renderBox = state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final newHeight = renderBox.size.height;
+      // 只有高度真正发生变化时才更新状态
+      if ((newHeight - state.lastKnownHeight).abs() > 1.0) {
+        state.lastKnownHeight = newHeight;
+        state.inputBoxHeight.value = newHeight;
+      }
+    }
   }
 }
