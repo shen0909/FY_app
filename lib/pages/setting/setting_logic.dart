@@ -10,6 +10,7 @@ import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/models/login_data.dart';
 
 import 'setting_state.dart';
 
@@ -30,6 +31,9 @@ class SettingLogic extends GetxController {
 
   // 加载设置数据
   void loadSettingData() async {
+    // 刷新用户数据
+    await state.refreshUserData();
+    
     // 加载锁屏设置状态
     bool isPatternEnabled = await PatternLockUtil.isPatternEnabled();
 
@@ -430,5 +434,31 @@ class SettingLogic extends GetxController {
     // 显示建设中提示
     DialogUtils.showUnderConstructionDialog();
     // Get.toNamed(Routers.userLoginData);
+  }
+  
+  // 手动刷新用户数据
+  Future<void> refreshUserData() async {
+    await state.refreshUserData();
+    ToastUtil.showShort('用户信息已更新');
+  }
+  
+  // 退出登录
+  Future<void> logout() async {
+    try {
+      // 清除本地存储的登录数据
+      await FYSharedPreferenceUtils.clearLoginData();
+      
+      // 清除图案锁和指纹解锁设置
+      await PatternLockUtil.enablePatternLock(false);
+      await FYSharedPreferenceUtils.setFingerprintEnabled(false);
+      
+      // 跳转到登录页面
+      Get.offAllNamed(Routers.login);
+      
+      ToastUtil.showShort('已退出登录');
+    } catch (e) {
+      print('退出登录失败: $e');
+      ToastUtil.showError('退出登录失败');
+    }
   }
 }

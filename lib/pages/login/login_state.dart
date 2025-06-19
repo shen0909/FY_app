@@ -30,6 +30,7 @@ class LoginState {
   final RxBool isLocked = false.obs;
   final RxInt lockTimeMinutes = 0.obs;
   final RxString userName = ''.obs;
+  final RxString userUid = ''.obs;
   final RxString greetingMessage = ''.obs;
   
   // 图案锁是否准备好渲染
