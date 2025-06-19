@@ -7,6 +7,7 @@ import '../../widgets/custom_app_bar.dart';
 import '../../widgets/markdown_message_widget.dart';
 import 'ai_qus_logic.dart';
 import 'ai_qus_state.dart';
+import 'dart:async';
 
 class AiQusPage extends StatelessWidget {
   AiQusPage({Key? key}) : super(key: key);
@@ -382,14 +383,25 @@ class AiQusPage extends StatelessWidget {
     );
   }
 
-  // 更新输入框高度的方法
+  // 更新输入框高度的方法（优化版本）
   void _updateInputBoxHeight() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final RenderBox? renderBox = state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
-      if (renderBox != null) {
-        final height = renderBox.size.height;
-        state.inputBoxHeight.value = height;
-      }
+    // 取消之前的定时器，实现防抖
+    state._heightUpdateTimer?.cancel();
+    
+    // 设置防抖延迟，避免频繁计算
+    state._heightUpdateTimer = Timer(const Duration(milliseconds: 100), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final RenderBox? renderBox = state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          final newHeight = renderBox.size.height;
+          
+          // 只有高度真正发生变化时才更新状态
+          if ((newHeight - state._lastKnownHeight).abs() > 1.0) {
+            state._lastKnownHeight = newHeight;
+            state.inputBoxHeight.value = newHeight;
+          }
+        }
+      });
     });
   }
 

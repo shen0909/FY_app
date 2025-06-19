@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/main.dart';
+import 'dart:async';
 
 // 导出状态枚举
 enum ExportStatus {
@@ -92,6 +93,10 @@ class AiQusState {
   // 输入框动态高度相关
   final RxDouble inputBoxHeight = 60.w.obs; // 输入框默认高度
   final GlobalKey inputBoxKey = GlobalKey(); // 用于获取输入框实际高度
+  
+  // 性能优化相关
+  Timer? _heightUpdateTimer; // 防抖定时器
+  double _lastKnownHeight = 60.0; // 缓存上次的高度值
 
   AiQusState() {
     ///Initialize variables
@@ -153,5 +158,14 @@ class AiQusState {
     isStreamingReply.value = false;
     currentAiReply.value = "";
     pollCount = 0;
+  }
+  
+  /// 清理资源
+  void dispose() {
+    _heightUpdateTimer?.cancel();
+    messageController.dispose();
+    titleController.dispose();
+    contentController.dispose();
+    scrollController.dispose();
   }
 }
