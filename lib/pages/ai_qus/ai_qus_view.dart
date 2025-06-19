@@ -147,51 +147,54 @@ class AiQusPage extends StatelessWidget {
               ),
             ),
           Flexible(
-            child: Container(
-              margin: EdgeInsets.only(
-                  right: isUser ? 17.w : 57.w,
-                  left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
-              child: isMarkdown && !isUser
-                  ? MarkdownMessageWidget(
-                      content: message['content']?.toString() ?? '',
-                      isUser: isUser,
-                      isStreaming: isStreaming,
-                    )
-                  : Container(
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
-                        gradient: !isUser
-                            ? null
-                            : const LinearGradient(colors: FYColors.loginBtn),
-                        color: isUser ? null : (isError ? const Color(0xFFFFECE9) : FYColors.color_F9F9F9),
-                        borderRadius: BorderRadius.circular(8.w),
-                        border: isError ? Border.all(color: const Color(0xFFFF6850), width: 1) : null,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 消息内容
-                          if (message['content'].toString().isNotEmpty)
-                            Text(
-                              message['content'],
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: isUser ? FYColors.whiteColor : (isError ? const Color(0xFFFF3B30) : FYColors.color_1A1A1A),
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          // Loading状态指示器
-                          if (isLoading && !isUser)
-                            SizedBox(
-                              width: 16.w,
-                              height: 16.w,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+            child: GestureDetector(
+              onTap: () => logic.copyContent(content),
+              child: Container(
+                margin: EdgeInsets.only(
+                    right: isUser ? 17.w : 57.w,
+                    left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
+                child: isMarkdown && !isUser
+                    ? MarkdownMessageWidget(
+                        content: message['content']?.toString() ?? '',
+                        isUser: isUser,
+                        isStreaming: isStreaming,
+                      )
+                    : Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          gradient: !isUser
+                              ? null
+                              : const LinearGradient(colors: FYColors.loginBtn),
+                          color: isUser ? null : (isError ? const Color(0xFFFFECE9) : FYColors.color_F9F9F9),
+                          borderRadius: BorderRadius.circular(8.w),
+                          border: isError ? Border.all(color: const Color(0xFFFF6850), width: 1) : null,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 消息内容
+                            if (message['content'].toString().isNotEmpty)
+                              Text(
+                                message['content'],
+                                style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: isUser ? FYColors.whiteColor : (isError ? const Color(0xFFFF3B30) : FYColors.color_1A1A1A),
+                                    fontWeight: FontWeight.w400),
                               ),
-                            ),
-                        ],
+                            // Loading状态指示器
+                            if (isLoading && !isUser)
+                              SizedBox(
+                                width: 16.w,
+                                height: 16.w,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+              ),
             ),
           )
         ],
