@@ -16,6 +16,11 @@ class AiQusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 初始化时获取输入框高度
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateInputBoxHeight();
+    });
+    
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) => logic.canPopFunction(didPop),
@@ -65,36 +70,27 @@ class AiQusPage extends StatelessWidget {
                           },
                         )),
                   ),
-                  // 提示词按钮和输入框组合区域
-                  Obx(() => state.isBatchCheck.value 
-                      ? SizedBox() 
-                      : Column(
-                          children: [
-                            // 提示词按钮区域
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.only(right: 16.w, bottom: 8.w),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => logic.showTipTemplateDialog(context),
-                                    child: Image.asset(
-                                      FYImages.addTip,
-                                      width: 57.w,
-                                      height: 57.w,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // 输入框
-                            _buildInputArea(),
-                          ],
-                        )),
+                  Obx(() => state.isBatchCheck.value
+                      ? const SizedBox()
+                      : _buildInputArea()),
                 ],
               ),
+              // 提示词按钮 - 浮动在聊天内容上方
+              Obx(() => state.isBatchCheck.value 
+                  ? const SizedBox()
+                  : Positioned(
+                      bottom: state.inputBoxHeight.value + 20.w,
+                      right: 16.w,
+                      child: GestureDetector(
+                        onTap: () => logic.showTipTemplateDialog(context),
+                        child: Image.asset(
+                          FYImages.addTip,
+                          width: 57.w,
+                          height: 57.w,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    )),
               // 底部操作栏 - 批量选择模式
               Obx(() => state.isBatchCheck.value 
                   ? Positioned(
@@ -333,6 +329,7 @@ class AiQusPage extends StatelessWidget {
 
   Widget _buildInputArea() {
     return Container(
+      key: state.inputBoxKey,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
         color: FYColors.whiteColor,
@@ -368,6 +365,10 @@ class AiQusPage extends StatelessWidget {
                 maxLines: 4,
                 minLines: 1,
                 keyboardType: TextInputType.multiline,
+                onChanged: (text) {
+                  // 监听文本变化，更新输入框高度
+                  _updateInputBoxHeight();
+                },
               ),
             ),
           ),
@@ -379,6 +380,17 @@ class AiQusPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // 更新输入框高度的方法
+  void _updateInputBoxHeight() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final RenderBox? renderBox = state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null) {
+        final height = renderBox.size.height;
+        state.inputBoxHeight.value = height;
+      }
+    });
   }
 
   // 顶部操作区域

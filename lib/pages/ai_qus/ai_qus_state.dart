@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/main.dart';
 
 // 导出状态枚举
 enum ExportStatus {
@@ -86,6 +88,10 @@ class AiQusState {
   
   // 登录状态
   final RxBool isLoggedIn = false.obs;
+
+  // 输入框动态高度相关
+  final RxDouble inputBoxHeight = 60.w.obs; // 输入框默认高度
+  final GlobalKey inputBoxKey = GlobalKey(); // 用于获取输入框实际高度
 
   AiQusState() {
     ///Initialize variables
