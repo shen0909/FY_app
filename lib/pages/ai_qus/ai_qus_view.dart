@@ -17,11 +17,6 @@ class AiQusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 初始化时获取输入框高度
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateInputBoxHeight();
-    });
-    
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) => logic.canPopFunction(didPop),
@@ -50,60 +45,70 @@ class AiQusPage extends StatelessWidget {
               ),
             ],
           ),
-          body: Stack(
-            children: [
-              Column(
+          body: NotificationListener<SizeChangedLayoutNotification>(
+            onNotification: (notification) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                logic.updateInputBoxHeightOptimized();
+              });
+              return false;
+            },
+            child: SizeChangedLayoutNotifier(
+              child: Stack(
                 children: [
-                  // 新增的顶部操作区域
-                  _buildTopActionBar(context),
-                  // 提示信息区域
-                  _buildNotificationBar(),
-                  SizedBox(height: 10.w),
-                  // 聊天内容区域
-                  Expanded(
-                    child: Obx(() => ListView.builder(
-                          controller: state.scrollController,
-                          padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
-                          itemCount: state.messages.length,
-                          itemBuilder: (context, index) {
-                            final message = state.messages[index];
-                            return _buildMessageItem(message, index);
-                          },
-                        )),
+                  Column(
+                    children: [
+                      // 新增的顶部操作区域
+                      _buildTopActionBar(context),
+                      // 提示信息区域
+                      _buildNotificationBar(),
+                      SizedBox(height: 10.w),
+                      // 聊天内容区域
+                      Expanded(
+                        child: Obx(() => ListView.builder(
+                              controller: state.scrollController,
+                              padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
+                              itemCount: state.messages.length,
+                              itemBuilder: (context, index) {
+                                final message = state.messages[index];
+                                return _buildMessageItem(message, index);
+                              },
+                            )),
+                      ),
+                      Obx(() => state.isBatchCheck.value
+                          ? const SizedBox()
+                          : _buildInputArea()),
+                    ],
                   ),
-                  Obx(() => state.isBatchCheck.value
+                  // 提示词按钮 - 浮动在聊天内容上方
+                  Obx(() => state.isBatchCheck.value 
                       ? const SizedBox()
-                      : _buildInputArea()),
+                      : Positioned(
+                          bottom: state.inputBoxHeight.value + 20.w,
+                          right: 16.w,
+                          child: GestureDetector(
+                            onTap: () => logic.showTipTemplateDialog(context),
+                            child: Image.asset(
+                              FYImages.addTip,
+                              width: 57.w,
+                              height: 57.w,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        )),
+                  // 底部操作栏 - 批量选择模式
+                  Obx(() => state.isBatchCheck.value 
+                      ? Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: _buildBatchSelectionBar(),
+                        )
+                      : const SizedBox()),
+                  // 导出弹窗
+                  _buildExportDialog(),
                 ],
               ),
-              // 提示词按钮 - 浮动在聊天内容上方
-              Obx(() => state.isBatchCheck.value 
-                  ? const SizedBox()
-                  : Positioned(
-                      bottom: state.inputBoxHeight.value + 20.w,
-                      right: 16.w,
-                      child: GestureDetector(
-                        onTap: () => logic.showTipTemplateDialog(context),
-                        child: Image.asset(
-                          FYImages.addTip,
-                          width: 57.w,
-                          height: 57.w,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    )),
-              // 底部操作栏 - 批量选择模式
-              Obx(() => state.isBatchCheck.value 
-                  ? Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: _buildBatchSelectionBar(),
-                    )
-                  : const SizedBox()),
-              // 导出弹窗
-              _buildExportDialog(),
-            ],
+            ),
           ),
         ),
       ),
@@ -366,10 +371,6 @@ class AiQusPage extends StatelessWidget {
                 maxLines: 4,
                 minLines: 1,
                 keyboardType: TextInputType.multiline,
-                onChanged: (text) {
-                  // 监听文本变化，更新输入框高度
-                  _updateInputBoxHeight();
-                },
               ),
             ),
           ),
@@ -381,28 +382,6 @@ class AiQusPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  // 更新输入框高度的方法（优化版本）
-  void _updateInputBoxHeight() {
-    // 取消之前的定时器，实现防抖
-    state._heightUpdateTimer?.cancel();
-    
-    // 设置防抖延迟，避免频繁计算
-    state._heightUpdateTimer = Timer(const Duration(milliseconds: 100), () {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final RenderBox? renderBox = state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
-        if (renderBox != null) {
-          final newHeight = renderBox.size.height;
-          
-          // 只有高度真正发生变化时才更新状态
-          if ((newHeight - state._lastKnownHeight).abs() > 1.0) {
-            state._lastKnownHeight = newHeight;
-            state.inputBoxHeight.value = newHeight;
-          }
-        }
-      });
-    });
   }
 
   // 顶部操作区域
