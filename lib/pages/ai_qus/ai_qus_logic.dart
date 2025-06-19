@@ -1591,7 +1591,7 @@ class AiQusLogic extends GetxController {
     if (content.trim().isEmpty) return;
     
     Clipboard.setData(ClipboardData(text: content));
-    // ToastUtil.showShort("消息内容已复制到剪贴板");
+    ToastUtil.showShort("消息内容已复制到剪贴板");
   }
 
   canPopFunction(bool didPop) {
