@@ -833,8 +833,9 @@ class DetailListPage extends StatelessWidget {
   // 添加分页按钮组件
   Widget _buildPagination() {
     return Obx(() {
-      if(state.sanctionList.isEmpty)
+      if(state.sanctionList.isEmpty) {
         return Container();
+      }
       // 计算总页数
       int totalPages = (state.totalCount / state.pageSize.value).ceil();
       if (totalPages == 0) totalPages = 1;
@@ -854,22 +855,37 @@ class DetailListPage extends StatelessWidget {
         ),
       );
 
+      // 根据屏幕宽度调整显示的页码数量
+      int maxVisiblePages = 5;
+      double screenWidth = MediaQuery.of(Get.context!).size.width;
+      if (screenWidth < 360) {
+        maxVisiblePages = 3; // 小屏幕设备显示更少的页码
+      }
+
       // 显示的页码范围
       int startPage = 1;
       int endPage = totalPages;
 
-      // 如果总页数大于5，则显示部分页码
-      if (totalPages > 5) {
-        if (currentPage <= 3) {
-          // 当前页靠前，显示前5页
-          endPage = 5;
-        } else if (currentPage >= totalPages - 2) {
-          // 当前页靠后，显示后5页
-          startPage = totalPages - 4;
+      // 如果总页数大于最大可见页码数，则显示部分页码
+      if (totalPages > maxVisiblePages) {
+        int halfVisible = maxVisiblePages ~/ 2;
+        
+        if (currentPage <= halfVisible + 1) {
+          // 当前页靠前，显示前几页
+          endPage = maxVisiblePages;
+        } else if (currentPage >= totalPages - halfVisible) {
+          // 当前页靠后，显示后几页
+          startPage = totalPages - maxVisiblePages + 1;
         } else {
-          // 当前页在中间，显示当前页及其前后各2页
-          startPage = currentPage - 2;
-          endPage = currentPage + 2;
+          // 当前页在中间，显示当前页及其前后各halfVisible页
+          startPage = currentPage - halfVisible;
+          endPage = currentPage + halfVisible;
+          
+          // 确保不超出有效范围
+          if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = totalPages - maxVisiblePages + 1;
+          }
         }
       }
 
@@ -921,10 +937,14 @@ class DetailListPage extends StatelessWidget {
       );
 
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: pageButtons,
+        padding: EdgeInsets.symmetric(vertical: 16.h,horizontal: 10.w),
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: pageButtons,
+          ),
         ),
       );
     });
