@@ -49,7 +49,7 @@ class DetailListLogic extends GetxController {
       }
       
       // 检测是否滑动到底部，触发加载更多
-      _checkIfNeedLoadMore();
+      // _checkIfNeedLoadMore();
     });
   }
 
@@ -102,15 +102,16 @@ class DetailListLogic extends GetxController {
 
       if (response != null && response.success && response.data != null) {
         final newEntities = response.data!.entities;
-        if (isRefresh || state.currentPage.value == 1) {
-          // 刷新或首次加载：替换数据
-          state.sanctionList.value = newEntities;
-        } else {
-          state.sanctionList.addAll(newEntities);
-        }
-        
+        // if (isRefresh || state.currentPage.value == 1) {
+        //   // 刷新或首次加载：替换数据
+        //   state.sanctionList.value = newEntities;
+        // } else {
+        //   state.sanctionList.addAll(newEntities);
+        // }
+        // 替换数据
+        state.sanctionList.clear();
+        state.sanctionList.value = newEntities;
         state.totalCount.value = response.data!.allCount;
-        
         // 检查是否还有更多数据
         final totalPages = (response.data!.allCount / state.pageSize.value).ceil();
         state.hasMoreData.value = state.currentPage.value < totalPages;
@@ -522,6 +523,25 @@ class DetailListLogic extends GetxController {
   // 刷新数据
   Future<void> refreshData() async {
     await loadData(isRefresh: true);
+  }
+
+  // 跳转到指定页码
+  Future<void> goToPage(int page) async {
+    if (page == state.currentPage.value) return;
+    
+    // 更新页码
+    state.currentPage.value = page;
+    
+    // 重置滚动位置
+    if (leftVerticalController.hasClients) {
+      leftVerticalController.jumpTo(0);
+    }
+    if (rightVerticalController.hasClients) {
+      rightVerticalController.jumpTo(0);
+    }
+    
+    // 加载数据
+    await loadData();
   }
 }
 

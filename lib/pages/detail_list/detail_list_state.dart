@@ -332,7 +332,7 @@ class DetailListState {
 
   // 分页相关状态
   var currentPage = 1.obs;           // 当前页码
-  var pageSize = 50.obs;             // 每页数量
+  var pageSize = 10.obs;             // 每页数量改为10
   var isLoadingMore = false.obs;     // 是否正在加载更多
   var hasMoreData = true.obs;        // 是否还有更多数据
   var isRefreshing = false.obs;      // 是否正在刷新
