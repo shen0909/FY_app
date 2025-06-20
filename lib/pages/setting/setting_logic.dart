@@ -211,6 +211,104 @@ class SettingLogic extends GetxController {
     }
   }
 
+
+  void logOut(){
+    showDialog(
+      context: Get.context!,
+      builder: (context) => AlertDialog(
+        backgroundColor: FYColors.whiteColor,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '确认要退出登录吗？',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18.sp,
+                color: const Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              '退出登录后将清除所有本地缓存信息',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_A6A6A6,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+        contentPadding: EdgeInsets.symmetric(vertical: 24.w, horizontal: 16.w),
+        actionsPadding: EdgeInsets.zero,
+        buttonPadding: EdgeInsets.zero,
+        actions: [
+          // 分割线
+          Container(
+            height: 1.w,
+            color: const Color(0xFFEFEFEF),
+          ),
+          // 按钮区域
+          Row(
+            children: [
+              // 取消按钮
+              Expanded(
+                child: InkWell(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    height: 44.w,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(
+                          color: const Color(0xFFEFEFEF),
+                          width: 1.w,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      '取消',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // 确定按钮
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    FYSharedPreferenceUtils.clearAll();
+                    Get.offAllNamed(Routers.login);
+                    Get.back();
+                  },
+                  child: Container(
+                    height: 44.w,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '确定',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF3361FE),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   // 切换风险预警推送开关
   void toggleRiskAlert(bool value) {
     state.isRiskAlertEnabled.value = value;
