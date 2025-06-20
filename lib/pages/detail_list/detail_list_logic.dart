@@ -72,6 +72,16 @@ class DetailListLogic extends GetxController {
     super.onClose();
   }
 
+  // 返回拦截
+  canPopFunction(bool didPop){
+    if (didPop) return;
+    if(_overlayEntry != null){
+      hideOverlay();
+      return;
+    }
+    Get.back();
+  }
+
   // 加载清单数据
   Future<void> loadData({bool isRefresh = false}) async {
     // 如果是刷新，重置分页状态

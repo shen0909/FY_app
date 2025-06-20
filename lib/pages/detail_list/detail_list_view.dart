@@ -16,33 +16,35 @@ class DetailListPage extends StatelessWidget {
   DetailListPage({Key? key}) : super(key: key);
 
   final DetailListLogic logic = Get.put(DetailListLogic());
-  final DetailListState state = Get
-      .find<DetailListLogic>()
-      .state;
+  final DetailListState state = Get.find<DetailListLogic>().state;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FYColors.whiteColor,
-      appBar: const FYAppBar(title: '实体清单'),
-      body: SingleChildScrollView(
-        controller: logic.yearlyStatsController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildYearlyStatsTable(),
-            _buildDivider(),
-            _buildInfoSection(),
-            _buildFilterSection(),
-            _buildFilterChips(context),
-            _buildResultCount(),
-            Obx(() => DynamicScrollbarWrapper(
-                scrollDirection: Axis.horizontal,
-                scrollController: logic.horizontalScrollController,
-                overallContentExtent: state.totalTableWidth.value,
-                child: _buildTable())),
-            _buildPagination(),
-          ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => logic.canPopFunction(didPop),
+      child: Scaffold(
+        backgroundColor: FYColors.whiteColor,
+        appBar: const FYAppBar(title: '实体清单'),
+        body: SingleChildScrollView(
+          controller: logic.yearlyStatsController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildYearlyStatsTable(),
+              _buildDivider(),
+              _buildInfoSection(),
+              _buildFilterSection(),
+              _buildFilterChips(context),
+              _buildResultCount(),
+              Obx(() => DynamicScrollbarWrapper(
+                  scrollDirection: Axis.horizontal,
+                  scrollController: logic.horizontalScrollController,
+                  overallContentExtent: state.totalTableWidth.value,
+                  child: _buildTable())),
+              _buildPagination(),
+            ],
+          ),
         ),
       ),
     );
