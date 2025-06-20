@@ -7,6 +7,7 @@ import 'package:safe_app/widgets/custom_app_bar.dart';
 import 'package:safe_app/widgets/widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../widgets/scroller_widget.dart';
 import 'detail_list_logic.dart';
 import 'detail_list_state.dart';
 
@@ -35,7 +36,13 @@ class DetailListPage extends StatelessWidget {
             _buildFilterSection(),
             _buildFilterChips(context),
             _buildResultCount(),
-            _buildTable(),
+            Obx(() {
+              return DynamicScrollbarWrapper(
+                  scrollDirection: Axis.horizontal,
+                  scrollController: logic.horizontalScrollController,
+                  overallContentExtent: state.totalTableWidth.value,
+                  child: _buildTable());
+            }),
             _buildPagination(),
           ],
         ),
@@ -291,7 +298,7 @@ class DetailListPage extends StatelessWidget {
           maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
 
           // 计算总宽度
-          double totalTableWidth = maxNameWidth +
+          state.totalTableWidth.value = maxNameWidth +
               maxSanctionTypeWidth +
               maxRegionWidth +
               timeWidth +
@@ -356,7 +363,7 @@ class DetailListPage extends StatelessWidget {
                       controller: logic.horizontalScrollController,
                       child: SizedBox(
                         // 设置足够的宽度让内容可以滚动
-                        width: totalTableWidth,
+                        width: state.totalTableWidth.value,
                         child: Column(
                           children: [
                             // 表头行
@@ -937,7 +944,7 @@ class DetailListPage extends StatelessWidget {
       );
 
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h,horizontal: 10.w),
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 10.w),
         width: double.infinity,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
