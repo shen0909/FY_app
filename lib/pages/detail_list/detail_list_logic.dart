@@ -116,6 +116,9 @@ class DetailListLogic extends GetxController {
         final totalPages = (response.data!.allCount / state.pageSize.value).ceil();
         state.hasMoreData.value = state.currentPage.value < totalPages;
         
+        // 数据加载完成后计算表格宽度
+        calculateTableWidth();
+        
       } else {
         // API调用失败
         print('API调用失败: ${response?.message ?? "响应为空"}');
@@ -138,10 +141,65 @@ class DetailListLogic extends GetxController {
     }
   }
 
+  // 计算表格宽度
+  void calculateTableWidth() {
+    if (state.sanctionList.isEmpty) {
+      // 如果没有数据，设置一个默认宽度
+      state.totalTableWidth.value = 600.w;
+      return;
+    }
+    
+    // 计算每列需要的最大宽度
+    double maxNameWidth = 150.w; // 名称列最小宽度
+    double maxSanctionTypeWidth = 0.0; // 制裁类型列，需要计算最大宽度
+    double maxRegionWidth = 100.w; // 地区列最小宽度
+    double timeWidth = 80.w; // 时间列
+    double removalTimeWidth = 80.w; // 移除时间列
+    
+    // 测量每个制裁类型的宽度
+    TextStyle sanctionTextStyle = TextStyle(fontSize: 12.sp, color: Colors.black);
+    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+    
+    // 为每个制裁类型计算所需宽度
+    for (var item in state.sanctionList) {
+      // 获取制裁类型
+      final sanctionType = item.getSanctionType(state.sanctionTypes);
+      
+      // 计算文本宽度
+      textPainter.text = TextSpan(text: sanctionType.name, style: sanctionTextStyle);
+      textPainter.layout();
+      // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2) + 额外缓冲(20.w)
+      double totalWidth = textPainter.width + 14.w + 4.w + 16.w + 20.w;
+      
+      if (totalWidth > maxSanctionTypeWidth) {
+        maxSanctionTypeWidth = totalWidth;
+      }
+    }
+    
+    // 确保制裁类型宽度至少有一个最小值
+    maxSanctionTypeWidth = maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
+    
+    // 保存制裁类型列宽度到state中
+    state.maxSanctionTypeWidth.value = maxSanctionTypeWidth;
+    
+    // 计算总宽度
+    state.totalTableWidth.value = maxNameWidth + 
+        maxSanctionTypeWidth + 
+        maxRegionWidth + 
+        timeWidth + 
+        removalTimeWidth;
+  }
+
   // 搜索
   void search(String keyword) {
     state.searchText.value = keyword;
     refreshData();
+  }
+
+  // 刷新数据
+  void refreshData() {
+    state.currentPage.value = 1;
+    loadData(isRefresh: true);
   }
 
   // 设置类型筛选
@@ -520,28 +578,21 @@ class DetailListLogic extends GetxController {
     }
   }
 
-  // 刷新数据
-  Future<void> refreshData() async {
-    await loadData(isRefresh: true);
-  }
-
-  // 跳转到指定页码
-  Future<void> goToPage(int page) async {
-    if (page == state.currentPage.value) return;
-    
-    // 更新页码
-    state.currentPage.value = page;
-    
-    // 重置滚动位置
-    if (leftVerticalController.hasClients) {
-      leftVerticalController.jumpTo(0);
+  // 跳转到指定页面
+  void goToPage(int page) {
+    if (page != state.currentPage.value) {
+      state.currentPage.value = page;
+      
+      // 重置滚动位置
+      if (leftVerticalController.hasClients) {
+        leftVerticalController.jumpTo(0);
+      }
+      if (rightVerticalController.hasClients) {
+        rightVerticalController.jumpTo(0);
+      }
+      
+      loadData();
     }
-    if (rightVerticalController.hasClients) {
-      rightVerticalController.jumpTo(0);
-    }
-    
-    // 加载数据
-    await loadData();
   }
 }
 
