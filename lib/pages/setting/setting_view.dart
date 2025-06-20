@@ -227,6 +227,7 @@ class SettingPage extends StatelessWidget {
         _buildNavigationItem('隐私保护', null, logic.goToPrivacySafe),
         _buildNavigationItem('使用教程', null, logic.goToUseTutorial),
         _buildNavigationItem('用户反馈', '提交问题或建议', logic.goToFeedback),
+        _buildNavigationItem('退出登录', null, logic.logOut),
       ],
     );
   }
