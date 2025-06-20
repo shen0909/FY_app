@@ -329,6 +329,7 @@ class DetailListState {
   
   // 总数量
   var totalCount = 0.obs;
+  RxDouble totalTableWidth = 0.0.obs;
 
   // 分页相关状态
   var currentPage = 1.obs;           // 当前页码
