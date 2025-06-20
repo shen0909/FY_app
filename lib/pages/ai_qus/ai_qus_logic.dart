@@ -38,11 +38,6 @@ class AiQusLogic extends GetxController {
     _safeHideModelSelection();
     // 清理定时器
     _pollTimer?.cancel();
-    state.heightUpdateTimer?.cancel();
-    state.messageController.dispose();
-    state.titleController.dispose();
-    state.contentController.dispose();
-    state.scrollController.dispose();
     super.onClose();
   }
 
