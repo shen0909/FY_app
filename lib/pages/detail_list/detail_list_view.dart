@@ -36,13 +36,11 @@ class DetailListPage extends StatelessWidget {
             _buildFilterSection(),
             _buildFilterChips(context),
             _buildResultCount(),
-            Obx(() {
-              return DynamicScrollbarWrapper(
-                  scrollDirection: Axis.horizontal,
-                  scrollController: logic.horizontalScrollController,
-                  overallContentExtent: state.totalTableWidth.value,
-                  child: _buildTable());
-            }),
+            Obx(() => DynamicScrollbarWrapper(
+                scrollDirection: Axis.horizontal,
+                scrollController: logic.horizontalScrollController,
+                overallContentExtent: state.totalTableWidth.value,
+                child: _buildTable())),
             _buildPagination(),
           ],
         ),
@@ -260,49 +258,15 @@ class DetailListPage extends StatelessWidget {
             return FYWidget.buildEmptyContent();
           }
 
-          // 计算每列需要的最大宽度
+          // 使用从logic中计算好的宽度值
           double maxNameWidth = 150.w; // 名称列最小宽度
-          double maxSanctionTypeWidth = 0; // 制裁类型列，需要计算最大宽度
           double maxRegionWidth = 100.w; // 地区列最小宽度
           double timeWidth = 80.w; // 时间列
           double removalTimeWidth = 80.w; // 移除时间列
-
-          // 测量每个制裁类型的宽度
-          TextStyle sanctionTextStyle =
-          TextStyle(fontSize: 12.sp, color: Colors.black);
-          TextPainter textPainter = TextPainter(
-              textDirection: TextDirection.ltr);
-
-          // 为每个制裁类型计算所需宽度
-          for (var item in state.sanctionList) {
-            // 获取制裁类型
-            final sanctionType = item.getSanctionType(state.sanctionTypes);
-
-            // 计算每个制裁类型标签所需的总宽度
-            // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2)
-
-            // 计算文本宽度
-            textPainter.text =
-                TextSpan(text: sanctionType.name, style: sanctionTextStyle);
-            textPainter.layout();
-            double totalWidth =
-                textPainter.width + 14.w + 4.w + 16.w + 20.w; // 额外添加10.w作为缓冲
-
-            if (totalWidth > maxSanctionTypeWidth) {
-              maxSanctionTypeWidth = totalWidth;
-            }
-          }
-
-          // 确保制裁类型宽度至少有一个最小值
-          maxSanctionTypeWidth =
-          maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
-
-          // 计算总宽度
-          state.totalTableWidth.value = maxNameWidth +
-              maxSanctionTypeWidth +
-              maxRegionWidth +
-              timeWidth +
-              removalTimeWidth;
+          
+          // 从state中获取计算好的制裁类型宽度
+          double maxSanctionTypeWidth = state.maxSanctionTypeWidth.value > 0 ? 
+              state.maxSanctionTypeWidth.value : 150.w;
 
           return Row(
             children: [
