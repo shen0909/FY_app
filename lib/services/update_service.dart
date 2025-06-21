@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -7,8 +8,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 import 'package:version/version.dart';
-import 'dart:collection';
 import 'package:dio/dio.dart';
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class UpdateService {
   static final UpdateService _instance = UpdateService._internal();
@@ -464,35 +466,86 @@ class UpdateService {
         print('$_tag 开始安装更新: $filePath');
       }
       
-      // 获取应用文档目录
-      Directory appDir = await getApplicationDocumentsDirectory();
-      String updateDir = '${appDir.path}/update';
-      
-      // 创建更新目录
-      Directory(updateDir).createSync(recursive: true);
-      
-      // 解压更新文件
-      final zipFile = File(filePath);
-      final destinationDir = Directory(updateDir);
-      
-      try {
-        await ZipFile.extractToDirectory(
-          zipFile: zipFile, 
-          destinationDir: destinationDir
-        );
-        
+      // 检查文件是否存在
+      final file = File(filePath);
+      if (!await file.exists()) {
         if (kDebugMode) {
-          print('$_tag 更新文件解压完成');
+          print('$_tag 安装文件不存在: $filePath');
         }
+        return false;
+      }
+      
+      // 获取文件扩展名
+      final fileExt = filePath.split('.').last.toLowerCase();
+      
+      // 如果是APK文件，直接调用系统安装
+      if (fileExt == 'apk') {
+        if (Platform.isAndroid) {
+          try {
+            // 检查安装应用权限
+            if (await _requestInstallPermission()) {
+              // 使用open_file插件打开APK文件，系统会自动调用安装器
+              final result = await OpenFile.open(filePath);
+              if (kDebugMode) {
+                print('$_tag 调用系统安装器结果: ${result.message}');
+              }
+              return result.type == ResultType.done;
+            } else {
+              if (kDebugMode) {
+                print('$_tag 用户拒绝了安装权限');
+              }
+              return false;
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print('$_tag 调用系统安装器失败: $e');
+            }
+            return false;
+          }
+        } else {
+          if (kDebugMode) {
+            print('$_tag 当前平台不支持APK安装');
+          }
+          return false;
+        }
+      } 
+      // 如果是ZIP文件，解压后作为热更新处理
+      else if (fileExt == 'zip') {
+        // 获取应用文档目录
+        Directory appDir = await getApplicationDocumentsDirectory();
+        String updateDir = '${appDir.path}/update';
         
-        // TODO: 根据不同平台实现不同的热更新安装逻辑
-        // Android: 可能需要调用原生方法加载新的资源
-        // iOS: 可能需要重启应用或其他机制
+        // 创建更新目录
+        Directory(updateDir).createSync(recursive: true);
         
-        return true;
-      } catch (e) {
+        // 解压更新文件
+        final zipFile = File(filePath);
+        final destinationDir = Directory(updateDir);
+        
+        try {
+          await ZipFile.extractToDirectory(
+            zipFile: zipFile, 
+            destinationDir: destinationDir
+          );
+          
+          if (kDebugMode) {
+            print('$_tag 更新文件解压完成');
+          }
+          
+          // TODO: 根据不同平台实现不同的热更新安装逻辑
+          // Android: 可能需要调用原生方法加载新的资源
+          // iOS: 可能需要重启应用或其他机制
+          
+          return true;
+        } catch (e) {
+          if (kDebugMode) {
+            print('$_tag 解压更新文件失败: $e');
+          }
+          return false;
+        }
+      } else {
         if (kDebugMode) {
-          print('$_tag 解压更新文件失败: $e');
+          print('$_tag 不支持的文件类型: $fileExt');
         }
         return false;
       }
@@ -502,5 +555,27 @@ class UpdateService {
       }
       return false;
     }
+  }
+  
+  /// 请求安装应用权限
+  Future<bool> _requestInstallPermission() async {
+    if (Platform.isAndroid) {
+      if (kDebugMode) {
+        print('$_tag 请求安装未知来源应用权限');
+      }
+      
+      // 检查是否已有权限
+      final status = await Permission.requestInstallPackages.status;
+      if (status.isGranted) {
+        return true;
+      }
+      
+      // 请求权限
+      final result = await Permission.requestInstallPackages.request();
+      return result.isGranted;
+    }
+    
+    // 非Android平台默认返回true
+    return true;
   }
 } 
