@@ -112,7 +112,7 @@ class ApiService {
   }
 
   /// 底层应用内统一请求封装
-  Future<dynamic> _sendChannelEvent({required Map<String, dynamic> paramData, Options? options}) async {
+  Future<dynamic> _sendChannelEvent({required Map<String, dynamic> paramData, Options? options, CancelToken? cancelToken}) async {
     dynamic response;
     // 统一接口请求参数
     Map<String, dynamic> requestData = {
@@ -124,7 +124,7 @@ class ApiService {
       "timeout_milliseconds": 100000,
       "wait_return": true
     };
-    await HttpService().sendChannelEvent(requestData, options: options,
+    await HttpService().sendChannelEvent(requestData, options: options, cancelToken: cancelToken,
         successCallback: (data) {
       response = data;
     }, errorCallback: (error) {
@@ -789,7 +789,7 @@ class ApiService {
   }
 
   /// 下载更新文件块
-  Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid, int fileIndex) async {
+  Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid, int fileIndex, {CancelToken? cancelToken}) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -809,7 +809,7 @@ class ApiService {
       }
     };
     
-    dynamic result = await _sendChannelEvent(paramData: paramData);
+    dynamic result = await _sendChannelEvent(paramData: paramData, cancelToken: cancelToken);
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {
         // 解析result_string

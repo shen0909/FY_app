@@ -85,11 +85,17 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: 'AlibabaPuHuiTi',
+            scaffoldBackgroundColor: Colors.white,
             appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              iconTheme: IconThemeData(color: Colors.black),
+              titleTextStyle: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+              centerTitle: true,
               surfaceTintColor: Colors.transparent,
             )
           ),
-          initialRoute: Routers.update,
+          initialRoute: Routers.login,
         );
       }
     );

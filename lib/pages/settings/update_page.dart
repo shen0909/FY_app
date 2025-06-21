@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe_app/services/update_service.dart';
 import 'package:safe_app/utils/toast_util.dart';
+import 'package:dio/dio.dart';
 
 class UpdatePage extends StatefulWidget {
   const UpdatePage({Key? key}) : super(key: key);
@@ -16,11 +17,18 @@ class _UpdatePageState extends State<UpdatePage> {
   double _downloadProgress = 0.0;
   Map<String, dynamic>? _updateInfo;
   String? _errorMessage;
+  CancelToken? _cancelToken;
 
   @override
   void initState() {
     super.initState();
     _checkUpdate();
+  }
+
+  @override
+  void dispose() {
+    _cancelDownloadIfNeeded();
+    super.dispose();
   }
 
   // 检查更新
@@ -48,6 +56,17 @@ class _UpdatePageState extends State<UpdatePage> {
     }
   }
 
+  // 取消下载
+  void _cancelDownloadIfNeeded() {
+    if (_isDownloading && _cancelToken != null && !_cancelToken!.isCancelled) {
+      _cancelToken!.cancel("用户取消下载");
+      setState(() {
+        _isDownloading = false;
+        _errorMessage = '下载已取消';
+      });
+    }
+  }
+
   // 下载并安装更新
   Future<void> _downloadAndInstall() async {
     if (_updateInfo == null) return;
@@ -56,6 +75,7 @@ class _UpdatePageState extends State<UpdatePage> {
       _isDownloading = true;
       _downloadProgress = 0.0;
       _errorMessage = null;
+      _cancelToken = CancelToken();
     });
 
     try {
@@ -72,12 +92,22 @@ class _UpdatePageState extends State<UpdatePage> {
       }
 
       // 下载更新文件
-      final filePath = await UpdateService().downloadUpdate(fileUuid, filename,
-          onProgress: (progress) {
-        setState(() {
-          _downloadProgress = progress;
-        });
-      });
+      final filePath = await UpdateService().downloadUpdate(
+        fileUuid, 
+        filename,
+        onProgress: (progress) {
+          setState(() {
+            _downloadProgress = progress;
+          });
+        },
+        cancelToken: _cancelToken,
+        maxConcurrentDownloads: 3, // 可以根据设备性能调整
+      );
+
+      // 如果下载被取消，直接返回
+      if (_cancelToken!.isCancelled) {
+        return;
+      }
 
       if (filePath == null) {
         setState(() {
@@ -104,6 +134,16 @@ class _UpdatePageState extends State<UpdatePage> {
       } else {
         setState(() {
           _errorMessage = '安装更新失败';
+        });
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.cancel) {
+        // 已经在_cancelDownloadIfNeeded中处理
+      } else {
+        setState(() {
+          _isDownloading = false;
+          _isInstalling = false;
+          _errorMessage = '更新过程出错: ${e.message}';
         });
       }
     } catch (e) {
@@ -182,7 +222,19 @@ class _UpdatePageState extends State<UpdatePage> {
                   if (_isDownloading)
                     Column(
                       children: [
-                        LinearProgressIndicator(value: _downloadProgress),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LinearProgressIndicator(value: _downloadProgress),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.cancel, color: Colors.red),
+                              onPressed: _cancelDownloadIfNeeded,
+                              tooltip: '取消下载',
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 8),
                         Text(
                             '下载中... ${(_downloadProgress * 100).toStringAsFixed(1)}%'),
