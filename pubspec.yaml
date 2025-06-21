@@ -47,6 +47,10 @@ dependencies:
 
   realm: ^3.4.0
   flutter_markdown: ^0.7.3  # Markdown 渲染支持
+  path_provider: ^2.1.5
+  package_info_plus: ^8.3.0
+  flutter_archive: ^6.0.3
+  version: ^3.0.2
 
 dev_dependencies:
   flutter_test:

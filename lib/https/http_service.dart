@@ -86,7 +86,7 @@ class HttpService {
       baseUrl: baseUrl,
       headers: _baseHeaders(),
       connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 15),
       contentType: 'application/json',
       responseType: ResponseType.json,

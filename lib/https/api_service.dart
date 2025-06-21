@@ -751,4 +751,79 @@ class ApiService {
       return '${dateTime.month}月${dateTime.day}日';
     }
   }
+
+  /// 检查App版本更新
+  Future<Map<String, dynamic>?> checkAppVersion() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 检查版本更新失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "app热更新_检查版本",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
+          return resultData['返回数据'];
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析版本更新响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 下载更新文件块
+  Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid, int fileIndex) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 下载更新文件失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "app热更新_下载文件",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "file_uuid": fileUuid,
+        "file_index": fileIndex
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
+          return resultData['返回数据'];
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析下载文件响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
 }

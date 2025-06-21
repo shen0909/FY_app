@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safe_app/pages/settings/update_page.dart';
 import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
@@ -88,7 +89,7 @@ class MyApp extends StatelessWidget {
               surfaceTintColor: Colors.transparent,
             )
           ),
-          initialRoute: Routers.login,
+          initialRoute: Routers.update,
         );
       }
     );
