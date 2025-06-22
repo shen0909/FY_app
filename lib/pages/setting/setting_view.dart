@@ -247,6 +247,7 @@ class SettingPage extends StatelessWidget {
     return Column(
       children: [
         _buildNavigationItem('清除缓存', null, logic.clearCache),
+        _buildNavigationItem('版本更新', null, logic.goToUpdate),
       ],
     );
   }

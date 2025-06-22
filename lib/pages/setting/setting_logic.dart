@@ -559,4 +559,8 @@ class SettingLogic extends GetxController {
       ToastUtil.showError('退出登录失败');
     }
   }
+
+  void goToUpdate() {
+    Get.toNamed(Routers.update);
+  }
 }

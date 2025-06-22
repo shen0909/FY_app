@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:safe_app/services/update_service.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:dio/dio.dart';
@@ -19,6 +20,8 @@ class _UpdatePageState extends State<UpdatePage> {
   double _downloadProgress = 0.0;
   String _errorMessage = '';
   CancelToken? _cancelToken;
+  PackageInfo? packageInfo;
+  String? currentVersion;
 
   @override
   void initState() {
@@ -34,6 +37,8 @@ class _UpdatePageState extends State<UpdatePage> {
 
   // 检查更新
   Future<void> _checkUpdate() async {
+    packageInfo = await PackageInfo.fromPlatform();
+    currentVersion = packageInfo!.version;
     setState(() {
       _isLoading = true;
       _errorMessage = '';
@@ -41,13 +46,9 @@ class _UpdatePageState extends State<UpdatePage> {
 
     try {
       final updateInfo = await UpdateService().checkUpdate();
-
       setState(() {
         _isLoading = false;
         _updateInfo = updateInfo;
-        if (updateInfo == null) {
-          _errorMessage = '当前已是最新版本';
-        }
       });
     } catch (e) {
       setState(() {
@@ -263,7 +264,7 @@ class _UpdatePageState extends State<UpdatePage> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text('当前版本: ${_updateInfo!['current_version'] ?? '未知'}'),
+                            Text('当前版本: ${currentVersion ?? '未知'}'),
                             const SizedBox(height: 16),
                             const Text(
                               '更新内容:',
@@ -284,7 +285,7 @@ class _UpdatePageState extends State<UpdatePage> {
                             backgroundColor: Colors.grey[300],
                           ),
                           const SizedBox(height: 8),
-                          Text('下载进度: ${(_downloadProgress * 100).toStringAsFixed(1)}%'),
+                          RepaintBoundary(child: Text('下载进度: ${(_downloadProgress * 100).toStringAsFixed(1)}%')),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _cancelDownloadIfNeeded,
