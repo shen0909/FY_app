@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/models/login_data.dart';
 
 class SettingState {
   // 用户信息
   final RxMap<String, dynamic> userInfo = <String, dynamic>{}.obs;
-  
+  final Rx<PackageInfo?> packageInfo = Rx<PackageInfo?>(null);
+
   // 功能开关
   final RxBool isLockEnabled = false.obs;
   final RxBool isFingerprintEnabled = false.obs;
@@ -34,6 +36,7 @@ class SettingState {
   // 从SharedPreferences加载真实的用户数据
   Future<void> _loadUserData() async {
     try {
+      packageInfo.value = await PackageInfo.fromPlatform();
       print('🔄 开始加载用户数据...');
       
       // 从SharedPreferences获取登录数据

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/services/biometric_service.dart';
 import 'package:safe_app/styles/colors.dart';
@@ -10,7 +11,6 @@ import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
-import 'package:safe_app/models/login_data.dart';
 
 import 'setting_state.dart';
 
@@ -18,19 +18,18 @@ class SettingLogic extends GetxController {
   final SettingState state = SettingState();
 
   @override
-  void onReady() {
-    super.onReady();
+  void onInit() {
+    super.onInit();
     // 加载数据
     loadSettingData();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   // 加载设置数据
   void loadSettingData() async {
+    // 获取应用信息
+    PackageInfo info = await PackageInfo.fromPlatform();
+    state.packageInfo.value = info;
+    
     // 刷新用户数据
     await state.refreshUserData();
     
