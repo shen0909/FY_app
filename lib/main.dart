@@ -86,11 +86,11 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             fontFamily: 'AlibabaPuHuiTi',
             scaffoldBackgroundColor: Colors.white,
-            appBarTheme: const AppBarTheme(
+            appBarTheme:  AppBarTheme(
               backgroundColor: Colors.white,
               elevation: 0,
               iconTheme: IconThemeData(color: Colors.black),
-              titleTextStyle: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+              titleTextStyle: TextStyle(color: Colors.black, fontSize: 18.sp, fontWeight: FontWeight.bold),
               centerTitle: true,
               surfaceTintColor: Colors.transparent,
             )

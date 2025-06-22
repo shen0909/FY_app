@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:safe_app/main.dart';
 import 'package:safe_app/services/update_service.dart';
+import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -39,6 +42,8 @@ class _UpdatePageState extends State<UpdatePage> {
   Future<void> _checkUpdate() async {
     packageInfo = await PackageInfo.fromPlatform();
     currentVersion = packageInfo!.version;
+    
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
       _errorMessage = '';
@@ -46,11 +51,14 @@ class _UpdatePageState extends State<UpdatePage> {
 
     try {
       final updateInfo = await UpdateService().checkUpdate();
+      
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _updateInfo = updateInfo;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _errorMessage = '检查更新失败: $e';
@@ -62,11 +70,13 @@ class _UpdatePageState extends State<UpdatePage> {
   void _cancelDownloadIfNeeded() {
     if (_isDownloading && _cancelToken != null && !_cancelToken!.isCancelled) {
       _cancelToken!.cancel('用户取消下载');
-      setState(() {
-        _isDownloading = false;
-        _downloadProgress = 0;
-        _errorMessage = '下载已取消';
-      });
+      if(mounted){
+        setState(() {
+          _isDownloading = false;
+          _downloadProgress = 0;
+          _errorMessage = '下载已取消';
+        });
+      }
     }
   }
 
@@ -75,6 +85,8 @@ class _UpdatePageState extends State<UpdatePage> {
     if (_isDownloading || _isInstalling) {
       return;
     }
+    
+    if (!mounted) return;
     
     setState(() {
       _isDownloading = true;
@@ -88,12 +100,16 @@ class _UpdatePageState extends State<UpdatePage> {
           _updateInfo!['uuid'],
           _updateInfo!['filename'],
         onProgress: (progress) {
-          setState(() {
-            _downloadProgress = progress;
-          });
+          if (mounted) {
+            setState(() {
+              _downloadProgress = progress;
+            });
+          }
         },
         cancelToken: _cancelToken
       );
+      
+      if (!mounted) return;
       
       setState(() {
         _isDownloading = false;
@@ -101,6 +117,7 @@ class _UpdatePageState extends State<UpdatePage> {
       });
       
       if (filePath == null) {
+        if (!mounted) return;
         setState(() {
           _errorMessage = '下载失败';
         });
@@ -108,6 +125,7 @@ class _UpdatePageState extends State<UpdatePage> {
       }
       
       // 下载完成后开始安装
+      if (!mounted) return;
       setState(() {
         _isInstalling = true;
       });
@@ -115,6 +133,7 @@ class _UpdatePageState extends State<UpdatePage> {
       // 调用安装方法
       await _installUpdate(filePath);
       
+      if (!mounted) return;
       setState(() {
         _isInstalling = false;
       });
@@ -124,6 +143,7 @@ class _UpdatePageState extends State<UpdatePage> {
         print('下载更新异常: ${e.message}');
       }
       
+      if (!mounted) return;
       setState(() {
         _isDownloading = false;
         _downloadProgress = 0;
@@ -138,6 +158,7 @@ class _UpdatePageState extends State<UpdatePage> {
         print('下载更新异常: $e');
       }
       
+      if (!mounted) return;
       setState(() {
         _isDownloading = false;
         _downloadProgress = 0;
@@ -258,20 +279,20 @@ class _UpdatePageState extends State<UpdatePage> {
                           children: [
                             Text(
                               '发现新版本: ${_updateInfo!['version']}',
-                              style: const TextStyle(
-                                fontSize: 18,
+                              style: TextStyle(
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text('当前版本: ${currentVersion ?? '未知'}'),
-                            const SizedBox(height: 16),
-                            const Text(
+                            SizedBox(height: 8.w),
+                            Text('当前版本: ${currentVersion ?? '未知'}',style: TextStyle(fontSize: 14.sp)),
+                            SizedBox(height: 16.w),
+                            Text(
                               '更新内容:',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14.sp),
                             ),
-                            const SizedBox(height: 8),
-                            Text(_updateInfo!['description'] ?? '暂无更新说明'),
+                            SizedBox(height: 8.w),
+                            Text(_updateInfo!['description'] ?? '暂无更新说明',style: TextStyle(fontSize: 14.sp)),
                           ],
                         ),
                       ),
@@ -284,24 +305,24 @@ class _UpdatePageState extends State<UpdatePage> {
                             value: _downloadProgress,
                             backgroundColor: Colors.grey[300],
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.w),
                           RepaintBoundary(child: Text('下载进度: ${(_downloadProgress * 100).toStringAsFixed(1)}%')),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.w),
                           ElevatedButton(
                             onPressed: _cancelDownloadIfNeeded,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              backgroundColor: Color(0XFF345DFF),
+                              padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 12.w),
                             ),
-                            child: const Text('取消下载'),
+                            child: Text('取消下载',style: TextStyle(fontSize: 14.sp,color: FYColors.whiteColor),),
                           ),
                         ],
                       )
                     else if (_isInstalling)
-                      const Column(
+                       Column(
                         children: [
                           CircularProgressIndicator(),
-                          SizedBox(height: 16),
+                          SizedBox(height: 16.w),
                           Text('正在安装更新...'),
                         ],
                       )
@@ -309,27 +330,27 @@ class _UpdatePageState extends State<UpdatePage> {
                       ElevatedButton(
                         onPressed: _downloadUpdate,
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 12.w),
                         ),
-                        child: const Text('下载并安装更新'),
+                        child: Text('下载并安装更新',style: TextStyle(fontSize: 14.sp)),
                       ),
                   ],
                 ),
               )
             else
-              const Center(
-                child: Text('当前已是最新版本'),
+              Center(
+                child: Text('当前已是最新版本',style: TextStyle(fontSize: 14.sp),),
               ),
               
-            if (_errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+            // if (_errorMessage.isNotEmpty)
+            //   Padding(
+            //     padding: EdgeInsets.only(top: 16.w),
+            //     child: Text(
+            //       _errorMessage,
+            //       style: const TextStyle(color: Colors.red),
+            //       textAlign: TextAlign.center,
+            //     ),
+            //   ),
           ],
         ),
       ),
