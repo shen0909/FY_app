@@ -21,6 +21,7 @@ import 'package:safe_app/pages/setting/user_analysis/user_analysis_view.dart';
 import '../pages/login/lock_method_selection/lock_method_selection_view.dart';
 import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
+import '../pages/setting/update_page/update_page_view.dart';
 import '../pages/settings/update_page.dart';
 
 class Routers {
@@ -55,7 +56,7 @@ class Routers {
     // GetPage(name: splash, page: () => SplashPage()),
     GetPage(name: login, page: () => LoginPage()),
     GetPage(name: home, page: () => HomePage()),
-    GetPage(name: update, page: () => UpdatePage()),
+    GetPage(name: update, page: () => UpdatePagePage()),
     GetPage(name: risk, page: () => RiskPage()),
     GetPage(name: riskDetails, page: () => RiskDetailsPage()),
     GetPage(name: hotPot, page: () => HotPotPage()),

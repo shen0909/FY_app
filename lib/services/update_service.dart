@@ -66,7 +66,7 @@ class UpdateService {
     String filename, {
     Function(double)? onProgress,
     CancelToken? cancelToken,
-    int maxConcurrentDownloads = 3,
+    int maxConcurrentDownloads = 5,
   }) async {
     // 确保取消操作可以在任何时候执行
     cancelToken ??= CancelToken();
