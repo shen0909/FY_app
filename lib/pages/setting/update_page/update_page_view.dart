@@ -123,9 +123,10 @@ class UpdatePagePage extends StatelessWidget {
                             onPressed: logic.downloadUpdate,
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 12.w),
+                              backgroundColor: Color(0XFF345DFF),
                             ),
                             child: Text('下载并安装更新',
-                                style: TextStyle(fontSize: 14.sp)),
+                                style: TextStyle(fontSize: 14.sp, color: FYColors.whiteColor)),
                           ),
                       ],
                     ),

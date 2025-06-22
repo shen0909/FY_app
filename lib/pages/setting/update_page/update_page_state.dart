@@ -9,6 +9,7 @@ class UpdatePageState {
   String errorMessage = '';
   String? currentVersion;
   CancelToken? cancelToken;
+  String? downloadedFilePath;
 
   UpdatePageState() {
     ///Initialize variables
