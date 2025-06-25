@@ -72,32 +72,41 @@ class MyApp extends StatelessWidget {
       _designSize = const Size(375, 812);
     } else {
       bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape; // 横屏
-      _designSize = isLandscape ? const Size(906, 600) : const Size(600, 960);
+      _designSize = isLandscape ? const Size(960, 600) : const Size(600, 960);
     }
     return ScreenUtilInit(
       designSize: _designSize,
-      minTextAdapt: false,
+      minTextAdapt: true,
       splitScreenMode: true,
       rebuildFactor: RebuildFactors.orientation,
       builder: (context, child) {
-        return GetMaterialApp(
-          getPages: Routers.pages,
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            fontFamily: 'AlibabaPuHuiTi',
-            scaffoldBackgroundColor: Colors.white,
-            appBarTheme:  AppBarTheme(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              iconTheme: IconThemeData(color: Colors.black),
-              titleTextStyle: TextStyle(color: Colors.black, fontSize: 18.sp, fontWeight: FontWeight.bold),
-              centerTitle: true,
-              surfaceTintColor: Colors.transparent,
-            )
+        return MediaQuery(
+          // 固定文本缩放因子，避免受系统字体大小影响
+          // 固定为1.0，不跟随系统字体缩放
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: GetMaterialApp(
+            getPages: Routers.pages,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              fontFamily: 'AlibabaPuHuiTi',
+              scaffoldBackgroundColor: Colors.white,
+              appBarTheme: AppBarTheme(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                iconTheme: const IconThemeData(color: Colors.black),
+                titleTextStyle: TextStyle(
+                  color: Colors.black, 
+                  fontSize: 18.sp, 
+                  fontWeight: FontWeight.bold
+                ),
+                centerTitle: true,
+                surfaceTintColor: Colors.transparent,
+              )
+            ),
+            initialRoute: Routers.login,
           ),
-          initialRoute: Routers.login,
         );
-      }
+      },
     );
   }
 }
