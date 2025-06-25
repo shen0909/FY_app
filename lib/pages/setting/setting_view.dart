@@ -14,7 +14,9 @@ class SettingPage extends StatelessWidget {
   SettingPage({Key? key}) : super(key: key);
 
   final SettingLogic logic = Get.put(SettingLogic());
-  final SettingState state = Get.find<SettingLogic>().state;
+  final SettingState state = Get
+      .find<SettingLogic>()
+      .state;
 
   @override
   Widget build(BuildContext context) {
@@ -52,55 +54,57 @@ class SettingPage extends StatelessWidget {
   }
 
   Widget _buildUserInfoCard() {
-    return Obx(() => Container(
-      width: double.infinity,
-      height: 110.h,
-      color: FYColors.whiteColor,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Row(
-        children: [
-          Image.asset(state.userInfo['avatar'] ?? FYImages.default_avatar,
-              width: 48.w, height: 48.w, fit: BoxFit.cover),
-          SizedBox(width: 16.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Obx(() =>
+        Container(
+          width: double.infinity,
+          height: 110.h,
+          color: FYColors.whiteColor,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Row(
             children: [
+              Image.asset(state.userInfo['avatar'] ?? FYImages.default_avatar,
+                  width: 48.w, height: 48.w, fit: BoxFit.cover),
+              SizedBox(width: 16.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '用户名：${state.userInfo['username'] ?? '未知用户'}',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 8.w, vertical: 5.h),
+                    decoration: BoxDecoration(
+                      color: FYColors.color_F0F5FF,
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Text(
+                      state.userInfo['department'] ?? '未知地区',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
               Text(
-                '用户名：${state.userInfo['username'] ?? '未知用户'}',
+                '版本号：${state.packageInfo.value?.version ?? "未知"}',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-                decoration: BoxDecoration(
-                  color: FYColors.color_F0F5FF,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: Text(
-                  state.userInfo['department'] ?? '未知地区',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_3361FE,
-                  ),
+                  color: FYColors.color_666666,
                 ),
               ),
             ],
           ),
-          Spacer(),
-          Text(
-            '版本号：${state.packageInfo.value?.version ?? "未知"}',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: FYColors.color_666666,
-            ),
-          ),
-        ],
-      ),
-    ));
+        ));
   }
 
   Widget _buildAvatar() {
@@ -170,7 +174,8 @@ class SettingPage extends StatelessWidget {
   Widget _buildSecuritySection() {
     return Column(
       children: [
-        Obx(() => Container(
+        Obx(() =>
+            Container(
               height: 48.h,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
@@ -193,7 +198,8 @@ class SettingPage extends StatelessWidget {
               ),
             )),
         SizedBox(height: 8.h),
-        Obx(() => Container(
+        Obx(() =>
+            Container(
               height: 48.h,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
@@ -216,7 +222,8 @@ class SettingPage extends StatelessWidget {
               ),
             )),
         SizedBox(height: 8.h),
-        _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
+        _buildNavigationItem(
+            '用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );
   }
@@ -247,13 +254,19 @@ class SettingPage extends StatelessWidget {
     return Column(
       children: [
         _buildNavigationItem('清除缓存', null, logic.clearCache),
-        _buildNavigationItem('版本更新', null, logic.goToUpdate),
+        Obx(() {
+          return state.hasUpdate.value
+              ? _buildNavigationItem(
+                  '版本更新', state.hasUpdate.value ? '新版' : null, logic.goToUpdate,
+                  withWidget: state.hasUpdate.value)
+              : Container();
+        }),
       ],
     );
   }
 
-  Widget _buildSwitchItem(
-      String title, RxBool value, Function(bool) onChanged) {
+  Widget _buildSwitchItem(String title, RxBool value,
+      Function(bool) onChanged) {
     return Container(
       height: 48.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -267,7 +280,8 @@ class SettingPage extends StatelessWidget {
             ),
           ),
           Spacer(),
-          Obx(() => CustomSwitch(
+          Obx(() =>
+              CustomSwitch(
                 value: value.value,
                 onChanged: onChanged,
                 width: 48.w,
@@ -278,8 +292,8 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationItem(
-      String title, String? subtitle, VoidCallback onTap) {
+  Widget _buildNavigationItem(String title, String? subtitle,
+      VoidCallback onTap, {bool withWidget = false}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -296,7 +310,7 @@ class SettingPage extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            if (subtitle != null)
+            if (subtitle != null && !withWidget)
               Text(
                 subtitle,
                 style: TextStyle(
@@ -304,12 +318,29 @@ class SettingPage extends StatelessWidget {
                   color: FYColors.color_666666,
                 ),
               ),
-            SizedBox(width: 8.w),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16.sp,
-              color: FYColors.color_1A1A1A,
-            ),
+            if(withWidget)
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(12.r))
+                ),
+                padding: EdgeInsets.all(4.w),
+                child: Text(
+                  subtitle!,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: FYColors.whiteColor,
+                  ),
+                ),
+              ),
+            if(!withWidget)
+              SizedBox(width: 8.w),
+            if(!withWidget)
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+                color: FYColors.color_1A1A1A,
+              ),
           ],
         ),
       ),
@@ -441,7 +472,8 @@ class SettingPage extends StatelessWidget {
           ),
         ),
         _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
-        _buildNavigationItem('权限申请审核', null, logic.goToPermissionRequests),
+        _buildNavigationItem(
+            '权限申请审核', null, logic.goToPermissionRequests),
       ],
     );
   }
@@ -508,7 +540,8 @@ class SettingPage extends StatelessWidget {
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: _buildRegionCard('区域统计', state.statistics['region'] ?? '未知地区'),
+                  child: _buildRegionCard(
+                      '区域统计', state.statistics['region'] ?? '未知地区'),
                 ),
               ],
             ),
@@ -543,8 +576,8 @@ class SettingPage extends StatelessWidget {
     });
   }
 
-  Widget _buildStatCard(
-      String title, String value, int trendValue, bool isPositive) {
+  Widget _buildStatCard(String title, String value, int trendValue,
+      bool isPositive) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(

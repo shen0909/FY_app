@@ -27,7 +27,7 @@ class SettingState {
   
   // 用户列表
   final RxList<Map<String, dynamic>> userList = <Map<String, dynamic>>[].obs;
-  
+  RxBool hasUpdate = false.obs;
   SettingState() {
     ///Initialize variables
     _loadUserData();

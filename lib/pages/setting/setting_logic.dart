@@ -12,6 +12,7 @@ import 'package:safe_app/utils/toast_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 
+import '../../services/update_service.dart';
 import 'setting_state.dart';
 
 class SettingLogic extends GetxController {
@@ -20,6 +21,7 @@ class SettingLogic extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    checkUpdate(); // 检查更新
     // 加载数据
     loadSettingData();
   }
@@ -561,5 +563,16 @@ class SettingLogic extends GetxController {
 
   void goToUpdate() {
     Get.toNamed(Routers.update);
+  }
+
+  Future<void> checkUpdate() async {
+    try {
+      final updateInfo = await UpdateService().checkUpdate();
+      if(updateInfo != null) {
+        state.hasUpdate.value = false;
+      }
+    } catch (e) {
+      state.hasUpdate.value = false;
+    }
   }
 }
