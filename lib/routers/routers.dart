@@ -23,6 +23,7 @@ import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
 import '../pages/setting/update_page/update_page_view.dart';
 import '../pages/settings/update_page.dart';
+import '../pages/home/webview.dart';
 
 class Routers {
   static const String splash = '/splash';
@@ -51,6 +52,7 @@ class Routers {
   static const String patternLock = '/pattern_lock';
   static const String lockMethodSelection = '/lock_method_selection';
   static const String fingerprintAuth = '/fingerprint_auth';
+  static const String webView = '/webview';
 
   static final List<GetPage> pages = [
     // GetPage(name: splash, page: () => SplashPage()),
@@ -77,5 +79,6 @@ class Routers {
     GetPage(name: lockMethodSelection, page: () => LockMethodSelectionPage()),
     GetPage(name: fingerprintAuth, page: () => FingerprintAuthPage()),
     GetPage(name: userAnalysis, page: () => UserAnalysisPage()),
+    GetPage(name: webView, page: () => FYWebView()),
   ];
 }

@@ -66,35 +66,25 @@ class HomeLogic extends GetxController {
 
   // 处理轮播图点击
   void onBannerTap(int index) async {
-    // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
+    // 根据索引确定要打开的HTML文件
+    String fileName;
+    switch (index) {
+      case 0:
+        fileName = 'commerce_chip_ban.html'; // 美国BIS企图全球禁用华为昇腾芯片
+        break;
+      case 1:
+        fileName = 'trump_tariff_policy.html'; // 有迹象表明特朗普可能准备撤回关税措施
+        break;
+      case 2:
+        fileName = 'us_ai_restrictions.html'; // 美国商务部进一步限制中国AI和先进算力
+        break;
+      default:
+        fileName = 'us_ai_restrictions.html';
+        break;
+    }
     
-    // 注释掉原有逻辑
-    // final item = state.carouselItems[index];
-    // try {
-    //   if (await canLaunchUrlString(item.linkUrl)) {
-    //     await launchUrlString(
-    //       item.linkUrl,
-    //       mode: LaunchMode.externalApplication, // 使用外部浏览器打开
-    //       webViewConfiguration: const WebViewConfiguration(
-    //         enableJavaScript: true,
-    //         enableDomStorage: true,
-    //       ),
-    //     );
-    //   } else {
-    //     Get.snackbar(
-    //       '提示',
-    //       '无法打开链接',
-    //       snackPosition: SnackPosition.BOTTOM,
-    //     );
-    //   }
-    // } catch (e) {
-    //   Get.snackbar(
-    //     '提示',
-    //     '链接打开失败: ${e.toString()}',
-    //     snackPosition: SnackPosition.BOTTOM,
-    //   );
-    // }
+    // 跳转到WebView页面显示HTML文件
+    Get.toNamed(Routers.webView, arguments: {'file': fileName});
   }
 
   // 去风险预警页
@@ -114,8 +104,8 @@ class HomeLogic extends GetxController {
 
   // 导航到订阅管理页面
   void goOrder() {
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.order);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.order);
   }
 
   // 导航到系统设置页面
