@@ -6,6 +6,7 @@ import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 import 'package:safe_app/widgets/widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:math' as math;
 
 import '../../widgets/scroller_widget.dart';
 import 'detail_list_logic.dart';
@@ -80,7 +81,7 @@ class DetailListPage extends StatelessWidget {
             ],
           ),
           Text(
-            "更新时间：2025-05-15",
+            "更新时间：2025-06-18",
             style: TextStyle(
               fontSize: 12.sp,
               color: FYColors.color_A6A6A6,
@@ -227,7 +228,7 @@ class DetailListPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Obx(() =>
           Text(
-            "${state.sanctionList.length} 条结果",
+            "总数${state.totalCount}条，移除数50条",
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF3361FE),
@@ -242,8 +243,10 @@ class DetailListPage extends StatelessWidget {
     return Obx(() {
       return Container(
         constraints: BoxConstraints(
-          maxHeight: state.sanctionList.isEmpty ? 100.h : state.sanctionList
-              .length * 44.h + 28.h,
+          maxHeight: math.max(
+            300.h,
+            state.sanctionList.length * 44.h + 28.h,
+          ),
         ),
         child: Obx(() {
           // 加载状态
