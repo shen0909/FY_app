@@ -11,7 +11,6 @@ import 'models/userDeviceInfo.dart';
 import 'services/realm_service.dart';
 
 late UserDeviceInfo userDeviceInfo;
-Size _designSize = ScreenUtil.defaultSize; // 设计图尺寸
 bool isPad = false;
 
 void main() async {
@@ -30,15 +29,16 @@ void main() async {
   
   // 检查并确保锁屏方式不会冲突
   await _checkLockMethodConflicts();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
   String idiom = MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.shortestSide >= 600
       ? 'pad'
       : 'phone';
   if (idiom == 'pad') {
     isPad = true;
+  } else {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
   FYSharedPreferenceUtils.saveUserDevice(idiom);
   userDeviceInfo = UserDeviceInfo(idiom: idiom);
@@ -68,21 +68,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!isPad) {
-      _designSize = const Size(375, 812);
-    } else {
-      bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape; // 横屏
-      _designSize = isLandscape ? const Size(960, 600) : const Size(600, 960);
-    }
     return ScreenUtilInit(
-      designSize: _designSize,
+      designSize: _getDesignSize(context),
       minTextAdapt: true,
       splitScreenMode: true,
       rebuildFactor: RebuildFactors.orientation,
       builder: (context, child) {
         return MediaQuery(
           // 固定文本缩放因子，避免受系统字体大小影响
-          // 固定为1.0，不跟随系统字体缩放
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: GetMaterialApp(
             getPages: Routers.pages,
@@ -108,6 +101,26 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+  
+  // 动态计算设计尺寸的方法
+  Size _getDesignSize(BuildContext context) {
+    if (!isPad) {
+      // 手机设备固定使用竖屏尺寸
+      return const Size(375, 812);
+    } else {
+      // 平板设备根据当前屏幕方向动态选择
+      final orientation = MediaQuery.of(context).orientation;
+      final isLandscape = orientation == Orientation.landscape;
+      
+      print('🔄 屏幕方向变化: ${isLandscape ? "横屏" : "竖屏"}');
+      
+      if (isLandscape) {
+        return const Size(960, 600); // 横屏尺寸
+      } else {
+        return const Size(600, 960); // 竖屏尺寸
+      }
+    }
   }
 }
 
