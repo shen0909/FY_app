@@ -55,7 +55,13 @@ class OrderState {
         'description': '相关资讯 3 条',
         'updateTime': '更新: 2025-04-23 11:45',
         'isFavorite': true
-      }
+      },
+      {
+        'title': '涉疆制裁',
+        'description': '相关资讯 3 条',
+        'updateTime': '更新: 2025-04-23 11:45',
+        'isFavorite': true
+      },
     ]);
     
     // 添加专题列表示例数据

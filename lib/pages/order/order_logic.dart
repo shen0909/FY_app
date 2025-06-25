@@ -139,12 +139,8 @@ class OrderLogic extends GetxController {
 
                     // 全部订阅内容
                     Padding(
-                      padding: EdgeInsets.fromLTRB(16.w, 0, 6.w, 50.h),
-                      child: Wrap(
-                        spacing: 8.w,
-                        runSpacing: 10.h,
-                        children: _buildAllSubscriptionItems(),
-                      ),
+                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 50.h),
+                      child: _buildAllSubscriptionGrid(),
                     ),
                   ],
                 )),
@@ -174,7 +170,7 @@ class OrderLogic extends GetxController {
           child: Text(
             item['title'],
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w500,
               color: FYColors.color_1A1A1A,
             ),
@@ -192,22 +188,23 @@ class OrderLogic extends GetxController {
       return Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 12.w),
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 6.w),
             decoration: BoxDecoration(
               color: FYColors.color_F9F9F9,
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: IntrinsicWidth(
-              child: Center(
-                child: Text(
-                  item['title'],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_1A1A1A,
-                  ),
-                  textAlign: TextAlign.center,
+            child: Center(
+              child: Text(
+                item['title'],
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w500,
+                  color: FYColors.color_1A1A1A,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
@@ -219,8 +216,8 @@ class OrderLogic extends GetxController {
               child: GestureDetector(
                 onTap: () => toggleSubscription(item),
                 child: Container(
-                  width: 45.w,
-                  height: 18.h,
+                  width: 40.w,
+                  height: 16.h,
                   decoration: BoxDecoration(
                     color: FYColors.color_3361FE,
                     borderRadius: BorderRadius.only(
@@ -232,7 +229,7 @@ class OrderLogic extends GetxController {
                   child: Text(
                     '加关注',
                     style: TextStyle(
-                      fontSize: 11.sp,
+                      fontSize: 10.sp,
                       color: Colors.white,
                     ),
                   ),
@@ -583,6 +580,85 @@ class OrderLogic extends GetxController {
       backgroundColor: Colors.white,
       colorText: Color(0xFF1A1A1A),
       snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  // 构建全部订阅内容网格
+  Widget _buildAllSubscriptionGrid() {
+    // 计算每个item的合理高度
+    final screenWidth = Get.width;
+    final itemWidth = (screenWidth - 32.w - (3 * 8.w)) / 4; // 减去左右padding和间距
+    final itemHeight = 45.h; // 固定高度，可根据需要调整
+    final aspectRatio = itemWidth / itemHeight;
+    
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: 8.w,
+        mainAxisSpacing: 10.h,
+        childAspectRatio: aspectRatio, // 使用动态计算的宽高比
+      ),
+      itemCount: state.allSubscriptionCategories.length,
+      itemBuilder: (context, index) {
+        final item = state.allSubscriptionCategories[index];
+        final bool isSubscribed = item['isSubscribed'] == true;
+        return Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: itemHeight, // 设置固定高度
+              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 6.w),
+              decoration: BoxDecoration(
+                color: FYColors.color_F9F9F9,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Center(
+                child: Text(
+                  item['title'],
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                    color: FYColors.color_1A1A1A,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            // 关注按钮（只在未订阅时显示）
+            if (!isSubscribed)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () => toggleSubscription(item),
+                  child: Container(
+                    width: 40.w,
+                    height: 16.h,
+                    decoration: BoxDecoration(
+                      color: FYColors.color_3361FE,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(8.r),
+                        topRight: Radius.circular(8.r),
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '加关注',
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
