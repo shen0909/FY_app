@@ -14,6 +14,7 @@ import '../../services/realm_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 
 class AiQusLogic extends GetxController {
   final AiQusState state = AiQusState();
@@ -109,11 +110,8 @@ class AiQusLogic extends GetxController {
       final historyForAPI = _prepareHistoryForAPI();
 
       // 发送AI对话请求
-      final chatUuid = await ApiService().sendAIChat(
-          text,
-          historyForAPI,
-          state.selectedModel.value
-      );
+      final chatUuid = await ApiService()
+          .sendAIChat(text, historyForAPI, state.selectedModel.value);
 
       // 添加到对话历史
       state.addToConversationHistory('user', text);
@@ -166,8 +164,9 @@ class AiQusLogic extends GetxController {
     try {
       if (state.currentConversationId == null) {
         // 创建新的聊天会话
-        String title = userMessage.length > 20 ? userMessage.substring(0, 20) +
-            "..." : userMessage;
+        String title = userMessage.length > 20
+            ? userMessage.substring(0, 20) + "..."
+            : userMessage;
 
         final chatHistory = await _realmService.saveChatHistory(
           title: title,
@@ -186,7 +185,6 @@ class AiQusLogic extends GetxController {
         await _realmService.updateChatHistory(
           id: state.currentConversationId!,
           messages: state.messages,
-
         );
         print('✅ 更新聊天会话: ${state.currentConversationId}');
       }
@@ -221,74 +219,155 @@ class AiQusLogic extends GetxController {
     return apiHistory;
   }
 
-  /// 开始轮询获取AI回复
+  /// 开始轮询获取AI回复 - 等待式轮询（正确实现）
   void _startPollingForReply(int messageIndex) {
     state.pollCount = 0;
     state.currentAiReply.value = "";
+    // 开始第一次请求
+    _pollForReplyOnce(messageIndex);
+  }
 
-    _pollTimer =
-        Timer.periodic(const Duration(milliseconds: 200), (timer) async {
-          if (state.currentChatUuid == null) {
-            timer.cancel();
-            return;
+  /// 单次轮询请求 - 等待响应后再决定是否继续
+  Future<void> _pollForReplyOnce(int messageIndex) async {
+    // 检查是否应该停止轮询
+    if (state.currentChatUuid == null || !state.isStreamingReply.value) {
+      return;
+    }
+
+    // 轮询计数和超时检查
+    state.pollCount++;
+    const int maxPollCount = 150; // 最大轮询次数
+    const int maxEmptyCount = 50; // 连续空内容次数
+
+    if (state.pollCount > maxPollCount) {
+      print('⚠️ 达到最大轮询次数限制(${maxPollCount})，停止轮询');
+      _finishStreaming(messageIndex);
+      return;
+    }
+
+    try {
+      // 发起单次请求，等待结果
+      final reply = await ApiService().getAIChatReply(state.currentChatUuid!);
+      // 检查轮询状态（请求期间可能被取消）
+      if (state.currentChatUuid == null || !state.isStreamingReply.value) {
+        return;
+      }
+      if (reply != null) {
+        final content = reply['content'];
+        final isEmpty = reply['isEmpty'] ?? false;
+
+        // 处理返回内容
+        bool hasNewContent = false;
+        if (content != null && content.isNotEmpty) {
+          state.currentAiReply.value += content;
+          hasNewContent = true;
+          // 更新UI中的消息
+          if (messageIndex < state.messages.length) {
+            state.messages[messageIndex] = {
+              'isUser': false,
+              'content': state.currentAiReply.value,
+              'isStreaming': true,
+              'timestamp': DateTime.now().toIso8601String(),
+            };
+
+            // 流式回复时自动滚动到底部
+            _scrollToBottom(animated: false);
           }
+        }
+        // 判断是否完成 - 根据接口文档建议
+        if (isEmpty || (content == null || content.isEmpty)) {
+          // 如果连续多次空内容，认为完成
+          if (!hasNewContent) {
+            // 使用静态变量追踪连续空内容次数
+            state.emptyContentCount = (state.emptyContentCount ?? 0) + 1;
 
-          try {
-            final reply = await ApiService().getAIChatReply(
-                state.currentChatUuid!);
-
-            if (reply != null) {
-              final content = reply['content'];
-              final isEmpty = reply['isEmpty'] ?? false;
-
-              // 累积回复内容
-              if (content != null && content.isNotEmpty) {
-                state.currentAiReply.value += content;
-
-                // 更新UI中的消息
-                if (messageIndex < state.messages.length) {
-                  state.messages[messageIndex] = {
-                    'isUser': false,
-                    'content': state.currentAiReply.value,
-                    'isStreaming': true,
-                    'timestamp': DateTime.now().toIso8601String(),
-                  };
-
-                  // 流式回复时自动滚动到底部，跟随新内容
-                  _scrollToBottom(animated: false); // 使用非动画滚动，避免频繁动画
-                }
-              }
-
-              // 检查是否完成（根据文档建议，通过内容为空且计数判断）
-              // 连续10次返回空内容认为完成
-              if (isEmpty) {
-                state.pollCount++;
-                if (state.pollCount >= 10) {
-                  _finishStreaming(messageIndex);
-                  timer.cancel();
-                }
-              } else {
-                state.pollCount = 0; // 重置计数器
-              }
-
-              // 超时保护
-              if (state.pollCount >= state.maxPollCount) {
-                _finishStreaming(messageIndex);
-                timer.cancel();
-              }
-            } else {
-              state.pollCount++;
-              if (state.pollCount >= state.maxPollCount) {
-                _finishStreaming(messageIndex);
-                timer.cancel();
-              }
+            if (state.emptyContentCount! >= maxEmptyCount) {
+              print('✅ AI回复完成 - 连续${maxEmptyCount}次空内容');
+              _finishStreaming(messageIndex);
+              return;
             }
-          } catch (e) {
-            print('轮询AI回复失败: $e');
-            _finishStreaming(messageIndex);
-            timer.cancel();
+          } else {
+            // 有新内容时重置计数
+            state.emptyContentCount = 0;
           }
+        } else {
+          state.emptyContentCount = 0;
+        }
+        // 计算下次请求的延迟时间
+        int nextDelay =
+            _calculateNextDelay(hasNewContent, state.emptyContentCount ?? 0);
+
+        // 延迟后继续下一次请求
+        Future.delayed(Duration(milliseconds: nextDelay), () {
+          _pollForReplyOnce(messageIndex);
         });
+      } else {
+        // 请求失败，增加重试延迟
+        print('⚠️ 获取AI回复失败，准备重试...');
+        state.emptyContentCount = (state.emptyContentCount ?? 0) + 1;
+
+        if (state.emptyContentCount! >= maxEmptyCount) {
+          print('⚠️ 连续失败次数过多，停止轮询');
+          _finishStreaming(messageIndex);
+          return;
+        }
+
+        // 失败重试延迟（指数退避）
+        int retryDelay = _calculateRetryDelay(state.pollCount);
+        Future.delayed(Duration(milliseconds: retryDelay), () {
+          _pollForReplyOnce(messageIndex);
+        });
+      }
+    } catch (e) {
+      print('轮询AI回复异常: $e');
+
+      // 检查轮询状态
+      if (state.currentChatUuid == null || !state.isStreamingReply.value) {
+        return;
+      }
+
+      // 网络异常处理
+      state.emptyContentCount = (state.emptyContentCount ?? 0) + 1;
+
+      // 网络错误容忍度更低
+      if (state.emptyContentCount! >= 10) {
+        print('⚠️ 网络错误过多，停止轮询');
+        _finishStreaming(messageIndex);
+        return;
+      }
+
+      // 异常重试延迟（更保守）
+      int retryDelay = _calculateRetryDelay(state.pollCount, isError: true);
+      Future.delayed(Duration(milliseconds: retryDelay), () {
+        _pollForReplyOnce(messageIndex);
+      });
+    }
+  }
+
+  int _calculateNextDelay(bool hasNewContent, int emptyCount) {
+    if (hasNewContent) {
+      // 有新内容时快速轮询
+      return 200;
+    } else if (emptyCount < 5) {
+      // 开始时保持较快频率
+      return 300;
+    } else if (emptyCount < 20) {
+      // 逐渐降低频率
+      return 500;
+    } else {
+      // 长时间无内容时降低到最低频率
+      return 1000;
+    }
+  }
+
+  /// 计算重试延迟时间（指数退避）
+  int _calculateRetryDelay(int pollCount, {bool isError = false}) {
+    int baseDelay = isError ? 500 : 300;
+    double multiplier = isError ? 2.0 : 1.5;
+    int maxDelay = isError ? 5000 : 3000;
+
+    int delay = (baseDelay * math.pow(multiplier, (pollCount / 10).floor())).toInt();
+    return math.min(delay, maxDelay);
   }
 
   /// 完成流式回复
@@ -348,10 +427,7 @@ class AiQusLogic extends GetxController {
     }
     SideSheet.left(
       context: Get.context!,
-      width: MediaQuery
-          .of(Get.context!)
-          .size
-          .width * 0.8,
+      width: MediaQuery.of(Get.context!).size.width * 0.8,
       // 内容部分
       body: Obx(() {
         return SafeArea(
@@ -408,271 +484,273 @@ class AiQusLogic extends GetxController {
                   child: state.chatHistory.isEmpty
                       ? FYWidget.buildEmptyContent()
                       : ListView.separated(
-                    padding: EdgeInsets.only(top: 12.w),
-                    itemCount: state.chatHistory.length,
-                    separatorBuilder: (context, index) =>
-                        Divider(
-                          height: 1.w,
-                          color: const Color(0xFFEFEFEF),
-                          indent: 16.w,
-                          endIndent: 16.w,
-                        ),
-                    itemBuilder: (context, index) {
-                      final history = state.chatHistory[index];
-                      return ListTile(
-                        leading: Image.asset(
-                          FYImages.messenge_icon,
-                          width: 24.w,
-                          height: 24.w,
-                          fit: BoxFit.contain,
-                        ),
-                        title: Text(
-                          history['title'],
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1A1A1A),
+                          padding: EdgeInsets.only(top: 12.w),
+                          itemCount: state.chatHistory.length,
+                          separatorBuilder: (context, index) => Divider(
+                            height: 1.w,
+                            color: const Color(0xFFEFEFEF),
+                            indent: 16.w,
+                            endIndent: 16.w,
                           ),
-                        ),
-                        subtitle: Padding(
-                          padding: EdgeInsets.only(top: 4.w),
-                          child: Text(
-                            history['time'],
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: const Color(0xFFA6A6A6),
-                            ),
-                          ),
-                        ),
-                        trailing: GestureDetector(
-                          onTap: () {
-                            print('删除');
-                            // 显示确认对话框
-                            showDialog(
-                              context: Get.context!,
-                              builder: (context) =>
-                                  AlertDialog(
-                                    content: Text(
-                                      '确定要删除当前对话吗？',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 18.sp,
-                                        color: const Color(0xFF1A1A1A),
-                                        fontWeight: FontWeight.w400,
+                          itemBuilder: (context, index) {
+                            final history = state.chatHistory[index];
+                            return ListTile(
+                              leading: Image.asset(
+                                FYImages.messenge_icon,
+                                width: 24.w,
+                                height: 24.w,
+                                fit: BoxFit.contain,
+                              ),
+                              title: Text(
+                                history['title'],
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1A1A1A),
+                                ),
+                              ),
+                              subtitle: Padding(
+                                padding: EdgeInsets.only(top: 4.w),
+                                child: Text(
+                                  history['time'],
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: const Color(0xFFA6A6A6),
+                                  ),
+                                ),
+                              ),
+                              trailing: GestureDetector(
+                                onTap: () {
+                                  print('删除');
+                                  // 显示确认对话框
+                                  showDialog(
+                                    context: Get.context!,
+                                    builder: (context) => AlertDialog(
+                                      content: Text(
+                                        '确定要删除当前对话吗？',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 18.sp,
+                                          color: const Color(0xFF1A1A1A),
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.w),
-                                    ),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 24.w, horizontal: 16.w),
-                                    actionsPadding: EdgeInsets.zero,
-                                    buttonPadding: EdgeInsets.zero,
-                                    actions: [
-                                      // 分割线
-                                      Container(
-                                        height: 1.w,
-                                        color: const Color(0xFFEFEFEF),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.w),
                                       ),
-                                      // 按钮区域
-                                      Row(
-                                        children: [
-                                          // 取消按钮
-                                          Expanded(
-                                            child: InkWell(
-                                              onTap: () =>
-                                                  Navigator.pop(context),
-                                              child: Container(
-                                                height: 44.w,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    right: BorderSide(
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 24.w, horizontal: 16.w),
+                                      actionsPadding: EdgeInsets.zero,
+                                      buttonPadding: EdgeInsets.zero,
+                                      actions: [
+                                        // 分割线
+                                        Container(
+                                          height: 1.w,
+                                          color: const Color(0xFFEFEFEF),
+                                        ),
+                                        // 按钮区域
+                                        Row(
+                                          children: [
+                                            // 取消按钮
+                                            Expanded(
+                                              child: InkWell(
+                                                onTap: () =>
+                                                    Navigator.pop(context),
+                                                child: Container(
+                                                  height: 44.w,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      right: BorderSide(
+                                                        color: const Color(
+                                                            0xFFEFEFEF),
+                                                        width: 1.w,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    '取消',
+                                                    style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: const Color(
-                                                          0xFFEFEFEF),
-                                                      width: 1.w,
+                                                          0xFF1A1A1A),
                                                     ),
                                                   ),
                                                 ),
-                                                child: Text(
-                                                  '取消',
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                    color:
-                                                    const Color(0xFF1A1A1A),
+                                              ),
+                                            ),
+                                            // 确定按钮
+                                            Expanded(
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  // 确认后删除记录
+                                                  await _deleteChatRecord(
+                                                      index);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Container(
+                                                  height: 44.w,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    '确定',
+                                                    style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: const Color(
+                                                          0xFF3361FE),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          // 确定按钮
-                                          Expanded(
-                                            child: InkWell(
-                                              onTap: () async {
-                                                // 确认后删除记录
-                                                await _deleteChatRecord(index);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Container(
-                                                height: 44.w,
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  '确定',
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                    color:
-                                                    const Color(0xFF3361FE),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Image.asset(
+                                  FYImages.cancle_cion,
+                                  width: 24.w,
+                                  height: 24.w,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              onTap: () {
+                                // 加载对话
+                                state.messageController.clear();
+                                loadConversation(history['title']);
+                                Navigator.pop(Get.context!);
+                              },
                             );
                           },
-                          child: Image.asset(
-                            FYImages.cancle_cion,
-                            width: 24.w,
-                            height: 24.w,
-                            fit: BoxFit.contain,
-                          ),
                         ),
-                        onTap: () {
-                          // 加载对话
-                          state.messageController.clear();
-                          loadConversation(history['title']);
-                          Navigator.pop(Get.context!);
-                        },
-                      );
-                    },
-                  ),
                 ),
                 // 底部按钮
                 state.chatHistory.isEmpty
                     ? Container()
                     : Container(
-                  padding: EdgeInsets.all(16.w),
-                  child: GestureDetector(
-                    onTap: () {
-                      // 显示确认对话框
-                      showDialog(
-                        context: Get.context!,
-                        builder: (context) =>
-                            AlertDialog(
-                              content: Text(
-                                '确定要清空当前对话吗？',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  color: const Color(0xFF1A1A1A),
-                                  fontWeight: FontWeight.w500,
+                        padding: EdgeInsets.all(16.w),
+                        child: GestureDetector(
+                          onTap: () {
+                            // 显示确认对话框
+                            showDialog(
+                              context: Get.context!,
+                              builder: (context) => AlertDialog(
+                                content: Text(
+                                  '确定要清空当前对话吗？',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: const Color(0xFF1A1A1A),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.w),
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 24.w, horizontal: 16.w),
-                              actionsPadding: EdgeInsets.zero,
-                              buttonPadding: EdgeInsets.zero,
-                              actions: [
-                                // 分割线
-                                Container(
-                                  height: 1.w,
-                                  color: const Color(0xFFEFEFEF),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.w),
                                 ),
-                                // 按钮区域
-                                Row(
-                                  children: [
-                                    // 取消按钮
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () => Navigator.pop(context),
-                                        child: Container(
-                                          height: 44.w,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              right: BorderSide(
-                                                color: const Color(0xFFEFEFEF),
-                                                width: 1.w,
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 24.w, horizontal: 16.w),
+                                actionsPadding: EdgeInsets.zero,
+                                buttonPadding: EdgeInsets.zero,
+                                actions: [
+                                  // 分割线
+                                  Container(
+                                    height: 1.w,
+                                    color: const Color(0xFFEFEFEF),
+                                  ),
+                                  // 按钮区域
+                                  Row(
+                                    children: [
+                                      // 取消按钮
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () => Navigator.pop(context),
+                                          child: Container(
+                                            height: 44.w,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                right: BorderSide(
+                                                  color:
+                                                      const Color(0xFFEFEFEF),
+                                                  width: 1.w,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              '取消',
+                                              style: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: const Color(0xFF1A1A1A),
                                               ),
                                             ),
                                           ),
-                                          child: Text(
-                                            '取消',
-                                            style: TextStyle(
-                                              fontSize: 16.sp,
-                                              color: const Color(0xFF1A1A1A),
+                                        ),
+                                      ),
+                                      // 确定按钮
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () async {
+                                            // 确认后执行操作
+                                            Navigator.pop(context);
+                                            Navigator.pop(Get.context!);
+                                            await _clearAllChatHistory();
+                                            createNewConversation();
+                                          },
+                                          child: Container(
+                                            height: 44.w,
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              '确定',
+                                              style: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: const Color(0xFF3361FE),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    // 确定按钮
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () async {
-                                          // 确认后执行操作
-                                          Navigator.pop(context);
-                                          Navigator.pop(Get.context!);
-                                          await _clearAllChatHistory();
-                                          createNewConversation();
-                                        },
-                                        child: Container(
-                                          height: 44.w,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '确定',
-                                            style: TextStyle(
-                                              fontSize: 16.sp,
-                                              color: const Color(0xFF3361FE),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 48.w,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFFFECE9),
+                                borderRadius: BorderRadius.circular(4.w),
+                                border: Border.all(
+                                  color: const Color(0xFFFF6850),
+                                )),
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  FYImages.cancel_red,
+                                  width: 24.w,
+                                  height: 24.w,
+                                  fit: BoxFit.contain,
+                                ),
+                                Text(
+                                  '删除所有历史',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: const Color(0xFFFF3B30),
+                                  ),
                                 ),
                               ],
                             ),
-                      );
-                    },
-                    child: Container(
-                      height: 48.w,
-                      decoration: BoxDecoration(
-                          color: const Color(0xFFFFECE9),
-                          borderRadius: BorderRadius.circular(4.w),
-                          border: Border.all(
-                            color: const Color(0xFFFF6850),
-                          )),
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            FYImages.cancel_red,
-                            width: 24.w,
-                            height: 24.w,
-                            fit: BoxFit.contain,
                           ),
-                          Text(
-                            '删除所有历史',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: const Color(0xFFFF3B30),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -688,159 +766,157 @@ class AiQusLogic extends GetxController {
 
   // 显示提示词模板
   void showPromptTemplates() {
-    FYDialogUtils.showBottomSheet(
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '自定义提示词模板',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Get.back(),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('创建您自己的提示词模板，以便在对话中快速使用。'),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.add_circle, color: Colors.blue.shade700),
-                          const SizedBox(width: 10),
-                          const Text(
-                            '创建新模板',
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      '模板标题',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: '例如：行业分析',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      '提示词内容',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: '输入您的提示词模板内容...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      maxLines: 5,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    const Text('我的模板'),
-                    const Icon(Icons.list),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: state.promptTemplates.length,
-                  itemBuilder: (context, index) {
-                    final template = state.promptTemplates[index];
-                    return ListTile(
-                      title: Text(template['title']),
-                      subtitle: Text(
-                        template['content'],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: const Text('保存模板'),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
+    FYDialogUtils.showBottomSheet(Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '自定义提示词模板',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ],
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Get.back(),
+                ),
+              ],
+            ),
           ),
-        )
-    );
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('创建您自己的提示词模板，以便在对话中快速使用。'),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.add_circle, color: Colors.blue.shade700),
+                      const SizedBox(width: 10),
+                      const Text(
+                        '创建新模板',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  '模板标题',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: '例如：行业分析',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  '提示词内容',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: '输入您的提示词模板内容...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  maxLines: 5,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Text('我的模板'),
+                const Icon(Icons.list),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: state.promptTemplates.length,
+              itemBuilder: (context, index) {
+                final template = state.promptTemplates[index];
+                return ListTile(
+                  title: Text(template['title']),
+                  subtitle: Text(
+                    template['content'],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: ElevatedButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: const Text('保存模板'),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ));
   }
 
   // 创建新的对话
   void createNewConversation() {
     // 清理定时器
     _pollTimer?.cancel();
-    
+
     // 重置所有状态
     state.resetStreamingState();
     state.clearConversationHistory();
@@ -848,13 +924,13 @@ class AiQusLogic extends GetxController {
 
     // 清空消息列表
     state.messages.clear();
-    
+
     // 添加欢迎消息
     state.messages.add({
       'isUser': false,
       'content': 'Hi~ 我是您身边的智能助手，可以为您答疑解惑、精读文档、尽情创作，让科技助你轻松工作，多点生活',
     });
-    
+
     state.currentConversationId = null;
     state.isLoading.value = false;
   }
@@ -864,7 +940,7 @@ class AiQusLogic extends GetxController {
     try {
       // 从Realm数据库加载聊天记录
       final chatHistories = _realmService.getAllChatHistory();
-      
+
       // 更新状态中的聊天历史
       state.chatHistory.clear();
       for (var history in chatHistories) {
@@ -906,8 +982,8 @@ class AiQusLogic extends GetxController {
           if (message['isUser'] == true) {
             state.addToConversationHistory(
                 'user', message['content']?.toString() ?? '');
-          } else
-          if (message['isError'] != true && message['isSystem'] != true) {
+          } else if (message['isError'] != true &&
+              message['isSystem'] != true) {
             state.addToConversationHistory(
                 'assistant', message['content']?.toString() ?? '');
           }
@@ -986,11 +1062,9 @@ class AiQusLogic extends GetxController {
     final difference = now.difference(dateTime);
 
     if (difference.inDays == 0) {
-      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
-          .toString().padLeft(2, '0')}';
+      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     } else if (difference.inDays == 1) {
-      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
-          .toString().padLeft(2, '0')}';
+      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     } else if (difference.inDays < 7) {
       return '${difference.inDays}天前';
     } else {
@@ -1106,10 +1180,7 @@ class AiQusLogic extends GetxController {
     FocusScope.of(context).unfocus();
     // 更新状态UI，添加半透明蒙层
     FYDialogUtils.showBottomSheet(Container(
-      height: MediaQuery
-          .of(context)
-          .size
-          .height * 0.75,
+      height: MediaQuery.of(context).size.height * 0.75,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -1249,7 +1320,7 @@ class AiQusLogic extends GetxController {
                             borderSide: BorderSide.none,
                           ),
                           contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12.w),
+                              EdgeInsets.symmetric(horizontal: 12.w),
                         ),
                       ),
                     ),
@@ -1295,7 +1366,7 @@ class AiQusLogic extends GetxController {
                       onTap: () {
                         // 显示建设中提示
                         DialogUtils.showUnderConstructionDialog();
-                        
+
                         // 注释掉原有逻辑
                         // // 添加模板到列表
                         // if (state.titleController.text.isNotEmpty &&
@@ -1369,8 +1440,7 @@ class AiQusLogic extends GetxController {
 
           // 模板列表
           Expanded(
-            child: Obx(() =>
-                ListView.builder(
+            child: Obx(() => ListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   itemCount: state.promptTemplates.length,
                   itemBuilder: (context, index) {
@@ -1379,7 +1449,8 @@ class AiQusLogic extends GetxController {
                       onTap: () {
                         // 使用该模板
                         state.messageController.text = template['content'];
-                        state.showTemplateForm.value = !state.showTemplateForm.value;
+                        state.showTemplateForm.value =
+                            !state.showTemplateForm.value;
                         Get.back();
                       },
                       child: Container(
@@ -1429,7 +1500,7 @@ class AiQusLogic extends GetxController {
 
     // 获取按钮的位置和大小
     final RenderBox? renderBox =
-    modelKey.currentContext?.findRenderObject() as RenderBox?;
+        modelKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
     final Size size = renderBox.size;
@@ -1437,93 +1508,87 @@ class AiQusLogic extends GetxController {
 
     // 创建浮层
     final overlayEntry = OverlayEntry(
-      builder: (context) =>
-          Stack(
-            children: [
-              // 背景遮罩，点击后关闭浮层
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: hideModelSelection,
-                  child: Container(
-                    color: Colors.transparent,
-                  ),
-                ),
+      builder: (context) => Stack(
+        children: [
+          // 背景遮罩，点击后关闭浮层
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: hideModelSelection,
+              child: Container(
+                color: Colors.transparent,
               ),
-              // 下拉菜单内容
-              Positioned(
-                top: position.dy + size.height + 4,
-                left: position.dx - 120,
-                right: 16.w,
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 0,
-                          blurRadius: 8,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: state.modelList.map((model) {
-                        return Obx(() =>
-                            GestureDetector(
-                              onTap: () =>
-                                  selectModel(model['name'].toString()),
-                              child: Container(
-                                height: 40,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12),
-                                decoration: BoxDecoration(
-                                  color: model['name'] ==
-                                      state.selectedModel.value
-                                      ? const Color(0xFFF0F6FF)
-                                      : Colors.white,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "${model['name'].toString()} +",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: const Color(0xFF1A1A1A),
-                                      ),
-                                      maxLines: 1,
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Text(
-                                      model['description'].toString(),
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: const Color(0xFFA6A6A6),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    if (model['name'] ==
-                                        state.selectedModel.value)
-                                      Icon(
-                                        Icons.check,
-                                        size: 20,
-                                        color: FYColors.color_3361FE,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ));
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
+          // 下拉菜单内容
+          Positioned(
+            top: position.dy + size.height + 4,
+            left: position.dx - 120,
+            right: 16.w,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 0,
+                      blurRadius: 8,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: state.modelList.map((model) {
+                    return Obx(() => GestureDetector(
+                          onTap: () => selectModel(model['name'].toString()),
+                          child: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: model['name'] == state.selectedModel.value
+                                  ? const Color(0xFFF0F6FF)
+                                  : Colors.white,
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "${model['name'].toString()} +",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF1A1A1A),
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  model['description'].toString(),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: const Color(0xFFA6A6A6),
+                                  ),
+                                ),
+                                const Spacer(),
+                                if (model['name'] == state.selectedModel.value)
+                                  Icon(
+                                    Icons.check,
+                                    size: 20,
+                                    color: FYColors.color_3361FE,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ));
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
 
     state.modelOverlayEntry.value = overlayEntry;
@@ -1584,7 +1649,7 @@ class AiQusLogic extends GetxController {
   // 复制消息内容
   void copyContent(String content) {
     if (content.trim().isEmpty) return;
-    
+
     Clipboard.setData(ClipboardData(text: content));
     ToastUtil.showShort("消息内容已复制到剪贴板");
   }
@@ -1603,7 +1668,8 @@ class AiQusLogic extends GetxController {
 
   // 更新 输入框的高度
   void updateInputBoxHeightOptimized() {
-    final RenderBox? renderBox = state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox =
+        state.inputBoxKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox != null) {
       final newHeight = renderBox.size.height;
       // 只有高度真正发生变化时才更新状态

@@ -87,6 +87,9 @@ class AiQusState {
   int pollCount = 0;
   final int maxPollCount = 50; // 最大轮询次数（约10秒）
   
+  // 连续空内容计数器（用于等待式轮询）
+  int? emptyContentCount;
+  
   // 登录状态
   final RxBool isLoggedIn = false.obs;
 
@@ -172,5 +175,6 @@ class AiQusState {
     isStreamingReply.value = false;
     currentAiReply.value = "";
     pollCount = 0;
+    emptyContentCount = null;
   }
 }
