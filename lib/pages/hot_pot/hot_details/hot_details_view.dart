@@ -59,7 +59,7 @@ class HotDetailsView extends StatelessWidget {
           GestureDetector(
             onTap: () => logic.downloadFile(),
             child: Container(
-              margin: const EdgeInsets.only(right: 16),
+              margin: EdgeInsets.only(right: 16.w),
               child: Image.asset(FYImages.download_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
 
             ),
@@ -79,7 +79,7 @@ class HotDetailsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('获取数据失败：${state.errorMessage.value}'),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.w),
                 ElevatedButton(
                   onPressed: () => logic.fetchNewsDetail(),
                   child: const Text('重试'),
@@ -121,7 +121,7 @@ class HotDetailsView extends StatelessWidget {
     
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -131,8 +131,8 @@ class HotDetailsView extends StatelessWidget {
               Expanded(
                 child: Text(
                   detail.newsTitle,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
@@ -140,19 +140,19 @@ class HotDetailsView extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.w),
           Text(
             "${detail.publishTime} | ${detail.newsMedium}",
-            style: const TextStyle(
-              fontSize: 14,
+            style: TextStyle(
+              fontSize: 14.w,
               color: Color(0xFFA6A6A6),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.w),
           Text(
             detail.newsSummary,
-            style: const TextStyle(
-              fontSize: 14,
+            style: TextStyle(
+              fontSize: 14.w,
               color: Color(0xFF1A1A1A),
               height: 1.5,
             ),
@@ -167,13 +167,13 @@ class HotDetailsView extends StatelessWidget {
     final tabs = ['风险分析', '时间序列', '决策建议', '原文与译文'];
     return Column(
       children: [
-        const Divider(
-          height: 8,
-          thickness: 8,
+         Divider(
+          height: 8.w,
+          thickness: 8.w,
           color: Color(0xFFF5F5F5),
         ),
         Container(
-          padding: const EdgeInsets.only(top: 6, bottom: 6),
+          padding: EdgeInsets.only(top: 6.w, bottom: 6.w),
           decoration: const BoxDecoration(
             color: Colors.white,
           ),
@@ -182,7 +182,7 @@ class HotDetailsView extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFF0F5FF),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(4.r),
                 border: Border.all(color: const Color(0xFF3362FE)),
               ),
               child: Obx(() {
@@ -530,7 +530,7 @@ class HotDetailsView extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 16.w),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF0F5FF),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                     border: Border.all(color: const Color(0xFF3362FE)),
                   ),
                   child: Row(
@@ -654,7 +654,7 @@ class HotDetailsView extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8.r),
       ),
       child: Column(
         children: riskMeasures.map<Widget>((measure) {
@@ -664,7 +664,7 @@ class HotDetailsView extends StatelessWidget {
               border: Border(
                 bottom: BorderSide(
                   color: Colors.grey.shade300,
-                  width: 1,
+                  width: 1.w,
                 ),
               ),
             ),
@@ -798,18 +798,18 @@ class HotDetailsView extends StatelessWidget {
               shape: BoxShape.circle,
               color: Colors.white,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.smart_toy,
               color: Color(0xFF3361FE),
-              size: 14,
+              size: 14.w,
             ),
           ),
-          const SizedBox(width: 8),
-          const Text(
+          SizedBox(width: 8.w),
+          Text(
             '内容由AI生成，仅供参考',
             style: TextStyle(
               color: Color(0xFF3361FE),
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
