@@ -40,6 +40,7 @@ class MarkdownMessageWidget extends StatelessWidget {
           fontSize: 14.sp,
           color: Colors.white,
           height: 1.4,
+          fontFamily: 'AlibabaPuHuiTi',
         ),
       ),
     );
@@ -57,29 +58,8 @@ class MarkdownMessageWidget extends StatelessWidget {
         children: [
           MarkdownBody(
             data: content,
-            fitContent: false,
-            styleSheet: MarkdownStyleSheet(
-                blockSpacing: 12.w,
-                // 表格
-                tableBorder: TableBorder.all(color: Colors.black12),
-                // 水平线
-                horizontalRuleDecoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(color: Colors.black12, width: 1.w)),
-                ),
-                // 代码块
-                codeblockDecoration: BoxDecoration(
-                  color: Color(0xfff8f8f8),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                // 引用
-                blockquotePadding: EdgeInsets.only(
-                    left: 16.w, top: 8.w, bottom: 8.w),
-                blockquoteDecoration: BoxDecoration(
-                  border: Border(
-                      left: BorderSide(color: Colors.black12, width: 4.w)),
-                )
-            ),
+            fitContent: true,
+            styleSheet: _buildMarkdownStyleSheet(),
             builders: {
               // 自定义代码/代码块构建
               // 'code': CustomCodeBuilder(),
@@ -118,6 +98,7 @@ class MarkdownMessageWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: const Color(0xFF999999),
+                      fontFamily: 'AlibabaPuHuiTi',
                     ),
                   ),
                 ],
@@ -130,11 +111,13 @@ class MarkdownMessageWidget extends StatelessWidget {
 
   MarkdownStyleSheet _buildMarkdownStyleSheet() {
     return MarkdownStyleSheet(
+      blockSpacing: 12.w,
       // 段落样式
       p: TextStyle(
         fontSize: 14.sp,
         color: const Color(0xFF1A1A1A),
         height: 1.5,
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       // 标题样式
       h1: TextStyle(
@@ -142,29 +125,34 @@ class MarkdownMessageWidget extends StatelessWidget {
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1A1A1A),
         height: 1.3,
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       h2: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1A1A1A),
         height: 1.3,
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       h3: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1A1A1A),
         height: 1.3,
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       // 强调样式
       strong: TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1A1A1A),
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       em: TextStyle(
         fontSize: 14.sp,
         fontStyle: FontStyle.italic,
         color: const Color(0xFF1A1A1A),
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       // 代码样式
       code: TextStyle(
@@ -174,27 +162,29 @@ class MarkdownMessageWidget extends StatelessWidget {
         fontFamily: 'monospace',
       ),
       codeblockDecoration: BoxDecoration(
-        color: const Color(0xFFF0F0F0),
-        borderRadius: BorderRadius.circular(4.w),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        color: const Color(0xFFF8F8F8),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       codeblockPadding: EdgeInsets.all(12.w),
       // 列表样式
       listBullet: TextStyle(
         fontSize: 14.sp,
         color: const Color(0xFF1A1A1A),
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       // 链接样式
       a: TextStyle(
         fontSize: 14.sp,
         color: const Color(0xFF3361FE),
         decoration: TextDecoration.underline,
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       // 引用样式
       blockquote: TextStyle(
         fontSize: 14.sp,
         color: const Color(0xFF666666),
         fontStyle: FontStyle.italic,
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       blockquoteDecoration: BoxDecoration(
         border: Border(
@@ -204,25 +194,27 @@ class MarkdownMessageWidget extends StatelessWidget {
           ),
         ),
       ),
-      blockquotePadding: EdgeInsets.only(left: 12.w),
+      blockquotePadding: EdgeInsets.only(left: 12.w, top: 8.w, bottom: 8.w),
       // 表格样式
       tableHead: TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1A1A1A),
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       tableBody: TextStyle(
         fontSize: 14.sp,
         color: const Color(0xFF1A1A1A),
+        fontFamily: 'AlibabaPuHuiTi',
       ),
       tableBorder: TableBorder.all(
         color: const Color(0xFFE0E0E0),
-        width: 1,
+        width: 1.w,
       ),
       // 水平分割线
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
+          top: BorderSide(
             color: const Color(0xFFE0E0E0),
             width: 1.w,
           ),
