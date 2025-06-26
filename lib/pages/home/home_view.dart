@@ -274,7 +274,7 @@ class HomePage extends StatelessWidget {
       onTap: () => _handleMenuItemClick(item['title']),
       child: Container(
         width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
-        height: 80.h,
+        padding: EdgeInsets.only(bottom: 15.w),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -282,24 +282,22 @@ class HomePage extends StatelessWidget {
               colors: item['bgColor']),
           borderRadius: BorderRadius.circular(15.r),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(item['image'], width: 40.w, height: 40.w),
-              SizedBox(height: 8.h),
-              Text(
-                item['title'],
-                style: TextStyle(
-                  color: FYColors.color_000000,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  height: 0.8,
-                  leadingDistribution: TextLeadingDistribution.even,
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(item['image'], width: 40.w, height: 40.w),
+            SizedBox(height: 8.h),
+            Text(
+              item['title'],
+              style: TextStyle(
+                color: FYColors.color_000000,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                height: 0.8,
+                leadingDistribution: TextLeadingDistribution.even,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
