@@ -788,6 +788,483 @@ class ApiService {
     return null;
   }
 
+  // ===== 提示词模板管理 API =====
+  /// 新增提示词模板
+  Future<Map<String, dynamic>?> addPromptTemplate({
+    required String promptName,
+    required String promptContent,
+    bool isDefault = false,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 新增提示词模板失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天提示词模板_新增模板",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "prompt_name": promptName,
+        "prompt_content": promptContent,
+        "is_default": isDefault ? 1 : 0
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新增提示词模板响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取提示词模板列表
+  Future<Map<String, dynamic>?> getPromptTemplateList({
+    int currentPage = 1,
+    int pageSize = 10,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取提示词模板列表失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天提示词模板_获取模板列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "current_page": currentPage,
+        "page_size": pageSize
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取提示词模板列表响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 修改提示词模板
+  Future<Map<String, dynamic>?> updatePromptTemplate({
+    required String promptUuid,
+    required String promptName,
+    required String promptContent,
+    bool isDefault = false,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 修改提示词模板失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天提示词模板_修改模板",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "prompt_uuid": promptUuid,
+        "prompt_name": promptName,
+        "prompt_content": promptContent,
+        "is_default": isDefault ? 1 : 0
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析修改提示词模板响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 删除提示词模板
+  Future<Map<String, dynamic>?> deletePromptTemplate(String promptUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 删除提示词模板失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天提示词模板_删除模板",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "prompt_uuid": promptUuid
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析删除提示词模板响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 批量删除提示词模板
+  Future<Map<String, dynamic>?> batchDeletePromptTemplates(List<String> promptUuids) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 批量删除提示词模板失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天提示词模板_批量删除模板",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "prompt_uuids": promptUuids
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析批量删除提示词模板响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  // ===== 聊天会话管理 API =====
+  
+  /// 新建聊天会话
+  Future<Map<String, dynamic>?> createChatSession({
+    required String sessionName,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 新建聊天会话失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天会话_新建会话",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "session_name": sessionName
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新建聊天会话响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取聊天会话列表
+  Future<Map<String, dynamic>?> getChatSessionList({
+    int currentPage = 1,
+    int pageSize = 10,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取聊天会话列表失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天会话_获取会话列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "current_page": currentPage,
+        "page_size": pageSize
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取聊天会话列表响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 修改聊天会话
+  Future<Map<String, dynamic>?> updateChatSession({
+    required String sessionUuid,
+    required String sessionName,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 修改聊天会话失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天会话_修改会话",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "session_uuid": sessionUuid,
+        "session_name": sessionName
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析修改聊天会话响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 删除聊天会话
+  Future<Map<String, dynamic>?> deleteChatSession(String sessionUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 删除聊天会话失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天会话_删除会话",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "session_uuid": sessionUuid
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析删除聊天会话响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 批量删除聊天会话
+  Future<Map<String, dynamic>?> batchDeleteChatSessions(List<String> sessionUuids) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 批量删除聊天会话失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天会话_批量删除会话",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "session_uuids": sessionUuids
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析批量删除聊天会话响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  // ===== 聊天记录管理 API =====
+  
+  /// 新增聊天记录
+  Future<Map<String, dynamic>?> addChatRecord({
+    required String sessionUuid,
+    required String role,
+    required String content,
+    String factoryName = "OpenAI",
+    String model = "ChatGPT4",
+    int tokenCount = 0,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 新增聊天记录失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天记录_新增记录",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "session_uuid": sessionUuid,
+        "role": role,
+        "content": content,
+        "factory_name": factoryName,
+        "model": model,
+        "token_count": tokenCount
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新增聊天记录响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取聊天记录
+  Future<Map<String, dynamic>?> getChatRecords(String sessionUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取聊天记录失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "ai聊天记录_获取记录",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "session_uuid": sessionUuid
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取聊天记录响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
   /// 下载更新文件块
   Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid, int fileIndex, {CancelToken? cancelToken}) async {
     // 获取内层token
@@ -827,3 +1304,4 @@ class ApiService {
     return null;
   }
 }
+

@@ -26,6 +26,8 @@ class AiQusLogic extends GetxController {
     super.onReady();
     // 加载数据
     loadConversations();
+    // 加载提示词模板
+    loadPromptTemplates();
   }
 
   @override
@@ -861,36 +863,93 @@ class AiQusLogic extends GetxController {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: state.promptTemplates.length,
-              itemBuilder: (context, index) {
-                final template = state.promptTemplates[index];
-                return ListTile(
-                  title: Text(template['title']),
-                  subtitle: Text(
-                    template['content'],
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward),
-                        onPressed: () {},
+            child: Obx(() => ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  itemCount: state.promptTemplates.length,
+                  itemBuilder: (context, index) {
+                    final template = state.promptTemplates[index];
+                    return GestureDetector(
+                      onTap: () {
+                        // 使用该模板
+                        state.messageController.text = template['content'];
+                        state.showTemplateForm.value = false;
+                        Get.back();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10.w),
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF9F9F9),
+                          borderRadius: BorderRadius.circular(8.w),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    template['title'],
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF1A1A1A),
+                                    ),
+                                  ),
+                                ),
+                                // 编辑按钮
+                                GestureDetector(
+                                  onTap: () {
+                                    _showEditTemplateDialog(context, template);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.w),
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 16.w,
+                                      color: const Color(0xFF666666),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                // 删除按钮
+                                GestureDetector(
+                                  onTap: () {
+                                    deletePromptTemplate(
+                                      template['uuid'] ?? '',
+                                      template['title'] ?? '',
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.w),
+                                    child: Icon(
+                                      Icons.delete,
+                                      size: 16.w,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8.w),
+                            Text(
+                              template['content'],
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: const Color(0xFFA6A6A6),
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                )),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () {
                 Get.back();
@@ -1364,23 +1423,11 @@ class AiQusLogic extends GetxController {
                     // 保存按钮
                     GestureDetector(
                       onTap: () {
-                        // 显示建设中提示
-                        DialogUtils.showUnderConstructionDialog();
-
-                        // 注释掉原有逻辑
-                        // // 添加模板到列表
-                        // if (state.titleController.text.isNotEmpty &&
-                        //     state.contentController.text.isNotEmpty) {
-                        //   state.promptTemplates.add({
-                        //     'title': state.titleController.text,
-                        //     'content': state.contentController.text,
-                        //   });
-                        //   // 清空输入框
-                        //   state.titleController.clear();
-                        //   state.contentController.clear();
-                        //   // 收起表单
-                        //   state.showTemplateForm.value = false;
-                        // }
+                        // 调用保存提示词模板的方法
+                        savePromptTemplate(
+                          state.titleController.text,
+                          state.contentController.text,
+                        );
                       },
                       child: Container(
                         height: 48.w,
@@ -1449,8 +1496,7 @@ class AiQusLogic extends GetxController {
                       onTap: () {
                         // 使用该模板
                         state.messageController.text = template['content'];
-                        state.showTemplateForm.value =
-                            !state.showTemplateForm.value;
+                        state.showTemplateForm.value = false;
                         Get.back();
                       },
                       child: Container(
@@ -1463,13 +1509,51 @@ class AiQusLogic extends GetxController {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              template['title'],
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1A1A1A),
-                              ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    template['title'],
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF1A1A1A),
+                                    ),
+                                  ),
+                                ),
+                                // 编辑按钮
+                                GestureDetector(
+                                  onTap: () {
+                                    _showEditTemplateDialog(context, template);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.w),
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 16.w,
+                                      color: const Color(0xFF666666),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                // 删除按钮
+                                GestureDetector(
+                                  onTap: () {
+                                    deletePromptTemplate(
+                                      template['uuid'] ?? '',
+                                      template['title'] ?? '',
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.w),
+                                    child: Icon(
+                                      Icons.delete,
+                                      size: 16.w,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             SizedBox(height: 8.w),
                             Text(
@@ -1478,6 +1562,8 @@ class AiQusLogic extends GetxController {
                                 fontSize: 14.sp,
                                 color: const Color(0xFFA6A6A6),
                               ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -1678,5 +1764,305 @@ class AiQusLogic extends GetxController {
         state.inputBoxHeight.value = newHeight;
       }
     }
+  }
+
+  // ===== 提示词模板管理方法 =====
+  
+  /// 从服务端加载提示词模板列表
+  Future<void> loadPromptTemplates() async {
+    try {
+      final response = await ApiService().getPromptTemplateList(
+        currentPage: 1,
+        pageSize: 100, // 获取所有模板
+      );
+
+      if (response != null && 
+          response['执行结果'] == true && 
+          response['返回数据'] != null) {
+        
+        final data = response['返回数据'];
+        if (data is Map && data['data'] != null) {
+          // 清空当前模板
+          state.promptTemplates.clear();
+          // 解析服务端返回的模板数据
+          final List<dynamic> templates = data['data'];
+          for (var template in templates) {
+            state.promptTemplates.add({
+              'uuid': template['uuid'] ?? '',
+              'title': template['prompt_name'] ?? '',
+              'content': template['prompt_content'] ?? '',
+              'isDefault': template['is_default'] == 1,
+              'createdAt': template['created_at'] ?? '',
+            });
+          }
+          
+          print('✅ 成功加载 ${state.promptTemplates.length} 个提示词模板');
+        }
+      } else {
+        print('❌ 加载提示词模板失败，使用默认模板');
+        // 如果服务端加载失败，保持使用当前的默认模板
+      }
+    } catch (e) {
+      print('❌ 加载提示词模板异常: $e');
+    }
+  }
+
+  /// 保存新的提示词模板到服务端
+  Future<void> savePromptTemplate(String title, String content) async {
+    if (title.trim().isEmpty || content.trim().isEmpty) {
+      ToastUtil.showShort('模板标题和内容不能为空');
+      return;
+    }
+
+    try {
+      // 显示加载状态
+      DialogUtils.showLoading('正在保存模板...');
+
+      final response = await ApiService().addPromptTemplate(
+        promptName: title.trim(),
+        promptContent: content.trim(),
+        isDefault: false,
+      );
+
+      DialogUtils.hideLoading();
+      if (response != null && response['执行结果'] == true) {
+        ToastUtil.showShort('模板保存成功');
+        // 清空输入框
+        state.titleController.clear();
+        state.contentController.clear();
+        // 关闭表单
+        state.showTemplateForm.value = false;
+        // 重新加载模板列表
+        await loadPromptTemplates();
+      } else {
+        ToastUtil.showShort('模板保存失败: ${response?['返回消息'] ?? '未知错误'}');
+      }
+    } catch (e) {
+      DialogUtils.hideLoading();
+      ToastUtil.showShort('保存模板时出错: $e');
+      print('保存提示词模板异常: $e');
+    }
+  }
+
+  /// 编辑提示词模板
+  Future<void> editPromptTemplate(String uuid, String title, String content) async {
+    if (title.trim().isEmpty || content.trim().isEmpty) {
+      ToastUtil.showShort('模板标题和内容不能为空');
+      return;
+    }
+
+    try {
+      // 显示加载状态
+      DialogUtils.showLoading('正在更新模板...');
+
+      final response = await ApiService().updatePromptTemplate(
+        promptUuid: uuid,
+        promptName: title.trim(),
+        promptContent: content.trim(),
+        isDefault: false,
+      );
+
+      DialogUtils.hideLoading();
+
+      if (response != null && response['执行结果'] == true) {
+        ToastUtil.showShort('模板更新成功');
+        
+        // 重新加载模板列表
+        await loadPromptTemplates();
+        
+      } else {
+        ToastUtil.showShort('模板更新失败: ${response?['返回消息'] ?? '未知错误'}');
+      }
+    } catch (e) {
+      DialogUtils.hideLoading();
+      ToastUtil.showShort('更新模板时出错: $e');
+      print('编辑提示词模板异常: $e');
+    }
+  }
+
+  /// 删除提示词模板
+  Future<void> deletePromptTemplate(String uuid, String title) async {
+    // 先确认删除
+    bool? confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('确认删除'),
+        content: Text('确定要删除模板"$title"吗？此操作不可撤销。'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    try {
+      // 显示加载状态
+      DialogUtils.showLoading('正在删除模板...');
+      final response = await ApiService().deletePromptTemplate(uuid);
+      if (response != null && response['执行结果'] == true) {
+        ToastUtil.showShort('模板删除成功');
+        
+        // 重新加载模板列表
+        await loadPromptTemplates();
+        DialogUtils.hideLoading();
+
+      } else {
+        ToastUtil.showShort('模板删除失败: ${response?['返回消息'] ?? '未知错误'}');
+        DialogUtils.hideLoading();
+      }
+    } catch (e) {
+      DialogUtils.hideLoading();
+      ToastUtil.showShort('删除模板时出错: $e');
+      print('删除提示词模板异常: $e');
+    }
+  }
+
+  /// 批量删除提示词模板
+  Future<void> batchDeletePromptTemplates(List<String> uuids) async {
+    if (uuids.isEmpty) {
+      ToastUtil.showShort('请选择要删除的模板');
+      return;
+    }
+
+    // 先确认删除
+    bool? confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('确认批量删除'),
+        content: Text('确定要删除选中的${uuids.length}个模板吗？此操作不可撤销。'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      // 显示加载状态
+      DialogUtils.showLoading('正在批量删除模板...');
+
+      final response = await ApiService().batchDeletePromptTemplates(uuids);
+
+      DialogUtils.hideLoading();
+
+      if (response != null && response['执行结果'] == true) {
+        ToastUtil.showShort('模板批量删除成功');
+        
+        // 重新加载模板列表
+        await loadPromptTemplates();
+        
+      } else {
+        ToastUtil.showShort('模板批量删除失败: ${response?['返回消息'] ?? '未知错误'}');
+      }
+    } catch (e) {
+      DialogUtils.hideLoading();
+      ToastUtil.showShort('批量删除模板时出错: $e');
+      print('批量删除提示词模板异常: $e');
+    }
+  }
+
+  /// 刷新提示词模板列表
+  Future<void> refreshPromptTemplates() async {
+    await loadPromptTemplates();
+  }
+
+  /// 显示编辑模板对话框
+  void _showEditTemplateDialog(BuildContext context, Map<String, dynamic> template) {
+    // 预填充当前模板的数据
+    final titleController = TextEditingController(text: template['title'] ?? '');
+    final contentController = TextEditingController(text: template['content'] ?? '');
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('编辑提示词模板'),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400, // 设置固定高度避免溢出
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 模板标题
+                const Text('模板标题'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    hintText: '请输入模板标题',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // 模板内容
+                const Text('模板内容'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: contentController,
+                  maxLines: 8, // 设置最大行数
+                  minLines: 3, // 设置最小行数
+                  decoration: const InputDecoration(
+                    hintText: '请输入模板内容',
+                    border: OutlineInputBorder(),
+                    alignLabelWithHint: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              titleController.dispose();
+              contentController.dispose();
+              Get.back();
+            },
+            child: const Text('取消'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final title = titleController.text.trim();
+              final content = contentController.text.trim();
+              
+              if (title.isEmpty || content.isEmpty) {
+                ToastUtil.showShort('标题和内容不能为空');
+                return;
+              }
+
+              // 关闭对话框
+              Get.back();
+              
+              // 调用编辑API
+              await editPromptTemplate(
+                template['uuid'] ?? '',
+                title,
+                content,
+              );
+              
+              titleController.dispose();
+              contentController.dispose();
+            },
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
   }
 }
