@@ -1108,9 +1108,9 @@ class AiQusLogic extends GetxController {
         if (serverResponse != null && 
             serverResponse['执行结果'] == true && 
             serverResponse['返回数据'] != null &&
-            serverResponse['返回数据']['list'] != null) {
+            serverResponse['返回数据']['data'] != null) {
           
-          final List<dynamic> sessionData = serverResponse['返回数据']['list'];
+          final List<dynamic> sessionData = serverResponse['返回数据']['data'];
           serverSessions = sessionData.map((session) => {
             'serverUuid': session['uuid'] ?? '',
             'title': session['title_name'] ?? '',
@@ -2006,11 +2006,11 @@ class AiQusLogic extends GetxController {
           response['返回数据'] != null) {
         
         final data = response['返回数据'];
-        if (data is Map && data['list'] != null) {
+        if (data is Map && data['data'] != null) {
           // 清空当前模板
           state.promptTemplates.clear();
           // 解析服务端返回的模板数据
-          final List<dynamic> templates = data['list'];
+          final List<dynamic> templates = data['data'];
           for (var template in templates) {
             state.promptTemplates.add({
               'uuid': template['uuid'] ?? '',
@@ -2049,9 +2049,7 @@ class AiQusLogic extends GetxController {
         isDefault: false,
       );
 
-      DialogUtils.hideLoading();
       if (response != null && response['执行结果'] == true) {
-        ToastUtil.showShort('模板保存成功');
         // 清空输入框
         state.titleController.clear();
         state.contentController.clear();
@@ -2059,7 +2057,11 @@ class AiQusLogic extends GetxController {
         state.showTemplateForm.value = false;
         // 重新加载模板列表
         await loadPromptTemplates();
+        // 所有操作完成后隐藏loading并显示成功提示
+        DialogUtils.hideLoading();
+        ToastUtil.showShort('模板保存成功');
       } else {
+        DialogUtils.hideLoading();
         ToastUtil.showShort('模板保存失败: ${response?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
@@ -2087,15 +2089,15 @@ class AiQusLogic extends GetxController {
         isDefault: false,
       );
 
-      DialogUtils.hideLoading();
-
       if (response != null && response['执行结果'] == true) {
-        ToastUtil.showShort('模板更新成功');
-        
         // 重新加载模板列表
         await loadPromptTemplates();
+        // 所有操作完成后隐藏loading并显示成功提示
+        DialogUtils.hideLoading();
+        ToastUtil.showShort('模板更新成功');
         
       } else {
+        DialogUtils.hideLoading();
         ToastUtil.showShort('模板更新失败: ${response?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
@@ -2132,15 +2134,13 @@ class AiQusLogic extends GetxController {
       DialogUtils.showLoading('正在删除模板...');
       final response = await ApiService().deletePromptTemplate(uuid);
       if (response != null && response['执行结果'] == true) {
-        ToastUtil.showShort('模板删除成功');
-        
         // 重新加载模板列表
         await loadPromptTemplates();
         DialogUtils.hideLoading();
-
+        ToastUtil.showShort('模板删除成功');
       } else {
-        ToastUtil.showShort('模板删除失败: ${response?['返回消息'] ?? '未知错误'}');
         DialogUtils.hideLoading();
+        ToastUtil.showShort('模板删除失败: ${response?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
       DialogUtils.hideLoading();
@@ -2182,16 +2182,15 @@ class AiQusLogic extends GetxController {
       DialogUtils.showLoading('正在批量删除模板...');
 
       final response = await ApiService().batchDeletePromptTemplates(uuids);
-
-      DialogUtils.hideLoading();
-
       if (response != null && response['执行结果'] == true) {
-        ToastUtil.showShort('模板批量删除成功');
-        
         // 重新加载模板列表
         await loadPromptTemplates();
+        // 所有操作完成后隐藏loading并显示成功提示
+        DialogUtils.hideLoading();
+        ToastUtil.showShort('模板批量删除成功');
         
       } else {
+        DialogUtils.hideLoading();
         ToastUtil.showShort('模板批量删除失败: ${response?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
