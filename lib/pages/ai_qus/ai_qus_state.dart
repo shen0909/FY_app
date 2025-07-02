@@ -26,6 +26,9 @@ class AiQusState {
   // 当前会话ID
   String? currentConversationId;
   
+  // 当前服务端会话UUID
+  String? currentServerSessionUuid;
+  
   // 聊天历史
   final RxList<Map<String, dynamic>> chatHistory = <Map<String, dynamic>>[].obs;
   

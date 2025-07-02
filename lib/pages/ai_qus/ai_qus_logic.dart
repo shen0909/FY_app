@@ -78,6 +78,7 @@ class AiQusLogic extends GetxController {
       'isUser': true,
       'content': text,
       'timestamp': DateTime.now().toIso8601String(),
+      'isSynced': false, // 标记新用户消息需要同步
     };
     state.messages.add(userMessage);
 
@@ -102,6 +103,7 @@ class AiQusLogic extends GetxController {
       'isStreaming': true,
       'isLoading': true, // 添加loading标识
       'timestamp': DateTime.now().toIso8601String(),
+      'isSynced': false, // 标记新AI消息需要同步
     });
 
     // 滚动到底部显示AI消息占位符
@@ -128,6 +130,7 @@ class AiQusLogic extends GetxController {
           'isStreaming': true,
           'isLoading': false,
           'timestamp': DateTime.now().toIso8601String(),
+          'isSynced': false, // 保持未同步状态
         };
 
         // 开始轮询获取回复
@@ -141,6 +144,7 @@ class AiQusLogic extends GetxController {
           'isError': true,
           'isStreaming': false,
           'timestamp': DateTime.now().toIso8601String(),
+          'isSynced': true, // 错误消息不需要同步
         };
         // 错误消息也需要滚动到底部
         _scrollToBottomDelayed();
@@ -155,43 +159,121 @@ class AiQusLogic extends GetxController {
         'isError': true,
         'isStreaming': false,
         'timestamp': DateTime.now().toIso8601String(),
+        'isSynced': true, // 错误消息不需要同步
       };
       // 错误消息也需要滚动到底部
       _scrollToBottomDelayed();
     }
   }
 
-  /// 创建或更新聊天会话
+    /// 创建或更新聊天会话
   Future<void> _createOrUpdateChatSession(String userMessage) async {
     try {
-      if (state.currentConversationId == null) {
+      if (state.currentServerSessionUuid == null) {
         // 创建新的聊天会话
         String title = userMessage.length > 20
             ? userMessage.substring(0, 20) + "..."
             : userMessage;
 
-        final chatHistory = await _realmService.saveChatHistory(
-          title: title,
-          messages: state.messages,
-          chatUuid: state.currentChatUuid,
-          modelName: state.selectedModel.value,
-        );
-        state.currentConversationId = chatHistory.id;
-
+        // 先尝试在服务端创建会话
+        String? serverSessionUuid;
+        try {
+          final serverResponse = await ApiService().createChatSession(sessionName: title);
+          if (serverResponse != null && 
+              // serverResponse['执行结果'] == true &&
+              serverResponse['返回数据'] != null) {
+            serverSessionUuid = serverResponse['返回数据']['session_uuid'];
+            print('✅ 服务端会话创建成功: $serverSessionUuid');
+          }
+        } catch (e) {
+          print('⚠️ 服务端会话创建失败: $e');
+        }
+        state.currentServerSessionUuid = serverSessionUuid;
+        state.currentChatUuid = serverSessionUuid ?? state.currentChatUuid;
+        state.currentConversationId = null;
         // 刷新聊天历史列表
         await loadConversations();
-
-        print('✅ 创建新聊天会话: $title');
+        print('✅ 创建新聊天会话: $title (仅服务端)');
       } else {
-        // 更新现有聊天会话
-        await _realmService.updateChatHistory(
-          id: state.currentConversationId!,
-          messages: state.messages,
-        );
-        print('✅ 更新聊天会话: ${state.currentConversationId}');
+        // 如果有服务端会话UUID，尝试同步到服务端
+        if (state.currentServerSessionUuid != null) {
+          try {
+            await _syncChatRecordsToServer();
+          } catch (e) {
+            print('⚠️ 同步聊天记录到服务端失败: $e');
+          }
+        }
+        
+        print('✅ 更新聊天会话: 仅服务端同步');
       }
     } catch (e) {
       print('创建/更新聊天会话失败: $e');
+    }
+  }
+
+  /// 同步聊天记录到服务端
+  Future<void> _syncChatRecordsToServer() async {
+    if (state.currentServerSessionUuid == null || state.messages.isEmpty) {
+      return;
+    }
+
+    try {
+      // ✅ 改进：只同步未同步过的消息
+      final unsyncedMessages = state.messages.where((msg) => 
+        msg['isError'] != true && 
+        msg['isSystem'] != true &&
+        msg['content']?.toString().isNotEmpty == true &&
+        msg['isSynced'] != true // 添加同步标记检查
+      ).toList();
+
+      if (unsyncedMessages.isEmpty) {
+        print('🔄 没有需要同步的新消息');
+        return;
+      }
+
+      print('🚀 开始同步 ${unsyncedMessages.length} 条新消息到服务端');
+      int successCount = 0;
+
+      for (int i = 0; i < unsyncedMessages.length; i++) {
+        final message = unsyncedMessages[i];
+        try {
+          final role = message['isUser'] == true ? 'user' : 'assistant';
+          final content = message['content']?.toString() ?? '';
+          
+          if (content.isNotEmpty) {
+            final response = await ApiService().addChatRecord(
+              sessionUuid: state.currentServerSessionUuid!,
+              role: role,
+              content: content,
+              factoryName: "OpenAI",
+              model: state.selectedModel.value,
+              tokenCount: 0,
+            );
+
+            // ✅ 同步成功后标记消息
+            if (response != null && response['执行结果'] == true) {
+              // 在原messages数组中找到对应消息并标记
+              for (int j = 0; j < state.messages.length; j++) {
+                if (state.messages[j] == message) {
+                  state.messages[j]['isSynced'] = true;
+                  break;
+                }
+              }
+              successCount++;
+              print('✅ 消息 ${i+1}/${unsyncedMessages.length} 同步成功');
+            } else {
+              print('⚠️ 消息 ${i+1}/${unsyncedMessages.length} 同步失败: ${response?['返回消息'] ?? '未知错误'}');
+            }
+          }
+        } catch (e) {
+          print('❌ 同步消息 ${i+1}/${unsyncedMessages.length} 异常: $e');
+          // 继续同步其他记录，不因单条失败而中断
+        }
+      }
+      
+      print('✅ 聊天记录同步完成: $successCount/${unsyncedMessages.length} 条成功');
+    } catch (e) {
+      print('同步聊天记录到服务端失败: $e');
     }
   }
 
@@ -271,6 +353,7 @@ class AiQusLogic extends GetxController {
               'content': state.currentAiReply.value,
               'isStreaming': true,
               'timestamp': DateTime.now().toIso8601String(),
+              'isSynced': false, // 保持流式消息的未同步状态
             };
 
             // 流式回复时自动滚动到底部
@@ -396,6 +479,7 @@ class AiQusLogic extends GetxController {
         'isStreaming': false,
         'timestamp': DateTime.now().toIso8601String(),
         'aiModel': state.selectedModel.value,
+        'isSynced': false, // 标记最终AI消息需要同步
       };
 
       // 添加到对话历史
@@ -409,22 +493,29 @@ class AiQusLogic extends GetxController {
     state.resetStreamingState();
   }
 
-  /// 更新数据库中的聊天记录
+    /// 更新聊天记录中的消息
   Future<void> _updateChatHistoryInDB() async {
     try {
-      if (state.currentConversationId != null) {
-        await _realmService.updateChatHistory(
-          id: state.currentConversationId!,
-          messages: state.messages,
+      if (state.currentServerSessionUuid != null) {
+        // 检查是否有未同步的消息
+        final hasUnsyncedMessages = state.messages.any((msg) => 
+          msg['isError'] != true && 
+          msg['isSystem'] != true &&
+          msg['content']?.toString().isNotEmpty == true &&
+          msg['isSynced'] != true
         );
 
-        // 刷新聊天历史列表以更新最后消息预览
-        await loadConversations();
-
-        print('✅ 数据库聊天记录已更新');
+        if (hasUnsyncedMessages) {
+          await _syncChatRecordsToServer();
+          print('✅ 聊天记录已同步到服务端');
+        } else {
+          print('🔄 所有消息已同步，跳过本次同步');
+        }
       }
+      // 刷新聊天历史列表以更新最后消息预览
+      await loadConversations();
     } catch (e) {
-      print('更新数据库聊天记录失败: $e');
+      print('同步聊天记录失败: $e');
     }
   }
 
@@ -995,80 +1086,178 @@ class AiQusLogic extends GetxController {
     state.messages.add({
       'isUser': false,
       'content': 'Hi~ 我是您身边的智能助手，可以为您答疑解惑、精读文档、尽情创作，让科技助你轻松工作，多点生活',
+      'isSynced': true, // ✅ 标记欢迎消息为已同步（系统消息不需要同步到服务端）
     });
 
     state.currentConversationId = null;
+    state.currentServerSessionUuid = null;
     state.isLoading.value = false;
   }
 
-  // 加载所有对话
+    // 加载所有历史对话
   Future<void> loadConversations() async {
     try {
-      // 从Realm数据库加载聊天记录
-      final chatHistories = _realmService.getAllChatHistory();
-
-      // 更新状态中的聊天历史
+      // ✅ 只从服务端加载会话列表
+      List<Map<String, dynamic>> serverSessions = [];
+      try {
+        final serverResponse = await ApiService().getChatSessionList(
+          currentPage: 1,
+          pageSize: 50, // 获取较多数据
+        );
+        
+        if (serverResponse != null && 
+            serverResponse['执行结果'] == true && 
+            serverResponse['返回数据'] != null &&
+            serverResponse['返回数据']['list'] != null) {
+          
+          final List<dynamic> sessionData = serverResponse['返回数据']['list'];
+          serverSessions = sessionData.map((session) => {
+            'serverUuid': session['uuid'] ?? '',
+            'title': session['title_name'] ?? '',
+            'createdAt': session['created_at'] ?? '',
+            'updatedAt': session['updated_at'] ?? '',
+          }).toList();
+          
+          print('✅ 从服务端加载了 ${serverSessions.length} 个会话');
+        }
+      } catch (e) {
+        print('⚠️ 从服务端加载会话失败: $e');
+        state.chatHistory.clear();
+        return;
+      }
       state.chatHistory.clear();
-      for (var history in chatHistories) {
-        state.chatHistory.add({
-          'id': history.id,
-          'title': history.title,
-          'time': _formatTime(history.updatedAt),
-          'createdAt': history.createdAt.toIso8601String(),
-          'messageCount': history.messageCount,
-          'lastMessage': history.lastMessage ?? '',
-          'chatUuid': history.chatUuid,
-        });
+      for (var serverSession in serverSessions) {
+        final title = serverSession['title'] ?? '';
+        if (title.isNotEmpty) {
+          state.chatHistory.add({
+            'id': null, // 服务端会话没有本地ID
+            'title': title,
+            'time': _formatServerTime(serverSession['updatedAt']),
+            'createdAt': serverSession['createdAt'] ?? '',
+            'messageCount': 0,
+            'lastMessage': '云端会话',
+            'chatUuid': serverSession['serverUuid'],
+            'serverUuid': serverSession['serverUuid'],
+            'source': 'server',
+          });
+        }
       }
 
-      print('✅ 已从Realm加载 ${chatHistories.length} 条聊天记录');
+      // 按时间排序
+      state.chatHistory.sort((a, b) {
+        final timeA = DateTime.tryParse(a['createdAt'] ?? '') ?? DateTime.now();
+        final timeB = DateTime.tryParse(b['createdAt'] ?? '') ?? DateTime.now();
+        return timeB.compareTo(timeA);
+      });
+
+      print('✅ 会话加载完成: 服务端${serverSessions.length}个');
     } catch (e) {
-      print('从Realm加载聊天记录失败: $e');
-      // 如果Realm加载失败，保持空状态，不加载模拟数据
+      print('加载聊天记录失败: $e');
       state.chatHistory.clear();
+    }
+  }
+
+  /// 格式化服务端时间
+  String _formatServerTime(String? timeString) {
+    if (timeString == null || timeString.isEmpty) {
+      return '未知时间';
+    }
+    
+    try {
+      // 尝试解析服务端时间格式 "2025-06-25 17:01:59"
+      final DateTime dateTime = DateTime.parse(timeString.replaceAll(' ', 'T'));
+      return _formatTime(dateTime);
+    } catch (e) {
+      return timeString;
     }
   }
 
   /// 加载指定对话
   Future<void> loadConversation(String title) async {
     try {
-      // 根据title查找对应的聊天历史
-      final chatHistory = _realmService.getChatHistoryByTitle(title);
+      final cloudSessions = state.chatHistory.where(
+        (chat) => chat['title'] == title && chat['source'] == 'server'
+      );
+      final cloudSession = cloudSessions.isNotEmpty ? cloudSessions.first : null;
 
-      if (chatHistory != null) {
-        // 加载聊天历史的所有消息
-        final messages = _realmService.getChatMessages(chatHistory.id);
-
-        state.messages.clear();
-        state.messages.addAll(messages);
-
-        // 重建对话历史（用于API调用）
-        state.clearConversationHistory();
-        for (var message in messages) {
-          if (message['isUser'] == true) {
-            state.addToConversationHistory(
-                'user', message['content']?.toString() ?? '');
-          } else if (message['isError'] != true &&
-              message['isSystem'] != true) {
-            state.addToConversationHistory(
-                'assistant', message['content']?.toString() ?? '');
-          }
-        }
-
-        state.currentConversationId = chatHistory.id;
-        state.currentChatUuid = chatHistory.chatUuid;
-
-        // 加载完成后自动滚动到底部
-        _scrollToBottomDelayed(animated: true, delayMs: 200);
-
-        print('✅ 已从Realm加载聊天记录: $title');
+      if (cloudSession != null) {
+        await _loadCloudConversation(cloudSession);
       } else {
-        // 如果找不到记录，创建新对话
+        // 完全找不到记录，创建新对话
         print('未找到聊天记录: $title，创建新对话');
         createNewConversation();
       }
     } catch (e) {
-      print('从Realm加载指定聊天记录失败: $e');
+      print('加载聊天记录失败: $e');
+      createNewConversation();
+    }
+  }
+
+  /// 从云端加载会话记录
+  Future<void> _loadCloudConversation(Map<String, dynamic> cloudSession) async {
+    try {
+      final serverUuid = cloudSession['serverUuid'];
+      if (serverUuid == null || serverUuid.toString().isEmpty) {
+        createNewConversation();
+        return;
+      }
+      print('🌐 正在从云端加载会话: ${cloudSession['title']}');
+      // 从服务端获取聊天记录
+      final serverResponse = await ApiService().getChatRecords(serverUuid.toString());
+      if (serverResponse != null && 
+          serverResponse['执行结果'] == true && 
+          serverResponse['返回数据'] != null) {
+        
+        final List<dynamic> records = serverResponse['返回数据'];
+        List<Map<String, dynamic>> messages = [];
+        for (var record in records) {
+          messages.add({
+            'isUser': record['role'] == 'user',
+            'content': record['content'] ?? '',
+            'timestamp': record['created_at'] ?? DateTime.now().toIso8601String(),
+            'aiModel': record['model'] ?? 'Unknown',
+            'isSynced': true, // ✅ 标记从云端加载的消息已同步
+          });
+        }
+        
+        // 如果没有消息，添加欢迎消息
+        if (messages.isEmpty) {
+          messages.add({
+            'isUser': false,
+            'content': 'Hi~ 我是您身边的智能助手，可以为您答疑解惑、精读文档、尽情创作，让科技助你轻松工作，多点生活',
+            'isSynced': true, // ✅ 欢迎消息也标记为已同步（系统消息）
+          });
+        }
+
+        // 更新UI状态
+        state.messages.clear();
+        state.messages.addAll(messages);
+        
+        // 重建对话历史
+        state.clearConversationHistory();
+        for (var message in messages) {
+          if (message['isUser'] == true) {
+            state.addToConversationHistory('user', message['content']?.toString() ?? '');
+          } else if (message['aiModel'] != null) {
+            state.addToConversationHistory('assistant', message['content']?.toString() ?? '');
+          }
+        }
+
+        // 设置当前会话状态
+        state.currentConversationId = null; // 云端会话暂时没有本地ID
+        state.currentServerSessionUuid = serverUuid.toString();
+        state.currentChatUuid = serverUuid.toString();
+
+        // 滚动到底部
+        _scrollToBottomDelayed(animated: true, delayMs: 200);
+
+        print('✅ 云端会话加载成功: ${messages.length} 条消息');
+      } else {
+        print('⚠️ 云端会话记录加载失败，创建新对话');
+        createNewConversation();
+      }
+    } catch (e) {
+      print('加载云端会话失败: $e');
       createNewConversation();
     }
   }
@@ -1078,47 +1267,76 @@ class AiQusLogic extends GetxController {
     try {
       // 获取要删除的聊天记录
       final chatToDelete = state.chatHistory[index];
-      final sessionId = chatToDelete['id'];
+      final serverUuid = chatToDelete['serverUuid'];
 
-      if (sessionId != null) {
-        // 从Realm数据库删除聊天记录
-        final success = await _realmService.deleteChatHistory(sessionId);
-
-        if (success) {
-          // 立即更新状态中的聊天历史
-          state.chatHistory.removeAt(index);
-
-          // 如果删除的是当前对话，则创建新对话
-          if (state.currentConversationId == sessionId) {
-            createNewConversation();
+      // ✅ 只删除服务端数据
+      if (serverUuid != null && serverUuid.toString().isNotEmpty) {
+        try {
+          final serverResponse = await ApiService().deleteChatSession(serverUuid.toString());
+          if (serverResponse != null && serverResponse['执行结果'] == true) {
+            print('✅ 服务端会话删除成功: $serverUuid');
+          } else {
+            print('⚠️ 服务端会话删除失败: ${serverResponse?['返回消息'] ?? '未知错误'}');
           }
-
-          Get.snackbar("删除成功", "聊天记录已删除");
-          print('✅ 聊天记录已从Realm删除: $sessionId');
-        } else {
-          Get.snackbar("删除失败", "无法删除聊天记录");
+        } catch (e) {
+          print('⚠️ 服务端会话删除异常: $e');
         }
       }
+      // 更新UI状态
+      state.chatHistory.removeAt(index);
+
+      // 如果删除的是当前对话，则创建新对话
+      // ✅ 修复：确保类型安全的字符串比较
+      if (state.currentServerSessionUuid?.toString() == serverUuid?.toString()) {
+        createNewConversation();
+      }
+
+      ToastUtil.showShort("删除成功");
+      print('✅ 聊天记录删除完成');
     } catch (e) {
-      print('从Realm删除聊天记录失败: $e');
-      Get.snackbar("删除失败", "删除聊天记录时出现错误");
+      print('删除聊天记录失败: $e');
+      ToastUtil.showShort("删除聊天记录时出现错误");
     }
   }
 
   /// 清空所有聊天记录
   Future<void> _clearAllChatHistory() async {
     try {
-      // 从Realm数据库清空所有聊天记录
-      await _realmService.clearAllChatHistory();
+      // 显示加载状态
+      DialogUtils.showLoading('正在清空聊天记录...');
 
+      // 收集所有需要删除的服务端会话UUID
+      List<String> serverUuidsToDelete = [];
+      for (var chat in state.chatHistory) {
+        final serverUuid = chat['serverUuid'];
+        if (serverUuid != null && serverUuid.toString().isNotEmpty) {
+          serverUuidsToDelete.add(serverUuid.toString());
+        }
+      }
+
+      // ✅ 只批量删除服务端会话
+      if (serverUuidsToDelete.isNotEmpty) {
+        try {
+          final serverResponse = await ApiService().batchDeleteChatSessions(serverUuidsToDelete);
+          if (serverResponse != null && serverResponse['执行结果'] == true) {
+            print('✅ 服务端批量删除会话成功: ${serverUuidsToDelete.length}个');
+          } else {
+            print('⚠️ 服务端批量删除失败: ${serverResponse?['返回消息'] ?? '未知错误'}');
+          }
+        } catch (e) {
+          print('⚠️ 服务端批量删除异常: $e');
+        }
+      }
       // 立即更新状态中的聊天历史
       state.chatHistory.clear();
 
-      Get.snackbar("清空成功", "所有聊天记录已清空");
-      print('✅ 所有聊天记录已从Realm清空');
+      DialogUtils.hideLoading();
+      ToastUtil.showShort("清空成功");
+      print('✅ 所有聊天记录已清空完成 (仅服务端)');
     } catch (e) {
-      print('从Realm清空聊天记录失败: $e');
-      Get.snackbar("清空失败", "清空聊天记录时出现错误");
+      DialogUtils.hideLoading();
+      print('清空聊天记录失败: $e');
+      ToastUtil.showShort("清空聊天记录时出现错误");
     }
   }
 
@@ -1780,7 +1998,7 @@ class AiQusLogic extends GetxController {
     try {
       final response = await ApiService().getPromptTemplateList(
         currentPage: 1,
-        pageSize: 100, // 获取所有模板
+        pageSize: 100
       );
 
       if (response != null && 
@@ -1788,11 +2006,11 @@ class AiQusLogic extends GetxController {
           response['返回数据'] != null) {
         
         final data = response['返回数据'];
-        if (data is Map && data['data'] != null) {
+        if (data is Map && data['list'] != null) {
           // 清空当前模板
           state.promptTemplates.clear();
           // 解析服务端返回的模板数据
-          final List<dynamic> templates = data['data'];
+          final List<dynamic> templates = data['list'];
           for (var template in templates) {
             state.promptTemplates.add({
               'uuid': template['uuid'] ?? '',
