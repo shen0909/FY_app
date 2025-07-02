@@ -257,6 +257,7 @@ class AiQusLogic extends GetxController {
       if (reply != null) {
         final content = reply['content'];
         final isEmpty = reply['isEmpty'] ?? false;
+        final isComplete = reply['isComplete'] ?? false;
 
         // 处理返回内容
         bool hasNewContent = false;
@@ -275,6 +276,12 @@ class AiQusLogic extends GetxController {
             // 流式回复时自动滚动到底部
             _scrollToBottom(animated: false);
           }
+        }
+
+        if (isComplete) {
+          print('✅ AI回复完成 - 服务器返回完成状态');
+          _finishStreaming(messageIndex);
+          return;
         }
         // 判断是否完成 - 根据接口文档建议
         if (isEmpty || (content == null || content.isEmpty)) {
