@@ -24,10 +24,25 @@ class AiQusLogic extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    // 设置初始化状态
+    state.isInitializing.value = true;
     // 加载数据
-    loadConversations();
-    // 加载提示词模板
-    loadPromptTemplates();
+    _initializeData();
+  }
+
+  // 新增初始化数据的方法
+  Future<void> _initializeData() async {
+    try {
+      // 并行加载会话列表和提示词模板
+      await Future.wait([
+        loadConversations(),
+        loadPromptTemplates(),
+      ]);
+    } catch (e) {
+      print('初始化数据失败: $e');
+    } finally {
+      state.isInitializing.value = false;
+    }
   }
 
   @override
@@ -1175,6 +1190,9 @@ class AiQusLogic extends GetxController {
   /// 加载指定对话
   Future<void> loadConversation(String title) async {
     try {
+      // 设置加载状态
+      state.isLoadingHistory.value = true;
+      
       final cloudSessions = state.chatHistory.where(
         (chat) => chat['title'] == title && chat['source'] == 'server'
       );
@@ -1183,13 +1201,15 @@ class AiQusLogic extends GetxController {
       if (cloudSession != null) {
         await _loadCloudConversation(cloudSession);
       } else {
-        // 完全找不到记录，创建新对话
         print('未找到聊天记录: $title，创建新对话');
         createNewConversation();
       }
     } catch (e) {
       print('加载聊天记录失败: $e');
       createNewConversation();
+    } finally {
+      // 完成后关闭加载状态
+      state.isLoadingHistory.value = false;
     }
   }
 

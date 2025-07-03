@@ -53,7 +53,15 @@ class AiQusPage extends StatelessWidget {
               return false;
             },
             child: SizeChangedLayoutNotifier(
-              child: Stack(
+              child: Obx(() {
+                // 显示初始化加载状态
+                if (state.isInitializing.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                
+                return Stack(
                 children: [
                   Column(
                     children: [
@@ -64,7 +72,9 @@ class AiQusPage extends StatelessWidget {
                       SizedBox(height: 10.w),
                       // 聊天内容区域
                       Expanded(
-                        child: Obx(() => ListView.builder(
+                          child: Stack(
+                            children: [
+                              Obx(() => ListView.builder(
                               controller: state.scrollController,
                               padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
                               itemCount: state.messages.length,
@@ -73,6 +83,16 @@ class AiQusPage extends StatelessWidget {
                                 return _buildMessageItem(message, index);
                               },
                             )),
+                              // 显示历史消息加载状态
+                              if (state.isLoadingHistory.value)
+                                Container(
+                                  color: Colors.white.withOpacity(0.7),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                            ],
+                          ),
                       ),
                       Obx(() => state.isBatchCheck.value
                           ? const SizedBox()
@@ -107,7 +127,8 @@ class AiQusPage extends StatelessWidget {
                   // 导出弹窗
                   _buildExportDialog(),
                 ],
-              ),
+                );
+              }),
             ),
           ),
         ),

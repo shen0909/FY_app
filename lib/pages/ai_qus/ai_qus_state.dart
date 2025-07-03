@@ -107,6 +107,12 @@ class AiQusState {
   // 预设位置方案（可选）- 极致性能
   final RxInt inputLines = 1.obs; // 当前输入行数
   
+  // 是否正在加载历史消息
+  final RxBool isLoadingHistory = false.obs;
+  
+  // 是否正在初始化页面数据
+  final RxBool isInitializing = false.obs;
+  
   // 预设的按钮位置（基于行数）
   double getButtonBottomByLines(int lines) {
     switch (lines) {
