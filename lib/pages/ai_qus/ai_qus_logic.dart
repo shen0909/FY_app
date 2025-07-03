@@ -21,6 +21,9 @@ class AiQusLogic extends GetxController {
   Timer? _pollTimer;
   final RealmService _realmService = RealmService();
 
+  final TextEditingController editTitleController = TextEditingController();
+  final TextEditingController editContentController = TextEditingController();
+
   @override
   void onReady() {
     super.onReady();
@@ -52,6 +55,9 @@ class AiQusLogic extends GetxController {
     state.titleController.dispose();
     state.contentController.dispose();
     state.scrollController.dispose();
+    // 编辑模板控制器释放
+    editTitleController.dispose();
+    editContentController.dispose();
     // 确保在页面销毁前清理浮层
     _safeHideModelSelection();
     // 清理定时器
@@ -2228,8 +2234,8 @@ class AiQusLogic extends GetxController {
   /// 显示编辑模板对话框
   void _showEditTemplateDialog(BuildContext context, Map<String, dynamic> template) {
     // 预填充当前模板的数据
-    final titleController = TextEditingController(text: template['title'] ?? '');
-    final contentController = TextEditingController(text: template['content'] ?? '');
+    editTitleController.text = template['title'] ?? '';
+    editContentController.text = template['content'] ?? '';
 
     Get.dialog(
       AlertDialog(
@@ -2246,7 +2252,7 @@ class AiQusLogic extends GetxController {
                 const Text('模板标题'),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: titleController,
+                  controller: editTitleController,
                   decoration: const InputDecoration(
                     hintText: '请输入模板标题',
                     border: OutlineInputBorder(),
@@ -2258,7 +2264,7 @@ class AiQusLogic extends GetxController {
                 const Text('模板内容'),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: contentController,
+                  controller: editContentController,
                   maxLines: 8, // 设置最大行数
                   minLines: 3, // 设置最小行数
                   decoration: const InputDecoration(
@@ -2274,16 +2280,15 @@ class AiQusLogic extends GetxController {
         actions: [
           TextButton(
             onPressed: () {
-              titleController.dispose();
-              contentController.dispose();
+              clearEditTemplateData();
               Get.back();
             },
             child: const Text('取消'),
           ),
           ElevatedButton(
             onPressed: () async {
-              final title = titleController.text.trim();
-              final content = contentController.text.trim();
+              final title = editTitleController.text.trim();
+              final content = editContentController.text.trim();
               
               if (title.isEmpty || content.isEmpty) {
                 ToastUtil.showShort('标题和内容不能为空');
@@ -2300,13 +2305,19 @@ class AiQusLogic extends GetxController {
                 content,
               );
               
-              titleController.dispose();
-              contentController.dispose();
+              // 清理编辑数据
+              clearEditTemplateData();
             },
             child: const Text('保存'),
           ),
         ],
       ),
     );
+  }
+
+  // 清理编辑模板数据
+  void clearEditTemplateData() {
+    editTitleController.clear();
+    editContentController.clear();
   }
 }
