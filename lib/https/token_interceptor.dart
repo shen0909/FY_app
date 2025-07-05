@@ -73,12 +73,12 @@ class TokenInterceptor extends Interceptor {
           data['result_string'] is String) {
         try {
           Map<String, dynamic> resultData = jsonDecode(data['result_string']);
-          if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
-            isTokenExpired = true;
-            if (kDebugMode) {
-              print('$_tag 响应中检测到内层token失效，状态码: ${resultData['状态码']}');
-            }
-          }
+          // if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
+          //   isTokenExpired = true;
+          //   if (kDebugMode) {
+          //     print('$_tag 响应中检测到内层token失效，状态码: ${resultData['状态码']}');
+          //   }
+          // }
         } catch (e) {
           // 解析错误，不处理
         }
