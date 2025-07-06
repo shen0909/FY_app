@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/routers/routers.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
-import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/services/token_keep_alive_service.dart';
+import 'package:safe_app/utils/shared_prefer.dart';
+import 'package:flutter/foundation.dart';
 
 import 'home_state.dart';
 
@@ -18,6 +19,8 @@ class HomeLogic extends GetxController {
     pageController = PageController();
     // 启动自动轮播
     _startAutoPlay();
+    // 启动Token保活服务
+    _startTokenKeepAlive();
   }
 
   @override
@@ -30,8 +33,46 @@ class HomeLogic extends GetxController {
   void onClose() {
     pageController.dispose();
     _stopAutoPlay();
+    // 停止Token保活服务
+    _stopTokenKeepAlive();
     // TODO: implement onClose
     super.onClose();
+  }
+
+  /// 启动Token保活服务
+  Future<void> _startTokenKeepAlive() async {
+    try {
+      // 检查是否有内层token
+      String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+      if (token != null && token.isNotEmpty) {
+        if (kDebugMode) {
+          print('HomeLogic: 检测到有效token，启动保活服务');
+        }
+        TokenKeepAliveService().startKeepAlive();
+      } else {
+        if (kDebugMode) {
+          print('HomeLogic: 未检测到有效token，跳过保活服务启动');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('HomeLogic: 启动Token保活服务时出错: $e');
+      }
+    }
+  }
+
+  /// 停止Token保活服务
+  void _stopTokenKeepAlive() {
+    try {
+      TokenKeepAliveService().stopKeepAlive();
+      if (kDebugMode) {
+        print('HomeLogic: Token保活服务已停止');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('HomeLogic: 停止Token保活服务时出错: $e');
+      }
+    }
   }
 
   // 启动自动轮播

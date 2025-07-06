@@ -11,6 +11,8 @@ import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/services/token_keep_alive_service.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../services/update_service.dart';
 import 'setting_state.dart';
@@ -285,7 +287,22 @@ class SettingLogic extends GetxController {
               Expanded(
                 child: InkWell(
                   onTap: () {
+                    // 停止Token保活服务
+                    try {
+                      TokenKeepAliveService().stopKeepAlive();
+                      if (kDebugMode) {
+                        print('SettingLogic: Token保活服务已停止（用户退出登录）');
+                      }
+                    } catch (e) {
+                      if (kDebugMode) {
+                        print('SettingLogic: 停止Token保活服务时出错: $e');
+                      }
+                    }
+                    
+                    // 清除所有缓存数据
                     FYSharedPreferenceUtils.clearAll();
+                    
+                    // 跳转到登录页面
                     Get.offAllNamed(Routers.login);
                     Get.back();
                   },
@@ -544,6 +561,18 @@ class SettingLogic extends GetxController {
   // 退出登录
   Future<void> logout() async {
     try {
+      // 停止Token保活服务
+      try {
+        TokenKeepAliveService().stopKeepAlive();
+        if (kDebugMode) {
+          print('SettingLogic: Token保活服务已停止（logout方法）');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('SettingLogic: 停止Token保活服务时出错: $e');
+        }
+      }
+      
       // 清除本地存储的登录数据
       await FYSharedPreferenceUtils.clearLoginData();
       

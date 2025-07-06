@@ -1303,5 +1303,41 @@ class ApiService {
     
     return null;
   }
+
+  /// Token保活ping接口 - 每分钟调用一次以刷新token时效
+  Future<bool> pingTokenKeepAlive() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag Token保活失败：内层token为空');
+      }
+      return false;
+    }
+    Map<String, dynamic> paramData = {
+      "消息类型": "ping",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+    try {
+      dynamic result = await _sendChannelEvent(paramData: paramData);
+      if (result != null && result['is_success'] == true) {
+        if (kDebugMode) {
+          print('$_tag Token保活ping成功');
+        }
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('$_tag Token保活ping失败: $result');
+        }
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('$_tag Token保活ping异常: $e');
+      }
+      return false;
+    }
+  }
 }
 
