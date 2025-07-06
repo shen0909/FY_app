@@ -172,7 +172,7 @@ class AiQusPage extends StatelessWidget {
               onTap: () => logic.copyContent(content),
               child: Container(
                 margin: EdgeInsets.only(
-                    right: isUser ? 17.w : 57.w,
+                    right: isUser ? 8.w : 57.w,
                     left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
                 child: isMarkdown && !isUser
                     ? MarkdownMessageWidget(
@@ -222,7 +222,7 @@ class AiQusPage extends StatelessWidget {
             GestureDetector(
               onTap: () => logic.toggleMessageSelection(index),
               child: Container(
-                margin: EdgeInsets.only(left: 16.w, top: 8.w),
+                margin: EdgeInsets.only(right: 16.w, top: 8.w),
                 child: Image.asset(
                   state.selectedMessageIndexes.contains(index)
                       ? FYImages.check_icon
@@ -744,13 +744,13 @@ class AiQusPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(
-            '文件已保存至应用文档目录',
+          Obx(() => Text(
+            '文件已保存至: ${state.exportInfo['saveLocation'] ?? '应用文档目录'}',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),
             ),
-          ),
+          )),
           SizedBox(height: 24.h),
 
           // 文件信息卡片

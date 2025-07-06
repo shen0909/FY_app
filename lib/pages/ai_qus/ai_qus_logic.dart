@@ -13,13 +13,14 @@ import '../../https/api_service.dart';
 import '../../services/realm_service.dart';
 import '../../services/permission_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
 
 class AiQusLogic extends GetxController {
   final AiQusState state = AiQusState();
@@ -748,6 +749,8 @@ class AiQusLogic extends GetxController {
                               ),
                               onTap: () {
                                 // 加载对话
+                                state.isBatchCheck.value = false;
+                                state.selectedMessageIndexes.clear();
                                 state.messageController.clear();
                                 loadConversation(history['title']);
                                 Navigator.pop(Get.context!);
@@ -1520,13 +1523,83 @@ class AiQusLogic extends GetxController {
       final String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final String fileName = 'AI对话_$timestamp.txt';
       
-      // 保存文件 - 使用临时目录，这样在所有平台上都能工作
-      final directory = await getTemporaryDirectory();
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsString(formattedText);
-      final filePath = file.path;
+      String? filePath;
+      String saveLocation = '';
       
-      print('✅ 文件已保存至临时目录: $filePath');
+      if (Platform.isAndroid) {
+        // Android: 保存到Downloads文件夹
+        try {
+          // 尝试保存到外部存储的Downloads目录
+          Directory? downloadsDir;
+          
+          // 方法1：尝试获取外部存储的Downloads目录
+          if (await Permission.manageExternalStorage.isGranted) {
+            downloadsDir = Directory('/storage/emulated/0/Download');
+            if (!await downloadsDir.exists()) {
+              downloadsDir = Directory('/storage/emulated/0/Downloads');
+            }
+          }
+          
+          // 方法2：如果上面失败，使用应用的外部存储目录
+          if (downloadsDir == null || !await downloadsDir.exists()) {
+            final externalDir = await getExternalStorageDirectory();
+            if (externalDir != null) {
+              downloadsDir = Directory('${externalDir.path}/Downloads');
+              await downloadsDir.create(recursive: true);
+            }
+          }
+          
+          // 方法3：最后备选方案，使用应用文档目录
+          if (downloadsDir == null || !await downloadsDir.exists()) {
+            final appDocDir = await getApplicationDocumentsDirectory();
+            downloadsDir = Directory('${appDocDir.path}/导出文件');
+            await downloadsDir.create(recursive: true);
+          }
+          
+          final file = File('${downloadsDir.path}/$fileName');
+          await file.writeAsString(formattedText);
+          filePath = file.path;
+          
+          // 确定保存位置描述
+          if (filePath.contains('/storage/emulated/0/Download')) {
+            saveLocation = '设备存储/Downloads';
+          } else if (filePath.contains('/storage/emulated/0/Downloads')) {
+            saveLocation = '设备存储/Downloads';
+          } else if (filePath.contains('Android/data')) {
+            saveLocation = '应用外部存储/Downloads';
+          } else {
+            saveLocation = '应用文档目录/导出文件';
+          }
+          
+          print('✅ Android文件已保存至: $filePath');
+          
+        } catch (e) {
+          print('❌ Android保存失败: $e');
+          // 备选方案：保存到应用文档目录
+          final appDocDir = await getApplicationDocumentsDirectory();
+          final exportDir = Directory('${appDocDir.path}/导出文件');
+          await exportDir.create(recursive: true);
+          final file = File('${exportDir.path}/$fileName');
+          await file.writeAsString(formattedText);
+          filePath = file.path;
+          saveLocation = '应用文档目录/导出文件';
+          print('✅ 备选方案保存成功: $filePath');
+        }
+      } else {
+        // iOS或其他平台：使用文档目录
+        final directory = await getApplicationDocumentsDirectory();
+        final exportDir = Directory('${directory.path}/导出文件');
+        await exportDir.create(recursive: true);
+        final file = File('${exportDir.path}/$fileName');
+        await file.writeAsString(formattedText);
+        filePath = file.path;
+        saveLocation = '应用文档目录/导出文件';
+        print('✅ 文件已保存至: $filePath');
+      }
+      
+      if (filePath == null) {
+        throw Exception('文件保存失败');
+      }
       
       // 设置导出信息
       state.exportInfo.value = {
@@ -1536,9 +1609,14 @@ class AiQusLogic extends GetxController {
         'size': await _getFileSize(filePath),
         'description': '包含${selectedMessages.length}条对话内容，已按时间顺序整理。',
         'filePath': filePath,
+        'saveLocation': saveLocation,
       };
       
       state.exportStatus.value = ExportStatus.success;
+      
+      // 显示成功提示
+      ToastUtil.showShort("文件已保存至: $saveLocation");
+      
     } catch (e) {
       print('导出消息异常: $e');
       state.exportStatus.value = ExportStatus.failed;
@@ -2102,7 +2180,11 @@ class AiQusLogic extends GetxController {
       ToastUtil.showShort("无法预览导出内容");
       return;
     }
-    
+    _openFileWithSystemApp();
+  }
+  
+  /// 应用内预览
+  void _showInAppPreview() {
     try {
       // 读取文件内容并显示预览
       final file = File(state.exportInfo['filePath']);
@@ -2111,7 +2193,7 @@ class AiQusLogic extends GetxController {
           Dialog(
             child: Container(
               width: double.maxFinite,
-              height: Get.height * 0.7,
+              height: Get.height * 0.8,
               padding: EdgeInsets.all(16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2120,37 +2202,107 @@ class AiQusLogic extends GetxController {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '预览导出内容',
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '预览导出内容',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              '文件位置: ${state.exportInfo['saveLocation'] ?? ''}',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => Get.back(),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // 用系统应用打开按钮
+                          IconButton(
+                            icon: Icon(Icons.open_in_new),
+                            onPressed: () {
+                              Get.back();
+                              _openFileWithSystemApp();
+                            },
+                            tooltip: '用系统应用打开',
+                          ),
+                          // 关闭按钮
+                          IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () => Get.back(),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                   Divider(),
                   // 内容预览
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Text(
-                        content,
-                        style: TextStyle(fontSize: 14.sp),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          content,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            height: 1.5,
+                            fontFamily: 'monospace', // 使用等宽字体
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  // 底部按钮
+                  // 底部操作按钮
                   SizedBox(height: 16.w),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      TextButton(
-                        onPressed: () => Get.back(),
-                        child: Text('关闭'),
+                      // 复制内容按钮
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: content));
+                            ToastUtil.showShort("内容已复制到剪贴板");
+                          },
+                          icon: Icon(Icons.copy, size: 16.sp),
+                          label: Text('复制内容'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey.shade100,
+                            foregroundColor: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      // 分享文件按钮
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Get.back();
+                            downloadExport();
+                          },
+                          icon: Icon(Icons.share, size: 16.sp),
+                          label: Text('分享文件'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -2160,11 +2312,188 @@ class AiQusLogic extends GetxController {
           ),
         );
       }).catchError((error) {
-        ToastUtil.showShort("读取文件内容失败");
+        ToastUtil.showShort("读取文件内容失败: $error");
       });
     } catch (e) {
-      ToastUtil.showShort("预览文件时出错");
+      ToastUtil.showShort("预览文件时出错: $e");
     }
+  }
+  
+  /// 用系统应用打开文件
+  void _openFileWithSystemApp() async {
+    try {
+      final filePath = state.exportInfo['filePath'];
+      if (filePath == null || filePath.isEmpty) {
+        ToastUtil.showShort("文件路径无效");
+        return;
+      }
+      
+      final file = File(filePath);
+      if (!await file.exists()) {
+        ToastUtil.showShort("文件不存在");
+        return;
+      }
+      
+      if (Platform.isAndroid) {
+        // Android: 优先使用open_file插件直接打开文件
+        try {
+          final result = await OpenFile.open(filePath);
+          
+          switch (result.type) {
+            case ResultType.done:
+              ToastUtil.showShort("文件已打开");
+              break;
+            case ResultType.noAppToOpen:
+              ToastUtil.showShort("没有找到可以打开此文件的应用");
+              _showFileLocationInfo(filePath);
+              break;
+            case ResultType.fileNotFound:
+              ToastUtil.showShort("文件不存在");
+              break;
+            case ResultType.permissionDenied:
+              ToastUtil.showShort("权限被拒绝");
+              _showFileLocationInfo(filePath);
+              break;
+            case ResultType.error:
+            default:
+              // 如果open_file失败，尝试使用分享功能
+              print('open_file失败，尝试分享功能: ${result.message}');
+              await _shareFileAsBackup(filePath);
+              break;
+          }
+        } catch (e) {
+          print('open_file异常: $e');
+          // 备选方案：使用分享功能
+          await _shareFileAsBackup(filePath);
+        }
+      } else {
+        // 其他平台的处理
+        ToastUtil.showShort("当前平台暂不支持直接打开文件");
+        _showFileLocationInfo(filePath);
+      }
+    } catch (e) {
+      print('打开文件异常: $e');
+      ToastUtil.showShort("打开文件失败: $e");
+      // 显示文件位置信息作为备选方案
+      final filePath = state.exportInfo['filePath'];
+      if (filePath != null) {
+        _showFileLocationInfo(filePath);
+      }
+    }
+  }
+  
+  /// 备选方案：使用分享功能
+  Future<void> _shareFileAsBackup(String filePath) async {
+    try {
+      final result = await Share.shareXFiles(
+        [XFile(filePath)],
+        text: '查看AI对话记录',
+        subject: state.exportInfo['title'] ?? 'AI对话记录',
+      );
+      
+      if (result.status == ShareResultStatus.success) {
+        ToastUtil.showShort("已调用系统应用");
+      } else if (result.status == ShareResultStatus.dismissed) {
+        // 用户取消了，显示文件位置信息
+        _showFileLocationInfo(filePath);
+      }
+    } catch (e) {
+      print('分享功能异常: $e');
+      _showFileLocationInfo(filePath);
+    }
+  }
+  
+  /// 显示文件位置信息
+  void _showFileLocationInfo(String filePath) {
+    Get.dialog(
+      AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.folder_open, color: Colors.blue),
+            SizedBox(width: 8.w),
+            Text('文件位置'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('文件已保存至以下位置：'),
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '保存位置:',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    state.exportInfo['saveLocation'] ?? '',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    '完整路径:',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  SelectableText(
+                    filePath,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontFamily: 'monospace',
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              '💡 提示：您可以使用文件管理器找到此文件',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Colors.blue.shade600,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: filePath));
+              ToastUtil.showShort("文件路径已复制到剪贴板");
+            },
+            child: Text('复制路径'),
+          ),
+          ElevatedButton(
+            onPressed: () => Get.back(),
+            child: Text('确定'),
+          ),
+        ],
+      ),
+    );
   }
 
   // 下载/分享导出文件
