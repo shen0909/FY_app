@@ -1976,35 +1976,42 @@ class AiQusLogic extends GetxController {
                                   ),
                                 ),
                                 // 编辑按钮
-                                GestureDetector(
-                                  onTap: () {
-                                    _showEditTemplateDialog(context, template);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.w),
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: 16.w,
-                                      color: const Color(0xFF666666),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 8.w),
-                                // 删除按钮
-                                GestureDetector(
-                                  onTap: () {
-                                    deletePromptTemplate(
-                                      template['uuid'] ?? '',
-                                      template['title'] ?? '',
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.w),
-                                    child: Icon(
-                                      Icons.delete,
-                                      size: 16.w,
-                                      color: Colors.red,
-                                    ),
+                                Visibility(
+                                  visible: template['isDefault'],
+                                  child: Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          _showEditTemplateDialog(context, template);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4.w),
+                                          child: Icon(
+                                            Icons.edit,
+                                            size: 16.w,
+                                            color: const Color(0xFF666666),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      // 删除按钮
+                                      GestureDetector(
+                                        onTap: () {
+                                          deletePromptTemplate(
+                                            template['uuid'] ?? '',
+                                            template['title'] ?? '',
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4.w),
+                                          child: Icon(
+                                            Icons.delete,
+                                            size: 16.w,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
