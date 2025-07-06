@@ -143,18 +143,23 @@ class LoginLogic extends GetxController {
   /// 注意：loading状态由调用方管理，这个方法只执行登录逻辑
   Future<void> _performServerLogin() async {
     try {
-      // 获取用户界面上的用户UID，如果没有则使用默认值
-      String username = state.userUid.value.isNotEmpty ? state.userUid.value : '用户';
-      String password = 'defaultPassword'; // 这里可以根据需要调整
+      Map<String, String>? credentials = await FYSharedPreferenceUtils.getUserCredentials();
+      
+      if (credentials == null) {
+        ToastUtil.showError('请先使用账号密码登录一次');
+        state.loginMethod.value = 0;
+        return;
+      }
+      String username = credentials['username']!;
+      String password = credentials['password']!;
       
       if (kDebugMode) {
-        print('生物认证成功，开始执行服务器登录，用户UID: $username');
+        print('生物认证成功，使用存储的凭据进行服务器登录，用户: $username');
       }
       
-      // 执行两层登录流程 (内部会使用固定参数连接服务器)
       var result = await ApiService().login(
-        username: username,  // 传入用户界面的用户名，用于显示
-        password: password,  // 传入密码（实际服务器验证使用固定参数）
+        username: username,
+        password: password,
       );
       
       if (result['code'] == 10010) {
@@ -179,8 +184,10 @@ class LoginLogic extends GetxController {
         
         Get.offAllNamed(Routers.home);
       } else {
-        // 登录失败
-        ToastUtil.showError(result['msg'] ?? '登录失败');
+        // 登录失败，可能是凭据已过期
+        ToastUtil.showError(result['msg'] ?? '登录失败，请重新使用账号密码登录');
+        // 清除可能已过期的凭据
+        await FYSharedPreferenceUtils.clearUserCredentials();
         // 登录失败时切换到密码登录
         state.loginMethod.value = 0;
       }
@@ -255,6 +262,10 @@ class LoginLogic extends GetxController {
       print("登录排查:${loginData?.token}");
       if (loginData != null) {
         await FYSharedPreferenceUtils.saveLoginData(loginData);
+        
+        // 🔑 新增：登录成功后安全存储用户凭据供生物识别登录使用
+        await FYSharedPreferenceUtils.saveUserCredentials(account, password);
+        
         state.isLogging.value = false;
 
         bool isFirstLogin = await FYSharedPreferenceUtils.isFirstLogin();

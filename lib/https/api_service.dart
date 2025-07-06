@@ -221,10 +221,9 @@ class ApiService {
       print('$_tag 开始执行两层登录流程');
     }
 
-    // 第一层：外层登录 - 使用接口文档固定参数
     OuterLoginResponse? outerResponse = await outerLogin(
-      username: 'test4',  // 接口文档固定参数
-      password: 'test4',  // 接口文档固定参数
+      username: 'test4',
+      password: 'test4',
     );
 
     if (outerResponse == null || !outerResponse.isSuccess) {
@@ -243,8 +242,8 @@ class ApiService {
 
     // 第二层：应用内登录 - 使用接口文档固定参数
     InnerLoginResponse? innerResponse = await innerLogin(
-      username: 'user0611',    // 接口文档固定参数
-      password: 'fNj12CT1TA',  // 接口文档固定参数
+      username: username,
+      password: password,
     );
 
     if (innerResponse == null || !innerResponse.success || innerResponse.statusCode != 10010) {

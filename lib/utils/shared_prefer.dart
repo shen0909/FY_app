@@ -58,6 +58,9 @@ class FYSharedPreferenceUtils {
   static const String OUTER_ACCESS_TOKEN_KEY = 'outer_access_token';
   static const String OUTER_REFRESH_TOKEN_KEY = 'outer_refresh_token';
   static const String INNER_ACCESS_TOKEN_KEY = 'inner_access_token';
+  // 新增：用户凭据安全存储相关的key
+  static const String STORED_USERNAME_KEY = 'stored_username';
+  static const String STORED_PASSWORD_KEY = 'stored_password_encoded';
 
   // 初始化sp
   static Future initSP() async {
@@ -186,7 +189,9 @@ class FYSharedPreferenceUtils {
     await remove(USER_DATA_KEY);
     await remove(OUTER_ACCESS_TOKEN_KEY);
     await remove(OUTER_REFRESH_TOKEN_KEY);
-    return remove(INNER_ACCESS_TOKEN_KEY);
+    await remove(INNER_ACCESS_TOKEN_KEY);
+    // 🔑 新增：同时清除存储的用户凭据
+    return clearUserCredentials();
   }
 
   // 清除所有数据
@@ -262,5 +267,52 @@ class FYSharedPreferenceUtils {
   // 设置非首次登录
   static Future<bool> setNotFirstLogin() async {
     return setBool(IS_FIRST_LOGIN, false);
+  }
+
+  /// 安全存储用户登录凭据（用于生物识别登录）
+  /// [username] 用户名
+  /// [password] 密码（将被编码存储）
+  static Future<bool> saveUserCredentials(String username, String password) async {
+    // 使用Base64编码密码以提供基本保护
+    String encodedPassword = base64Encode(utf8.encode(password));
+    
+    await setString(STORED_USERNAME_KEY, username);
+    return setString(STORED_PASSWORD_KEY, encodedPassword);
+  }
+
+  /// 获取已存储的用户凭据
+  /// 返回Map包含username和password，如果没有存储则返回null
+  static Future<Map<String, String>?> getUserCredentials() async {
+    String? username = getString(STORED_USERNAME_KEY);
+    String? encodedPassword = getString(STORED_PASSWORD_KEY);
+    
+    if (username.isEmpty || encodedPassword.isEmpty) {
+      return null;
+    }
+    
+    try {
+      // 解码密码
+      String password = utf8.decode(base64Decode(encodedPassword));
+      return {
+        'username': username,
+        'password': password,
+      };
+    } catch (e) {
+      print('解码用户凭据失败: $e');
+      return null;
+    }
+  }
+
+  /// 清除存储的用户凭据
+  static Future<bool> clearUserCredentials() async {
+    await remove(STORED_USERNAME_KEY);
+    return remove(STORED_PASSWORD_KEY);
+  }
+
+  /// 检查是否已存储用户凭据
+  static Future<bool> hasUserCredentials() async {
+    String? username = getString(STORED_USERNAME_KEY);
+    String? encodedPassword = getString(STORED_PASSWORD_KEY);
+    return username.isNotEmpty && encodedPassword.isNotEmpty;
   }
 }
