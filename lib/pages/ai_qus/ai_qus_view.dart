@@ -217,7 +217,22 @@ class AiQusPage extends StatelessWidget {
                       ),
               ),
             ),
-          )
+          ),
+          if (state.isBatchCheck.value && isUser) // 只为AI消息添加选择框
+            GestureDetector(
+              onTap: () => logic.toggleMessageSelection(index),
+              child: Container(
+                margin: EdgeInsets.only(left: 16.w, top: 8.w),
+                child: Image.asset(
+                  state.selectedMessageIndexes.contains(index)
+                      ? FYImages.check_icon
+                      : FYImages.uncheck_icon,
+                  width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
         ],
       ),
     ));
@@ -317,7 +332,7 @@ class AiQusPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.w),
                       ),
                       child: Text(
-                        "导出为文本",
+                        "导出文本",
                         style: TextStyle(
                           fontSize: 16.sp,
                           color: state.selectedMessageIndexes.isNotEmpty
@@ -730,88 +745,88 @@ class AiQusPage extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            '文件名:AI问答导出_2025-05-23T02-40-25.txt',
+            '文件已保存至应用文档目录',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),
             ),
           ),
-          SizedBox(height: 37.h),
-          //
-          // // 文件信息卡片
-          // Container(
-          //   padding: EdgeInsets.all(12.w),
-          //   decoration: BoxDecoration(
-          //     color: Color(0xFFF9F9F9),
-          //     borderRadius: BorderRadius.circular(8.r),
-          //     border: Border.all(
-          //       color: Colors.grey.withOpacity(0.1),
-          //       width: 1.w,
-          //     ),
-          //   ),
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       Text(
-          //         state.exportInfo.value['title'] ?? '',
-          //         style: TextStyle(
-          //           fontSize: 14.sp,
-          //           fontWeight: FontWeight.w500,
-          //           color: Color(0xFF1A1A1A),
-          //         ),
-          //       ),
-          //       SizedBox(height: 8.h),
-          //       Row(
-          //         children: [
-          //           Icon(
-          //             Icons.calendar_today,
-          //             size: 14.sp,
-          //             color: Color(0xFF666666),
-          //           ),
-          //           SizedBox(width: 4.w),
-          //           Text(
-          //             state.exportInfo.value['date'] ?? '',
-          //             style: TextStyle(
-          //               fontSize: 12.sp,
-          //               color: Color(0xFFA6A6A6),
-          //             ),
-          //           ),
-          //           SizedBox(width: 10.w),
-          //           Icon(
-          //             Icons.description,
-          //             size: 14.sp,
-          //             color: Color(0xFF666666),
-          //           ),
-          //           SizedBox(width: 4.w),
-          //           Text(
-          //             state.exportInfo.value['fileType'] ?? '',
-          //             style: TextStyle(
-          //               fontSize: 12.sp,
-          //               color: Color(0xFFA6A6A6),
-          //             ),
-          //           ),
-          //           Spacer(),
-          //           Text(
-          //             state.exportInfo.value['size'] ?? '',
-          //             style: TextStyle(
-          //               fontSize: 12.sp,
-          //               color: Color(0xFFA6A6A6),
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //       SizedBox(height: 8.h),
-          //       Text(
-          //         state.exportInfo.value['description'] ?? '',
-          //         style: TextStyle(
-          //           fontSize: 14.sp,
-          //           color: Color(0xFF666666),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(height: 20.h),
+          SizedBox(height: 24.h),
+
+          // 文件信息卡片
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: Color(0xFFF9F9F9),
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.1),
+                width: 1.w,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  state.exportInfo.value['title'] ?? '导出文件',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 14.sp,
+                      color: Color(0xFF666666),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      state.exportInfo.value['date'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Icon(
+                      Icons.description,
+                      size: 14.sp,
+                      color: Color(0xFF666666),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      state.exportInfo.value['fileType'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      state.exportInfo.value['size'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  state.exportInfo.value['description'] ?? '',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Color(0xFF666666),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20.h),
           
           // 操作按钮
           Row(
@@ -856,7 +871,7 @@ class AiQusPage extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      '下载文件',
+                      '分享/保存',
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Color(0xFF1A1A1A),

@@ -11,10 +11,15 @@ import 'dart:async';
 import 'ai_qus_state.dart';
 import '../../https/api_service.dart';
 import '../../services/realm_service.dart';
+import '../../services/permission_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:intl/intl.dart';
 
 class AiQusLogic extends GetxController {
   final AiQusState state = AiQusState();
@@ -1459,26 +1464,146 @@ class AiQusLogic extends GetxController {
   }
 
   /// 导出选中的消息
-  exportSelectedMessages() {
-    state.isExporting.value = true;
-    state.exportStatus.value = ExportStatus.generating;
+  exportSelectedMessages() async {
+    try {
+      // 获取选中的消息
+      List<Map<String, dynamic>> selectedMessages = [];
+      for (int index in state.selectedMessageIndexes) {
+        if (index < state.messages.length) {
+          selectedMessages.add(state.messages[index]);
+        }
+      }
 
-    // 模拟导出过程
-    Future.delayed(const Duration(seconds: 2), () {
+      if (selectedMessages.isEmpty) {
+        ToastUtil.showShort("没有选中任何消息");
+        return;
+      }
+      
+      // 先检查权限
+      final hasPermission = await PermissionService.requestStoragePermission(Get.context);
+      if (!hasPermission) {
+        // 权限被拒绝，显示对话框让用户选择重试或取消
+        if (Get.context != null) {
+          final bool? retry = await showDialog<bool>(
+            context: Get.context!,
+            builder: (context) => AlertDialog(
+              title: const Text('需要存储权限'),
+              content: const Text('导出文件需要存储权限，请授予权限后重试'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('取消'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('重试'),
+                ),
+              ],
+            ),
+          );
+          
+          if (retry == true) {
+            // 用户选择重试，再次尝试导出
+            exportSelectedMessages();
+          }
+        }
+        return;
+      }
+      
+      state.isExporting.value = true;
+      state.exportStatus.value = ExportStatus.generating;
+
+      // 格式化消息为文本
+      final String formattedText = _formatMessagesToText(selectedMessages);
+      
+      // 生成文件名
+      final String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final String fileName = 'AI对话_$timestamp.txt';
+      
+      // 保存文件 - 使用临时目录，这样在所有平台上都能工作
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}/$fileName');
+      await file.writeAsString(formattedText);
+      final filePath = file.path;
+      
+      print('✅ 文件已保存至临时目录: $filePath');
+      
       // 设置导出信息
-      // state.exportInfo.value = {
-      //   'title': '对话内容导出文件',
-      //   'date': DateTime.now().toString().substring(0, 16),
-      //   'fileType': 'TXT文件',
-      //   'size': '1.2MB',
-      //   'description': '包含${state.selectedMessageIndexes.length}条对话内容，已按时间顺序整理。',
-      // };
-
+      state.exportInfo.value = {
+        'title': fileName,
+        'date': DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
+        'fileType': 'TXT文件',
+        'size': await _getFileSize(filePath),
+        'description': '包含${selectedMessages.length}条对话内容，已按时间顺序整理。',
+        'filePath': filePath,
+      };
+      
       state.exportStatus.value = ExportStatus.success;
-    });
+    } catch (e) {
+      print('导出消息异常: $e');
+      state.exportStatus.value = ExportStatus.failed;
+      ToastUtil.showShort("导出过程中出现错误: ${e.toString().substring(0, math.min(50, e.toString().length))}");
+      Future.delayed(Duration(seconds: 2), () {
+        state.isExporting.value = false;
+      });
+    }
   }
 
-  /// 取消批量选择
+  /// 格式化消息为文本
+  String _formatMessagesToText(List<Map<String, dynamic>> messages) {
+    StringBuffer buffer = StringBuffer();
+    
+    // 添加标题
+    buffer.writeln('========== AI对话记录 ==========');
+    buffer.writeln('导出时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}');
+    buffer.writeln('=============================\n');
+    
+    // 按时间顺序添加消息
+    for (var message in messages) {
+      final bool isUser = message['isUser'] == true;
+      final String role = isUser ? '用户' : 'AI助手';
+      final String content = message['content']?.toString() ?? '';
+      final String timestamp = message['timestamp'] != null 
+          ? _formatTimestamp(message['timestamp'])
+          : '';
+          
+      buffer.writeln('[$role] $timestamp');
+      buffer.writeln(content);
+      buffer.writeln('\n----------------------------\n');
+    }
+    
+    return buffer.toString();
+  }
+  
+  /// 格式化时间戳
+  String _formatTimestamp(String timestamp) {
+    try {
+      final dateTime = DateTime.parse(timestamp);
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+    } catch (e) {
+      return '';
+    }
+  }
+  
+  /// 获取文件大小
+  Future<String> _getFileSize(String filePath) async {
+    try {
+      final file = File(filePath);
+      final bytes = await file.length();
+      
+      if (bytes < 1024) {
+        return '$bytes B';
+      } else if (bytes < 1024 * 1024) {
+        return '${(bytes / 1024).toStringAsFixed(2)} KB';
+      } else {
+        return '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
+      }
+    } catch (e) {
+      return '未知大小';
+    }
+  }
+
+  // 取消批量选择
   cancelBatchSelection() {
     state.isBatchCheck.value = false;
     state.selectedMessageIndexes.clear();
@@ -1972,15 +2097,121 @@ class AiQusLogic extends GetxController {
 
   // 预览导出内容
   void previewExport() {
-    // TODO: 实现预览功能
-    Get.snackbar('提示', '预览功能开发中');
+    // 如果没有导出信息或文件路径，则返回
+    if (state.exportInfo.isEmpty || state.exportInfo['filePath'] == null) {
+      ToastUtil.showShort("无法预览导出内容");
+      return;
+    }
+    
+    try {
+      // 读取文件内容并显示预览
+      final file = File(state.exportInfo['filePath']);
+      file.readAsString().then((content) {
+        Get.dialog(
+          Dialog(
+            child: Container(
+              width: double.maxFinite,
+              height: Get.height * 0.7,
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 标题栏
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '预览导出内容',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Get.back(),
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  // 内容预览
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        content,
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                    ),
+                  ),
+                  // 底部按钮
+                  SizedBox(height: 16.w),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Get.back(),
+                        child: Text('关闭'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).catchError((error) {
+        ToastUtil.showShort("读取文件内容失败");
+      });
+    } catch (e) {
+      ToastUtil.showShort("预览文件时出错");
+    }
   }
 
-  // 下载导出文件
-  void downloadExport() {
-    // TODO: 实现下载功能
-    Get.snackbar('提示', '文件已开始下载');
-    closeExportDialog();
+  // 下载/分享导出文件
+  void downloadExport() async {
+    // 如果没有导出信息或文件路径，则返回
+    if (state.exportInfo.isEmpty || state.exportInfo['filePath'] == null) {
+      ToastUtil.showShort("无法分享导出内容");
+      return;
+    }
+    
+    try {
+      final filePath = state.exportInfo['filePath'];
+      final file = File(filePath);
+      
+      if (await file.exists()) {
+        // 确保文件可以被访问
+        final bytes = await file.readAsBytes();
+        if (bytes.isEmpty) {
+          ToastUtil.showShort("文件内容为空，无法分享");
+          return;
+        }
+        
+        // 使用分享功能让用户选择保存位置或分享
+        final result = await Share.shareXFiles(
+          [XFile(filePath)],
+          text: '导出的AI对话记录',
+          subject: '${state.exportInfo['title'] ?? "AI对话记录"}',
+        );
+        
+        if (result.status == ShareResultStatus.success) {
+          ToastUtil.showShort("文件已成功分享");
+        } else if (result.status == ShareResultStatus.dismissed) {
+          ToastUtil.showShort("分享已取消");
+        }
+        
+        closeExportDialog();
+      } else {
+        // 如果文件不存在，尝试重新导出
+        ToastUtil.showShort("文件不存在，请重新导出");
+        closeExportDialog();
+      }
+    } catch (e) {
+      print('分享文件异常: $e');
+      ToastUtil.showShort("分享文件时出错，请重试");
+      // 显示更详细的错误信息，帮助调试
+      print('详细错误: $e');
+    }
   }
 
   // 复制消息内容

@@ -8,6 +8,7 @@ import 'dart:async';
 enum ExportStatus {
   generating,
   success,
+  failed,
 }
 
 class AiQusState {
