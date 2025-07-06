@@ -28,18 +28,18 @@ class _RiskPageState extends State<RiskPage> {
       onPopInvoked: (didPop) => logic.canPopFunction(didPop),
       child: Scaffold(
         backgroundColor: FYColors.whiteColor,
-        appBar: FYAppBar(
-          title: '风险预警',
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLocationSection(),
-            _buildUnitTypeSelector(),
-            _buildRiskStatCards(),
-            SizedBox(height: 14.w),
-            _buildRiskList(),
-          ],
+        appBar: FYAppBar(title: '风险预警'),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLocationSection(),
+              _buildUnitTypeSelector(),
+              _buildRiskStatCards(),
+              SizedBox(height: 14.w),
+              _buildRiskList(),
+            ],
+          ),
         ),
       ),
     );
@@ -334,23 +334,23 @@ class _RiskPageState extends State<RiskPage> {
 
   // 风险单位列表
   Widget _buildRiskList() {
-    return Expanded(
-      child: Obx(() {
-        final currentList = state.currentRiskList;
-        return state.currentRiskList.isEmpty
-            ? FYWidget.buildEmptyContent()
-            : ListView.builder(
-                itemCount: currentList.length,
-                itemBuilder: (context, index) {
-                  return state.chooseUint.value == 0
-                      ? _buildRiskItem1(currentList[index]) // 一类单位
-                      : state.chooseUint.value == 1
-                          ? _buildRiskItem2(currentList[index])
-                          : _buildRiskItem3(currentList[index]);
-                },
-              );
-      }),
-    );
+    return Obx(() {
+      final currentList = state.currentRiskList;
+      return state.currentRiskList.isEmpty
+          ? FYWidget.buildEmptyContent()
+          : ListView.builder(
+              itemCount: currentList.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return state.chooseUint.value == 0
+                    ? _buildRiskItem1(currentList[index]) // 一类单位
+                    : state.chooseUint.value == 1
+                        ? _buildRiskItem2(currentList[index])
+                        : _buildRiskItem3(currentList[index]);
+              },
+            );
+    });
   }
 
   // 一类单位风险项
