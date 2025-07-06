@@ -475,7 +475,7 @@ class AiQusPage extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       Obx(() => Text(
-                        "${state.selectedModel.value} +",
+                        "FY+AI(${state.selectedModel.value.substring(0, 1)})",
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_1A1A1A,
