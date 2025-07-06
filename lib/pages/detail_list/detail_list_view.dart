@@ -589,42 +589,42 @@ class DetailListPage extends StatelessWidget {
                   color: Color(0xFF1A1A1A),
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  // 添加位置选择功能
-                },
-                child: Container(
-                  padding:
-                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF9F9F9),
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16.sp,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        "广东省",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 12.sp,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     // 添加位置选择功能
+              //   },
+              //   child: Container(
+              //     padding:
+              //     EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              //     decoration: BoxDecoration(
+              //       color: Color(0xFFF9F9F9),
+              //       borderRadius: BorderRadius.circular(16.r),
+              //     ),
+              //     child: Row(
+              //       children: [
+              //         Icon(
+              //           Icons.location_on_outlined,
+              //           size: 16.sp,
+              //           color: Color(0xFF1A1A1A),
+              //         ),
+              //         SizedBox(width: 4.w),
+              //         Text(
+              //           "广东省",
+              //           style: TextStyle(
+              //             fontSize: 14.sp,
+              //             color: Color(0xFF1A1A1A),
+              //           ),
+              //         ),
+              //         SizedBox(width: 4.w),
+              //         Icon(
+              //           Icons.arrow_forward_ios,
+              //           size: 12.sp,
+              //           color: Color(0xFF1A1A1A),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
 
