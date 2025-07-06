@@ -26,6 +26,8 @@ class DetailListLogic extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    // 初始化数据
+    loadData();
     // 初始化滚动控制器
     yearlyStatsController = ScrollController();
     leftVerticalController = ScrollController();
@@ -61,13 +63,13 @@ class DetailListLogic extends GetxController {
       // _checkIfNeedLoadMore();
     });
   }
-
-  @override
-  void onReady() {
-    // 初始化数据
-    loadData();
-    super.onReady();
-  }
+  //
+  // @override
+  // void onReady() {
+  //   // 初始化数据
+  //   loadData();
+  //   super.onReady();
+  // }
 
   @override
   void onClose() {

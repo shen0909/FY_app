@@ -249,8 +249,7 @@ class DetailListPage extends StatelessWidget {
           ),
         ),
         child: Obx(() {
-          // 加载状态
-          if (state.isLoading.value && state.sanctionList.isEmpty) {
+          if (state.isLoading.value || state.isRefreshing.value) {
             return Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
@@ -259,7 +258,7 @@ class DetailListPage extends StatelessWidget {
           }
 
           // 数据为空时显示暂无数据
-          if (state.sanctionList.isEmpty && !state.isLoading.value) {
+          if (state.sanctionList.isEmpty && !state.isLoading.value && !state.isRefreshing.value) {
             return FYWidget.buildEmptyContent();
           }
 
