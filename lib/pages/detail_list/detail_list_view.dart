@@ -588,42 +588,6 @@ class DetailListPage extends StatelessWidget {
                   color: Color(0xFF1A1A1A),
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () {
-              //     // 添加位置选择功能
-              //   },
-              //   child: Container(
-              //     padding:
-              //     EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              //     decoration: BoxDecoration(
-              //       color: Color(0xFFF9F9F9),
-              //       borderRadius: BorderRadius.circular(16.r),
-              //     ),
-              //     child: Row(
-              //       children: [
-              //         Icon(
-              //           Icons.location_on_outlined,
-              //           size: 16.sp,
-              //           color: Color(0xFF1A1A1A),
-              //         ),
-              //         SizedBox(width: 4.w),
-              //         Text(
-              //           "广东省",
-              //           style: TextStyle(
-              //             fontSize: 14.sp,
-              //             color: Color(0xFF1A1A1A),
-              //           ),
-              //         ),
-              //         SizedBox(width: 4.w),
-              //         Icon(
-              //           Icons.arrow_forward_ios,
-              //           size: 12.sp,
-              //           color: Color(0xFF1A1A1A),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
             ],
           ),
 
@@ -644,13 +608,25 @@ class DetailListPage extends StatelessWidget {
               if (state.yearlyStats.isEmpty) {
                 return Center(child: Text("暂无数据"));
               }
+              
+              // 计算Y轴最大值，使用固定逻辑
+              double maxValue = 0;
+              for (var stat in state.yearlyStats) {
+                if (stat.newCount > maxValue) {
+                  maxValue = stat.newCount.toDouble();
+                }
+              }
+              // 向上取整到最接近的50的倍数，确保图表美观
+              double yMaxValue = ((maxValue / 50).ceil() * 50).toDouble();
+              if (yMaxValue == 0) yMaxValue = 250; // 最小值保证
+              
               return LineChart(
                 LineChartData(
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    horizontalInterval: 30.w,
-                    // horizontalInterval: 38,
+                    // 使用固定间距，避免响应式单位造成的平板适配问题
+                    horizontalInterval: yMaxValue / 5, // 固定显示5条水平网格线
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
                         color: Color(0xFFEEEEEE),
@@ -663,7 +639,8 @@ class DetailListPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 30.h,
+                        reservedSize: 35.h,
+                        interval: 1, // 固定间隔，确保每个年份都显示
                         getTitlesWidget: (value, meta) {
                           // 年份标签
                           if (value.toInt() >= 0 &&
@@ -675,10 +652,10 @@ class DetailListPage extends StatelessWidget {
                                 angle: -0.785398, // 45度角
                                 child: Text(
                                   year,
-                                  textAlign: TextAlign.right,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Color(0xFF808080),
-                                    fontSize: 10.sp,
+                                    fontSize: 9.sp, // 稍微减小字体避免重叠
                                   ),
                                 ),
                               ),
@@ -691,7 +668,7 @@ class DetailListPage extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: 40.h,
+                        interval: yMaxValue / 5, // 固定间隔，与网格线对应
                         getTitlesWidget: (value, meta) {
                           if (value == 0) return const SizedBox();
                           return Padding(
@@ -705,29 +682,29 @@ class DetailListPage extends StatelessWidget {
                             ),
                           );
                         },
-                        reservedSize: 30.w,
+                        reservedSize: 35.w,
                       ),
                     ),
                     rightTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
                     topTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                   ),
                   borderData: FlBorderData(show: false),
                   minX: 0,
-                  maxX: state.yearlyStats.length - 1.0,
+                  maxX: (state.yearlyStats.length - 1).toDouble(),
                   minY: 0,
-                  maxY: _getMaxYValue(),
+                  maxY: yMaxValue,
                   lineBarsData: [
-                    // 累计总数曲线
+                    // 新增数量曲线
                     LineChartBarData(
                       spots: List.generate(state.yearlyStats.length, (index) {
-                        return FlSpot(index.toDouble(),
-                            state.yearlyStats[index].newCount.toDouble());
+                        return FlSpot(
+                          index.toDouble(),
+                          state.yearlyStats[index].newCount.toDouble(),
+                        );
                       }),
                       isCurved: true,
                       color: Color(0xFF3361FE),
@@ -785,24 +762,19 @@ class DetailListPage extends StatelessWidget {
     );
   }
 
-  // 获取图表Y轴最大值
+  // 获取图表Y轴最大值（已废弃，逻辑移至_buildYearlyStatsTable内部）
   double _getMaxYValue() {
-    if (state.yearlyStats.isEmpty) return 240;
+    if (state.yearlyStats.isEmpty) return 250;
 
-    double maxTotal = 0;
     double maxNew = 0;
-
     for (var stat in state.yearlyStats) {
-      // if (stat.totalCount > maxTotal) {
-      //   maxTotal = stat.totalCount.toDouble();
-      // }
       if (stat.newCount > maxNew) {
         maxNew = stat.newCount.toDouble();
       }
     }
 
-    // 向上取整到最接近的40的倍数
-    return (((maxTotal > maxNew ? maxTotal : maxNew) ~/ 40) + 1) * 40.0;
+    // 向上取整到最接近的50的倍数
+    return ((maxNew / 50).ceil() * 50).toDouble();
   }
 
   // 添加分页按钮组件
