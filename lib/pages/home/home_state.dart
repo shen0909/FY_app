@@ -30,7 +30,7 @@ class HomeState {
   final int notificationCount = 3;
 
   // 清单更新时间
-  final String listUpdateTime = "2025.06.18";
+  final String listUpdateTime = "2025.07.07";
   List<Map<String, dynamic>> riskType = [];
   List<Map<String, dynamic>> homeItemList = [];
   
