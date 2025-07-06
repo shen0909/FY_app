@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/detail_list_data.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
+import 'package:safe_app/utils/area_data_manager.dart';
 
 import 'detail_list_state.dart';
 
@@ -34,6 +35,14 @@ class DetailListLogic extends GetxController {
     // 确保制裁类型列表已初始化
     if (state.sanctionTypes.isEmpty) {
       state.sanctionTypes.addAll(SanctionType.mockSanctionType());
+    }
+
+    // 初始化省市数据
+    try {
+      await AreaDataManager.instance.loadAreaData();
+      print('省市数据初始化完成');
+    } catch (e) {
+      print('省市数据初始化失败: $e');
     }
 
     // 同步左右两侧的垂直滚动
@@ -221,6 +230,27 @@ class DetailListLogic extends GetxController {
   // 设置省份筛选
   void setProvinceFilter(String province) {
     state.provinceFilter.value = province;
+    
+    // 省份改变时，重置城市筛选（实现级联效果）
+    if (province == '全部') {
+      // 如果选择"全部"省份，城市筛选也重置为"全部"
+      state.cityFilter.value = '';
+    } else {
+      // 如果选择了具体省份，检查当前选择的城市是否属于该省份
+      String currentCity = state.cityFilter.value;
+      if (currentCity.isNotEmpty && currentCity != '全部') {
+        // 检查当前城市是否属于新选择的省份
+        List<String> newCities = AreaDataManager.instance.getCityListByProvince(province);
+        if (!newCities.contains(currentCity)) {
+          // 如果当前城市不属于新省份，重置城市选择
+          state.cityFilter.value = '';
+        }
+      } else {
+        // 如果之前没有选择城市，保持为空
+        state.cityFilter.value = '';
+      }
+    }
+    
     refreshData();
   }
 
@@ -395,57 +425,22 @@ class DetailListLogic extends GetxController {
 
   // 获取省份选项
   List<String> getProvinceOptions() {
-    return [
-      "全部",
-      "广东",
-      "北京",
-      "上海",
-      "江苏",
-      "浙江",
-      "四川",
-      "福建",
-      "湖北",
-      "山东",
-      "安徽",
-      "辽宁",
-      "湖南",
-      "河北",
-      "江西",
-      "中国香港",
-      "中国澳门",
-      "中国台湾",
-      "西藏自治区",
-      "内蒙古自治区",
-      "广西壮族自治区",
-      "宁夏回族自治区",
-      "新疆维吾尔自治区"
-    ];
+    // 从AreaDataManager获取省份数据
+    return AreaDataManager.instance.getProvinceList();
   }
 
   // 获取城市选项
   List<String> getCityOptions() {
-    return [
-      "全部",
-      "广州",
-      "深圳",
-      "北京",
-      "上海",
-      "杭州",
-      "合肥",
-      "香港",
-      "苏州",
-      "南京",
-      "成都",
-      "福州",
-      "武汉",
-      "济南",
-      "青岛",
-      "长沙",
-      "石家庄",
-      "南昌",
-      "沈阳",
-      "大连"
-    ];
+    // 根据当前选择的省份获取对应的城市列表
+    String selectedProvince = state.provinceFilter.value;
+    
+    if (selectedProvince.isEmpty || selectedProvince == '全部') {
+      // 如果没有选择省份或选择了"全部"，返回所有城市
+      return AreaDataManager.instance.getAllCities();
+    } else {
+      // 根据选择的省份返回对应的城市列表
+      return AreaDataManager.instance.getCityListByProvince(selectedProvince);
+    }
   }
 
   // 根据类型名称获取类型数据

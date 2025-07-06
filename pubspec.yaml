@@ -83,6 +83,7 @@ flutter:
   assets:
      - assets/images/
      - assets/complete-risk-alerts-data.json
+     - assets/area-data.json
      - assets/company-details/
      - assets/html/
 
