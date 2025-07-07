@@ -598,7 +598,7 @@ class SettingLogic extends GetxController {
     try {
       final updateInfo = await UpdateService().checkUpdate();
       if(updateInfo != null) {
-        state.hasUpdate.value = false;
+        state.hasUpdate.value = true;
       }
     } catch (e) {
       state.hasUpdate.value = false;
