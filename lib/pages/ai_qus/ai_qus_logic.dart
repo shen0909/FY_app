@@ -206,7 +206,7 @@ class AiQusLogic extends GetxController {
         String? serverSessionUuid;
         try {
           final serverResponse = await ApiService().createChatSession(sessionName: title);
-          if (serverResponse != null && 
+          if (serverResponse != null &&
               // serverResponse['执行结果'] == true &&
               serverResponse['返回数据'] != null) {
             serverSessionUuid = serverResponse['返回数据']['session_uuid'];
@@ -897,19 +897,19 @@ class AiQusLogic extends GetxController {
   void showPromptTemplates() {
     FYDialogUtils.showBottomSheet(Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(vertical: 20.w),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   '自定义提示词模板',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -922,22 +922,22 @@ class AiQusLogic extends GetxController {
           ),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('创建您自己的提示词模板，以便在对话中快速使用。'),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.w),
                 Container(
-                  padding: const EdgeInsets.all(15),
+                  padding: EdgeInsets.all(15.w),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Row(
                     children: [
                       Icon(Icons.add_circle, color: Colors.blue.shade700),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10.w),
                       const Text(
                         '创建新模板',
                         style: TextStyle(
@@ -948,31 +948,31 @@ class AiQusLogic extends GetxController {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.w),
                 const Text(
                   '模板标题',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.w),
                 TextField(
                   decoration: InputDecoration(
                     hintText: '例如：行业分析',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.w),
                 const Text(
                   '提示词内容',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.w),
                 TextField(
                   decoration: InputDecoration(
                     hintText: '输入您的提示词模板内容...',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                   ),
                   maxLines: 5,
@@ -2053,6 +2053,9 @@ class AiQusLogic extends GetxController {
     final Size size = renderBox.size;
     final Offset position = renderBox.localToGlobal(Offset.zero);
 
+    // 获取屏幕宽度用于边界检查
+    final screenWidth = MediaQuery.of(context).size.width;
+
     // 创建浮层
     final overlayEntry = OverlayEntry(
       builder: (context) => Stack(
@@ -2069,67 +2072,75 @@ class AiQusLogic extends GetxController {
           // 下拉菜单内容
           Positioned(
             top: position.dy + size.height + 4,
-            left: position.dx - 120,
-            right: 16.w,
+            right: 1.w,
             child: Material(
               color: Colors.transparent,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 0,
-                      blurRadius: 8,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: state.modelList.map((model) {
-                    return Obx(() => GestureDetector(
-                          onTap: () => selectModel(model['name'].toString()),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: model['name'] == state.selectedModel.value
-                                  ? const Color(0xFFF0F6FF)
-                                  : Colors.white,
+              child: IntrinsicWidth(
+                child: Container(
+                  // 计算左侧位置，确保不超出屏幕边界
+                  margin: EdgeInsets.only(
+                    left: _calculateDropdownLeft(position.dx, screenWidth, context),
+                    right: 16.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 0,
+                        blurRadius: 8,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: state.modelList.map((model) {
+                      return Obx(() => GestureDetector(
+                            onTap: () => selectModel(model['name'].toString()),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: model['name'] == state.selectedModel.value
+                                    ? const Color(0xFFF0F6FF)
+                                    : Colors.white,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "${model['name'].toString()} +",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF1A1A1A),
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    model['description'].toString(),
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: const Color(0xFFA6A6A6),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  if (model['name'] == state.selectedModel.value)
+                                    Icon(
+                                      Icons.check,
+                                      size: 20.w,
+                                      color: FYColors.color_3361FE,
+                                    ),
+                                ],
+                              ),
                             ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "${model['name'].toString()} +",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF1A1A1A),
-                                  ),
-                                  maxLines: 1,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  model['description'].toString(),
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: const Color(0xFFA6A6A6),
-                                  ),
-                                ),
-                                const Spacer(),
-                                if (model['name'] == state.selectedModel.value)
-                                  Icon(
-                                    Icons.check,
-                                    size: 20,
-                                    color: FYColors.color_3361FE,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ));
-                  }).toList(),
+                          ));
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
@@ -2147,6 +2158,27 @@ class AiQusLogic extends GetxController {
       print('插入模型选择浮层时出现异常: $e');
       state.modelOverlayEntry.value = null;
     }
+  }
+
+  /// 计算下拉菜单的左侧位置，确保不超出屏幕边界
+  double _calculateDropdownLeft(double buttonX, double screenWidth, BuildContext context) {
+    // 预估弹窗宽度（可以根据实际内容调整）
+    const estimatedDropdownWidth = 200.0;
+    
+    // 理想的左侧位置（按钮中心向左偏移一些）
+    double idealLeft = buttonX - 60;
+    
+    // 确保不超出左边界
+    if (idealLeft < 16.w) {
+      idealLeft = 16.w;
+    }
+    
+    // 确保不超出右边界
+    if (idealLeft + estimatedDropdownWidth > screenWidth - 16.w) {
+      idealLeft = screenWidth - estimatedDropdownWidth - 16.w;
+    }
+    
+    return idealLeft;
   }
 
   // 隐藏模型选择弹窗

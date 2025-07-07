@@ -40,7 +40,7 @@ class AiQusState {
   final RxBool isLoading = false.obs;
   
   // 当前选择的模型
-  final RxString selectedModel = "Hunyuan".obs;
+  final RxString selectedModel = "Perplexity".obs;
 
   final RxBool isBatchCheck = false.obs;
   final RxBool showTemplateForm = false.obs; // 自定义提示词模版弹窗是否关闭
