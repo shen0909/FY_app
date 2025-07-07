@@ -1,13 +1,16 @@
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/newslist_data.dart';
+import 'package:safe_app/utils/shared_prefer.dart';
 
 import 'hot_pot_state.dart';
 
 class HotPotLogic extends GetxController {
   final HotPotState state = HotPotState();
+  static const String _readNewsKey = 'read_news_ids';
 
   @override
   Future<void> onInit() async {
@@ -16,7 +19,9 @@ class HotPotLogic extends GetxController {
     // 设置默认日期范围为最近30天
     final now = DateTime.now();
     state.endDate.value = now;
-    state.startDate.value = now.subtract(Duration(days: 30));
+    state.startDate.value = now.subtract(const Duration(days: 30));
+    // 加载已读新闻状态
+    await _loadReadNewsIds();
     
     // 获取地区列表
     await getRegionList();
@@ -37,6 +42,32 @@ class HotPotLogic extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+  
+  // 从本地存储加载已读新闻ID
+  Future<void> _loadReadNewsIds() async {
+    try {
+      final readNewsString = FYSharedPreferenceUtils.getString(_readNewsKey);
+      if (readNewsString.isNotEmpty) {
+        final List<dynamic> readNewsList = json.decode(readNewsString);
+        final Set<String> readNewsIds = readNewsList.map((id) => id.toString()).toSet();
+        state.setReadNewsIds(readNewsIds);
+        print('从本地存储加载已读新闻ID: ${readNewsIds.length}条');
+      }
+    } catch (e) {
+      print('加载已读新闻状态失败: $e');
+    }
+  }
+
+  // 保存已读新闻ID到本地存储
+  Future<void> _saveReadNewsIds() async {
+    try {
+      final readNewsList = state.readNewsIds.toList();
+      await FYSharedPreferenceUtils.setString(_readNewsKey, json.encode(readNewsList));
+      print('保存已读新闻ID到本地存储: ${readNewsList.length}条');
+    } catch (e) {
+      print('保存已读新闻状态失败: $e');
+    }
   }
   
   // 切换标签页
@@ -209,6 +240,15 @@ class HotPotLogic extends GetxController {
   void navigateToDetails(int index) {
     // 获取对应的新闻项
     NewsItem newsItem = state.newsList[index];
+    
+    // 标记该新闻为已读
+    state.markNewsAsRead(newsItem.newsId);
+    
+    // 保存已读状态到本地存储
+    _saveReadNewsIds();
+    
+    print('标记新闻为已读: ${newsItem.newsId} - ${newsItem.newsTitle}');
+    
     // 导航到详情页面并传递newsId
     Get.toNamed('/hot_details', arguments: {
       'newsId': newsItem.newsId,

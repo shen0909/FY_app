@@ -68,6 +68,9 @@ class HotPotState {
   final RxBool hasMoreData = true.obs; // 是否还有更多数据
   final RxBool isLoadingMore = false.obs; // 是否正在加载更多
 
+  // 已读新闻ID集合 - 用于跟踪用户已查看过的新闻
+  final RxSet<String> readNewsIds = <String>{}.obs;
+
   HotPotState() {
     ///Initialize variables
   }
@@ -101,5 +104,21 @@ class HotPotState {
   void resetPagination() {
     currentPage.value = 1;
     hasMoreData.value = true;
+  }
+
+  // 标记新闻为已读
+  void markNewsAsRead(String newsId) {
+    readNewsIds.add(newsId);
+  }
+
+  // 检查新闻是否已读
+  bool isNewsRead(String newsId) {
+    return readNewsIds.contains(newsId);
+  }
+
+  // 设置已读新闻ID集合（从本地存储加载时使用）
+  void setReadNewsIds(Set<String> ids) {
+    readNewsIds.clear();
+    readNewsIds.addAll(ids);
   }
 }

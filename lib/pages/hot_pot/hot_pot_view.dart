@@ -394,75 +394,83 @@ class HotPotPage extends StatelessWidget {
 
   // 构建单个新闻卡片
   Widget _buildNewsCard(NewsItem news, int index) {
-    return Container(
-      margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => logic.navigateToDetails(index),
-          borderRadius: BorderRadius.circular(8.r),
-          child: Padding(
-            padding: EdgeInsets.only(
-                top: 16.0.w, bottom: 12.w, left: 16.w, right: 16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  news.newsTitle,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_1A1A1A,
-                  ),
-                ),
-                SizedBox(height: 12.w),
-                Text(
-                  news.newsSummary,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_1A1A1A,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 8.w),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      news.publishTime,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: FYColors.color_A6A6A6
-                      ),
+    return Obx(() {
+      // 检查当前新闻是否已读
+      bool isRead = state.isNewsRead(news.newsId);
+      
+      return Container(
+        margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
+        decoration: BoxDecoration(
+          // 已读状态使用灰色背景，未读状态使用白色背景
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => logic.navigateToDetails(index),
+            borderRadius: BorderRadius.circular(8.r),
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: 16.0.w, bottom: 12.w, left: 16.w, right: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    news.newsTitle,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      // 已读状态使用较浅的颜色
+                      color: isRead ? FYColors.color_A6A6A6 : FYColors.color_1A1A1A,
                     ),
-                    Text(
-                      news.newsMedium,
-                      style: TextStyle(
+                  ),
+                  SizedBox(height: 12.w),
+                  Text(
+                    news.newsSummary,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      // 已读状态使用较浅的颜色
+                      color: isRead ? FYColors.color_A6A6A6 : FYColors.color_1A1A1A,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 8.w),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        news.publishTime,
+                        style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_A6A6A6
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        news.newsMedium,
+                        style: TextStyle(
+                            fontSize: 12.sp,
+                            color: FYColors.color_A6A6A6
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   // 构建单个类型选项
