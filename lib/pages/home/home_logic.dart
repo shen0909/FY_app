@@ -111,16 +111,16 @@ class HomeLogic extends GetxController {
     String fileName;
     switch (index) {
       case 0:
-        fileName = 'commerce_chip_ban.html'; // 美国BIS企图全球禁用华为昇腾芯片
+        fileName = 'html1.html';
         break;
       case 1:
-        fileName = 'trump_tariff_policy.html'; // 有迹象表明特朗普可能准备撤回关税措施
+        fileName = 'html2.html';
         break;
       case 2:
-        fileName = 'us_ai_restrictions.html'; // 美国商务部进一步限制中国AI和先进算力
+        fileName = 'html3.html';
         break;
       default:
-        fileName = 'us_ai_restrictions.html';
+        fileName = 'html1.html';
         break;
     }
     

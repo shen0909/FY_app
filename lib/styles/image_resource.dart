@@ -51,7 +51,7 @@ class FYImages {
   static const String calendar_black = 'assets/images/calendar_black.png';
   static const String lunbo1 = 'assets/images/lunbo1.png';
   static const String lunbo2 = 'assets/images/lunbo2.png';
-  static const String lunbo3 = 'assets/images/lunbo3.jpg';
+  static const String lunbo3 = 'assets/images/lunbo3.png';
   static const String report_icon = 'assets/images/report_icon.png';
   static const String blank_page = 'assets/images/blank_page.png';
   static const String add_tip_mock = 'assets/images/add_tip_mock.png';

@@ -59,19 +59,19 @@ class HomeState {
     carouselItems.addAll([
       CarouselItem(
         imageUrl:  FYImages.lunbo1,
-        title: '美国BIS企图全球禁用华为昇腾芯片',
+        title: '特朗普“贸易信函”拉响新一轮全球关税警报',
         date: '2025.05.12',
         linkUrl: 'https://www.mofcom.gov.cn/syxwfb/art/2025/art_8232e23dd3cb49bcb70634eb0c65ecea.html',
       ),
       CarouselItem(
-        imageUrl:  FYImages.lunbo3,
-        title: '有迹象表明特朗普可能准备撤回关税措施',
+        imageUrl:  FYImages.lunbo2,
+        title: '特朗普称TikTok有买家了',
         date: '2025.04.27',
         linkUrl: 'https://www.bbc.com/zhongwen/articles/c5ylzv95nj3o/simp',
       ),
       CarouselItem(
-        imageUrl:  FYImages.lunbo2,
-        title: '美国商务部进一步限制中国AI和先进算力',
+        imageUrl:  FYImages.lunbo3,
+        title: '美国禁止包括中国在内的所有国家使用华为人工智能芯片组',
         date: '2025.03.31',
         linkUrl: 'https://www.state.gov/translations/chinese/20250325-commerce-further-restricts-chinas-artificial-intelligence-and-advanced-computing-capabilities-chinese/',
       ),
