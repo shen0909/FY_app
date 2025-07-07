@@ -347,14 +347,7 @@ class AiQusLogic extends GetxController {
 
     // 轮询计数和超时检查
     state.pollCount++;
-    const int maxPollCount = 150; // 最大轮询次数
     const int maxEmptyCount = 50; // 连续空内容次数
-
-    if (state.pollCount > maxPollCount) {
-      print('⚠️ 达到最大轮询次数限制(${maxPollCount})，停止轮询');
-      _finishStreaming(messageIndex);
-      return;
-    }
 
     try {
       // 发起单次请求，等待结果
