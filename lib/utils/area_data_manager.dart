@@ -39,7 +39,8 @@ class AreaDataManager {
     }
     
     List<String> provinces = ['全部'];
-    provinces.addAll(_provinceList!.values.toList()..sort());
+    // provinces.addAll(_provinceList!.values.toList()..sort());
+    provinces.addAll(_provinceList!.values.toList());
     return provinces;
   }
 
@@ -75,7 +76,7 @@ class AreaDataManager {
     
     // 城市列表排序（保持"全部"在首位）
     List<String> sortedCities = cities.sublist(1)..sort();
-    return ['全部'] + sortedCities;
+    return cities;
   }
 
   /// 根据城市名称获取其所属省份
@@ -107,7 +108,7 @@ class AreaDataManager {
     }
     
     List<String> cities = ['全部'];
-    cities.addAll(_cityList!.values.toList()..sort());
+    cities.addAll(_cityList!.values.toList());
     return cities;
   }
 
