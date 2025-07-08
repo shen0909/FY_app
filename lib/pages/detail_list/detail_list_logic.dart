@@ -133,10 +133,11 @@ class DetailListLogic extends GetxController {
         state.sanctionList.clear();
         state.sanctionList.value = newEntities;
         state.totalCount.value = response.data!.allCount;
+        state.searchCount.value = response.data!.search_all_num;
+        state.updateTime.value = response.data!.update_time;
         // 检查是否还有更多数据
         final totalPages = (response.data!.allCount / state.pageSize.value).ceil();
         state.hasMoreData.value = state.currentPage.value < totalPages;
-        
         // 数据加载完成后计算表格宽度
         calculateTableWidth();
         
@@ -146,6 +147,8 @@ class DetailListLogic extends GetxController {
         if (isRefresh || state.currentPage.value == 1) {
           state.sanctionList.clear();
           state.totalCount.value = 0;
+          state.searchCount.value = 0;
+          state.updateTime.value = "";
         }
         state.hasMoreData.value = false;
       }
@@ -154,6 +157,8 @@ class DetailListLogic extends GetxController {
       if (isRefresh || state.currentPage.value == 1) {
         state.sanctionList.clear();
         state.totalCount.value = 0;
+        state.searchCount.value = 0;
+        state.updateTime.value = "";
       }
       state.hasMoreData.value = false;
     } finally {

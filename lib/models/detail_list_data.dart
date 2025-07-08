@@ -33,11 +33,15 @@ class SanctionListResponse {
 class SanctionListData {
   final int allCount;
   final int allPage;
+  final int search_all_num;
+  final String update_time;
   final List<SanctionEntity> entities;
 
   SanctionListData({
     required this.allCount,
     required this.allPage,
+    required this.search_all_num,
+    required this.update_time,
     required this.entities,
   });
 
@@ -52,6 +56,8 @@ class SanctionListData {
     return SanctionListData(
       allCount: json['all_count'] ?? 0,
       allPage: json['all_page'] ?? 0,
+      search_all_num: json['search_all_num'] ?? 0,
+      update_time: json['update_time'] ?? "",
       entities: entities,
     );
   }

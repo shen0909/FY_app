@@ -38,11 +38,12 @@ class DetailListPage extends StatelessWidget {
               _buildFilterSection(),
               _buildFilterChips(context),
               _buildResultCount(),
-              Obx(() => DynamicScrollbarWrapper(
-                  scrollDirection: Axis.horizontal,
-                  scrollController: logic.horizontalScrollController,
-                  overallContentExtent: state.totalTableWidth.value,
-                  child: _buildTable())),
+              Obx(() =>
+                  DynamicScrollbarWrapper(
+                      scrollDirection: Axis.horizontal,
+                      scrollController: logic.horizontalScrollController,
+                      overallContentExtent: state.totalTableWidth.value,
+                      child: _buildTable())),
               _buildPagination(),
             ],
           ),
@@ -78,16 +79,26 @@ class DetailListPage extends StatelessWidget {
                   ),
                 );
               }),
+              Text(
+                "，移出数50条",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                  fontWeight: FontWeight.normal,
+                ),
+              )
             ],
           ),
-          Text(
-            "更新时间：2025-07-07",
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: FYColors.color_A6A6A6,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          Obx(() {
+            return Text(
+              "更新时间：${state.updateTime.value}",
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: FYColors.color_A6A6A6,
+                fontWeight: FontWeight.normal,
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -228,7 +239,7 @@ class DetailListPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Obx(() =>
           Text(
-            "总数${state.totalCount}条，移除数50条",
+            "总数${state.searchCount}条",
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF3361FE),
@@ -258,7 +269,8 @@ class DetailListPage extends StatelessWidget {
           }
 
           // 数据为空时显示暂无数据
-          if (state.sanctionList.isEmpty && !state.isLoading.value && !state.isRefreshing.value) {
+          if (state.sanctionList.isEmpty && !state.isLoading.value &&
+              !state.isRefreshing.value) {
             return FYWidget.buildEmptyContent();
           }
 
@@ -269,8 +281,7 @@ class DetailListPage extends StatelessWidget {
           double removalTimeWidth = 80.w; // 移除时间列
           
           // 从state中获取计算好的制裁类型宽度
-          double maxSanctionTypeWidth = state.maxSanctionTypeWidth.value > 0 ? 
-              state.maxSanctionTypeWidth.value : 150.w;
+          double maxSanctionTypeWidth = state.maxSanctionTypeWidth.value > 0 ? state.maxSanctionTypeWidth.value : 150.w;
 
           return Row(
             children: [
@@ -394,7 +405,7 @@ class DetailListPage extends StatelessWidget {
                                   SizedBox(
                                     width: removalTimeWidth,
                                     child: Text(
-                                      "移除时间",
+                                      "移出时间",
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Color(0xFF3361FE),
@@ -780,7 +791,7 @@ class DetailListPage extends StatelessWidget {
   // 添加分页按钮组件
   Widget _buildPagination() {
     return Obx(() {
-      if(state.sanctionList.isEmpty) {
+      if (state.sanctionList.isEmpty) {
         return Container();
       }
       // 计算总页数

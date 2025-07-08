@@ -329,6 +329,8 @@ class DetailListState {
   
   // 总数量
   var totalCount = 0.obs;
+  var searchCount = 0.obs;
+  var updateTime = "".obs;
   RxDouble totalTableWidth = 0.0.obs;
   RxDouble maxSanctionTypeWidth = 0.0.obs; // 存储制裁类型列的宽度
 

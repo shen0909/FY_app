@@ -376,7 +376,6 @@ class ApiService {
     dynamic result = await _sendChannelEvent(paramData: paramData);
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {
-        // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
         return SanctionListResponse.fromJson(resultData);
       } catch (e) {
