@@ -255,11 +255,9 @@ class SettingPage extends StatelessWidget {
       children: [
         _buildNavigationItem('清除缓存', null, logic.clearCache),
         Obx(() {
-          return state.hasUpdate.value
-              ? _buildNavigationItem(
-                  '版本更新', state.hasUpdate.value ? '新版' : null, logic.goToUpdate,
-                  withWidget: state.hasUpdate.value)
-              : Container();
+          return _buildNavigationItem(
+              '版本更新', state.hasUpdate.value ? '新版' : null, logic.goToUpdate,
+              withWidget: state.hasUpdate.value);
         }),
       ],
     );
