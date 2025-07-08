@@ -322,11 +322,11 @@ class SettingPage extends StatelessWidget {
                     color: Colors.red,
                     borderRadius: BorderRadius.all(Radius.circular(12.r))
                 ),
-                padding: EdgeInsets.all(4.w),
+                padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 4.w),
                 child: Text(
                   subtitle!,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 14.sp,
                     color: FYColors.whiteColor,
                   ),
                 ),
