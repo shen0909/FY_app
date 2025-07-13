@@ -209,12 +209,6 @@ class HotPotLogic extends GetxController {
     String? startDate = state.useCustomDateRange.value ? formatDate(state.startDate.value) : null;
     String? endDate = state.useCustomDateRange.value ? formatDate(state.endDate.value) : null;
     
-    // 打印日志，便于调试
-    print('应用筛选: 类型=${state.selectedNewsType.value}, 地区=${state.selectedRegion.value}, ' +
-          '时间=${dateFilter ?? "自定义"}, ' +
-          '开始日期=$startDate, 结束日期=$endDate, ' +
-          '搜索关键词=${state.searchKeyword.value}');
-    
     // 重置分页状态
     state.resetPagination();
     
@@ -338,15 +332,8 @@ class HotPotLogic extends GetxController {
         } else {
           state.hasMoreData.value = true;
         }
-      } else if (result != null && result['code'] == 10016) {
-        // 已经是最后一页
-        state.hasMoreData.value = false;
-        
-        if (!isLoadMore) {
-          state.newsList.value = [];
-        }
       } else {
-        state.errorMessage.value = result['message'] ?? '获取数据失败';
+        state.errorMessage.value = result['msg'] ?? '获取数据失败';
         
         if (isLoadMore) {
           // 加载更多失败，页码回退

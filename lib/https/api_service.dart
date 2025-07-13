@@ -638,32 +638,132 @@ class ApiService {
     String? endDate,
     String? search,
   }) async {
-    var data = {
-      'current_page': currentPage,
-      'page_size': pageSize,
-      'news_type': newsType,
-      'region': region,
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻列表失败：内层token为空');
+      }
+      return {'code': 0, 'msg': '内层token为空'};
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_新闻_分页获取列表",
+      "当前请求用户UUID": token,
+      "服务类型": 0,
+      "命令具体内容": {
+        "current_page": currentPage,
+        "page_size": pageSize,
+      }
     };
-
-    if (dateFilter != null && dateFilter.isNotEmpty) {
-      data['date_filter'] = dateFilter;
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        
+        // 转换为与原接口兼容的格式
+        List<dynamic> newsData = resultData["返回数据"]['data'] ?? [];
+        List<Map<String, dynamic>> transformedData = newsData.map((item) {
+          return {
+            'news_id': item['uuid'] ?? '',
+            'news_title': item['news_title'] ?? '',
+            'news_type': '舆情热点', // 新接口没有分类，使用固定值
+            'news_medium': item['news_medium'] ?? '',
+            'google_keyword': '', // 新接口没有此字段
+            'publish_time': item['publish_time'] ?? '',
+            'news_summary': item['news_summary'] ?? '',
+            'news_source_url': '', // 新接口没有此字段
+            'region': '', // 新接口没有区域字段
+          };
+        }).toList();
+        
+        return {
+          'code': 10010,
+          'data': transformedData,
+          'all_count': resultData['all_count'] ?? 0,
+        };
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新闻列表响应失败: $e');
+        }
+        return {'code': 0, 'msg': '解析响应失败: $e'};
+      }
+    } else {
+      if (kDebugMode) {
+        print('$_tag 获取新闻列表失败: ${result?['error_message'] ?? '未知错误'}');
+      }
+      return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
     }
-    if (startDate != null && startDate.isNotEmpty) {
-      data['start_date'] = startDate;
-    }
-    if (endDate != null && endDate.isNotEmpty) {
-      data['end_date'] = endDate;
-    }
-    if (search != null && search.isNotEmpty) {
-      data['search'] = search;
-    }
-
-    return await _prePost(ServicePath.getNewsList, data: data,isForm: true);
   }
 
   /// 获取新闻详情
   Future<dynamic> getNewsDetail({required String newsId}) async {
-    return await _preGet(ServicePath.getNewsDetail, params: {'news_id': newsId});
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻详情失败：内层token为空');
+      }
+      return {'code': 0, 'msg': '内层token为空'};
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_新闻_获取新闻详细",
+      "当前请求用户UUID": token,
+      "服务类型": 0,
+      "命令具体内容": {
+        "uuid": newsId,
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultString = jsonDecode(result['result_string']);
+        Map<String, dynamic> resultData = resultString["返回数据"]?? [];
+
+        Map<String, dynamic> transformedData = {
+          'news_id': resultData['news_id'] ?? newsId,
+          'news_title': resultData['news_title'] ?? '',
+          'news_type': resultData['news_type'] ?? '舆情热点',
+          'news_medium': resultData['news_medium'] ?? '',
+          'google_keyword': resultData['google_keyword'] ?? '',
+          'publish_time': resultData['publish_time'] ?? '',
+          'news_summary': resultData['news_summary'] ?? '',
+          'region': resultData['region'] ?? '',
+          'risk_analysis': resultData['risk_analysis'] ?? '',
+          'news_source_url': resultData['news_source_url'] ?? '',
+          'origin_context': resultData['origin_context'] ?? '',
+          'translated_context': resultData['news_summary'] ?? '', // 使用摘要作为译文
+          'publish_authors': resultData['publish_authors'] ?? '',
+          'future_progression': resultData['future_progression'] ?? '',
+          'relevant_news': resultData['relevant_news'] ?? '',
+          'decision_suggestion': resultData['decision_suggestion'] ?? '',
+          'effect': resultData['effect'] ?? '',
+          'risk_measure': resultData['risk_measure'] ?? '',
+        };
+        
+        return {
+          'code': 10010,
+          'data': transformedData,
+        };
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新闻详情响应失败: $e');
+        }
+        return {'code': 0, 'msg': '解析响应失败: $e'};
+      }
+    } else {
+      if (kDebugMode) {
+        print('$_tag 获取新闻详情失败: ${result?['error_message'] ?? '未知错误'}');
+      }
+      return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
+    }
   }
 
   /// 导出新闻报告

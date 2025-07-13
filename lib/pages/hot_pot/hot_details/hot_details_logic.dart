@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/news_detail_data.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
-import 'package:safe_app/models/newslist_data.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 
 class HotDetailsLogic extends GetxController {
@@ -41,12 +40,6 @@ class HotDetailsLogic extends GetxController {
       
       // 检查API响应状态
       if (result != null && result['code'] == 10010 && result['data'] != null) {
-        // 打印原始数据结构
-        print('API返回详情数据结构: ${result['data'].runtimeType}');
-        print('API返回effect字段类型: ${result['data']['effect']?.runtimeType}');
-        print('API返回relevant_news字段类型: ${result['data']['relevant_news']?.runtimeType}');
-        
-        // 将返回的JSON数据保存
         state.newsDetail.value = result['data'];
         
         try {
