@@ -41,27 +41,8 @@ class NewsDetail {
 
   factory NewsDetail.fromJson(Map<String, dynamic> json) {
     Effect effectObj;
-    if (json['effect'] is Map) {
-      effectObj = Effect.fromJson(json['effect']);
-    } else if (json['effect'] is String && json['effect'].isNotEmpty) {
-      try {
-        // 尝试解析JSON字符串
-        Map<String, dynamic> effectMap = jsonDecode(json['effect']);
-        effectObj = Effect.fromJson(effectMap);
-      } catch (e) {
-        effectObj = Effect(
-          directEffect: [],
-          indirectEffect: [],
-          effectCompany: [],
-        );
-      }
-    } else {
-      effectObj = Effect(
-        directEffect: [],
-        indirectEffect: [],
-        effectCompany: [],
-      );
-    }
+    Map<String, dynamic> effectMap = jsonDecode(json['effect']);
+    effectObj = Effect.fromJson(effectMap);
 
     List<RelevantNews> relevantNewsList = [];
     if (json['relevant_news'] is List) {
