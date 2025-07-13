@@ -7,7 +7,7 @@ import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_logic.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
-import 'dart:math' as math;
+
 import '../../../widgets/custom_app_bar.dart';
 
 // 虚线绘制器
@@ -264,19 +264,17 @@ class HotDetailsView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 24.w),
-                // 风险措施表格（如果有）
-                if (detail.riskMeasure.isNotEmpty) ...[
-                  Text(
-                    '风险措施',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                Text(
+                  '影响范围',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                  SizedBox(height: 8.w),
-                  _buildRiskMeasureTable(detail.riskMeasure),
-                ],
+                ),
+                SizedBox(height: 8.w),
+                _buildImpact(detail.effect),
+                SizedBox(height: 22.w),
               ],
             ),
           );
@@ -381,7 +379,6 @@ class HotDetailsView extends StatelessWidget {
                 // 整体策略容器
                 Stack(
                   children: [
-                    // 这是你主要的卡片内容
                     Container(
                       width: double.infinity,
                       padding: EdgeInsets.all(16.w),
@@ -524,6 +521,18 @@ class HotDetailsView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20.w),
+                if (detail.riskMeasure.isNotEmpty) ...[
+                  Text(
+                    '风险应对矩阵',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 8.w),
+                  _buildRiskMeasureTable(detail.riskMeasure),
+                ],
               ],
             ),
           );
@@ -693,180 +702,65 @@ class HotDetailsView extends StatelessWidget {
       );
   }
 
-  // 构建风险措施表格
-  /*Widget _buildRiskMeasureTable(List<RiskMeasure> riskMeasures) {
-    if (riskMeasures.isEmpty) {
-      return SizedBox.shrink();
-    }
-    // 计算各列的宽度
-    double riskScenarioWidth = 150.w; // 风险场景列宽度
-    double possibilityWidth = 80.w;   // 可能性列宽度
-    double impactWidth = 80.w;        // 影响程度列宽度
-    double measuresWidth = 200.w;     // 应对措施列宽度
-    // 计算总宽度
-    double totalWidth = riskScenarioWidth + possibilityWidth + impactWidth + measuresWidth;
-    // 定义表头和数据行的固定高度
-    double headerHeight = 28.h;
-    double rowHeight = 50.h;
-
-    // 计算表格内容的动态高度（所有数据行的高度）
-    double calculatedContentHeight = riskMeasures.length * rowHeight;
-    double actualTableHeight = math.max(200.h, calculatedContentHeight + headerHeight);
-    double listViewHeight = actualTableHeight - headerHeight;
-
+  // 影响范围
+  Widget _buildImpact(Effect effect){
     return Container(
-      // 将外层 Container 的高度明确设置为计算出的实际高度
-      height: actualTableHeight,
-      child: SingleChildScrollView( // 整个表格进行水平滑动
-        scrollDirection:Axis.horizontal,
-        child: Column( // Column 的宽度由 totalWidth 决定，高度由子元素决定
-          children: [
-            // 表头
-            Container(
-              width: totalWidth,
-              height: headerHeight, // 使用定义的表头高度
-              color: const Color(0xFFF0F5FF), // 添加 const
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: riskScenarioWidth,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8.w),
-                      child: Text(
-                        "风险场景",
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: const Color(0xFF3361FE), // 添加 const
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: possibilityWidth,
-                    child: Text(
-                      "可能性",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF3361FE), // 添加 const
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: impactWidth,
-                    child: Text(
-                      "影响程度",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF3361FE), // 添加 const
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: measuresWidth,
-                    child: Text(
-                      "应对措施",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF3361FE), // 添加 const
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // 数据行部分
-            SizedBox( // 使用 SizedBox 代替 Expanded，并明确给出高度和宽度
-              height: listViewHeight, // 设置 ListView.builder 的明确高度
-              width: totalWidth, // 设置 ListView.builder 的明确宽度
-              child: ListView.builder( // ListView.builder 会在自身范围内垂直滑动
-                itemCount: riskMeasures.length,
-                itemBuilder: (context, index) {
-                  final measure = riskMeasures[index];
-                  final isOdd = index % 2 == 1;
-
-                  return Container(
-                    width: totalWidth, // 确保每一行的宽度都是 totalWidth
-                    height: rowHeight, // 每行数据的高度
-                    color: isOdd ? Colors.white : const Color(0xFFF9F9F9), // 添加 const
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: riskScenarioWidth,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 8.w, top: 8.w, bottom: 8.w),
-                            child: Text(
-                              measure.riskScenario,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF1A1A1A), // 添加 const
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: possibilityWidth,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.w),
-                            child: Text(
-                              measure.possibility,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF1A1A1A), // 添加 const
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: impactWidth,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.w),
-                            child: Text(
-                              measure.impactLevel,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF1A1A1A), // 添加 const
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: measuresWidth,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 8.w, top: 8.w, bottom: 8.w),
-                            child: Text(
-                              measure.countermeasures,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF1A1A1A), // 添加 const
-                              ),
-                              // overflow: TextOverflow.ellipsis,
-                              // maxLines: 2,
-                            ),
-                          ),
-                        ),
-                      ],
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: FYColors.color_F9F9F9,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              impactItem("直接影响行业",effect.directEffect),
+              impactItem("间接影响行业",effect.indirectEffect)
+            ],
+          ),
+          SizedBox(height: 20.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("受影响企业",style: TextStyle(color: Color(0xff1A1A1A),fontSize: 14.sp,fontWeight: FontWeight.w500)),
+              SizedBox(height: 8.w),
+              Wrap(
+                spacing: 8.w,
+                runSpacing: 4.w,
+                children: effect.effectCompany.map<Widget>((element) {
+                  return Text(
+                    element,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_666666,
                     ),
                   );
-                },
-              ),
-            ),
-          ],
-        ),
+                }).toList(),
+              )
+            ],
+          )
+        ],
       ),
     );
-  }*/
+  }
+
+  // 影响范围item
+  Widget impactItem(String title,List<String> items){
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,style: TextStyle(color: Color(0xff1A1A1A),fontSize: 14.sp,fontWeight: FontWeight.w500)),
+          SizedBox(height: 8.w),
+          ...items.map((element){
+            return Text(element,style: TextStyle(fontSize: 14.sp,color: FYColors.color_666666));
+          })
+        ],
+      );
+  }
+
+  // 构建风险措施表格
   Widget _buildRiskMeasureTable(List<RiskMeasure> riskMeasures) {
     if (riskMeasures.isEmpty) {
       return SizedBox.shrink();
@@ -883,163 +777,180 @@ class HotDetailsView extends StatelessWidget {
     // 定义表头固定高度
     double headerHeight = 28.h;
 
-    // 估算 ListView 的最小可见高度。
-    // 即使行高自适应，ListView 也需要一个明确的视口高度。
-    // 200.h 是一个合理的最小高度，如果数据量大，ListView 会自动滚动。
-    // initialEstimatedRowHeight 仅用于计算 ListView 视口的初始高度，
-    // 实际的行高将由内容决定。
-    double initialEstimatedRowHeight = 44.h; // 用于估算ListView的总高度
-    double actualTableMinHeight = 200.h; // 表格的最小显示高度
-
-    // 这里的计算主要是为了给外部的 Container 和 ListView.builder 提供一个“视口”高度。
-    // 实际的行内容高度会自适应。如果实际内容总高度超过这个视口，ListView 会出现滚动条。
-    double estimatedContentHeight = riskMeasures.length * initialEstimatedRowHeight;
-    double actualTableHeight = math.max(actualTableMinHeight, estimatedContentHeight + headerHeight);
-
-    // 计算 ListView.builder 应该占据的高度（总高度 - 表头高度）
-    double listViewHeight = actualTableHeight - headerHeight;
-
-    return Container(
-      height: actualTableHeight, // 整个表格容器的高度
-      child: SingleChildScrollView( // 整个表格进行水平滑动
-        scrollDirection:Axis.horizontal,
-        child: Column( // Column 的宽度由 totalWidth 决定，高度由子元素决定
-          children: [
-            // 表头
-            Container(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      controller: _horizontalScrollController,
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // 让Column根据内容自适应高度
+        children: [
+          // 表头
+          Container(
+            width: totalWidth,
+            height: headerHeight,
+            color: const Color(0xFFF0F5FF),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: riskScenarioWidth,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 8.w),
+                    child: Text(
+                      "风险场景",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: const Color(0xFF3361FE),
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: possibilityWidth,
+                  child: Text(
+                    "可能性",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xFF3361FE),
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: impactWidth,
+                  child: Text(
+                    "影响程度",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xFF3361FE),
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: measuresWidth,
+                  child: Text(
+                    "应对措施",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xFF3361FE),
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ...riskMeasures.asMap().entries.map((entry) {
+            int index = entry.key;
+            RiskMeasure measure = entry.value;
+            final isOdd = index % 2 == 1;
+            
+            return Container(
               width: totalWidth,
-              height: headerHeight,
-              color: const Color(0xFFF0F5FF),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: riskScenarioWidth,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8.w),
-                      child: Text(
-                        "风险场景",
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: const Color(0xFF3361FE),
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: possibilityWidth,
-                    child: Text(
-                      "可能性",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF3361FE),
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: impactWidth,
-                    child: Text(
-                      "影响程度",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF3361FE),
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: measuresWidth,
-                    child: Text(
-                      "应对措施",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF3361FE),
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // 数据行部分
-            SizedBox( // 为 ListView.builder 提供一个明确的高度和宽度
-              height: listViewHeight, // 设置 ListView.builder 的明确高度
-              width: totalWidth, // 设置 ListView.builder 的明确宽度
-              child: ListView.builder( // ListView.builder 会在自身范围内垂直滑动
-                itemCount: riskMeasures.length,
-                itemBuilder: (context, index) {
-                  final measure = riskMeasures[index];
-                  final isOdd = index % 2 == 1;
-                  return Container(
-                    width: totalWidth,
-                    color: isOdd ? Colors.white : const Color(0xFFF9F9F9),
-                    padding: EdgeInsets.symmetric(vertical: 8.w),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start, // 内容顶部对齐
-                      children: [
-                        SizedBox(
-                          width: riskScenarioWidth,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 8.w), // 只留左右内边距
-                            child: Text(
-                              measure.riskScenario,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF1A1A1A),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: possibilityWidth,
+              color: isOdd ? Colors.white : const Color(0xFFF9F9F9),
+              padding: EdgeInsets.symmetric(vertical: 8.w),
+              child: IntrinsicHeight( // 让Row内的所有子组件高度一致
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: riskScenarioWidth,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 8.w),
+                        child: Center(
                           child: Text(
-                            measure.possibility,
+                            measure.riskScenario,
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: const Color(0xFF1A1A1A),
+                              height: 1.4, // 行高
                             ),
-                            textAlign: TextAlign.center,
+                            softWrap: true, // 允许换行
                           ),
                         ),
-                        SizedBox(
-                          width: impactWidth,
-                          child: Text(
-                            measure.impactLevel,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: const Color(0xFF1A1A1A),
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        SizedBox(
-                          width: measuresWidth,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 8.w), // 只留左右内边距
-                            child: Text(
-                              measure.countermeasures,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF1A1A1A),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  );
-                },
+                    Container(
+                      alignment: Alignment.center,
+                      width: possibilityWidth,
+                      child: tableItemWithColor(measure.possibility),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: impactWidth,
+                      child: tableItemWithColor(measure.impactLevel),
+                    ),
+                    SizedBox(
+                      width: measuresWidth,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 8.w),
+                        child: Text(
+                          measure.countermeasures,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: const Color(0xFF1A1A1A),
+                            height: 1.4,
+                          ),
+                          softWrap: true, // 允许换行
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
+
+  // 风险应对矩阵 可能性/影响程度背景
+  Widget tableItemWithColor(String string){
+    Color backgroundColor;
+    Color textColor;
+    switch (string) {
+      case '高':
+        backgroundColor = Color(0xFFFFECE9);
+        textColor = Color(0xFFFF6850);
+        break;
+      case '中':
+        backgroundColor = Color(0xFFFFF7E6);
+        textColor = Color(0xFFF6D500);
+        break;
+      case '低':
+        backgroundColor = Color(0xFFE7FEF8);
+        textColor = Color(0xFF07CC89);
+        break;
+      default:
+        backgroundColor = Color(0xFFE7FEF8);
+        textColor = Color(0xFF07CC89);
+    }
+    return Container(
+      width: 24.w,
+      height: 24.w,
+      padding: EdgeInsets.all(2.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(25.r)),
+        color: backgroundColor,
+      ),
+      child: Text(
+       string,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: textColor,
+          fontWeight: FontWeight.w400
+        ),
+        textAlign: TextAlign.center,
+        softWrap: true,
+      ),
+    );
+  }
+
   // 构建单个时间线项目
   Widget _buildTimelineItem(Map<String, dynamic> item, bool isLast) {
     return Container(
