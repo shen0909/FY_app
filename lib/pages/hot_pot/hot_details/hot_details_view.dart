@@ -234,8 +234,6 @@ class HotDetailsView extends StatelessWidget {
       
       switch (index) {
         case 0:
-          // 风险分析
-          // 检查风险分析内容是否为空
           if (detail.riskAnalysis.isEmpty) {
             return _buildEmptyContent();
           }
@@ -381,36 +379,59 @@ class HotDetailsView extends StatelessWidget {
                 ),
                 SizedBox(height: 12.w),
                 // 整体策略容器
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                      color: Color(0xffF9F9F9),
-                      borderRadius: BorderRadius.all(Radius.circular(8.r))
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '总体策略',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                Stack(
+                  children: [
+                    // 这是你主要的卡片内容
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Color(0XFFEBEEFF), FYColors.whiteColor]),
+                          borderRadius: BorderRadius.all(Radius.circular(8.r))),
+                      child: Column( // 保持原来的 Column 结构
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '总体策略',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 8.w),
+                          Text(
+                            detail.decisionSuggestion.overallStrategy,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: FYColors.color_A6A6A6,
+                              fontWeight: FontWeight.w400,
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      left: 0, // 距离左边 0
+                      top: 0, // 距离顶部 0
+                      bottom: 0,
+                      child: Container(
+                        width: 4.w, // 蓝色条的宽度
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4285F4), // 蓝色
+                          // 因为Positioned放在卡片内容之上，所以蓝色条的圆角也要与卡片左侧的圆角匹配
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8.r),
+                            bottomLeft: Radius.circular(8.r),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 8.w),
-                      Text(
-                        detail.decisionSuggestion.overallStrategy,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_A6A6A6,
-                          fontWeight: FontWeight.w400,
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10.w),
                 // 短期措施
@@ -433,14 +454,11 @@ class HotDetailsView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 8.w),
-                      Text(
-                        detail.decisionSuggestion.shortTermMeasures,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_A6A6A6,
-                          fontWeight: FontWeight.w400,
-                          height: 1.5,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: detail.decisionSuggestion.shortTermMeasures
+                            .map((measure) => measureItem(measure))
+                            .toList(),
                       ),
                     ],
                   ),
@@ -466,14 +484,11 @@ class HotDetailsView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 8.w),
-                      Text(
-                        detail.decisionSuggestion.midTermMeasures,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_A6A6A6,
-                          fontWeight: FontWeight.w400,
-                          height: 1.5,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: detail.decisionSuggestion.midTermMeasures
+                            .map((measure) => measureItem(measure))
+                            .toList(),
                       ),
                     ],
                   ),
@@ -499,14 +514,11 @@ class HotDetailsView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 8.w),
-                      Text(
-                        detail.decisionSuggestion.longTermMeasures,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_A6A6A6,
-                          fontWeight: FontWeight.w400,
-                          height: 1.5,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: detail.decisionSuggestion.longTermMeasures
+                            .map((measure) => measureItem(measure))
+                            .toList(),
                       ),
                     ],
                   ),
@@ -622,6 +634,38 @@ class HotDetailsView extends StatelessWidget {
           return const SizedBox.shrink();
       }
     });
+  }
+
+  // 决策建议措施item
+  Widget measureItem(String measure){
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 8.w,
+          height: 8.w,
+          margin: EdgeInsets.only(top: 6.w),
+          decoration: BoxDecoration(
+            borderRadius:
+            BorderRadius.circular(4.r),
+            color: FYColors.color_3361FE,
+          ),
+        ),
+        SizedBox(width: 4.w),
+        Expanded(
+          child: Text(
+            measure,
+            softWrap: true,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_A6A6A6,
+              fontWeight: FontWeight.w400,
+              height: 1.5,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget translateTap(int index) {
