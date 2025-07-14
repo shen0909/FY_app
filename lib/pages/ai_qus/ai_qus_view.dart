@@ -52,83 +52,86 @@ class AiQusPage extends StatelessWidget {
               });
               return false;
             },
-            child: SizeChangedLayoutNotifier(
-              child: Obx(() {
-                // 显示初始化加载状态
-                if (state.isInitializing.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                
-                return Stack(
-                children: [
-                  Column(
-                    children: [
-                      // 新增的顶部操作区域
-                      _buildTopActionBar(context),
-                      // 提示信息区域
-                      _buildNotificationBar(),
-                      SizedBox(height: 10.w),
-                      // 聊天内容区域
-                      Expanded(
-                          child: Stack(
-                            children: [
-                              Obx(() => ListView.builder(
-                              controller: state.scrollController,
-                              padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
-                              itemCount: state.messages.length,
-                              itemBuilder: (context, index) {
-                                final message = state.messages[index];
-                                return _buildMessageItem(message, index);
-                              },
-                            )),
-                              // 显示历史消息加载状态
-                              if (state.isLoadingHistory.value)
-                                Container(
-                                  color: Colors.white.withOpacity(0.7),
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
+            child: SafeArea(
+              bottom: true,
+              child: SizeChangedLayoutNotifier(
+                child: Obx(() {
+                  // 显示初始化加载状态
+                  if (state.isInitializing.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return Stack(
+                  children: [
+                    Column(
+                      children: [
+                        // 新增的顶部操作区域
+                        _buildTopActionBar(context),
+                        // 提示信息区域
+                        _buildNotificationBar(),
+                        SizedBox(height: 10.w),
+                        // 聊天内容区域
+                        Expanded(
+                            child: Stack(
+                              children: [
+                                Obx(() => ListView.builder(
+                                controller: state.scrollController,
+                                padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
+                                itemCount: state.messages.length,
+                                itemBuilder: (context, index) {
+                                  final message = state.messages[index];
+                                  return _buildMessageItem(message, index);
+                                },
+                              )),
+                                // 显示历史消息加载状态
+                                if (state.isLoadingHistory.value)
+                                  Container(
+                                    color: Colors.white.withOpacity(0.7),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
                                   ),
-                                ),
-                            ],
-                          ),
-                      ),
-                      Obx(() => state.isBatchCheck.value
-                          ? const SizedBox()
-                          : _buildInputArea()),
-                    ],
-                  ),
-                  // 提示词按钮 - 浮动在聊天内容上方
-                  Obx(() => state.isBatchCheck.value 
-                      ? const SizedBox()
-                      : Positioned(
-                          bottom: state.inputBoxHeight.value + 20.w,
-                          right: 16.w,
-                          child: GestureDetector(
-                            onTap: () => logic.showTipTemplateDialog(context),
-                            child: Image.asset(
-                              FYImages.addTip,
-                              width: 57.w,
-                              height: 57.w,
-                              fit: BoxFit.contain,
+                              ],
                             ),
-                          ),
-                        )),
-                  // 底部操作栏 - 批量选择模式
-                  Obx(() => state.isBatchCheck.value 
-                      ? Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: _buildBatchSelectionBar(),
-                        )
-                      : const SizedBox()),
-                  // 导出弹窗
-                  _buildExportDialog(),
-                ],
-                );
-              }),
+                        ),
+                        Obx(() => state.isBatchCheck.value
+                            ? const SizedBox()
+                            : _buildInputArea()),
+                      ],
+                    ),
+                    // 提示词按钮 - 浮动在聊天内容上方
+                    Obx(() => state.isBatchCheck.value
+                        ? const SizedBox()
+                        : Positioned(
+                            bottom: state.inputBoxHeight.value + 20.w,
+                            right: 16.w,
+                            child: GestureDetector(
+                              onTap: () => logic.showTipTemplateDialog(context),
+                              child: Image.asset(
+                                FYImages.addTip,
+                                width: 57.w,
+                                height: 57.w,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          )),
+                    // 底部操作栏 - 批量选择模式
+                    Obx(() => state.isBatchCheck.value
+                        ? Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: _buildBatchSelectionBar(),
+                          )
+                        : const SizedBox()),
+                    // 导出弹窗
+                    _buildExportDialog(),
+                  ],
+                  );
+                }),
+              ),
             ),
           ),
         ),

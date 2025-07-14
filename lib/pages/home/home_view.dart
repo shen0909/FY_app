@@ -274,7 +274,7 @@ class HomePage extends StatelessWidget {
       onTap: () => _handleMenuItemClick(item['title']),
       child: Container(
         width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
-        padding: EdgeInsets.only(bottom: 15.w),
+        padding: EdgeInsets.only(bottom: 10.w,top: 10.w),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
