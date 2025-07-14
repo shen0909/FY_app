@@ -131,7 +131,21 @@ class LoginLogic extends GetxController {
       }
     } catch (e) {
       print('指纹认证错误: $e');
-      ToastUtil.showError('指纹认证出错，请使用密码登录');
+      String errorMessage = '指纹认证失败，请使用密码登录';
+      if (e.toString().contains('FragmentActivity')) {
+        errorMessage = '系统兼容性问题，请重启应用后重试';
+      } else if (e.toString().contains('设备不支持')) {
+        errorMessage = '当前设备不支持指纹登录';
+      } else if (e.toString().contains('未设置指纹')) {
+        errorMessage = '请先在系统设置中添加指纹';
+      } else if (e.toString().contains('次数过多')) {
+        errorMessage = '验证次数过多，请稍后再试';
+      } else if (e.toString().contains('已被锁定')) {
+        errorMessage = '指纹功能已锁定，请使用密码登录';
+      } else if (e.toString().contains('用户取消')) {
+        errorMessage = '已取消指纹验证';
+      }
+      ToastUtil.showError(errorMessage);
       state.loginMethod.value = 0;
     } finally {
       state.isBiometricAuthenticating.value = false;

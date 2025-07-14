@@ -34,9 +34,9 @@ class BiometricService {
     try {
       final isAvailable = await isBiometricAvailable();
       if (!isAvailable) {
+        print('生物识别认证失败: 设备不支持或未启用生物识别');
         return false;
       }
-      
       return await _localAuth.authenticate(
         localizedReason: reason,
         options: const AuthenticationOptions(
@@ -46,14 +46,24 @@ class BiometricService {
         ),
       );
     } on PlatformException catch (e) {
-      print('生物识别认证失败: ${e.message}');
-      if (e.code == auth_error.notAvailable) {
-        throw Exception('设备不支持指纹登录');
-      } else if (e.code == auth_error.notEnrolled) {
-        throw Exception('设备未设置指纹');
-      } else {
-        throw Exception('指纹验证失败: ${e.message}');
+      print('生物识别认证失败: ${e.message}, 错误代码: ${e.code}');
+      
+      // 企业级错误处理
+      switch (e.code) {
+        case auth_error.notAvailable:
+          throw Exception('设备不支持指纹登录');
+        case auth_error.notEnrolled:
+          throw Exception('设备未设置指纹，请先在系统设置中添加指纹');
+        case auth_error.lockedOut:
+          throw Exception('指纹验证次数过多，请稍后再试');
+        case auth_error.permanentlyLockedOut:
+          throw Exception('指纹功能已被锁定，请使用其他认证方式');
+        default:
+          throw Exception('指纹验证失败: ${e.message}');
       }
+    } catch (e) {
+      print('生物识别认证异常: $e');
+      throw Exception('生物识别认证服务异常，请联系技术支持');
     }
   }
   
