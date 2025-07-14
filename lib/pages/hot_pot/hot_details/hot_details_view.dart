@@ -68,46 +68,49 @@ class HotDetailsView extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        // 加载中状态
-        if (state.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        
-        // 错误状态
-        if (state.errorMessage.value.isNotEmpty) {
-          return Center(
+      body: SafeArea(
+        bottom: true,
+        child: Obx(() {
+          // 加载中状态
+          if (state.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // 错误状态
+          if (state.errorMessage.value.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('获取数据失败：${state.errorMessage.value}'),
+                  SizedBox(height: 16.w),
+                  ElevatedButton(
+                    onPressed: () => logic.fetchNewsDetail(),
+                    child: const Text('重试'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // 数据为空状态
+          if (state.newsDetail.value.isEmpty) {
+            return const Center(child: Text('暂无详情数据'));
+          }
+
+          // 显示详情数据
+          return SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text('获取数据失败：${state.errorMessage.value}'),
-                SizedBox(height: 16.w),
-                ElevatedButton(
-                  onPressed: () => logic.fetchNewsDetail(),
-                  child: const Text('重试'),
-                ),
+                _buildHeader(),
+                _buildTabBar(),
+                _buildTabContentForScrollView(), // 使用适合SingleChildScrollView的内容构建方法
               ],
             ),
           );
-        }
-        
-        // 数据为空状态
-        if (state.newsDetail.value.isEmpty) {
-          return const Center(child: Text('暂无详情数据'));
-        }
-        
-        // 显示详情数据
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildHeader(),
-              _buildTabBar(),
-              _buildTabContentForScrollView(), // 使用适合SingleChildScrollView的内容构建方法
-            ],
-          ),
-        );
-      }),
+        }),
+      ),
     );
   }
 
