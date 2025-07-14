@@ -27,25 +27,28 @@ class DetailListPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: FYColors.whiteColor,
         appBar: const FYAppBar(title: '实体清单'),
-        body: SingleChildScrollView(
-          controller: logic.yearlyStatsController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildYearlyStatsTable(),
-              _buildDivider(),
-              _buildInfoSection(),
-              _buildFilterSection(),
-              _buildFilterChips(context),
-              _buildResultCount(),
-              Obx(() =>
-                  DynamicScrollbarWrapper(
-                      scrollDirection: Axis.horizontal,
-                      scrollController: logic.horizontalScrollController,
-                      overallContentExtent: state.totalTableWidth.value,
-                      child: _buildTable())),
-              _buildPagination(),
-            ],
+        body: SafeArea(
+          bottom: true,
+          child: SingleChildScrollView(
+            controller: logic.yearlyStatsController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildYearlyStatsTable(),
+                _buildDivider(),
+                _buildInfoSection(),
+                _buildFilterSection(),
+                _buildFilterChips(context),
+                _buildResultCount(),
+                Obx(() =>
+                    DynamicScrollbarWrapper(
+                        scrollDirection: Axis.horizontal,
+                        scrollController: logic.horizontalScrollController,
+                        overallContentExtent: state.totalTableWidth.value,
+                        child: _buildTable())),
+                _buildPagination(),
+              ],
+            ),
           ),
         ),
       ),
