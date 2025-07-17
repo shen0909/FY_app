@@ -654,6 +654,12 @@ class ApiService {
       "命令具体内容": {
         "current_page": currentPage,
         "page_size": pageSize,
+        'news_type': newsType == "全部" ? "" : newsType,
+        'region': region == "全部" ? "" : region,
+        'date_filter':dateFilter == "全部" ? "" : dateFilter,
+        'start_date':startDate,
+        'end_date':endDate,
+        'search':search,
       }
     };
     
@@ -663,8 +669,7 @@ class ApiService {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
-        
-        // 转换为与原接口兼容的格式
+
         List<dynamic> newsData = resultData["返回数据"]['data'] ?? [];
         List<Map<String, dynamic>> transformedData = newsData.map((item) {
           return {

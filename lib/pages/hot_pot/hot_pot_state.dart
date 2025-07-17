@@ -29,7 +29,7 @@ class HotPotState {
   // 日期范围选择
   final Rx<DateTime> startDate = DateTime.now().obs;
   final Rx<DateTime> endDate = DateTime.now().obs;
-  final RxBool useCustomDateRange = false.obs;
+  final RxBool useCustomDateRange = false.obs; //使用自定义的时间范围
   
   // 区域选项 - 将从接口获取
   final RxList<Map<String, dynamic>> regionList = <Map<String, dynamic>>[].obs;
