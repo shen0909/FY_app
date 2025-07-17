@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/pages/settings/update_page.dart';
@@ -96,6 +97,16 @@ class MyApp extends StatelessWidget {
                 surfaceTintColor: Colors.transparent,
               )
             ),
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('zh', ''), // 简体中文（不带国家代码）
+              Locale('zh', 'CN'), // 简体中文（中国大陆）
+              Locale('zh', 'TW'), // 繁体中文（台湾）
+            ],
             initialRoute: Routers.login,
           ),
         );

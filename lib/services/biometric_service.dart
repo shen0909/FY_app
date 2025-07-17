@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth_android/local_auth_android.dart'; // 导入这个
 
 class BiometricService {
   static final LocalAuthentication _localAuth = LocalAuthentication();
@@ -44,10 +45,21 @@ class BiometricService {
           biometricOnly: true,
           sensitiveTransaction: true,
         ),
+        authMessages: const <AuthMessages>[
+          AndroidAuthMessages(
+            biometricHint: "指纹验证",
+            biometricNotRecognized: "无法识别。请重试。",
+            biometricRequiredTitle: "弹出提示框的时候的提示",
+            biometricSuccess: "指纹验证成功",
+            cancelButton: "取消",
+            deviceCredentialsRequiredTitle: "需要设备凭证",
+            deviceCredentialsSetupDescription: "设备凭证设置说明",
+            signInTitle: "需要进行指纹验证",
+          )
+        ]
       );
     } on PlatformException catch (e) {
       print('生物识别认证失败: ${e.message}, 错误代码: ${e.code}');
-      
       // 企业级错误处理
       switch (e.code) {
         case auth_error.notAvailable:

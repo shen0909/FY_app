@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/login_data.dart';
 
+import '../../services/biometric_service.dart';
 import 'login_state.dart';
 
 class LoginLogic extends GetxController {
@@ -114,13 +115,7 @@ class LoginLogic extends GetxController {
         return;
       }
 
-      bool didAuthenticate = await _localAuth.authenticate(
-        localizedReason: '请验证指纹以登录',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
-      );
+      bool didAuthenticate = await BiometricService.authenticateWithBiometrics(reason: '请验证指纹以登录');
 
       if (didAuthenticate) {
         // 指纹验证成功，执行真正的登录流程
