@@ -118,8 +118,8 @@ class ApiService {
     Map<String, dynamic> requestData = {
       "marker": "",
       "param_string": jsonEncode(paramData),
-      "service_category": "comb_business_listen_plate",
-      "service_name": "comb_business_listen_channel",
+      "service_category": "zqclient_plate",
+      "service_name": "zqclient_channel",
       "target_hall_name": "",
       "timeout_milliseconds": 100000,
       "wait_return": true
