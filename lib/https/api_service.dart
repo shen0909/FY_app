@@ -172,11 +172,11 @@ class ApiService {
     String passBase64 = base64.encode(bytes);
     // 构造请求参数
     Map<String, dynamic> paramData = {
-      "消息类型": "用户操作-登录",
+      "消息类型": "用户认证-登录",
       "当前请求用户UUID": "",
       "命令具体内容": {
-        "用户名": username,
-        "PassBase64": passBase64
+        "username": username,
+        "password": passBase64
       }
     };
     dynamic result = await _sendChannelEvent(paramData: paramData);
