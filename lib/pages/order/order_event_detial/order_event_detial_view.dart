@@ -690,7 +690,7 @@ class OrderEventDetialPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  state.reportInfo.value['title'] ?? '',
+                  state.reportInfo['title'] ?? '',
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -707,7 +707,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      state.reportInfo.value['date'] ?? '',
+                      state.reportInfo['date'] ?? '',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Color(0xFFA6A6A6),
@@ -721,7 +721,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      state.reportInfo.value['fileType'] ?? '',
+                      state.reportInfo['fileType'] ?? '',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Color(0xFFA6A6A6),
@@ -729,7 +729,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     ),
                     Spacer(),
                     Text(
-                      state.reportInfo.value['size'] ?? '',
+                      state.reportInfo['size'] ?? '',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Color(0xFFA6A6A6),
@@ -739,7 +739,7 @@ class OrderEventDetialPage extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  state.reportInfo.value['description'] ?? '',
+                  state.reportInfo['description'] ?? '',
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Color(0xFF666666),

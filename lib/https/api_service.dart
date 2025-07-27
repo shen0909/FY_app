@@ -1442,5 +1442,672 @@ class ApiService {
       return false;
     }
   }
+
+  // ===== 专题订阅管理 API =====
+  
+  /// 新增专题订阅
+  Future<Map<String, dynamic>?> topicSubscription({
+    required String subjectUuid,
+    required bool isFollow
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 新增专题订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_专题_修改专题订阅状态",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "subject_uuid": subjectUuid,
+        "is_follow": isFollow,
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新增专题订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取专题订阅列表
+  Future<Map<String, dynamic>?> getTopicSubscriptionList({
+    int currentPage = 1,
+    int pageSize = 10,
+    String? searchKeyword,
+    bool? isActive,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取专题订阅列表失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_专题_获取专题列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取专题订阅列表响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 修改专题订阅
+  Future<Map<String, dynamic>?> updateTopicSubscription({
+    required String topicUuid,
+    String? topicName,
+    String? topicDescription,
+    List<String>? keywords,
+    List<String>? tags,
+    bool? isActive,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 修改专题订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> commandContent = {
+      "topic_uuid": topicUuid,
+    };
+    
+    if (topicName != null) commandContent["topic_name"] = topicName;
+    if (topicDescription != null) commandContent["topic_description"] = topicDescription;
+    if (keywords != null) commandContent["keywords"] = keywords;
+    if (tags != null) commandContent["tags"] = tags;
+    if (isActive != null) commandContent["is_active"] = isActive ? 1 : 0;
+    
+    Map<String, dynamic> paramData = {
+      "消息类型": "专题订阅_修改订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": commandContent
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析修改专题订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 删除专题订阅
+  Future<Map<String, dynamic>?> deleteTopicSubscription(String topicUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 删除专题订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "专题订阅_删除订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "topic_uuid": topicUuid
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析删除专题订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 批量删除专题订阅
+  Future<Map<String, dynamic>?> batchDeleteTopicSubscriptions(List<String> topicUuids) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 批量删除专题订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "专题订阅_批量删除订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "topic_uuids": topicUuids
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析批量删除专题订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  // ===== 事件订阅管理 API =====
+  
+  /// 新增事件订阅
+  Future<Map<String, dynamic>?> addEventSubscription({
+    required String eventName,
+    required String eventDescription,
+    List<String>? keywords,
+    List<String>? tags,
+    String? eventType,
+    bool isActive = true,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 新增事件订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件订阅_新增订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "event_name": eventName,
+        "event_description": eventDescription,
+        "keywords": keywords ?? [],
+        "tags": tags ?? [],
+        "event_type": eventType ?? "",
+        "is_active": isActive ? 1 : 0
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新增事件订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取事件订阅列表
+  Future<Map<String, dynamic>?> getEventSubscriptionList({
+    int currentPage = 1,
+    int pageSize = 10,
+    String? searchKeyword,
+    String? eventType,
+    bool? isActive,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取事件订阅列表失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件订阅_获取订阅列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "current_page": currentPage,
+        "page_size": pageSize,
+        "search_keyword": searchKeyword ?? "",
+        "event_type": eventType ?? "",
+        "is_active": isActive != null ? (isActive ? 1 : 0) : null
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取事件订阅列表响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 修改事件订阅
+  Future<Map<String, dynamic>?> updateEventSubscription({
+    required String eventUuid,
+    String? eventName,
+    String? eventDescription,
+    List<String>? keywords,
+    List<String>? tags,
+    String? eventType,
+    bool? isActive,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 修改事件订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> commandContent = {
+      "event_uuid": eventUuid,
+    };
+    
+    if (eventName != null) commandContent["event_name"] = eventName;
+    if (eventDescription != null) commandContent["event_description"] = eventDescription;
+    if (keywords != null) commandContent["keywords"] = keywords;
+    if (tags != null) commandContent["tags"] = tags;
+    if (eventType != null) commandContent["event_type"] = eventType;
+    if (isActive != null) commandContent["is_active"] = isActive ? 1 : 0;
+    
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件订阅_修改订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": commandContent
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析修改事件订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 删除事件订阅
+  Future<Map<String, dynamic>?> deleteEventSubscription(String eventUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 删除事件订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件订阅_删除订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "event_uuid": eventUuid
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析删除事件订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 批量删除事件订阅
+  Future<Map<String, dynamic>?> batchDeleteEventSubscriptions(List<String> eventUuids) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 批量删除事件订阅失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件订阅_批量删除订阅",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "event_uuids": eventUuids
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析批量删除事件订阅响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  // ===== 订阅内容获取 API =====
+  
+  /// 获取专题订阅内容
+  Future<Map<String, dynamic>?> getTopicSubscriptionContent({
+    required String topicUuid,
+    int currentPage = 1,
+    int pageSize = 10,
+    String? startDate,
+    String? endDate,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取专题订阅内容失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "专题订阅_获取订阅内容",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "topic_uuid": topicUuid,
+        "current_page": currentPage,
+        "page_size": pageSize,
+        "start_date": startDate ?? "",
+        "end_date": endDate ?? ""
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取专题订阅内容响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取事件订阅内容
+  Future<Map<String, dynamic>?> getEventSubscriptionContent({
+    required String eventUuid,
+    int currentPage = 1,
+    int pageSize = 10,
+    String? startDate,
+    String? endDate,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取事件订阅内容失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件订阅_获取订阅内容",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "event_uuid": eventUuid,
+        "current_page": currentPage,
+        "page_size": pageSize,
+        "start_date": startDate ?? "",
+        "end_date": endDate ?? ""
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取事件订阅内容响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取我的订阅汇总
+  Future<Map<String, dynamic>?> getMySubscriptionSummary() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取我的订阅汇总失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_专题_获取关注专题列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取订阅汇总响应失败: $e');
+        }
+      }
+    }
+    return null;
+  }
+
+  /// 获取热门事件列表
+  Future<Map<String, dynamic>?> getHotEventsList(
+      {int currentPage = 1, int pageSize = 10}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取热门事件列表失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_事件_获取事件列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取热门事件列表响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取事件详情
+  Future<Map<String, dynamic>?> getEventDetail({
+    required String eventUuid,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取事件详情失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件管理_获取事件详情",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "event_uuid": eventUuid
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取事件详情响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /// 获取事件最新动态
+  Future<Map<String, dynamic>?> getEventLatestUpdates({
+    required String eventUuid,
+    int currentPage = 1,
+    int pageSize = 10,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取事件最新动态失败：内层token为空');
+      }
+      return null;
+    }
+    
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "事件管理_获取最新动态",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "event_uuid": eventUuid,
+        "current_page": currentPage,
+        "page_size": pageSize
+      }
+    };
+    
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取事件最新动态响应失败: $e');
+        }
+      }
+    }
+    
+    return null;
+  }
 }
 

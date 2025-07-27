@@ -15,11 +15,17 @@ class OrderEventDetialState {
   // 事件日期
   final RxString eventDate = ''.obs;
   
+  // 事件UUID
+  final RxString eventUuid = ''.obs;
+  
   // 事件查看数
   final RxInt viewCount = 0.obs;
   
   // 事件关注数
   final RxInt followCount = 0.obs;
+  
+  // 是否已关注
+  final RxBool isFollowed = false.obs;
   
   // 事件描述
   final RxString eventDescription = ''.obs;

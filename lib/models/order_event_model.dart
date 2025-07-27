@@ -3,7 +3,7 @@ class OrderEventModels {
   final String uuid;
   final String name;
   final String description;
-  final String keyword;
+  final List<String> keyword;
   final String createdAt;
   final String updatedAt;
   final int relateNewsCount;
@@ -23,11 +23,18 @@ class OrderEventModels {
   });
 
   factory OrderEventModels.fromJson(Map<String, dynamic> json) {
+    final String keywordString = json['keyword'] as String;
+    final List<String> keywordList = keywordString
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
     return OrderEventModels(
       uuid: json['uuid'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      keyword: json['keyword'] as String,
+      keyword: keywordList,
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       relateNewsCount: json['relate_news_count'] as int,
@@ -42,7 +49,7 @@ class OrderEventModels {
       'uuid': uuid,
       'name': name,
       'description': description,
-      'keyword': keyword,
+      'keyword': keyword.join(','),
       'created_at': createdAt,
       'updated_at': updatedAt,
       'relate_news_count': relateNewsCount,

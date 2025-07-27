@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 
+import '../../models/order_event_model.dart';
 import '../../widgets/custom_app_bar.dart';
 import 'order_logic.dart';
 import 'order_state.dart';
@@ -176,8 +177,8 @@ class OrderPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEventItem(Map<String, dynamic> event) {
-    final bool isFollowed = event['isFavorite'] == true;
+  Widget _buildEventItem(OrderEventModels event) {
+    final bool isFollowed = false;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -186,7 +187,7 @@ class OrderPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
-        onTap: () => logic.getNewsListByEvent(event['title']),
+        onTap: () => logic.getNewsListByEvent(event.uuid),
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -197,7 +198,7 @@ class OrderPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    event['title'],
+                    event.name,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
@@ -205,7 +206,7 @@ class OrderPage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => logic.toggleEventFavorite(event),
+                    onTap: () => {},
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
                       decoration: BoxDecoration(
@@ -229,16 +230,18 @@ class OrderPage extends StatelessWidget {
               // if (event['description'] != null)
               Row(
                 children: [
-                  Text(
-                    event['description'],
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color(0xFFA6A6A6),
+                  Expanded(
+                    child: Text(
+                      "相关资讯 ${event.relateNewsCount ?? 0} 条",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
                     ),
                   ),
-                  const Spacer(),
+                  SizedBox(width: 8.w),
                   Text(
-                    event['updateTime'],
+                    event.updatedAt,
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Color(0xFFA6A6A6),
@@ -291,8 +294,8 @@ class OrderPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTopicItem(Map<String, dynamic> topic) {
-    final bool isFollowed = topic['isFavorite'] == true;
+  Widget _buildTopicItem(OrderEventModels topic) {
+    final bool isFollowed = false;
 
     return Container(
       margin: EdgeInsets.only(bottom: 10.w),
@@ -311,7 +314,7 @@ class OrderPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    topic['title'],
+                    topic.name,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
@@ -319,19 +322,29 @@ class OrderPage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => logic.toggleTopicFavorite(topic),
-                    child: Image.asset(
-                      FYImages.star,
-                      width: 16.w,
-                      height: 16.w,
-                      color: isFollowed ? Color(0xFFFF9719) : FYColors.color_D8D8D8,
+                    onTap: () => logic.toggleTopicFavorite(topic.uuid,false),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
+                      decoration: BoxDecoration(
+                        color: isFollowed
+                            ? Color(0x333361FE)
+                            : Color(0xFF3361FE),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        isFollowed ? '已关注' : '加关注',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: isFollowed ? Color(0xFF3361FE) : Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 8.w),
               Text(
-                '相关事件: ${topic['count']}个',
+                '相关事件: ${topic.relateNewsCount}个',
                 style: TextStyle(
                     fontSize: 12.sp,
                     color: FYColors.color_A6A6A6,
@@ -342,7 +355,7 @@ class OrderPage extends StatelessWidget {
               Wrap(
                 spacing: 8.w,
                 children: List.generate(
-                  topic['tags'].length,
+                  topic.keyword.length,
                       (tagIndex) =>
                       Container(
                         padding: EdgeInsets.symmetric(
@@ -352,7 +365,7 @@ class OrderPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(
-                          topic['tags'][tagIndex],
+                          topic.keyword[tagIndex],
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: FYColors.color_1A1A1A,
@@ -368,7 +381,7 @@ class OrderPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFavoriteEventItem(Map<String, dynamic> event) {
+  Widget _buildFavoriteEventItem(OrderEventModels event) {
     return Container(
       margin: EdgeInsets.only(bottom: 8.w),
       decoration: BoxDecoration(
@@ -378,15 +391,15 @@ class OrderPage extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
         title: Text(
-          event['title'] ?? '未命名事件',
+          event.name ?? '未命名事件',
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w500,
             color: FYColors.color_1A1A1A,
           ),
         ),
-        subtitle: event['description'] != null ? Text(
-          event['description'],
+        subtitle: event.description != null ? Text(
+          event.description,
           style: TextStyle(
             fontSize: 12.sp,
             color: FYColors.color_A6A6A6,
@@ -407,7 +420,7 @@ class OrderPage extends StatelessWidget {
             const Icon(Icons.chevron_right, color: FYColors.color_A6A6A6),
           ],
         ),
-        onTap: () => logic.getNewsListByEvent(event['title']),
+        onTap: () => logic.getNewsListByEvent(event.name),
       ),
     );
   }
@@ -445,7 +458,7 @@ class OrderPage extends StatelessWidget {
             height: 120.w, // 固定高度，根据实际需求调整
             child: Obx(() {
               final favoriteEvents = state.myFavorites.where((e) =>
-              !state.topicList.any((t) => t['title'] == e['title'])).toList();
+              !state.topicList.any((t) => t.name == e.name)).toList();
 
               if (favoriteEvents.isEmpty) {
                 return Center(
@@ -509,8 +522,7 @@ class OrderPage extends StatelessWidget {
           Expanded(
             child: Obx(() {
               // final favoriteTopics = state.topicList.where((t) => t['isFavorite'] == true).toList();
-              final favoriteTopics = state.topicList;
-
+              final favoriteTopics = state.myFavorites;
               if (favoriteTopics.isEmpty) {
                 return Center(
                   child: Column(
@@ -534,7 +546,6 @@ class OrderPage extends StatelessWidget {
                   ),
                 );
               }
-
               return ListView.builder(
                 itemCount: favoriteTopics.length,
                 physics: const AlwaysScrollableScrollPhysics(),
