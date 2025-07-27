@@ -178,7 +178,7 @@ class OrderPage extends StatelessWidget {
   }
 
   Widget _buildEventItem(OrderEventModels event) {
-    final bool isFollowed = false;
+    final bool isFollowed = event.isFollowed;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -206,7 +206,7 @@ class OrderPage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => {},
+                    onTap: () => logic.toggleEventFavorite(event.uuid, event.isFollowed),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
                       decoration: BoxDecoration(
@@ -295,8 +295,7 @@ class OrderPage extends StatelessWidget {
   }
 
   Widget _buildTopicItem(OrderEventModels topic) {
-    final bool isFollowed = false;
-
+    final bool isFollowed = topic.isFollowed;
     return Container(
       margin: EdgeInsets.only(bottom: 10.w),
       decoration: BoxDecoration(
@@ -322,7 +321,7 @@ class OrderPage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => logic.toggleTopicFavorite(topic.uuid,false),
+                    onTap: () => logic.toggleTopicFavorite(topic.uuid,topic.isFollowed),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w),
                       decoration: BoxDecoration(
@@ -457,9 +456,7 @@ class OrderPage extends StatelessWidget {
           SizedBox(
             height: 120.w, // 固定高度，根据实际需求调整
             child: Obx(() {
-              final favoriteEvents = state.myFavorites.where((e) =>
-              !state.topicList.any((t) => t.name == e.name)).toList();
-
+              final favoriteEvents = state.hotEvents.where((item) => item.isFollowed == true).toList();
               if (favoriteEvents.isEmpty) {
                 return Center(
                   child: Column(

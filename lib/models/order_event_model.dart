@@ -9,6 +9,7 @@ class OrderEventModels {
   final int relateNewsCount;
   final int readingCount;
   final int followerCount;
+  bool isFollowed; // 新增字段，表示是否已关注
 
   OrderEventModels({
     required this.uuid,
@@ -20,6 +21,7 @@ class OrderEventModels {
     required this.relateNewsCount,
     required this.readingCount,
     required this.followerCount,
+    this.isFollowed = false, // 初始值为false
   });
 
   factory OrderEventModels.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class OrderEventModels {
       relateNewsCount: json['relate_news_count'] as int,
       readingCount: json['reading_count'] as int,
       followerCount: json['follower_count'] as int,
+      isFollowed: false, // 不从JSON中获取，初始化为false
     );
   }
 
@@ -55,6 +58,7 @@ class OrderEventModels {
       'relate_news_count': relateNewsCount,
       'reading_count': readingCount,
       'follower_count': followerCount,
+      'is_followed': isFollowed,
     };
   }
 
@@ -62,6 +66,6 @@ class OrderEventModels {
   String toString() {
     return 'Event(uuid: $uuid, name: $name, description: $description, keyword: $keyword, '
         'createdAt: $createdAt, updatedAt: $updatedAt, relateNewsCount: $relateNewsCount, '
-        'readingCount: $readingCount, followerCount: $followerCount)';
+        'readingCount: $readingCount, followerCount: $followerCount, isFollowed: $isFollowed)';
   }
 }

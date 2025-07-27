@@ -27,6 +27,10 @@ class OrderState {
   // 是否显示订阅管理弹窗
   final RxBool isShowingManageDialog = false.obs;
 
+  // 订阅的专题UUID列表
+  final RxList<String> subscribedTopicUuids = <String>[].obs;
+  final RxList<String> subscribedEventUuids = <String>[].obs;
+
   OrderState() {
     ///Initialize variables
     _initDemoData();

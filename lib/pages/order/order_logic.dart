@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/https/api_service.dart';
-
 import '../../models/order_event_model.dart';
 import 'order_state.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 class OrderLogic extends GetxController {
   final OrderState state = OrderState();
@@ -32,14 +32,15 @@ class OrderLogic extends GetxController {
         Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
-      
+      await Future.wait([
+        loadSubscriptTopicUUidList(),
+        loadSubscriptEventUUidList()]);
       // 并行获取各种数据
       await Future.wait([
         loadHotEvents(),
         loadTopicList(),
         loadMySubscriptionSummary(),
       ]);
-      
       // 关闭加载对话框
       Get.back();
     } catch (e) {
@@ -68,27 +69,47 @@ class OrderLogic extends GetxController {
             .map((item) => OrderEventModels.fromJson(item))
             .toList();
         state.hotEvents.addAll(items);
+        // 根据订阅的UUID列表更新isFollowed状态
+        _updateHotEventsFollowedStatus(2);
       }
     } catch (e) {
       print('加载热门事件失败: $e');
     }
   }
   
+  // 更新热门事件的isFollowed状态
+  void _updateHotEventsFollowedStatus(int updateEvent) {
+    // 更新专题
+    if(updateEvent == 1){
+      // 根据订阅的UUID列表更新isFollowed状态
+      for (var topic in state.topicList) {
+        topic.isFollowed = state.subscribedTopicUuids.contains(topic.uuid);
+      }
+      state.topicList.refresh();
+    }
+    // 更新事件关注
+    else if (updateEvent == 2) {
+      for (var event in state.hotEvents) {
+        event.isFollowed = state.subscribedEventUuids.contains(event.uuid);
+      }
+      state.hotEvents.refresh();
+    }
+  }
+  
   // 加载专题列表
   Future<void> loadTopicList() async {
     try {
-      final result = await _apiService.getTopicSubscriptionList(
-        currentPage: 1,
-        pageSize: 20,
-        isActive: true,
-      );
-      
+      final result = await _apiService.getTopicSubscriptionList();
       if (result != null && result['执行结果'] == true) {
         state.topicList.clear();
         List<OrderEventModels> items = (result['返回数据'] as List)
             .map((item) => OrderEventModels.fromJson(item))
             .toList();
         state.topicList.addAll(items);
+        // 根据订阅的UUID列表更新isFollowed状态
+        for (var topic in state.topicList) {
+          topic.isFollowed = state.subscribedTopicUuids.contains(topic.uuid);
+        }
       }
     } catch (e) {
       print('加载专题列表失败: $e');
@@ -109,231 +130,66 @@ class OrderLogic extends GetxController {
             .toList();
         // 添加关注的事件
         state.myFavorites.addAll(items);
+        // 根据订阅的UUID列表更新isFollowed状态
+        _updateMyFavoritesFollowedStatus();
       }
     } catch (e) {
       print('加载订阅汇总失败: $e');
     }
   }
   
-  // 切换事件关注状态（新API版本）
-  Future<void> toggleEventFavorite(String eventUuid, bool isFavorite) async {
-    // try {
-    //   if (isFavorite) {
-    //     // 取消关注
-    //     final result = await _apiService.deleteEventSubscription(eventUuid);
-    //     if (result != null && result['执行结果'] == true) {
-    //       // 更新本地状态
-    //       final index = state.hotEvents.indexWhere((event) => event.uuid == eventUuid);
-    //       if (index != -1) {
-    //         state.hotEvents[index] = false;
-    //       }
-    //
-    //       // 从我的关注中移除
-    //       state.myFavorites.removeWhere((item) => item['uuid'] == eventUuid);
-    //
-    //       Get.snackbar('成功', '已取消关注该事件');
-    //     }
-    //   } else {
-    //     // 添加关注
-    //     final event = state.hotEvents.firstWhere((e) => e.uuid == eventUuid);
-    //     final result = await _apiService.addEventSubscription(
-    //       eventName: event.name,
-    //       eventDescription: event.description,
-    //       keywords: event.keyword,
-    //       tags: event['tags'] ?? [],
-    //       eventType: event['eventType'] ?? '',
-    //     );
-    //
-    //     if (result != null && result['执行结果'] == true) {
-    //       // 更新本地状态
-    //       final index = state.hotEvents.indexWhere((e) => e['uuid'] == eventUuid);
-    //       if (index != -1) {
-    //         state.hotEvents[index]['isFavorite'] = true;
-    //       }
-    //
-    //       // 添加到我的关注
-    //       state.myFavorites.add({
-    //         'uuid': eventUuid,
-    //         'title': event['title'],
-    //         'description': event['description'],
-    //         'updateTime': event['updateTime'],
-    //         'isFavorite': true,
-    //         'type': 'event',
-    //       });
-    //
-    //       Get.snackbar('成功', '已关注该事件');
-    //     }
-    //   }
-    // } catch (e) {
-    //   Get.snackbar('错误', '操作失败: $e');
-    // }
+  // 更新isFollowed状态
+  void _updateMyFavoritesFollowedStatus() {
+    for (var favorite in state.myFavorites) {
+      favorite.isFollowed = state.subscribedTopicUuids.contains(favorite.uuid);
+    }
+    state.myFavorites.refresh();
+    
+    if (kDebugMode) {
+      print('已更新我的关注列表的isFollowed状态');
+    }
   }
   
   // 切换专题关注状态
   Future<void> toggleTopicFavorite(String topicUuid, bool isFavorite) async {
     try {
-      final result = await _apiService.topicSubscription(subjectUuid: topicUuid,isFollow: true);
-
-      /*if (isFavorite) {
-        // 取消关注
-        final result = await _apiService.deleteTopicSubscription(topicUuid);
-        if (result != null && result['执行结果'] == true) {
-          // // 更新本地状态
-          // final index = state.topicList.indexWhere((topic) => topic['uuid'] == topicUuid);
-          // if (index != -1) {
-          //   state.topicList[index]['isFavorite'] = false;
-          // }
-          //
-          // // 从我的关注中移除
-          // state.myFavorites.removeWhere((item) => item['uuid'] == topicUuid);
-
-          Get.snackbar('成功', '已取消关注该专题');
-        }
-      } else {
-        // 添加关注
-        final topic = state.topicList.firstWhere((t) => t['uuid'] == topicUuid);
-        final result = await _apiService.topicSubscription(
-          topicName: topic['title'],
-          topicDescription: topic['description'] ?? '',
-          keywords: topic['tags'] ?? [],
-          tags: topic['tags'] ?? [],
-        );
-
-        if (result != null && result['执行结果'] == true) {
-          // 更新本地状态
-          final index = state.topicList.indexWhere((t) => t['uuid'] == topicUuid);
-          if (index != -1) {
-            state.topicList[index]['isFavorite'] = true;
-          }
-
-          // 添加到我的关注
-          state.myFavorites.add({
-            'uuid': topicUuid,
-            'title': topic['title'],
-            'count': topic['count'],
-            'tags': topic['tags'],
-            'isFavorite': true,
-            'type': 'topic',
-            'isTopic': true,
-          });
-
-          Get.snackbar('成功', '已关注该专题');
-        }
-      }*/
+      Get.dialog(
+        Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+      final result = await _apiService.toggleTopicSubscription(subjectUuid: topicUuid, isFollow: !isFavorite);
+      if(result != null && result['执行结果'] != false){
+        await loadSubscriptTopicUUidList();
+        _updateHotEventsFollowedStatus(1);
+        state.myFavorites.clear();
+        state.myFavorites.value = state.topicList.where((item) => item.isFollowed == true).toList();
+      }
+      Get.back();
     } catch (e) {
+      Get.back();
       Get.snackbar('错误', '操作失败: $e');
     }
   }
-  
-  // // 新增专题订阅
-  // Future<void> addNewTopicSubscription({
-  //   required String topicName,
-  //   required String topicDescription,
-  //   List<String>? keywords,
-  //   List<String>? tags,
-  // }) async {
-  //   try {
-  //     final result = await _apiService.topicSubscription(
-  //       topicName: topicName,
-  //       topicDescription: topicDescription,
-  //       keywords: keywords ?? [],
-  //       tags: tags ?? [],
-  //     );
-  //
-  //     if (result != null && result['执行结果'] == true) {
-  //       Get.snackbar('成功', '专题订阅创建成功');
-  //       // 重新加载数据
-  //       await loadTopicList();
-  //     } else {
-  //       Get.snackbar('错误', '创建专题订阅失败');
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('错误', '创建专题订阅失败: $e');
-  //   }
-  // }
-  
-  // 新增事件订阅
-  Future<void> addNewEventSubscription({
-    required String eventName,
-    required String eventDescription,
-    List<String>? keywords,
-    List<String>? tags,
-    String? eventType,
-  }) async {
+
+  // 切换事件关注状态
+  Future<void> toggleEventFavorite(String eventUid, bool isFavorite) async {
     try {
-      final result = await _apiService.addEventSubscription(
-        eventName: eventName,
-        eventDescription: eventDescription,
-        keywords: keywords ?? [],
-        tags: tags ?? [],
-        eventType: eventType ?? '',
+      Get.dialog(
+        Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
       );
-      
-      if (result != null && result['执行结果'] == true) {
-        Get.snackbar('成功', '事件订阅创建成功');
-        // 重新加载数据
-        await loadHotEvents();
-      } else {
-        Get.snackbar('错误', '创建事件订阅失败');
+      final result = await _apiService.toggleEventSubscription(subjectUuid: eventUid, isFollow: !isFavorite);
+      if(result != null){
+        await loadSubscriptEventUUidList();
+        _updateHotEventsFollowedStatus(2);
       }
+      Get.back();
     } catch (e) {
-      Get.snackbar('错误', '创建事件订阅失败: $e');
+      Get.back();
+      Get.snackbar('错误', '操作失败: $e');
     }
   }
-  
-  // 删除订阅项目
-  // Future<void> deleteSubscriptionItem(String uuid, String type) async {
-  //   try {
-  //     bool success = false;
-  //
-  //     if (type == 'event') {
-  //       final result = await _apiService.deleteEventSubscription(uuid);
-  //       success = result != null && result['执行结果'] == true;
-  //     } else if (type == 'topic') {
-  //       final result = await _apiService.deleteTopicSubscription(uuid);
-  //       success = result != null && result['执行结果'] == true;
-  //     }
-  //
-  //     if (success) {
-  //       // 从我的关注中移除
-  //       state.myFavorites.removeWhere((item) => item['uuid'] == uuid);
-  //       Get.snackbar('成功', '已删除订阅');
-  //     } else {
-  //       Get.snackbar('错误', '删除订阅失败');
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('错误', '删除订阅失败: $e');
-  //   }
-  // }
-  
-  // 批量删除订阅
-  // Future<void> batchDeleteSubscriptions(List<String> uuids, String type) async {
-  //   try {
-  //     bool success = false;
-  //
-  //     if (type == 'event') {
-  //       final result = await _apiService.batchDeleteEventSubscriptions(uuids);
-  //       success = result != null && result['执行结果'] == true;
-  //     } else if (type == 'topic') {
-  //       final result = await _apiService.batchDeleteTopicSubscriptions(uuids);
-  //       success = result != null && result['执行结果'] == true;
-  //     }
-  //
-  //     if (success) {
-  //       // 从我的关注中移除选中的项目
-  //       for (String uuid in uuids) {
-  //         state.myFavorites.removeWhere((item) => item['uuid'] == uuid);
-  //       }
-  //       Get.snackbar('成功', '批量删除成功');
-  //     } else {
-  //       Get.snackbar('错误', '批量删除失败');
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('错误', '批量删除失败: $e');
-  //   }
-  // }
-  
-  // 切换底部Tab
+
   void switchTab(int index) {
     state.currentTabIndex.value = index;
   }
@@ -718,63 +574,7 @@ class OrderLogic extends GetxController {
       ),
     );
   }*/
-  
-  // 切换事件收藏状态（旧版本，兼容UI调用）
- /* void toggleEventFavoriteLegacy(Map<String, dynamic> event) {
-    // 如果有uuid，使用新的API方法
-    if (event['uuid'] != null) {
-      final bool isFavorite = event['isFavorite'] ?? false;
-      toggleEventFavorite(event['uuid'], isFavorite);
-      return;
-    }
-    
-    // 否则使用旧的本地状态切换逻辑
-    final index = state.hotEvents.indexWhere(
-      (e) => e['title'] == event['title']
-    );
-    
-    if (index != -1) {
-      state.hotEvents[index]['isFavorite'] = !state.hotEvents[index]['isFavorite'];
-      state.hotEvents.refresh();
-      
-      // 更新我的关注列表
-      if (state.hotEvents[index]['isFavorite']) {
-        if (!state.myFavorites.any((e) => e['title'] == event['title'])) {
-          state.myFavorites.add({
-            'title': event['title'],
-            'isFavorite': true
-          });
-        }
-      } else {
-        state.myFavorites.removeWhere((e) => e['title'] == event['title']);
-      }
-    } else {
-      // 检查自定义事件
-      final customIndex = state.customEvents.indexWhere(
-        (e) => e['title'] == event['title']
-      );
-      
-      if (customIndex != -1) {
-        state.customEvents[customIndex]['isFavorite'] = !state.customEvents[customIndex]['isFavorite'];
-        state.customEvents.refresh();
-        
-        // 更新我的关注列表
-        if (state.customEvents[customIndex]['isFavorite']) {
-          if (!state.myFavorites.any((e) => e['title'] == event['title'])) {
-            state.myFavorites.add({
-              'title': event['title'],
-              'isFavorite': true
-            });
-          }
-        } else {
-          state.myFavorites.removeWhere((e) => e['title'] == event['title']);
-        }
-      }
-    }
-    
-    // 刷新列表
-    state.myFavorites.refresh();
-  }*/
+
   
   // 删除自定义事件
   /*void deleteCustomEvent(int index) {
@@ -857,14 +657,6 @@ class OrderLogic extends GetxController {
     // 导航到事件详情页面
     Get.toNamed('/order_event_detail', arguments: {'eventTitle': title});
   }
-
-  // 切换专题收藏状态（旧版本，兼容UI调用）
-  void toggleTopicFavoriteLegacy(OrderEventModels topic) {
-    // 如果有uuid，使用新的API方法
-    // final bool isFavorite = topic['isFavorite'] ?? false;
-    // toggleTopicFavorite(topic['uuid'], isFavorite);
-    // return;
-    }
 
   // 查看专题详情
   void viewTopicDetail(OrderEventModels topic) {
@@ -955,5 +747,40 @@ class OrderLogic extends GetxController {
         );
       },
     );
+  }
+
+  Future<void> loadSubscriptTopicUUidList() async {
+    final result = await _apiService.getSubscriptionTopic();
+    if (result != null) {
+      final returnData = result['返回数据'] as Map<String, dynamic>?;
+      if (returnData != null && returnData['subject_uuid'] != null) {
+        final List<dynamic> subscribedUuids = returnData['subject_uuid'] as List<dynamic>;
+        
+        // 清空并保存订阅的UUID列表
+        state.subscribedTopicUuids.clear();
+        state.subscribedTopicUuids.addAll(
+          subscribedUuids.map((uuid) => uuid.toString()).toList()
+        );
+        
+        if (kDebugMode) {
+          print('已保存订阅的UUID列表，数量: ${state.subscribedTopicUuids.length}');
+          print('订阅的UUID: ${state.subscribedTopicUuids}');
+        }
+      }
+    }
+  }
+
+  Future<void> loadSubscriptEventUUidList() async {
+    final result = await _apiService.getSubscriptionEvent();
+    if (result != null) {
+      // 清空并保存订阅的UUID列表
+      List<String> eventUUidList = (result['返回数据'] as List).map((item) => item.toString()).toList();
+      state.subscribedEventUuids.clear();
+      state.subscribedEventUuids.addAll(eventUUidList);
+      if (kDebugMode) {
+        print('已保存订阅的UUID列表，数量: ${state.subscribedTopicUuids.length}');
+        print('订阅的Event UUID: ${state.subscribedTopicUuids}');
+      }
+    }
   }
 }
