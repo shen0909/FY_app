@@ -670,18 +670,15 @@ class ApiService {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
 
-        List<dynamic> newsData = resultData["返回数据"]['data'] ?? [];
+        List<dynamic> newsData = resultData["返回数据"]['list'] ?? [];
         List<Map<String, dynamic>> transformedData = newsData.map((item) {
           return {
             'news_id': item['uuid'] ?? '',
-            'news_title': item['news_title'] ?? '',
-            'news_type': '舆情热点', // 新接口没有分类，使用固定值
+            'news_title': item['title'] ?? '',
+            'news_type': item['types'] ?? '舆情热点', // 新接口没有分类，使用固定值
             'news_medium': item['news_medium'] ?? '',
-            'google_keyword': '', // 新接口没有此字段
             'publish_time': item['publish_time'] ?? '',
-            'news_summary': item['news_summary'] ?? '',
-            'news_source_url': '', // 新接口没有此字段
-            'region': '', // 新接口没有区域字段
+            'news_summary': item['summary'] ?? '',
           };
         }).toList();
         
