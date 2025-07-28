@@ -187,7 +187,7 @@ class OrderPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
-        onTap: () => logic.getNewsListByEvent(event.uuid),
+        onTap: () => logic.getNewsListByEvent(event),
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -419,7 +419,7 @@ class OrderPage extends StatelessWidget {
             const Icon(Icons.chevron_right, color: FYColors.color_A6A6A6),
           ],
         ),
-        onTap: () => logic.getNewsListByEvent(event.name),
+        onTap: () => logic.getNewsListByEvent(event),
       ),
     );
   }

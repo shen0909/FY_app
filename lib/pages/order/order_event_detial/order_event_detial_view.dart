@@ -21,7 +21,7 @@ class OrderEventDetialPage extends StatelessWidget {
           Scaffold(
             backgroundColor: FYColors.whiteColor,
             appBar: FYAppBar(
-              title: '事件详情',
+              title: logic.getPageTitle(), // 使用动态标题
               actions: [
                 batchCheckWidget()
               ],
@@ -48,7 +48,7 @@ class OrderEventDetialPage extends StatelessWidget {
       );
     });
   }
-  
+
   // 事件头部信息
   Widget _buildEventHeader() {
     return Padding(
@@ -160,7 +160,7 @@ class OrderEventDetialPage extends StatelessWidget {
     return Container(
       height: 8.h,
       color: FYColors.color_F9F9F9,
-      margin: EdgeInsets.symmetric(vertical: 10.h),
+      margin: EdgeInsets.symmetric(vertical: 1.h),
     );
   }
   
@@ -227,10 +227,10 @@ class OrderEventDetialPage extends StatelessWidget {
           
           // 查看更多
           GestureDetector(
-            onTap: () => logic.viewMoreUpdates(),
+            onTap: () => logic.refreshData(),
             child: Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
+              // padding: EdgeInsets.symmetric(vertical: 16.h),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -251,7 +251,7 @@ class OrderEventDetialPage extends StatelessWidget {
             ),
           ),
           // 底部留白，防止底部操作栏遮挡内容
-          state.isBatchCheck.value ? SizedBox(height: 80.h) : SizedBox(height: 20.h),
+          SizedBox(height: 80.h),
         ],
       ),
     );
@@ -298,6 +298,7 @@ class OrderEventDetialPage extends StatelessWidget {
                       fontSize: 14.sp,
                       color: Color(0xFF666666),
                     ),
+                    maxLines: 2,
                   ),
                   SizedBox(height: 10.h),
                   Row(
@@ -450,7 +451,7 @@ class OrderEventDetialPage extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    '可生成事件报告',
+                    logic.isEvent ? '可生成事件报告' : '可生成专题报告',
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Color(0xFFA6A6A6),
@@ -564,7 +565,7 @@ class OrderEventDetialPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '生成事件报告',
+                            logic.isEvent ? '生成事件报告' : '生成专题报告',
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -624,7 +625,7 @@ class OrderEventDetialPage extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            '正在处理所选事件并整合为分析报告',
+            logic.isEvent ? '正在处理所选事件并整合为分析报告' : '正在处理所选专题并整合为分析报告',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),
@@ -667,7 +668,7 @@ class OrderEventDetialPage extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            '事件分析报告已生成，可立即下载查看',
+            logic.isEvent ? '事件分析报告已生成，可立即下载查看' : '专题分析报告已生成，可立即下载查看',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),

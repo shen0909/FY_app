@@ -1,28 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
+import '../../../models/order_event_model.dart';
 
 import 'order_event_detial_state.dart';
 
 class OrderEventDetialLogic extends GetxController {
   final OrderEventDetialState state = OrderEventDetialState();
   final ApiService _apiService = ApiService();
+  
+  // 添加变量来标识当前是事件还是专题
+  bool _isEvent = true;
+  OrderEventModels? _currentModel;
 
   @override
   void onReady() {
     super.onReady();
     // 获取路由参数
     final Map<String, dynamic>? args = Get.arguments;
-    if (args != null && args.containsKey('eventTitle')) {
-      loadEventDetails(args['eventTitle']);
-    } else if (args != null && args.containsKey('eventUuid')) {
-      loadEventDetailsByUuid(args['eventUuid']);
+    if (args != null) {
+      // 处理新的参数格式
+      if (args.containsKey('is_event') && args.containsKey('models')) {
+        _isEvent = args['is_event'] as bool;
+        _currentModel = args['models'] as OrderEventModels;
+        // 根据模型数据初始化基本信息
+        _initializeFromModel(_currentModel!);
+        // 根据是否是事件来加载对应的详情和动态
+        if (_isEvent) {
+          loadEventDetailsByUuid(_currentModel!.uuid);
+        } else {
+          loadTopicDetailsByUuid(_currentModel!.uuid);
+        }
+      }
+      // 兼容旧的参数格式
+      else if (args.containsKey('eventTitle')) {
+        loadEventDetails(args['eventTitle']);
+      } else if (args.containsKey('eventUuid')) {
+        loadEventDetailsByUuid(args['eventUuid']);
+      }
     }
   }
 
   @override
   void onClose() {
     super.onClose();
+  }
+  
+  // 从模型数据初始化基本信息
+  void _initializeFromModel(OrderEventModels model) {
+    state.eventTitle.value = model.name;
+    state.eventUuid.value = model.uuid;
+    state.eventDescription.value = model.description ?? '';
+    state.isFollowed.value = model.isFollowed;
+    state.eventTags.addAll(model.keyword);
   }
   
   // 通过UUID加载事件详情
@@ -33,14 +63,8 @@ class OrderEventDetialLogic extends GetxController {
         Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
-      
-      // 并行获取事件详情和最新动态
-      await Future.wait([
-        loadEventDetail(eventUuid),
-        loadEventLatestUpdates(eventUuid),
-      ]);
-      
-      // 关闭加载对话框
+      await loadEventLatestUpdates(eventUuid);
+    // 关闭加载对话框
       Get.back();
     } catch (e) {
       Get.back(); // 关闭加载对话框
@@ -54,53 +78,99 @@ class OrderEventDetialLogic extends GetxController {
     }
   }
   
-  // 加载事件详情
-  Future<void> loadEventDetail(String eventUuid) async {
+  // 通过UUID加载专题详情
+  Future<void> loadTopicDetailsByUuid(String topicUuid) async {
     try {
-      final result = await _apiService.getEventDetail(eventUuid: eventUuid);
+      // 显示加载状态
+      Get.dialog(
+        Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
       
-      if (result != null && result['执行结果'] == true) {
-        final eventData = result['返回数据'];
-        
-        state.eventTitle.value = eventData['event_name'] ?? '';
-        state.eventDate.value = eventData['create_time'] ?? '';
-        state.viewCount.value = eventData['view_count'] ?? 0;
-        state.followCount.value = eventData['follow_count'] ?? 0;
-        state.eventDescription.value = eventData['event_description'] ?? '';
-        state.eventTags.assignAll(List<String>.from(eventData['tags'] ?? []));
-        state.eventUuid.value = eventUuid;
-      }
+      // 并行获取专题详情和最新动态
+      await loadTopicLatestUpdates(topicUuid);
+      
+      // 关闭加载对话框
+      Get.back();
     } catch (e) {
-      print('加载事件详情失败: $e');
+      Get.back(); // 关闭加载对话框
+      Get.snackbar(
+        '错误', 
+        '加载专题详情失败: $e',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
-  
+
   // 加载事件最新动态
   Future<void> loadEventLatestUpdates(String eventUuid) async {
     try {
       final result = await _apiService.getEventLatestUpdates(
         eventUuid: eventUuid,
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
       );
       
       if (result != null && result['执行结果'] == true) {
-        final List<dynamic> updatesData = result['返回数据']['data'] ?? [];
+        final Map<String, dynamic> returnData = result['返回数据'] ?? {};
+        final List<dynamic> updatesData = returnData['list'] ?? [];
+        
         state.latestUpdates.clear();
         
         for (var update in updatesData) {
           state.latestUpdates.add({
             'uuid': update['uuid'] ?? '',
             'title': update['title'] ?? '',
-            'content': update['content'] ?? '',
-            'date': update['create_time'] ?? '',
-            'type': update['type'] ?? '',
-            'source': update['source'] ?? '',
+            'content': update['summary'] ?? '', // 使用summary作为内容
+            'date': update['publish_time'] ?? '',
+            'type': update['types'] ?? '',
+            'source': update['news_medium'] ?? '',
           });
         }
+        print('✅ 成功加载事件最新动态，共 ${state.latestUpdates.length} 条');
+      } else {
+        print('❌ 加载事件最新动态失败: ${result?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
-      print('加载事件最新动态失败: $e');
+      print('❌ 加载事件最新动态异常: $e');
+    }
+  }
+  
+  // 加载专题最新动态
+  Future<void> loadTopicLatestUpdates(String topicUuid) async {
+    try {
+      final result = await _apiService.getTopicLatestUpdates(
+        eventUuid: topicUuid, // API方法中参数名为eventUuid但实际可以传入topicUuid
+        currentPage: 1,
+        pageSize: 10, // 增加获取更多数据
+      );
+      
+      if (result != null && result['执行结果'] == true) {
+        // 根据实际返回数据结构解析
+        final Map<String, dynamic> returnData = result['返回数据'] ?? {};
+        final List<dynamic> updatesData = returnData['list'] ?? [];
+        
+        state.latestUpdates.clear();
+        
+        for (var update in updatesData) {
+          state.latestUpdates.add({
+            'uuid': update['uuid'] ?? '',
+            'title': update['title'] ?? '',
+            'content': update['summary'] ?? '', // 使用summary作为内容
+            'date': update['publish_time'] ?? '',
+            'type': update['types'] ?? '',
+            'source': update['news_medium'] ?? '',
+          });
+        }
+        
+        print('✅ 成功加载专题最新动态，共 ${state.latestUpdates.length} 条');
+      } else {
+        print('❌ 加载专题最新动态失败: ${result?['返回消息'] ?? '未知错误'}');
+      }
+    } catch (e) {
+      print('❌ 加载专题最新动态异常: $e');
     }
   }
   
@@ -114,7 +184,7 @@ class OrderEventDetialLogic extends GetxController {
     state.followCount.value = 48;
     state.eventDescription.value = '该事件包含多个最新动态和分析报告，涉及全球贸易摩擦、关税政策变化以及对产业链的影响。';
     state.eventTags.assignAll(['贸易', '关税', '产业链']);
-    
+
     // 添加最新动态
     state.latestUpdates.assignAll([
       {
@@ -337,26 +407,78 @@ class OrderEventDetialLogic extends GetxController {
   // 刷新数据
   Future<void> refreshData() async {
     if (state.eventUuid.value.isNotEmpty) {
-      await loadEventDetailsByUuid(state.eventUuid.value);
+      if (_isEvent) {
+        await loadEventDetailsByUuid(state.eventUuid.value);
+      } else {
+        await loadTopicDetailsByUuid(state.eventUuid.value);
+      }
     }
   }
   
-  // 关注/取消关注事件
+  // 关注/取消关注事件或专题
   Future<void> toggleEventFollow() async {
     try {
-      // 这里可以调用API来关注/取消关注事件
-      // 暂时使用本地状态切换
-      if (state.isFollowed.value) {
-        state.isFollowed.value = false;
-        state.followCount.value--;
-        Get.snackbar('成功', '已取消关注该事件');
+      // 根据是否是事件来调用不同的API
+      if (_isEvent) {
+        // 调用事件关注API
+        final result = await _apiService.toggleEventSubscription(
+          subjectUuid: state.eventUuid.value,
+          isFollow: !state.isFollowed.value,
+        );
+        
+        if (result != null && result['执行结果'] == true) {
+          if (state.isFollowed.value) {
+            state.isFollowed.value = false;
+            state.followCount.value--;
+            Get.snackbar('成功', '已取消关注该事件');
+          } else {
+            state.isFollowed.value = true;
+            state.followCount.value++;
+            Get.snackbar('成功', '已关注该事件');
+          }
+        } else {
+          Get.snackbar('错误', '操作失败');
+        }
       } else {
-        state.isFollowed.value = true;
-        state.followCount.value++;
-        Get.snackbar('成功', '已关注该事件');
+        // 调用专题关注API
+        final result = await _apiService.toggleTopicSubscription(
+          subjectUuid: state.eventUuid.value,
+          isFollow: state.isFollowed.value,
+        );
+        
+        if (result != null && result['执行结果'] == true) {
+          if (state.isFollowed.value) {
+            state.isFollowed.value = false;
+            state.followCount.value--;
+            Get.snackbar('成功', '已取消关注该专题');
+          } else {
+            state.isFollowed.value = true;
+            state.followCount.value++;
+            Get.snackbar('成功', '已关注该专题');
+          }
+        } else {
+          Get.snackbar('错误', '操作失败');
+        }
       }
     } catch (e) {
       Get.snackbar('错误', '操作失败: $e');
     }
   }
+  
+  // 获取当前页面标题（用于UI显示）
+  String getPageTitle() {
+    return _isEvent ? '事件详情' : '专题详情';
+  }
+  
+  // 获取关注按钮文本
+  String getFollowButtonText() {
+    if (_isEvent) {
+      return state.isFollowed.value ? '已关注事件' : '关注事件';
+    } else {
+      return state.isFollowed.value ? '已关注专题' : '关注专题';
+    }
+  }
+  
+  // 判断当前是否为事件
+  bool get isEvent => _isEvent;
 }

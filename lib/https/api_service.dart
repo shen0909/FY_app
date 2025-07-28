@@ -1829,7 +1829,7 @@ class ApiService {
   Future<Map<String, dynamic>?> getEventLatestUpdates({
     required String eventUuid,
     int currentPage = 1,
-    int pageSize = 10,
+    int pageSize = 1,
   }) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
@@ -1842,10 +1842,10 @@ class ApiService {
     
     // 构造请求参数
     Map<String, dynamic> paramData = {
-      "消息类型": "事件管理_获取最新动态",
+      "消息类型": "舆情热点_事件_获取相关新闻列表",
       "当前请求用户UUID": token,
       "命令具体内容": {
-        "event_uuid": eventUuid,
+        "uuid": eventUuid,
         "current_page": currentPage,
         "page_size": pageSize
       }
@@ -1864,6 +1864,48 @@ class ApiService {
       }
     }
     
+    return null;
+  }
+
+  /// 获取专题相关新闻
+  Future<Map<String, dynamic>?> getTopicLatestUpdates({
+    required String eventUuid,
+    int currentPage = 1,
+    int pageSize = 1,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取事件最新动态失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_专题_获取相关新闻列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "uuid": eventUuid,
+        "current_page": currentPage,
+        "page_size": pageSize
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取事件最新动态响应失败: $e');
+        }
+      }
+    }
+
     return null;
   }
 }

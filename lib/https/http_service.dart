@@ -6,7 +6,8 @@ import 'package:safe_app/https/token_interceptor.dart';
 class HttpService {
   static final HttpService _instance = HttpService._internal();
   static const String _tag = 'FYHttp';
-  static const String baseUrl = 'https://api2.fyclouds.com:2053';
+  static const String baseUrl = 'http://180.97.221.196:2033';
+  // static const String baseUrl = 'https://api2.fyclouds.com:2053';
   static const String baseUrl1 = 'http://180.97.221.196:2032';
 
   factory HttpService() => _instance;

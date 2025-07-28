@@ -5,6 +5,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/https/api_service.dart';
 import '../../models/order_event_model.dart';
+import '../../routers/routers.dart';
 import 'order_state.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -653,21 +654,15 @@ class OrderLogic extends GetxController {
   }*/
   
   // 获取资讯列表
-  void getNewsListByEvent(String title) {
+  void getNewsListByEvent(OrderEventModels models) {
     // 导航到事件详情页面
-    Get.toNamed('/order_event_detail', arguments: {'eventTitle': title});
+    Get.toNamed(Routers.orderEventDetail, arguments: {'is_event': true, 'models': models });
   }
 
   // 查看专题详情
   void viewTopicDetail(OrderEventModels topic) {
     // 模拟进入专题详情页面
-    Get.snackbar(
-      '提示', 
-      '正在查看 ${topic.name} 专题详情',
-      backgroundColor: Colors.white,
-      colorText: Color(0xFF1A1A1A),
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    Get.toNamed(Routers.orderEventDetail, arguments: {'is_event': false, 'models': topic });
   }
 
   // 构建全部订阅内容网格
