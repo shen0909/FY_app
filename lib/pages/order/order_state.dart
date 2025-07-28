@@ -19,7 +19,7 @@ class OrderState {
   final RxList<OrderEventModels> myFavorites = <OrderEventModels>[].obs;
 
   // 全部订阅类别
-  final RxList<Map<String, dynamic>> allSubscriptionCategories = <Map<String, dynamic>>[].obs;
+  final RxList<OrderEventModels> allSubscriptionCategories = <OrderEventModels>[].obs;
 
   // 当前选中的底部tab索引
   final RxInt currentTabIndex = 0.obs;

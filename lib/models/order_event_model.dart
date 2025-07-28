@@ -10,6 +10,7 @@ class OrderEventModels {
   final int readingCount;
   final int followerCount;
   bool isFollowed; // 新增字段，表示是否已关注
+  bool isEvent; // 新增字段，表示是否已关注
 
   OrderEventModels({
     required this.uuid,
@@ -22,6 +23,7 @@ class OrderEventModels {
     required this.readingCount,
     required this.followerCount,
     this.isFollowed = false, // 初始值为false
+    this.isEvent = false, // 初始值为false
   });
 
   factory OrderEventModels.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class OrderEventModels {
       readingCount: json['reading_count'] as int,
       followerCount: json['follower_count'] as int,
       isFollowed: false, // 不从JSON中获取，初始化为false
+      isEvent: false, // 不从JSON中获取，初始化为false
     );
   }
 

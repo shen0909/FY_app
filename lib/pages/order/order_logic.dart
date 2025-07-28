@@ -72,6 +72,7 @@ class OrderLogic extends GetxController {
         state.hotEvents.addAll(items);
         // 根据订阅的UUID列表更新isFollowed状态
         _updateHotEventsFollowedStatus(2);
+        state.allSubscriptionCategories.addAll(items);
       }
     } catch (e) {
       print('加载热门事件失败: $e');
@@ -92,9 +93,11 @@ class OrderLogic extends GetxController {
     else if (updateEvent == 2) {
       for (var event in state.hotEvents) {
         event.isFollowed = state.subscribedEventUuids.contains(event.uuid);
+        event.isEvent = true;
       }
       state.hotEvents.refresh();
     }
+    state.allSubscriptionCategories.refresh();
   }
   
   // 加载专题列表
@@ -110,7 +113,9 @@ class OrderLogic extends GetxController {
         // 根据订阅的UUID列表更新isFollowed状态
         for (var topic in state.topicList) {
           topic.isFollowed = state.subscribedTopicUuids.contains(topic.uuid);
+          topic.isEvent = false;
         }
+        state.allSubscriptionCategories.addAll(items);
       }
     } catch (e) {
       print('加载专题列表失败: $e');
@@ -317,9 +322,7 @@ class OrderLogic extends GetxController {
   
   // 构建我的订阅项目列表
   List<Widget> _buildMySubscriptionItems() {
-    final List<Map<String, dynamic>> mySubscriptions = state.allSubscriptionCategories
-        .where((item) => item['isSubscribed'] == true)
-        .toList();
+    final List<OrderEventModels> mySubscriptions = state.allSubscriptionCategories.where((item) => item.isFollowed == true).toList();
         
     return mySubscriptions.map((item) {
       return IntrinsicWidth(
@@ -331,7 +334,7 @@ class OrderLogic extends GetxController {
           ),
           alignment: Alignment.center,
           child: Text(
-            item['title'],
+            item.name,
             style: TextStyle(
               fontSize: 11.sp,
               fontWeight: FontWeight.w500,
@@ -344,79 +347,65 @@ class OrderLogic extends GetxController {
     }).toList();
   }
   
-  // 构建全部订阅项目列表
-  List<Widget> _buildAllSubscriptionItems() {
-    return state.allSubscriptionCategories.map((item) {
-      final bool isSubscribed = item['isSubscribed'] == true;
-      return Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 6.w),
-            decoration: BoxDecoration(
-              color: FYColors.color_F9F9F9,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Center(
-              child: Text(
-                item['title'],
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w500,
-                  color: FYColors.color_1A1A1A,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-          // 关注按钮（只在未订阅时显示）
-          if (!isSubscribed)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: () => toggleSubscription(item),
-                child: Container(
-                  width: 40.w,
-                  height: 16.h,
-                  decoration: BoxDecoration(
-                    color: FYColors.color_3361FE,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(8.r),
-                      topRight: Radius.circular(8.r),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '加关注',
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      );
-    }).toList();
-  }
-  
-  // 切换订阅状态
-  void toggleSubscription(Map<String, dynamic> item) {
-    print('点击了加关注按钮，项目: ${item['title']}');
-    final index = state.allSubscriptionCategories.indexWhere(
-      (e) => e['title'] == item['title']
-    );
-    
-    if (index != -1) {
-      final oldStatus = state.allSubscriptionCategories[index]['isSubscribed'];
-      state.allSubscriptionCategories[index]['isSubscribed'] = !oldStatus;
-      state.allSubscriptionCategories.refresh();
-    }
-  }
+  // // 构建全部订阅项目列表
+  // List<Widget> _buildAllSubscriptionItems() {
+  //   return state.allSubscriptionCategories.map((item) {
+  //     final bool isSubscribed = item.isFollowed == true;
+  //     return Stack(
+  //       children: [
+  //         Container(
+  //           width: double.infinity,
+  //           padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 6.w),
+  //           decoration: BoxDecoration(
+  //             color: FYColors.color_F9F9F9,
+  //             borderRadius: BorderRadius.circular(8.r),
+  //           ),
+  //           child: Center(
+  //             child: Text(
+  //               item.name,
+  //               style: TextStyle(
+  //                 fontSize: 11.sp,
+  //                 fontWeight: FontWeight.w500,
+  //                 color: FYColors.color_1A1A1A,
+  //               ),
+  //               textAlign: TextAlign.center,
+  //               maxLines: 2,
+  //               overflow: TextOverflow.ellipsis,
+  //             ),
+  //           ),
+  //         ),
+  //         // 关注按钮（只在未订阅时显示）
+  //         if (!isSubscribed)
+  //           Positioned(
+  //             top: 0,
+  //             right: 0,
+  //             child: GestureDetector(
+  //               onTap: () => {},
+  //               child: Container(
+  //                 width: 40.w,
+  //                 height: 16.h,
+  //                 decoration: BoxDecoration(
+  //                   color: FYColors.color_3361FE,
+  //                   borderRadius: BorderRadius.only(
+  //                     bottomLeft: Radius.circular(8.r),
+  //                     topRight: Radius.circular(8.r),
+  //                   ),
+  //                 ),
+  //                 alignment: Alignment.center,
+  //                 child: Text(
+  //                   '加关注',
+  //                   style: TextStyle(
+  //                     fontSize: 10.sp,
+  //                     color: Colors.white,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //       ],
+  //     );
+  //   }).toList();
+  // }
   
   // 显示事件订阅管理
   /*void showEventManage() {
@@ -685,7 +674,7 @@ class OrderLogic extends GetxController {
       itemCount: state.allSubscriptionCategories.length,
       itemBuilder: (context, index) {
         final item = state.allSubscriptionCategories[index];
-        final bool isSubscribed = item['isSubscribed'] == true;
+        final bool isSubscribed = item.isFollowed == true;
         return Stack(
           children: [
             Container(
@@ -698,7 +687,7 @@ class OrderLogic extends GetxController {
               ),
               child: Center(
                 child: Text(
-                  item['title'],
+                  item.name,
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w500,
@@ -716,7 +705,13 @@ class OrderLogic extends GetxController {
                 top: 0,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () => toggleSubscription(item),
+                  onTap: () {
+                    if(item.isEvent) {
+                      toggleEventFavorite(item.uuid, item.isFollowed);
+                    } else {
+                      toggleTopicFavorite(item.uuid, item.isFollowed);
+                    }
+                  },
                   child: Container(
                     width: 40.w,
                     height: 16.h,
