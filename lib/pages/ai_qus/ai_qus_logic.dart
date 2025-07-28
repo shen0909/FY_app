@@ -1130,9 +1130,9 @@ class AiQusLogic extends GetxController {
         if (serverResponse != null && 
             serverResponse['执行结果'] == true && 
             serverResponse['返回数据'] != null &&
-            serverResponse['返回数据']['data'] != null) {
+            serverResponse['返回数据']['list'] != null) {
           
-          final List<dynamic> sessionData = serverResponse['返回数据']['data'];
+          final List<dynamic> sessionData = serverResponse['返回数据']['list'];
           serverSessions = sessionData.map((session) => {
             'serverUuid': session['uuid'] ?? '',
             'title': session['title_name'] ?? '',
@@ -2624,11 +2624,11 @@ class AiQusLogic extends GetxController {
           response['返回数据'] != null) {
         
         final data = response['返回数据'];
-        if (data is Map && data['data'] != null) {
+        if (data is Map && data['list'] != null) {
           // 清空当前模板
           state.promptTemplates.clear();
           // 解析服务端返回的模板数据
-          final List<dynamic> templates = data['data'];
+          final List<dynamic> templates = data['list'];
           for (var template in templates) {
             state.promptTemplates.add({
               'uuid': template['uuid'] ?? '',
