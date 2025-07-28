@@ -53,6 +53,11 @@ class OrderEventDetialLogic extends GetxController {
     state.eventDescription.value = model.description ?? '';
     state.isFollowed.value = model.isFollowed;
     state.eventTags.addAll(model.keyword);
+    // 重置分页状态
+    state.currentPage.value = 1;
+    state.hasMoreData.value = true;
+    state.isLoadingMore.value = false;
+    state.totalCount.value = 0;
   }
   
   // 通过UUID加载事件详情
@@ -105,72 +110,129 @@ class OrderEventDetialLogic extends GetxController {
   }
 
   // 加载事件最新动态
-  Future<void> loadEventLatestUpdates(String eventUuid) async {
+  Future<void> loadEventLatestUpdates(String eventUuid, {bool isLoadMore = false}) async {
     try {
+      // 如果是加载更多，设置加载状态
+      if (isLoadMore) {
+        state.isLoadingMore.value = true;
+      }
+      
       final result = await _apiService.getEventLatestUpdates(
         eventUuid: eventUuid,
-        currentPage: 1,
-        pageSize: 10,
+        currentPage: isLoadMore ? state.currentPage.value : 1,
+        pageSize: state.pageSize,
       );
       
       if (result != null && result['执行结果'] == true) {
         final Map<String, dynamic> returnData = result['返回数据'] ?? {};
         final List<dynamic> updatesData = returnData['list'] ?? [];
-        
-        state.latestUpdates.clear();
-        
+        final int allCount = returnData['all_count'] ?? 0;
+        if (!isLoadMore) {
+          state.latestUpdates.clear();
+          state.currentPage.value = 1;
+          state.totalCount.value = allCount;
+        }
+        // 添加新数据
         for (var update in updatesData) {
           state.latestUpdates.add({
             'uuid': update['uuid'] ?? '',
             'title': update['title'] ?? '',
-            'content': update['summary'] ?? '', // 使用summary作为内容
+            'content': update['summary'] ?? '',
             'date': update['publish_time'] ?? '',
             'type': update['types'] ?? '',
             'source': update['news_medium'] ?? '',
           });
         }
-        print('✅ 成功加载事件最新动态，共 ${state.latestUpdates.length} 条');
+        
+        // 更新分页状态
+        if (isLoadMore) {
+          state.currentPage.value++;
+        }
+        // 判断是否还有更多数据
+        state.hasMoreData.value = state.latestUpdates.length < allCount;
+        print('✅ 成功加载事件最新动态，当前共 ${state.latestUpdates.length} 条，总共 $allCount 条');
       } else {
         print('❌ 加载事件最新动态失败: ${result?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
       print('❌ 加载事件最新动态异常: $e');
+    } finally {
+      if (isLoadMore) {
+        state.isLoadingMore.value = false;
+      }
     }
   }
   
   // 加载专题最新动态
-  Future<void> loadTopicLatestUpdates(String topicUuid) async {
+  Future<void> loadTopicLatestUpdates(String topicUuid, {bool isLoadMore = false}) async {
     try {
+      // 如果是加载更多，设置加载状态
+      if (isLoadMore) {
+        state.isLoadingMore.value = true;
+      }
+      
       final result = await _apiService.getTopicLatestUpdates(
-        eventUuid: topicUuid, // API方法中参数名为eventUuid但实际可以传入topicUuid
-        currentPage: 1,
-        pageSize: 10, // 增加获取更多数据
+        eventUuid: topicUuid,
+        currentPage: isLoadMore ? state.currentPage.value : 1,
+        pageSize: state.pageSize,
       );
       
       if (result != null && result['执行结果'] == true) {
-        // 根据实际返回数据结构解析
         final Map<String, dynamic> returnData = result['返回数据'] ?? {};
         final List<dynamic> updatesData = returnData['list'] ?? [];
+        final int allCount = returnData['all_count'] ?? 0;
         
-        state.latestUpdates.clear();
+        // 如果不是加载更多，清空现有数据并重置页码
+        if (!isLoadMore) {
+          state.latestUpdates.clear();
+          state.currentPage.value = 1;
+          state.totalCount.value = allCount;
+        }
         
+        // 添加新数据
         for (var update in updatesData) {
           state.latestUpdates.add({
             'uuid': update['uuid'] ?? '',
             'title': update['title'] ?? '',
-            'content': update['summary'] ?? '', // 使用summary作为内容
+            'content': update['summary'] ?? '',
             'date': update['publish_time'] ?? '',
             'type': update['types'] ?? '',
             'source': update['news_medium'] ?? '',
           });
         }
         
-        print('✅ 成功加载专题最新动态，共 ${state.latestUpdates.length} 条');
+        // 更新分页状态
+        if (isLoadMore) {
+          state.currentPage.value++;
+        }
+        
+        // 判断是否还有更多数据
+        state.hasMoreData.value = state.latestUpdates.length < allCount;
+        
+        print('✅ 成功加载专题最新动态，当前共 ${state.latestUpdates.length} 条，总共 $allCount 条');
       } else {
         print('❌ 加载专题最新动态失败: ${result?['返回消息'] ?? '未知错误'}');
       }
     } catch (e) {
       print('❌ 加载专题最新动态异常: $e');
+    } finally {
+      if (isLoadMore) {
+        state.isLoadingMore.value = false;
+      }
+    }
+  }
+  
+  // 加载更多动态
+  Future<void> loadMoreUpdates() async {
+    if (state.isLoadingMore.value || !state.hasMoreData.value) {
+      return;
+    }
+    if (state.eventUuid.value.isNotEmpty) {
+      if (_isEvent) {
+        await loadEventLatestUpdates(state.eventUuid.value, isLoadMore: true);
+      } else {
+        await loadTopicLatestUpdates(state.eventUuid.value, isLoadMore: true);
+      }
     }
   }
   
@@ -406,11 +468,16 @@ class OrderEventDetialLogic extends GetxController {
   
   // 刷新数据
   Future<void> refreshData() async {
+    // 重置分页状态
+    state.currentPage.value = 1;
+    state.hasMoreData.value = true;
+    state.isLoadingMore.value = false;
+    
     if (state.eventUuid.value.isNotEmpty) {
       if (_isEvent) {
-        await loadEventDetailsByUuid(state.eventUuid.value);
+        await loadEventLatestUpdates(state.eventUuid.value);
       } else {
-        await loadTopicDetailsByUuid(state.eventUuid.value);
+        await loadTopicLatestUpdates(state.eventUuid.value);
       }
     }
   }

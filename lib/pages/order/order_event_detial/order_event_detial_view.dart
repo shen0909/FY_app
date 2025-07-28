@@ -226,30 +226,67 @@ class OrderEventDetialPage extends StatelessWidget {
           ),
           
           // 查看更多
-          GestureDetector(
-            onTap: () => logic.refreshData(),
-            child: Container(
-              alignment: Alignment.center,
-              // padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '查看更多',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color(0xFF3361FE),
-                    ),
-                  ),
-                  Icon(
-                    Icons.keyboard_arrow_right,
-                    size: 14.sp,
-                    color: Color(0xFF3361FE),
-                  ),
-                ],
+          if (state.hasMoreData.value || state.isLoadingMore.value)
+            GestureDetector(
+              onTap: () => logic.loadMoreUpdates(),
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: state.isLoadingMore.value
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 14.w,
+                            height: 14.h,
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF3361FE),
+                              strokeWidth: 2.w,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            '加载中...',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Color(0xFF3361FE),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '查看更多',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Color(0xFF3361FE),
+                            ),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 14.sp,
+                            color: Color(0xFF3361FE),
+                          ),
+                        ],
+                      ),
               ),
             ),
-          ),
+          
+          // 没有更多数据提示
+          if (!state.hasMoreData.value && !state.isLoadingMore.value && state.latestUpdates.isNotEmpty)
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Text(
+                '没有更多数据了',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                ),
+              ),
+            ),
           // 底部留白，防止底部操作栏遮挡内容
           SizedBox(height: 80.h),
         ],
@@ -331,11 +368,11 @@ class OrderEventDetialPage extends StatelessWidget {
                         ),
                     ],
                   ),
-                  Divider(
-                    height: 20.h,
-                    thickness: 1,
-                    color: FYColors.color_F9F9F9,
-                  ),
+                  // Divider(
+                  //   height: 1.h,
+                  //   thickness: 1,
+                  //   color: FYColors.color_F9F9F9,
+                  // ),
                 ],
               ),
             ),

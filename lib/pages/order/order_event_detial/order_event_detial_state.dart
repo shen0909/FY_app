@@ -54,6 +54,18 @@ class OrderEventDetialState {
   // 报告信息
   RxMap<String, dynamic> reportInfo = <String, dynamic>{}.obs;
 
+  // ===== 分页相关状态 =====
+  // 当前页码
+  final RxInt currentPage = 1.obs;
+  // 每页数据量
+  final int pageSize = 10;
+  // 是否正在加载更多
+  final RxBool isLoadingMore = false.obs;
+  // 是否还有更多数据
+  final RxBool hasMoreData = true.obs;
+  // 总数据量
+  final RxInt totalCount = 0.obs;
+
   OrderEventDetialState() {
     ///初始化变量
   }
