@@ -493,7 +493,7 @@ class _RiskPageState extends State<RiskPage> {
 
   // 二类单位风险项
   Widget _buildRiskItem2(Map<String, dynamic> item) {
-    final String riskLevel = item['riskLevel'];
+    final String riskLevel = item['riskLevel'] == 1 ? "low" : item['riskLevel']== 2 ? "medium" : "high";
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
 
@@ -608,7 +608,7 @@ class _RiskPageState extends State<RiskPage> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 6.w),
                         child: Text(
-                          item['riskLevel'],
+                          item['riskLevelText'],
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: riskColor,
@@ -630,13 +630,9 @@ class _RiskPageState extends State<RiskPage> {
 
   // 星云
   Widget _buildRiskItem3(Map<String, dynamic> item) {
-    final String? riskLevel = item['riskLevel'];
+    final String attentionLevel = item['riskLevel'] == 1 ? "low" : item['riskLevel']== 2 ? "general_focus" : "key_focus";
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
-    // 获取关注度数据
-    final String? attentionLevel = item['attentionLevel'] as String?;
-    final String? attentionLevelText = item['attentionLevelText'] as String?;
-
     // 关注度级别颜色
     Color attentionColor = Colors.grey;
     Color backgroundColor = Colors.white;
@@ -743,7 +739,7 @@ class _RiskPageState extends State<RiskPage> {
                     padding:
                         EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.w),
                     child: Text(
-                      item['attentionLevelText'],
+                      item['riskLevelText'],
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: riskColor,

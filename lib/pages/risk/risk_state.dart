@@ -2,11 +2,12 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 
 import '../../models/risk_data.dart';
+import '../../models/risk_data_new.dart';
 
 class RiskState {
   // 当前选择的单位类型 0-烽云一号 1-烽云二号 2-星云
   RxInt chooseUint = 0.obs;
-  final Rx<UnreadMessage?> unreadMessageList = Rx<UnreadMessage?>(null); // 未读消息
+  final Rx<List?> unreadMessageList = Rx<List?>(null); // 未读消息
   final Rx<RiskyData?> riskyData = Rx<RiskyData?>(null); // 风险预警消息
   final Rx<Map<String, dynamic>> currentUnitData = Rx<Map<String, dynamic>>({}); // 当前单位数据
   final RxList<Map<String, dynamic>> currentRiskList = RxList<Map<String, dynamic>>([]); // 当前风险列表
@@ -19,4 +20,11 @@ class RiskState {
   final RxString selectedCity = "全部".obs;
   final RxList<String> priorityCities = RxList<String>(["全部"]); // 优先显示的城市
   final RxList<String> otherCities = RxList<String>([]); // 其他城市
+
+
+ // 新接口
+  final RxList<RiskListElement> fengyun1List = <RiskListElement>[].obs;
+  final RxList<RiskListElement> fengyun2List = <RiskListElement>[].obs;
+  final RxList<RiskListElement> xingyunList = <RiskListElement>[].obs;
+
 }
