@@ -118,7 +118,7 @@ class DetailListLogic extends GetxController {
         sanctionType: sanctionTypeParam,
         province: provinceParam,
         city: cityParam,
-        search: searchParam,
+        zhName: searchParam,
       );
 
       if (response != null && response.success && response.data != null) {

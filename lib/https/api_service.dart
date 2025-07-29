@@ -345,10 +345,10 @@ class ApiService {
   Future<SanctionListResponse?> getSanctionList({
     int currentPage = 1,
     int pageSize = 1,
-    String sanctionType = "全部",
-    String province = "全部",
-    String city = "全部",
-    String search = "",
+    String sanctionType = "",
+    String province = "",
+    String city = "",
+    String zhName = "",
   }) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
@@ -366,10 +366,10 @@ class ApiService {
       "命令具体内容": {
         "current_page": currentPage,
         "page_size": pageSize,
-        "sanction_type": sanctionType,
-        "province": province,
-        "city": city,
-        "search": search,
+        "zh_name": zhName,
+        "sanction_type": sanctionType != '全部' ? sanctionType : '',
+        "province": province != '全部' ? province : '',
+        "city": city != '全部' ? city : ''
       }
     };
     
@@ -1932,40 +1932,6 @@ class ApiService {
         'zh_name': zhName,
         'region_code': regionCode
       }
-    };
-
-    dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
-      try {
-        // 解析result_string
-        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
-        return resultData;
-      } catch (e) {
-        if (kDebugMode) {
-          print('$_tag 解析获取事件最新动态响应失败: $e');
-        }
-      }
-    }
-
-    return null;
-  }
-
-  /// 获取风险预警详情
-  Future<Map<String, dynamic>?> getRiskDetails(String uuid) async {
-    // 获取内层token
-    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
-    if (token == null || token.isEmpty) {
-      if (kDebugMode) {
-        print('$_tag 获取事件最新动态失败：内层token为空');
-      }
-      return null;
-    }
-
-    // 构造请求参数
-    Map<String, dynamic> paramData = {
-      "消息类型": "预警企业_获取企业列表",
-      "当前请求用户UUID": token,
-      "命令具体内容": {"uuid": uuid}
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
