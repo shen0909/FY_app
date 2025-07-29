@@ -1,14 +1,11 @@
 import 'package:get/get.dart';
-import 'package:safe_app/styles/colors.dart';
-
-import '../../models/risk_data.dart';
 import '../../models/risk_data_new.dart';
+import '../../models/region_data.dart';
 
 class RiskState {
   // 当前选择的单位类型 0-烽云一号 1-烽云二号 2-星云
   RxInt chooseUint = 0.obs;
   final Rx<List?> unreadMessageList = Rx<List?>(null); // 未读消息
-  final Rx<RiskyData?> riskyData = Rx<RiskyData?>(null); // 风险预警消息
   final Rx<Map<String, dynamic>> currentUnitData = Rx<Map<String, dynamic>>({}); // 当前单位数据
   final RxList<Map<String, dynamic>> currentRiskList = RxList<Map<String, dynamic>>([]); // 当前风险列表
   final RxList<Map<String, dynamic>> currentUnreadMessages = RxList<Map<String, dynamic>>([]); // 当前未读消息列表
@@ -21,10 +18,16 @@ class RiskState {
   final RxList<String> priorityCities = RxList<String>(["全部"]); // 优先显示的城市
   final RxList<String> otherCities = RxList<String>([]); // 其他城市
 
-
- // 新接口
+  // 新接口
   final RxList<RiskListElement> fengyun1List = <RiskListElement>[].obs;
   final RxList<RiskListElement> fengyun2List = <RiskListElement>[].obs;
   final RxList<RiskListElement> xingyunList = <RiskListElement>[].obs;
 
+  // 地区筛选相关
+  final RxList<RegionData> allRegions = <RegionData>[].obs; // 所有地区数据
+  final Rx<RegionData?> selectedProvince = Rx<RegionData?>(null); // 选择的省份
+  final Rx<RegionData?> selectedRegion = Rx<RegionData?>(null); // 选择的具体地区（市/区）
+  final RxString searchKeyword = "".obs; // 搜索关键词
+  final RxString selectedRegionCode = "".obs; // 当前选择的地区代码（用于筛选）
+  final RxString selectedRegionName = "全部".obs; // 当前选择的地区名称（用于显示）
 }

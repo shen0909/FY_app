@@ -5,14 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
-import 'package:safe_app/widgets/unread_message_dialog.dart';
-import 'package:safe_app/models/risk_data.dart';
-import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
-
-import '../../models/risk_company_details.dart';
-import '../../models/risk_data.dart';
 import '../../models/risk_data_new.dart';
+import '../../models/region_data.dart';
 import 'risk_state.dart';
 
 class RiskLogic extends GetxController {
@@ -22,30 +17,13 @@ class RiskLogic extends GetxController {
   OverlayEntry? _overlayEntry;
   final GlobalKey locationKey = GlobalKey();
 
-  getRiskList() async {
-    final result = await ApiService().getRiskLists();
-    if(result!=null && result['执行结果'] == true ) {
-      List<dynamic> list = (result['返回数据']['list'] as List);
-      RiskyDataNew riskyDataNew = RiskyDataNew.fromJson(result['返回数据']);
-      state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customEntType == 1).toList());
-      state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customEntType == 2).toList());
-      state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customEntType == 3).toList());
-    }
-  }
-
   @override
   Future<void> onInit() async {
     super.onInit();
     try {
+      await loadRegionData();
       await getRiskList();
-      final filePath = 'assets/complete-risk-alerts-data.json';
-      final fileContent = await rootBundle.loadString(filePath);
-      final jsonData = json.decode(fileContent) as Map<String, dynamic>;
 
-      print("数据数据:${jsonData}");
-      state.riskyData.value = RiskyData.fromJson(jsonData);
-      // 从RiskyData中获取城市列表
-      _updateCitiesList();
       _updateCurrentUnitData();
       _updateCurrentRiskList();
       
@@ -55,16 +33,17 @@ class RiskLogic extends GetxController {
         _updateCurrentRiskList();
       });
       
-      // 监听城市选择变化
-      ever(state.selectedCity, (_) {
+      // 监听地区选择变化
+      ever(state.selectedRegionCode, (_) {
         _updateCurrentRiskList();
       });
-      
-      ever(state.riskyData, (_) {
-        _updateCitiesList();
+
+      debounce(state.searchKeyword, (_) async {
+        await getRiskList();
         _updateCurrentUnitData();
         _updateCurrentRiskList();
-      });
+      }, time: Duration(milliseconds: 500));
+      
     } catch (e, stackTrace) {
       print("解析风险数据出错: $e");
       print("错误堆栈: $stackTrace");
@@ -98,52 +77,85 @@ class RiskLogic extends GetxController {
     }
   }
 
-  // 从RiskyData中更新城市列表
-  void _updateCitiesList() {
-    if (state.riskyData.value != null && state.riskyData.value!.location.cities.isNotEmpty) {
-      // 始终保留"全部"选项作为第一个
-      List<String> priority = [];
-      List<String> others = [];
-      
-      // 从数据中提取城市名称
-      for (var city in state.riskyData.value!.location.cities) {
-        // // 判断是否是优先城市
-        // if (["guangzhou", "shenzhen", "zhuhai"].contains(city.code)) {
-        //   // 广州、深圳、珠海等重要城市放在优先列表
-        //   priority.add(city.name);
-        // } else if (city.code != "all") {
-        //   others.add(city.name);
-        // }
-        others.add(city.name);
-      }
-      // 更新状态中的城市列表
-      state.priorityCities.clear();
-      // state.priorityCities.add("全部");
-      state.priorityCities.addAll(priority);
-      
-      state.otherCities.clear();
-      state.otherCities.addAll(others);
-      
-      print("城市列表更新完成 - 优先城市: ${state.priorityCities}, 其他城市: ${state.otherCities}");
+  // 获取风险预警列表数据
+  getRiskList() async {
+    final result = await ApiService().getRiskLists(
+      zhName: state.searchKeyword.value.isEmpty ? null : state.searchKeyword.value,
+      regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
+    );
+    if(result!=null && result['执行结果'] == true ) {
+      RiskyDataNew riskyDataNew = RiskyDataNew.fromJson(result['返回数据']);
+      state.fengyun1List.clear();
+      state.fengyun2List.clear();
+      state.xingyunList.clear();
+      state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customEntType == 1).toList());
+      state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customEntType == 2).toList());
+      state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customEntType == 3).toList());
     }
   }
 
-  // 更新当前单位数据
-  void _updateCurrentUnitData() {
-    if (state.riskyData.value == null) {
-      state.currentUnitData.value = {};
-      return;
+  // 加载地区数据
+  Future<void> loadRegionData() async {
+    try {
+      final String regionJson = await rootBundle.loadString('assets/risk_region.json');
+      final List<dynamic> regionList = json.decode(regionJson);
+      final List<RegionData> regions = regionList.map((region) => RegionData.fromJson(region)).toList();
+      state.allRegions.assignAll(regions);
+      // 默认选择广东省
+      final guangdong = regions.firstWhere((region) => region.name == "广东省", orElse: () => regions.first);
+      state.selectedProvince.value = guangdong;
+      _updateCitiesList();
+    } catch (e) {
+      print("加载地区数据出错: $e");
     }
+  }
 
+  // 从地区数据中更新城市列表
+  void _updateCitiesList() {
+    if (state.selectedProvince.value != null) {
+      List<String> cities = ["全部"];
+      cities.addAll(state.selectedProvince.value!.children.map((city) => city.name));
+      
+      // 分离优先城市和其他城市
+      List<String> priority = ["全部"];
+      List<String> others = [];
+      
+      for (var city in state.selectedProvince.value!.children) {
+        // 广东省的重要城市优先显示
+        if (state.selectedProvince.value!.name == "广东省" && 
+            ["广州市", "深圳市", "珠海市", "佛山市", "东莞市", "中山市"].contains(city.name)) {
+          priority.add(city.name);
+        } else {
+          others.add(city.name);
+        }
+      }
+      
+      state.priorityCities.assignAll(priority);
+      state.otherCities.assignAll(others);
+      
+    }
+  }
+
+  // 更新当前单位数据（支持地区筛选）
+  void _updateCurrentUnitData() {
     dealCurrentData(int index){
       List<RiskListElement> selectedList = [];
       if (index == 0) {
         selectedList = state.fengyun1List;
       } else if (index == 1) {
         selectedList = state.fengyun2List;
-      } else if (index == 2) { // 如果有更多列表，就继续添加
+      } else if (index == 2) {
         selectedList = state.xingyunList;
       }
+
+      // 应用地区筛选
+      if (state.selectedRegionCode.value.isNotEmpty && state.selectedRegionCode.value != "all") {
+        selectedList = selectedList.where((item) => 
+          item.regionCode == state.selectedRegionCode.value ||
+          item.regionCode.startsWith(state.selectedRegionCode.value)
+        ).toList();
+      }
+
       state.currentUnitData.value = {
         'high': {
           'title': '高风险',
@@ -185,14 +197,8 @@ class RiskLogic extends GetxController {
     }
   }
 
-  // 更新当前风险列表
+  // 更新当前风险列表（支持地区筛选）
   void _updateCurrentRiskList() {
-    if (state.riskyData.value == null) {
-      state.currentRiskList.clear();
-      return;
-    }
-
-    final companies = state.riskyData.value!.companies;
     List<Map<String, dynamic>> newList = [];
     dealCurrentList(int index){
       List<RiskListElement> selectedList = [];
@@ -204,6 +210,15 @@ class RiskLogic extends GetxController {
         selectedList = state.fengyun2List;
         // selectedList = state.xingyunList;
       }
+
+      // 应用地区筛选（本地筛选）
+      if (state.selectedRegionCode.value.isNotEmpty && state.selectedRegionCode.value != "all") {
+        selectedList = selectedList.where((item) => 
+          item.regionCode == state.selectedRegionCode.value ||
+          item.regionCode.startsWith(state.selectedRegionCode.value)
+        ).toList();
+      }
+
       newList = selectedList.map((company) => {
         'id': company.uuid,
         'name': company.zhName,
@@ -218,6 +233,7 @@ class RiskLogic extends GetxController {
         'isRead': true,
       }).toList();
     }
+
     switch (state.chooseUint.value) {
       case 0:
         dealCurrentList(0);
@@ -232,14 +248,31 @@ class RiskLogic extends GetxController {
     state.currentRiskList.assignAll(newList);
   }
 
+  // 搜索企业
+  void searchCompany(String keyword) {
+    state.searchKeyword.value = keyword;
+  }
+
+  // 选择地区
+  void selectRegion(String regionName, String regionCode) {
+    state.selectedRegionName.value = regionName;
+    state.selectedRegionCode.value = regionCode;
+    // 更新显示的地区名称
+    if (regionName == "全部") {
+      state.location.value = "${state.selectedProvince.value?.name ?? ''}全部";
+    } else {
+      state.location.value = "${state.selectedProvince.value?.name ?? ''}$regionName";
+    }
+  }
+
   // 获取风险等级对应的颜色
   int _getRiskColor(int riskLevel) {
     switch (riskLevel) {
-      case '3':
+      case 3:
         return 0xFFFF6850;
-      case '2':
+      case 2:
         return 0xFFF6D500;
-      case '1':
+      case 1:
         return 0xFF07CC89;
       default:
         return 0xFF07CC89;
@@ -249,11 +282,11 @@ class RiskLogic extends GetxController {
   // 获取风险等级对应的边框颜色
   int _getBorderColor(int riskLevel) {
     switch (riskLevel) {
-      case '3':
+      case 3:
         return 0xFFFFECE9;
-      case '2':
+      case 2:
         return 0xFFFFF7E6;
-      case '1':
+      case 1:
         return 0xFFE7FEF8;
       default:
         return 0xFFE7FEF8;
@@ -372,7 +405,7 @@ class RiskLogic extends GetxController {
     state.currentUnreadMessages.assignAll(updatedMessages);
   }
 
-  // 显示城市选择器浮层
+  // 显示地区选择器浮层
   void showCitySelector(BuildContext context) {
     // 先隐藏可能存在的浮层
     hideOverlay();
@@ -410,11 +443,20 @@ class RiskLogic extends GetxController {
     }
   }
 
-  // 构建城市选择浮层
+  // 构建地区选择浮层
   Widget _buildCityOverlay(Offset position, Size size) {
     final scrollController = ScrollController();
-    // 确保优先城市和其他城市列表以正确的顺序显示
-    final List<String> allCities = [...state.priorityCities, ...state.otherCities];
+    // 构建地区列表：全部 + 当前省份的所有城市
+    final List<Map<String, String>> regionOptions = [
+      {'name': '全部', 'code': 'all'}
+    ];
+    
+    if (state.selectedProvince.value != null) {
+      regionOptions.addAll(state.selectedProvince.value!.children.map((city) => {
+        'name': city.name,
+        'code': city.code
+      }).toList());
+    }
     
     return Material(
       color: Colors.transparent,
@@ -430,7 +472,7 @@ class RiskLogic extends GetxController {
             ),
           ),
           
-          // 城市选择内容
+          // 地区选择内容
           Positioned(
             left: (position.dx - 16).w,
             top: position.dy + size.height,
@@ -461,22 +503,16 @@ class RiskLogic extends GetxController {
                         controller: scrollController,
                         padding: EdgeInsets.only(right: 10),
                         shrinkWrap: true,
-                        itemCount: allCities.length,
+                        itemCount: regionOptions.length,
                         itemBuilder: (context, index) {
-                          final city = allCities[index];
-                          final isSelected = state.selectedCity.value == city;
-                          final isPriority = state.priorityCities.contains(city);
+                          final region = regionOptions[index];
+                          final isSelected = state.selectedRegionCode.value == region['code'] ||
+                                           (state.selectedRegionCode.value.isEmpty && region['code'] == 'all');
+                          final isPriority = state.priorityCities.contains(region['name']);
                           
                           return InkWell(
                             onTap: () {
-                              state.selectedCity.value = city;
-                              // 更新显示的地点名称
-                              if (city == "全部") {
-                                state.location.value = "广东省全部";
-                              } else {
-                                state.location.value = "广东省$city";
-                              }
-                              // 更新列表后隐藏浮层
+                              selectRegion(region['name']!, region['code']!);
                               hideOverlay();
                             },
                             child: Container(
@@ -484,7 +520,7 @@ class RiskLogic extends GetxController {
                               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                               color: isSelected ? Color(0xFFF0F5FF) : Colors.white,
                               child: Text(
-                                city,
+                                region['name']!,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: isSelected ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
@@ -504,20 +540,6 @@ class RiskLogic extends GetxController {
         ],
       ),
     );
-  }
-
-  // 根据城市名称获取城市代码
-  String _getCityCodeByName(String cityName) {
-    // 风险预警数据为空，筛选代码返回null
-    if (state.riskyData.value == null) return "all";
-    // 查找对应的城市代码
-    for (var city in state.riskyData.value!.location.cities) {
-      if (city.name == cityName) {
-        return city.code;
-      }
-    }
-    // 没有对应代码返回全部
-    return 'all';
   }
 
   // 处理物理返回按钮事件

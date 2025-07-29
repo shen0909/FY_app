@@ -120,7 +120,7 @@ class RiskDetailsPage extends StatelessWidget {
           Row(
             children: [
               Obx(() => Text(
-                    state.riskCompanyDetail.value!.companyInfo.name!,
+                    state.riskCompanyDetail.value!.zhName,
                     style: FYTextStyles.riskLocationTitleStyle()
                         .copyWith(fontSize: 20.sp),
                   )),
@@ -137,7 +137,7 @@ class RiskDetailsPage extends StatelessWidget {
           ),
           SizedBox(height: 8.w),
           Obx(() => Text(
-                state.riskCompanyDetail.value!.companyInfo.englishName!,
+                state.riskCompanyDetail.value!.enName,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
@@ -158,6 +158,8 @@ class RiskDetailsPage extends StatelessWidget {
         children: [
           Text('时序跟踪', style: FYTextStyles.mediumBodyTextStyle()),
           SizedBox(height: 10.w),
+          // todo:风险预警详情接口未返回，暂时隐藏
+          state.riskCompanyDetail.value!.timelineTracking.isEmpty ? Container():
           Container(
             decoration: BoxDecoration(
                 color: FYColors.color_F9F9F9,
@@ -861,7 +863,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value!.riskScore.components!.operationalImpact['score']}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components?.operationalImpact['score']}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -883,7 +885,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value!.riskScore.components!.securityImpact['score']}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components?.securityImpact['score']}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,

@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/https/api_service.dart';
-import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
+import 'package:safe_app/models/new_risk_detail.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -32,7 +32,10 @@ class RiskDetailsLogic extends GetxController {
     state.isLoading.value = true;
     
     try {
-      state.riskCompanyDetail.value = await ApiService().getCompanyDetail(companyId);
+      final result = await ApiService().getRiskDetails(companyId);
+      if(result != null && result['执行结果'] != false){
+        state.riskCompanyDetail.value = RiskCompanyNew.fromJson(result['返回数据']);
+      }
     } catch (e) {
       print('加载企业详情出错: $e');
     } finally {
@@ -90,12 +93,13 @@ class RiskDetailsLogic extends GetxController {
   }
 
   void showRiskScoreDetails() {
-    FYDialogUtils.showBottomSheet(
-        hasMaxHeightConstraint: true,
-        heightMaxFactor: 0.9,
-        SingleChildScrollView(
-      child: RiskDetailsPage().buildRiskScoreDialog(),
-    ));
+    // todo: 点击分数弹窗，由于接口未给数据，避免崩溃暂时隐藏
+    // FYDialogUtils.showBottomSheet(
+    //     hasMaxHeightConstraint: true,
+    //     heightMaxFactor: 0.9,
+    //     SingleChildScrollView(
+    //   child: RiskDetailsPage().buildRiskScoreDialog(),
+    // ));
   }
 
   showNewsResource(List<Source> listSource, String newsDate) {
@@ -224,11 +228,11 @@ class RiskDetailsLogic extends GetxController {
                       padding: EdgeInsets.only(left: 16.w, top: 16.w),
                       child: Column(
                         children: [
-                          companyItem('地区', state.riskCompanyDetail.value!.companyInfo.location!),
-                          companyItem('所处行业', state.riskCompanyDetail.value!.companyInfo.industry!),
-                          companyItem('公司类型', '上市公司（股票代码：600143）'),
-                          companyItem('市值', state.riskCompanyDetail.value!.companyInfo.registeredCapital ?? state.riskCompanyDetail.value!.companyInfo.marketValue!),
-                          companyItem('股价', state.riskCompanyDetail.value!.companyInfo.registeredCapital ?? state.riskCompanyDetail.value!.companyInfo.stockPrice!),
+                          companyItem('地区', state.riskCompanyDetail.value!.area),
+                          companyItem('所处行业', state.riskCompanyDetail.value!.industry),
+                          companyItem('公司类型', state.riskCompanyDetail.value!.enterpriseType),
+                          companyItem('市值', state.riskCompanyDetail.value!.marketValue),
+                          companyItem('股价', state.riskCompanyDetail.value!.stockPrice),
                         ],
                       ),
                     ),
@@ -251,7 +255,7 @@ class RiskDetailsLogic extends GetxController {
                           borderRadius: BorderRadius.all(Radius.circular(8.w))),
                       padding: EdgeInsets.all(16.w),
                       child: Text(
-                        state.riskCompanyDetail.value!.companyInfo.description ?? '无',
+                        state.riskCompanyDetail.value!.entProfile,
                         style: TextStyle(
                             fontSize: 14.sp, fontWeight: FontWeight.w400),
                       ),

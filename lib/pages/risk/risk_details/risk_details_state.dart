@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
 
+import '../../../models/new_risk_detail.dart';
 import '../../../models/risk_company_details.dart';
 
 class RiskDetailsState {
   // 企业详情数据
-  Rx<RiskCompanyDetail?> riskCompanyDetail = Rx<RiskCompanyDetail?>(null);
-  
+  Rx<RiskCompanyNew?> riskCompanyDetail = Rx<RiskCompanyNew?>(null);
+
   // 添加企业详情数据列表
   RxList<RiskCompanyDetail> allCompanyDetails = <RiskCompanyDetail>[].obs;
   
@@ -59,50 +60,56 @@ class RiskDetailsState {
 
   // 外部风险详情列表
   List<Map<String, dynamic>> get externalRiskDetails {
+    // todo:风险预警详情接口未返回
+    return [];
     if (riskCompanyDetail.value == null) return [];
     
-    final breakdown = riskCompanyDetail.value!.riskScore.components!.externalRisk!.breakdown;
-    return [
-      {'name': '宣布调查', 'score': breakdown?.investigationAnnounced},
-      {'name': '实施调查', 'score': breakdown?.investigationOngoing},
-      {'name': '人员打入', 'score': breakdown?.personnelInfiltration},
-      {'name': '人员拉出', 'score': breakdown?.personnelExtraction},
-      {'name': '技术攻击', 'score': breakdown?.technicalAttacks},
-      {'name': '实施制裁', 'score': breakdown?.sanctionsImplemented},
-      {'name': '司法诉讼', 'score': breakdown?.legalActions},
-      {'name': '攻击抹黑', 'score': breakdown?.reputationAttacks},
-      {'name': '脱钩断链', 'score': breakdown?.decouplingPressure},
-      {'name': '外资渗透', 'score': breakdown?.foreignInfiltration},
-    ].where((item) => (item['score'] as int) > 0).toList(); // 只显示分数大于0的项目
+    // final breakdown = riskCompanyDetail.value!.riskScore.components!.externalRisk!.breakdown;
+    // return [
+    //   {'name': '宣布调查', 'score': breakdown?.investigationAnnounced},
+    //   {'name': '实施调查', 'score': breakdown?.investigationOngoing},
+    //   {'name': '人员打入', 'score': breakdown?.personnelInfiltration},
+    //   {'name': '人员拉出', 'score': breakdown?.personnelExtraction},
+    //   {'name': '技术攻击', 'score': breakdown?.technicalAttacks},
+    //   {'name': '实施制裁', 'score': breakdown?.sanctionsImplemented},
+    //   {'name': '司法诉讼', 'score': breakdown?.legalActions},
+    //   {'name': '攻击抹黑', 'score': breakdown?.reputationAttacks},
+    //   {'name': '脱钩断链', 'score': breakdown?.decouplingPressure},
+    //   {'name': '外资渗透', 'score': breakdown?.foreignInfiltration},
+    // ].where((item) => (item['score'] as int) > 0).toList(); // 只显示分数大于0的项目
   }
 
   // 内部风险详情列表
   List<Map<String, dynamic>> get internalRiskDetails {
+    // todo:风险预警详情接口未返回
+    return [];
     if (riskCompanyDetail.value == null) return [];
     
-    final breakdown = riskCompanyDetail.value!.riskScore.components!.internalRisk!.breakdown;
-    return [
-      {'name': '失密泄密', 'score': breakdown!.informationLeakage},
-      {'name': '人员失管', 'score': breakdown.personnelMismanagement},
-      {'name': '网络失管', 'score': breakdown.networkMismanagement},
-      {'name': '场所失管', 'score': breakdown.facilityMismanagement},
-      {'name': '信息失管', 'score': breakdown.informationMismanagement},
-      {'name': '员工举报', 'score': breakdown.employeeWhistleblowing},
-      {'name': '技术外流', 'score': breakdown.technologyOutflow},
-      {'name': '负面舆情', 'score': breakdown.negativePublicity},
-      {'name': '制度缺失', 'score': breakdown.institutionalDeficiency},
-      {'name': '合规经营', 'score': breakdown.complianceOperations},
-    ].where((item) => (item['score'] as int) > 0).toList(); // 只显示分数大于0的项目
+    // final breakdown = riskCompanyDetail.value!.riskScore.components!.internalRisk!.breakdown;
+    // return [
+    //   {'name': '失密泄密', 'score': breakdown!.informationLeakage},
+    //   {'name': '人员失管', 'score': breakdown.personnelMismanagement},
+    //   {'name': '网络失管', 'score': breakdown.networkMismanagement},
+    //   {'name': '场所失管', 'score': breakdown.facilityMismanagement},
+    //   {'name': '信息失管', 'score': breakdown.informationMismanagement},
+    //   {'name': '员工举报', 'score': breakdown.employeeWhistleblowing},
+    //   {'name': '技术外流', 'score': breakdown.technologyOutflow},
+    //   {'name': '负面舆情', 'score': breakdown.negativePublicity},
+    //   {'name': '制度缺失', 'score': breakdown.institutionalDeficiency},
+    //   {'name': '合规经营', 'score': breakdown.complianceOperations},
+    // ].where((item) => (item['score'] as int) > 0).toList(); // 只显示分数大于0的项目
   }
 
   // 获取风险趋势数据
   List<Map<String, dynamic>> get riskTrends {
-    if (riskCompanyDetail.value == null) return [];
-    return riskCompanyDetail.value!.riskScore.trend!
-        .map((trend) => {
-              'month': trend.month,
-              'score': trend.score,
-            })
-        .toList();
+    // todo:风险预警详情接口未返回
+    return [];
+    // if (riskCompanyDetail.value == null) return [];
+    // return riskCompanyDetail.value!.riskScore.trend!
+    //     .map((trend) => {
+    //           'month': trend.month,
+    //           'score': trend.score,
+    //         })
+    //     .toList();
   }
 }

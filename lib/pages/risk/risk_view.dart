@@ -114,7 +114,7 @@ class _RiskPageState extends State<RiskPage> {
                       border: InputBorder.none,
                     ),
                     onChanged: (value) {
-                      print("风险预警--value ${value}");
+                      logic.searchCompany(value);
                     },
                   ),
                 ),
@@ -355,7 +355,7 @@ class _RiskPageState extends State<RiskPage> {
 
   // 一类单位风险项
   Widget _buildRiskItem1(Map<String, dynamic> item) {
-    final String riskLevel = item['riskLevel'] as String? ?? '';
+    final String riskLevel = item['riskLevel'] == 1 ? "low" : item['riskLevel']== 2 ? "medium" : "high";
     final Color riskColor = Color(item['riskColor'] as int? ?? 0xFF07CC89);
     final bool isRead = item['isRead'] as bool? ?? false;
 
