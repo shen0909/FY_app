@@ -5,6 +5,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
+import 'dart:convert';
 import 'home_logic.dart';
 import 'home_state.dart';
 
@@ -71,86 +72,100 @@ class HomePage extends StatelessWidget {
             // 轮播图
             GetBuilder<HomeLogic>(
               builder: (controller) {
-                return PageView.builder(
-                  controller: controller.pageController,
-                  itemCount: state.carouselItems.length,
-                  onPageChanged: (index) {
-                    logic.updateBannerIndex(index);
-                  },
-                  itemBuilder: (context, index) {
-                    final item = state.carouselItems[index];
-                    return GestureDetector(
-                      onTap: () => logic.onBannerTap(index),
-                      child: Container(
-                        width: double.infinity,
-                        child: Stack(
-                          children: [
-                            // 图片
-                            Image.asset(
-                              item.imageUrl,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 172.h,
-                            ),
-                            // 文字遮罩层（渐变背景）
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                padding: EdgeInsets.fromLTRB(15.w, 30.h, 15.w, 15.h),
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.topRight,
-                                    colors: [
-                                      Color(0xff85000000),
-                                      Color(0xff00000000),
-                                    ],
-                                  ),
-                                ),
-                                child: Text(
-                                  item.title,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                return Obx(() {
+                  // 优先使用接口数据，如果没有则使用默认数据
+                  final bannerCount = state.bannerList.isNotEmpty 
+                      ? state.bannerList.length 
+                      : state.carouselItems.length;
+                  
+                  if (bannerCount == 0) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: Text('暂无轮播图数据'),
                       ),
                     );
-                  },
-                );
+                  }
+                  return PageView.builder(
+                    controller: controller.pageController,
+                    itemCount: bannerCount,
+                    onPageChanged: (index) {
+                      logic.updateBannerIndex(index);
+                    },
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () => logic.onBannerTap(index),
+                        child: Container(
+                          width: double.infinity,
+                          child: Stack(
+                            children: [
+                              _buildBannerImage(index),
+                              // 文字遮罩层（渐变背景）
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(15.w, 30.h, 15.w, 15.h),
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.topRight,
+                                      colors: [
+                                        Color(0xff85000000),
+                                        Color(0xff00000000),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Text(
+                                    _getBannerTitle(index),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                });
               }
             ),
-            // 轮播图指示器
+            // 轮播图指示器 - 修改为动态数量
             Positioned(
               bottom: 10.h,
               right: 16.w,
               child: GetBuilder<HomeLogic>(
                 builder: (controller) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: state.carouselItems.asMap().entries.map((entry) {
-                      return Container(
-                        width: 8.w,
-                        height: 8.w,
-                        margin: EdgeInsets.symmetric(horizontal: 2.5.w),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: state.currentBannerIndex == entry.key
-                              ? Colors.white
-                              : Colors.white54,
-                        ),
-                      );
-                    }).toList(),
-                  );
+                  return Obx(() {
+                    final bannerCount = state.bannerList.isNotEmpty 
+                        ? state.bannerList.length 
+                        : state.carouselItems.length;
+                    
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(bannerCount, (index) {
+                        return Container(
+                          width: 8.w,
+                          height: 8.w,
+                          margin: EdgeInsets.symmetric(horizontal: 2.5.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: state.currentBannerIndex == index
+                                ? Colors.white
+                                : Colors.white54,
+                          ),
+                        );
+                      }),
+                    );
+                  });
                 }
               ),
             )
@@ -158,6 +173,76 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // 构建轮播图图片
+  Widget _buildBannerImage(int index) {
+    // 优先使用接口数据
+    if (state.bannerList.isNotEmpty && index < state.bannerList.length) {
+      final banner = state.bannerList[index];
+      if (banner.image.isNotEmpty) {
+        try {
+          // 解析base64图片
+          final bytes = base64Decode(banner.image);
+          return Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 172.h,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[300],
+                child: Center(
+                  child: Icon(Icons.image_not_supported),
+                ),
+              );
+            },
+          );
+        } catch (e) {
+          // base64解析失败，显示占位图
+          return Container(
+            color: Colors.grey[300],
+            child: Center(
+              child: Icon(Icons.image_not_supported),
+            ),
+          );
+        }
+      }
+    }
+    
+    // 使用默认数据
+    if (state.carouselItems.isNotEmpty && index < state.carouselItems.length) {
+      final item = state.carouselItems[index];
+      return Image.asset(
+        item.imageUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 172.h,
+      );
+    }
+    
+    // 兜底显示
+    return Container(
+      color: Colors.grey[300],
+      child: Center(
+        child: Icon(Icons.image),
+      ),
+    );
+  }
+
+  // 获取轮播图标题
+  String _getBannerTitle(int index) {
+    // 优先使用接口数据
+    if (state.bannerList.isNotEmpty && index < state.bannerList.length) {
+      return state.bannerList[index].title;
+    }
+    
+    // 使用默认数据
+    if (state.carouselItems.isNotEmpty && index < state.carouselItems.length) {
+      return state.carouselItems[index].title;
+    }
+    
+    return '暂无标题';
   }
 
   // 风险预警卡片

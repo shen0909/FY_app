@@ -18,11 +18,11 @@ import 'package:safe_app/pages/setting/privacy_safe/privacy_safe_view.dart';
 import 'package:safe_app/pages/setting/pattern_setup/pattern_setup_view.dart';
 import 'package:safe_app/pages/pattern_lock/pattern_lock_view.dart';
 import 'package:safe_app/pages/setting/user_analysis/user_analysis_view.dart';
+import 'package:safe_app/pages/banner_content/banner_content_view.dart';
 import '../pages/login/lock_method_selection/lock_method_selection_view.dart';
 import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
 import '../pages/setting/update_page/update_page_view.dart';
-import '../pages/settings/update_page.dart';
 import '../pages/home/webview.dart';
 
 class Routers {
@@ -53,6 +53,7 @@ class Routers {
   static const String lockMethodSelection = '/lock_method_selection';
   static const String fingerprintAuth = '/fingerprint_auth';
   static const String webView = '/webview';
+  static const String bannerContent = '/banner_content';
 
   static final List<GetPage> pages = [
     // GetPage(name: splash, page: () => SplashPage()),
@@ -80,5 +81,6 @@ class Routers {
     GetPage(name: fingerprintAuth, page: () => FingerprintAuthPage()),
     GetPage(name: userAnalysis, page: () => UserAnalysisPage()),
     GetPage(name: webView, page: () => FYWebView()),
+    GetPage(name: bannerContent, page: () => BannerContentPage()),
   ];
 }

@@ -34,29 +34,35 @@ class ApiService {
   /// 底层POST封装，统一处理请求和错误
   Future<dynamic> _post(String path,
       {Map<String, dynamic>? data,
-      bool isForm = false,
-      Options? options}) async {
+        bool isForm = false,
+        Options? options}) async {
     dynamic response;
-    await HttpService().post(path, data: data, options: options, isForm: isForm,
+    await HttpService().post(path, data: data,
+        options: options,
+        isForm: isForm,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
-      response = {'code': 0, 'msg': error.toString()};
-    });
+          response = data;
+        },
+        errorCallback: (error) {
+          response = {'code': 0, 'msg': error.toString()};
+        });
     return response;
   }
 
   Future<dynamic> _prePost(String path,
       {Map<String, dynamic>? data,
-      bool isForm = false,
-      Options? options}) async {
+        bool isForm = false,
+        Options? options}) async {
     dynamic response;
-    await HttpService().prePost(path, data: data, options: options, isForm: isForm,
+    await HttpService().prePost(path, data: data,
+        options: options,
+        isForm: isForm,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
-      response = {'code': 0, 'msg': error.toString()};
-    });
+          response = data;
+        },
+        errorCallback: (error) {
+          response = {'code': 0, 'msg': error.toString()};
+        });
     return response;
   }
 
@@ -66,10 +72,10 @@ class ApiService {
     dynamic response;
     await HttpService().get(path, params: params, options: options,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
-      response = {'code': 0, 'msg': error.toString()};
-    });
+          response = data;
+        }, errorCallback: (error) {
+          response = {'code': 0, 'msg': error.toString()};
+        });
     return response;
   }
 
@@ -78,10 +84,10 @@ class ApiService {
     dynamic response;
     await HttpService().preGet(path, params: params, options: options,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
-      response = {'code': 0, 'msg': error.toString()};
-    });
+          response = data;
+        }, errorCallback: (error) {
+          response = {'code': 0, 'msg': error.toString()};
+        });
     return response;
   }
 
@@ -91,10 +97,10 @@ class ApiService {
     dynamic response;
     await HttpService().delete(path, params: params, options: options,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
-      response = {'code': 0, 'msg': error.toString()};
-    });
+          response = data;
+        }, errorCallback: (error) {
+          response = {'code': 0, 'msg': error.toString()};
+        });
     return response;
   }
 
@@ -104,15 +110,16 @@ class ApiService {
     dynamic response;
     await HttpService().put(path, data: data, options: options,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
-      response = {'code': 0, 'msg': error.toString()};
-    });
+          response = data;
+        }, errorCallback: (error) {
+          response = {'code': 0, 'msg': error.toString()};
+        });
     return response;
   }
 
   /// 底层应用内统一请求封装
-  Future<dynamic> _sendChannelEvent({required Map<String, dynamic> paramData, Options? options, CancelToken? cancelToken}) async {
+  Future<dynamic> _sendChannelEvent({required Map<String,
+      dynamic> paramData, Options? options, CancelToken? cancelToken}) async {
     dynamic response;
     // 统一接口请求参数
     Map<String, dynamic> requestData = {
@@ -124,10 +131,11 @@ class ApiService {
       "timeout_milliseconds": 100000,
       "wait_return": true
     };
-    await HttpService().sendChannelEvent(requestData, options: options, cancelToken: cancelToken,
+    await HttpService().sendChannelEvent(
+        requestData, options: options, cancelToken: cancelToken,
         successCallback: (data) {
-      response = data;
-    }, errorCallback: (error) {
+          response = data;
+        }, errorCallback: (error) {
       response = {'is_success': false, 'error_message': error.toString()};
     });
     return response;
@@ -138,7 +146,8 @@ class ApiService {
       {required String username, required String password}) async {
     var data = {'uid': username, 'password': password, 'validate_code': '123'};
 
-    dynamic result = await _post(ServicePath.outerLogin, data: data, isForm: true);
+    dynamic result = await _post(
+        ServicePath.outerLogin, data: data, isForm: true);
 
     if (result != null) {
       try {
@@ -146,8 +155,10 @@ class ApiService {
 
         if (response.isSuccess) {
           // 保存外层token
-          await FYSharedPreferenceUtils.saveOuterAccessToken(response.accessToken);
-          await FYSharedPreferenceUtils.saveOuterRefreshToken(response.refreshToken);
+          await FYSharedPreferenceUtils.saveOuterAccessToken(
+              response.accessToken);
+          await FYSharedPreferenceUtils.saveOuterRefreshToken(
+              response.refreshToken);
         }
         return response;
       } catch (e) {
@@ -181,13 +192,15 @@ class ApiService {
     };
     dynamic result = await _sendChannelEvent(paramData: paramData);
 
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
         InnerLoginResponse response = InnerLoginResponse.fromJson(resultData);
 
-        if (response.success && response.statusCode == 10010 && response.data != null) {
+        if (response.success && response.statusCode == 10010 &&
+            response.data != null) {
           // 保存内层token
           String innerToken = response.data!['access_token'];
           await FYSharedPreferenceUtils.saveInnerAccessToken(innerToken);
@@ -246,7 +259,8 @@ class ApiService {
       password: password,
     );
 
-    if (innerResponse == null || !innerResponse.success || innerResponse.statusCode != 10010) {
+    if (innerResponse == null || !innerResponse.success ||
+        innerResponse.statusCode != 10010) {
       if (kDebugMode) {
         print('$_tag 应用内登录失败: ${innerResponse?.message}');
       }
@@ -295,7 +309,8 @@ class ApiService {
 
         if (response.isSuccess) {
           // 保存新的访问令牌
-          await FYSharedPreferenceUtils.saveOuterAccessToken(response.accessToken);
+          await FYSharedPreferenceUtils.saveOuterAccessToken(
+              response.accessToken);
           return response.accessToken;
         }
       } catch (e) {
@@ -317,11 +332,12 @@ class ApiService {
     try {
       // 使用接口文档中的固定用户名和密码重新登录
       InnerLoginResponse? response = await innerLogin(
-        username: 'user0611',    // 接口文档固定参数
-        password: 'fNj12CT1TA',  // 接口文档固定参数
+        username: 'user0611', // 接口文档固定参数
+        password: 'fNj12CT1TA', // 接口文档固定参数
       );
 
-      if (response != null && response.success && response.statusCode == 10010) {
+      if (response != null && response.success &&
+          response.statusCode == 10010) {
         if (kDebugMode) {
           print('$_tag 应用内重新登录成功');
         }
@@ -358,7 +374,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "实体清单_分页获取列表",
@@ -372,9 +388,10 @@ class ApiService {
         "city": city != '全部' ? city : ''
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
         return SanctionListResponse.fromJson(resultData);
@@ -384,12 +401,13 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   /// 发送AI对话
-  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history, String robotUID) async {
+  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history,
+      String robotUID) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -400,19 +418,20 @@ class ApiService {
     }
     // 内容转Base64
     final contentBase64 = base64Encode(utf8.encode(content));
-    
+
     // 转换历史对话为新的JSON结构
     List<Map<String, dynamic>> historyJson = history.map((item) {
-      String role = item['role'] ?? (item['isUser'] == true ? 'user' : 'assistant');
+      String role = item['role'] ??
+          (item['isUser'] == true ? 'user' : 'assistant');
       String content = item['content']?.toString() ?? '';
       String contentBase64 = base64Encode(utf8.encode(content));
-      
+
       return {
         'role': role,
         'content_base64': contentBase64,
       };
     }).toList();
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "流任务-执行机器人流对话",
@@ -423,9 +442,10 @@ class ApiService {
         "对话RobotUID": robotUID
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -438,7 +458,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -452,7 +472,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "流任务-查询机器人流对话回复内容",
@@ -462,15 +482,16 @@ class ApiService {
         "最多等待毫秒": 200
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
         if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
           final returnData = resultData['返回数据'];
-          
+
           // Base64解码内容
           final contentBase64 = returnData['内容Base64'];
           String? content;
@@ -483,7 +504,7 @@ class ApiService {
               }
             }
           }
-          
+
           return {
             'content': content,
             'isComplete': returnData['是否完成'] ?? false,
@@ -496,15 +517,16 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   /// 保存聊天记录到Realm数据库
-  Future<bool> saveChatHistoryToRealm(String title, List<Map<String, dynamic>> messages, String? chatUuid) async {
+  Future<bool> saveChatHistoryToRealm(String title,
+      List<Map<String, dynamic>> messages, String? chatUuid) async {
     try {
       final realmService = RealmService();
-      
+
       // 创建新的聊天历史记录
       await realmService.saveChatHistory(
         title: title,
@@ -512,7 +534,7 @@ class ApiService {
         chatUuid: chatUuid,
         modelName: 'DeepSeek', // 可以从state中获取当前模型
       );
-      
+
       print('✅ 聊天记录已保存到Realm数据库');
       return true;
     } catch (e) {
@@ -528,9 +550,9 @@ class ApiService {
     try {
       final realmService = RealmService();
       final chatHistories = realmService.getAllChatHistory();
-      
+
       final historyList = <Map<String, dynamic>>[];
-      
+
       for (var history in chatHistories) {
         historyList.add({
           'id': history.id,
@@ -542,7 +564,7 @@ class ApiService {
           'chatUuid': history.chatUuid,
         });
       }
-      
+
       return historyList;
     } catch (e) {
       if (kDebugMode) {
@@ -553,7 +575,8 @@ class ApiService {
   }
 
   /// 从Realm获取特定会话的消息
-  Future<List<Map<String, dynamic>>?> getChatMessagesFromRealm(String sessionId) async {
+  Future<List<Map<String, dynamic>>?> getChatMessagesFromRealm(
+      String sessionId) async {
     try {
       final realmService = RealmService();
       return realmService.getChatMessages(sessionId);
@@ -617,7 +640,8 @@ class ApiService {
   }
 
   /// 修改地区参数
-  Future<dynamic> updateRegion({required String id, required String region}) async {
+  Future<dynamic> updateRegion(
+      {required String id, required String region}) async {
     var data = {'id': id, 'region': region};
     return await _put(ServicePath.getRegion, data: data);
   }
@@ -645,7 +669,7 @@ class ApiService {
       }
       return {'code': 0, 'msg': '内层token为空'};
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_新闻_分页获取列表",
@@ -656,16 +680,17 @@ class ApiService {
         "page_size": pageSize,
         'news_type': newsType == "全部" ? "" : newsType,
         'region': region == "全部" ? "" : region,
-        'date_filter':dateFilter == "全部" ? "" : dateFilter,
-        'start_date':startDate,
-        'end_date':endDate,
-        'search':search,
+        'date_filter': dateFilter == "全部" ? "" : dateFilter,
+        'start_date': startDate,
+        'end_date': endDate,
+        'search': search,
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -681,7 +706,7 @@ class ApiService {
             'news_summary': item['summary'] ?? '',
           };
         }).toList();
-        
+
         return {
           'code': 10010,
           'data': transformedData,
@@ -695,7 +720,8 @@ class ApiService {
       }
     } else {
       if (kDebugMode) {
-        print('$_tag 获取新闻列表失败: ${result?['error_message'] ?? '未知错误'}');
+        print('$_tag 获取新闻列表失败: ${result?['error_message'] ??
+            '未知错误'}');
       }
       return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
     }
@@ -711,7 +737,7 @@ class ApiService {
       }
       return {'code': 0, 'msg': '内层token为空'};
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_新闻_获取新闻详细",
@@ -721,13 +747,14 @@ class ApiService {
         "uuid": newsId,
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         Map<String, dynamic> resultString = jsonDecode(result['result_string']);
-        Map<String, dynamic> resultData = resultString["返回数据"]?? [];
+        Map<String, dynamic> resultData = resultString["返回数据"] ?? [];
 
         Map<String, dynamic> transformedData = {
           'news_id': resultData['news_id'] ?? newsId,
@@ -749,7 +776,7 @@ class ApiService {
           'effect': resultData['effect'] ?? '',
           'risk_measure': resultData['risk_measure'] ?? '',
         };
-        
+
         return {
           'code': 10010,
           'data': transformedData,
@@ -762,7 +789,8 @@ class ApiService {
       }
     } else {
       if (kDebugMode) {
-        print('$_tag 获取新闻详情失败: ${result?['error_message'] ?? '未知错误'}');
+        print('$_tag 获取新闻详情失败: ${result?['error_message'] ??
+            '未知错误'}');
       }
       return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
     }
@@ -825,7 +853,8 @@ class ApiService {
   Future<RiskCompanyDetail?> getCompanyDetail(String companyId) async {
     try {
       // 加载对应的JSON文件
-      final String jsonString = await rootBundle.loadString('assets/company-details/$companyId-detail.json');
+      final String jsonString = await rootBundle.loadString(
+          'assets/company-details/$companyId-detail.json');
       final Map<String, dynamic> jsonData = json.decode(jsonString);
 
       // 转换为RiskCompanyDetail对象
@@ -840,11 +869,13 @@ class ApiService {
   String _formatTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays == 0) {
-      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return '今天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
+          .toString().padLeft(2, '0')}';
     } else if (difference.inDays == 1) {
-      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return '昨天 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
+          .toString().padLeft(2, '0')}';
     } else if (difference.inDays < 7) {
       return '${difference.inDays}天前';
     } else {
@@ -862,16 +893,17 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "app热更新_检查版本",
       "当前请求用户UUID": token,
       "命令具体内容": {}
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -884,7 +916,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -903,7 +935,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天提示词模板_新增模板",
@@ -914,9 +946,10 @@ class ApiService {
         "is_default": isDefault ? 1 : 0
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -927,7 +960,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -944,7 +977,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天提示词模板_获取模板列表",
@@ -954,9 +987,10 @@ class ApiService {
         "page_size": pageSize
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -967,7 +1001,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -986,7 +1020,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天提示词模板_修改模板",
@@ -998,9 +1032,10 @@ class ApiService {
         "is_default": isDefault ? 1 : 0
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1011,7 +1046,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1025,7 +1060,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天提示词模板_删除模板",
@@ -1034,9 +1069,10 @@ class ApiService {
         "prompt_uuid": promptUuid
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1047,12 +1083,13 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   /// 批量删除提示词模板
-  Future<Map<String, dynamic>?> batchDeletePromptTemplates(List<String> promptUuids) async {
+  Future<Map<String, dynamic>?> batchDeletePromptTemplates(
+      List<String> promptUuids) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -1061,7 +1098,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天提示词模板_批量删除模板",
@@ -1070,9 +1107,10 @@ class ApiService {
         "prompt_uuids": promptUuids
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1083,12 +1121,12 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   // ===== 聊天会话管理 API =====
-  
+
   /// 新建聊天会话
   Future<Map<String, dynamic>?> createChatSession({
     required String sessionName,
@@ -1101,7 +1139,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天会话_新建会话",
@@ -1110,9 +1148,10 @@ class ApiService {
         "session_name": sessionName
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1123,7 +1162,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1140,7 +1179,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天会话_获取会话列表",
@@ -1150,9 +1189,10 @@ class ApiService {
         "page_size": pageSize
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1163,7 +1203,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1180,7 +1220,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天会话_修改会话",
@@ -1190,9 +1230,10 @@ class ApiService {
         "session_name": sessionName
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1203,7 +1244,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1217,7 +1258,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天会话_删除会话",
@@ -1226,9 +1267,10 @@ class ApiService {
         "session_uuid": sessionUuid
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1239,12 +1281,13 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   /// 批量删除聊天会话
-  Future<Map<String, dynamic>?> batchDeleteChatSessions(List<String> sessionUuids) async {
+  Future<Map<String, dynamic>?> batchDeleteChatSessions(
+      List<String> sessionUuids) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -1253,7 +1296,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天会话_批量删除会话",
@@ -1262,9 +1305,10 @@ class ApiService {
         "session_uuids": sessionUuids
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1275,12 +1319,12 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   // ===== 聊天记录管理 API =====
-  
+
   /// 新增聊天记录
   Future<Map<String, dynamic>?> addChatRecord({
     required String sessionUuid,
@@ -1298,7 +1342,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天记录_新增记录",
@@ -1312,9 +1356,10 @@ class ApiService {
         "token_count": tokenCount
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1325,7 +1370,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1339,7 +1384,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天记录_获取记录",
@@ -1348,9 +1393,10 @@ class ApiService {
         "session_uuid": sessionUuid
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1361,12 +1407,13 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
   /// 下载更新文件块
-  Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid, int fileIndex, {CancelToken? cancelToken}) async {
+  Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid,
+      int fileIndex, {CancelToken? cancelToken}) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -1375,7 +1422,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "app热更新_下载文件",
@@ -1385,9 +1432,11 @@ class ApiService {
         "file_index": fileIndex
       }
     };
-    
-    dynamic result = await _sendChannelEvent(paramData: paramData, cancelToken: cancelToken);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+
+    dynamic result = await _sendChannelEvent(
+        paramData: paramData, cancelToken: cancelToken);
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1400,7 +1449,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1441,7 +1490,7 @@ class ApiService {
   }
 
   // ===== 专题订阅管理 API =====
-  
+
   /// 新增专题订阅
   Future<Map<String, dynamic>?> toggleTopicSubscription({
     required String subjectUuid,
@@ -1455,7 +1504,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_专题_修改专题订阅状态",
@@ -1465,9 +1514,10 @@ class ApiService {
         "is_follow": isFollow,
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1478,7 +1528,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1492,16 +1542,17 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_专题_获取专题列表",
       "当前请求用户UUID": token,
       "命令具体内容": {}
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1512,7 +1563,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1543,7 +1594,8 @@ class ApiService {
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1557,7 +1609,7 @@ class ApiService {
 
     return null;
   }
-  
+
   /// 获取专题订阅内容
   Future<Map<String, dynamic>?> getTopicSubscriptionContent({
     required String topicUuid,
@@ -1574,7 +1626,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "专题订阅_获取订阅内容",
@@ -1587,9 +1639,10 @@ class ApiService {
         "end_date": endDate ?? ""
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1600,7 +1653,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1620,7 +1673,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "事件订阅_获取订阅内容",
@@ -1633,9 +1686,10 @@ class ApiService {
         "end_date": endDate ?? ""
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1646,7 +1700,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1669,7 +1723,8 @@ class ApiService {
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1702,7 +1757,8 @@ class ApiService {
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1726,16 +1782,17 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_专题_获取关注专题列表",
       "当前请求用户UUID": token,
       "命令具体内容": {}
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1760,16 +1817,17 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_事件_获取事件列表",
       "当前请求用户UUID": token,
       "命令具体内容": {}
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1780,7 +1838,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1796,7 +1854,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "事件管理_获取事件详情",
@@ -1805,9 +1863,10 @@ class ApiService {
         "event_uuid": eventUuid
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1818,7 +1877,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1836,7 +1895,7 @@ class ApiService {
       }
       return null;
     }
-    
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "舆情热点_事件_获取相关新闻列表",
@@ -1847,9 +1906,10 @@ class ApiService {
         "page_size": pageSize
       }
     };
-    
+
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1860,7 +1920,7 @@ class ApiService {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -1891,7 +1951,8 @@ class ApiService {
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1935,7 +1996,8 @@ class ApiService {
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
-    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
       try {
         // 解析result_string
         Map<String, dynamic> resultData = jsonDecode(result['result_string']);
@@ -1969,6 +2031,41 @@ class ApiService {
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取事件最新动态响应失败: $e');
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /// 获取轮播图
+  Future<Map<String, dynamic>?> getBannerLists() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取事件最新动态失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "轮播图_获取轮播图",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
     if (result != null && result['is_success'] == true && result['result_string'] != null) {
       try {
         // 解析result_string
@@ -1984,4 +2081,3 @@ class ApiService {
     return null;
   }
 }
-

@@ -1,8 +1,9 @@
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:get/get.dart';
+import '../../models/banner_models.dart';
 
-// 轮播图数据模型
+// 轮播图数据模型（保留原有的以防向后兼容）
 class CarouselItem {
   final String imageUrl;
   final String title;
@@ -34,9 +35,12 @@ class HomeState {
   List<Map<String, dynamic>> riskType = [];
   List<Map<String, dynamic>> homeItemList = [];
   
-  // 轮播图数据
+  // 轮播图数据（保留原有的）
   final carouselItems = <CarouselItem>[].obs;
   int currentBannerIndex = 0;
+
+  // 新增：从接口获取的banner数据
+  final bannerList = <BannerModels>[].obs;
 
   HomeState() {
     riskType = [
@@ -55,11 +59,11 @@ class HomeState {
   }
 
   void _initData() {
-    // 初始化轮播图数据
+    // 初始化轮播图数据（保留作为fallback）
     carouselItems.addAll([
       CarouselItem(
         imageUrl:  FYImages.lunbo1,
-        title: '特朗普“贸易信函”拉响新一轮全球关税警报',
+        title: '特朗普"贸易信函"拉响新一轮全球关税警报',
         date: '2025.05.12',
         linkUrl: 'https://www.mofcom.gov.cn/syxwfb/art/2025/art_8232e23dd3cb49bcb70634eb0c65ecea.html',
       ),
