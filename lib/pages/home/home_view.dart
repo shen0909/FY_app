@@ -182,8 +182,16 @@ class HomePage extends StatelessWidget {
       final banner = state.bannerList[index];
       if (banner.image.isNotEmpty) {
         try {
+          String imageData = banner.image;
+          if (imageData.contains(',')) {
+            final parts = imageData.split(',');
+            if (parts.length > 1) {
+              imageData = parts[1]; // 取逗号后面的部分
+            }
+          }
+          
           // 解析base64图片
-          final bytes = base64Decode(banner.image);
+          final bytes = base64Decode(imageData);
           return Image.memory(
             bytes,
             fit: BoxFit.cover,
@@ -196,7 +204,7 @@ class HomePage extends StatelessWidget {
                   child: Icon(Icons.image_not_supported),
                 ),
               );
-            },
+            }
           );
         } catch (e) {
           // base64解析失败，显示占位图

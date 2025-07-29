@@ -7,7 +7,7 @@ import 'package:safe_app/services/token_keep_alive_service.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:flutter/foundation.dart';
 import '../../models/banner_models.dart';
-
+import '../../utils/dialog_utils.dart';
 import 'home_state.dart';
 
 class HomeLogic extends GetxController {
@@ -18,7 +18,6 @@ class HomeLogic extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getBannerList();
     pageController = PageController();
     // 启动自动轮播
     _startAutoPlay();
@@ -26,10 +25,9 @@ class HomeLogic extends GetxController {
     _startTokenKeepAlive();
   }
 
-  @override
   void onReady() {
-    // TODO: implement onReady
     super.onReady();
+    getBannerList();
   }
 
   @override
@@ -180,6 +178,8 @@ class HomeLogic extends GetxController {
 
   // 获取Banner列表
   Future<void> getBannerList() async {
+    // 方案1：全局Dialog loading（当前方案）
+    DialogUtils.showLoading();
     try {
       final result = await ApiService().getBannerLists();
       if (kDebugMode) {
@@ -211,6 +211,9 @@ class HomeLogic extends GetxController {
       if (kDebugMode) {
         print("获取Banner列表出错: $e，使用默认轮播图数据");
       }
+    } finally {
+      // 确保无论成功还是失败都隐藏loading
+      DialogUtils.hideLoading();
     }
   }
 }
