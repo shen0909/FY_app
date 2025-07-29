@@ -6,6 +6,7 @@ import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/https/api_service.dart';
 import '../../models/order_event_model.dart';
 import '../../routers/routers.dart';
+import '../../utils/dialog_utils.dart';
 import 'order_state.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -28,11 +29,7 @@ class OrderLogic extends GetxController {
   // 加载订阅数据
   Future<void> loadSubscriptionData() async {
     try {
-      // 显示加载状态
-      Get.dialog(
-        Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+      DialogUtils.showLoading();
       await Future.wait([
         loadSubscriptTopicUUidList(),
         loadSubscriptEventUUidList()]);
@@ -42,10 +39,9 @@ class OrderLogic extends GetxController {
         loadTopicList(),
         loadMySubscriptionSummary(),
       ]);
-      // 关闭加载对话框
-      Get.back();
+      DialogUtils.hideLoading();
     } catch (e) {
-      Get.back(); // 关闭加载对话框
+      DialogUtils.hideLoading();
       Get.snackbar(
         '错误', 
         '加载订阅数据失败: $e',
@@ -159,10 +155,7 @@ class OrderLogic extends GetxController {
   // 切换专题关注状态
   Future<void> toggleTopicFavorite(String topicUuid, bool isFavorite) async {
     try {
-      Get.dialog(
-        Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+      DialogUtils.showLoading();
       final result = await _apiService.toggleTopicSubscription(subjectUuid: topicUuid, isFollow: !isFavorite);
       if(result != null && result['执行结果'] != false){
         await loadSubscriptTopicUUidList();
@@ -170,9 +163,9 @@ class OrderLogic extends GetxController {
         state.myFavorites.clear();
         state.myFavorites.value = state.topicList.where((item) => item.isFollowed == true).toList();
       }
-      Get.back();
+      DialogUtils.hideLoading();
     } catch (e) {
-      Get.back();
+      DialogUtils.hideLoading();
       Get.snackbar('错误', '操作失败: $e');
     }
   }
@@ -180,17 +173,15 @@ class OrderLogic extends GetxController {
   // 切换事件关注状态
   Future<void> toggleEventFavorite(String eventUid, bool isFavorite) async {
     try {
-      Get.dialog(
-        Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+      DialogUtils.showLoading();
       final result = await _apiService.toggleEventSubscription(subjectUuid: eventUid, isFollow: !isFavorite);
       if(result != null){
         await loadSubscriptEventUUidList();
         _updateHotEventsFollowedStatus(2);
       }
-      Get.back();
+      DialogUtils.hideLoading();
     } catch (e) {
+      DialogUtils.hideLoading();
       Get.back();
       Get.snackbar('错误', '操作失败: $e');
     }
