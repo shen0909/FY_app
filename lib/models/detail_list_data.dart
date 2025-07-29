@@ -47,8 +47,8 @@ class SanctionListData {
 
   factory SanctionListData.fromJson(Map<String, dynamic> json) {
     List<SanctionEntity> entities = [];
-    if (json['data'] != null && json['data'] is List) {
-      entities = (json['data'] as List)
+    if (json['list'] != null && json['list'] is List) {
+      entities = (json['list'] as List)
           .map((v) => SanctionEntity.fromJson(v as Map<String, dynamic>))
           .toList();
     }
