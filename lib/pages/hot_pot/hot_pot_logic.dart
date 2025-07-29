@@ -22,21 +22,10 @@ class HotPotLogic extends GetxController {
     state.startDate.value = now.subtract(const Duration(days: 30));
     // 加载已读新闻状态
     await _loadReadNewsIds();
-    
     // 获取地区列表
     await getRegionList();
     // 获取热点列表
     await getNewsList();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    // 获取传入的热点数据
-    if (Get.arguments != null) {
-      // 在实际应用中，这里会根据传入的ID或其他参数加载对应的热点数据
-      // 例如: loadHotNewsDetails(Get.arguments['id']);
-    }
   }
 
   @override
