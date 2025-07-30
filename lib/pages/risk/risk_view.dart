@@ -31,19 +31,22 @@ class _RiskPageState extends State<RiskPage> {
         appBar: FYAppBar(title: '风险预警'),
         body: SafeArea(
           bottom: true,
-          child: SingleChildScrollView(
-            controller: logic.scrollController, // 使用logic中的scrollController
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLocationSection(),
-                _buildUnitTypeSelector(),
-                _buildRiskStatCards(),
-                SizedBox(height: 14.w),
-                _buildRiskList(), // 恢复原来的列表实现
-                _buildLoadMoreIndicator(), // 在列表后添加加载指示器
-              ],
-            ),
+          child: Obx(() => state.isLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  controller: logic.scrollController, // 使用logic中的scrollController
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLocationSection(),
+                      _buildUnitTypeSelector(),
+                      _buildRiskStatCards(),
+                      SizedBox(height: 14.w),
+                      _buildRiskList(), // 恢复原来的列表实现
+                      _buildLoadMoreIndicator(), // 在列表后添加加载指示器
+                    ],
+                  ),
+                ),
           ),
         ),
       ),
@@ -337,20 +340,9 @@ class _RiskPageState extends State<RiskPage> {
     );
   }
 
-  // 恢复原来的风险单位列表实现
   Widget _buildRiskList() {
     return Obx(() {
       final currentList = state.currentRiskList;
-      
-      if (state.isLoading.value && currentList.isEmpty) {
-        // 首次加载显示loading
-        return Container(
-          height: 200,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      }
       
       if (currentList.isEmpty) {
         return FYWidget.buildEmptyContent();

@@ -22,6 +22,8 @@ class RiskLogic extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    // 设置初始加载状态
+    state.isLoading.value = true;
     // 初始化滚动控制器
     scrollController = ScrollController();
     _addScrollListener();
@@ -57,6 +59,9 @@ class RiskLogic extends GetxController {
         'total': {'count': 0, 'color': 0xFF1A1A1A},
       };
       state.currentRiskList.clear();
+    } finally {
+      // 完成加载后隐藏loading
+      state.isLoading.value = false;
     }
   }
 
