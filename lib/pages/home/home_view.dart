@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: 16.h),
                 _buildHeader(),
                 SizedBox(height: 16.h),
-                _buildRiskWarning(),
+                Obx(() => _buildRiskWarning()),
                 SizedBox(height: 16.h),
                 _buildQuickMenu(),
                 SizedBox(height: 16.h),

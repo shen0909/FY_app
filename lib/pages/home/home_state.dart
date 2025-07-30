@@ -32,7 +32,8 @@ class HomeState {
 
   // 清单更新时间
   final String listUpdateTime = "2025.07.07";
-  List<Map<String, dynamic>> riskType = [];
+
+  final riskType = <Map<String, dynamic>>[].obs;
   List<Map<String, dynamic>> homeItemList = [];
   
   // 轮播图数据（保留原有的）
@@ -43,11 +44,13 @@ class HomeState {
   final bannerList = <BannerModels>[].obs;
 
   HomeState() {
-    riskType = [
-      {'title': '高风险','count':30,'bgColor':FYColors.highRiskBg,'borderColor':FYColors.highRiskBorder},
-      {'title': '中风险','count':17,'bgColor':FYColors.middleRiskBg,'borderColor':FYColors.middleRiskBorder},
-      {'title': '低风险','count':52,'bgColor':FYColors.lowRiskBg,'borderColor':FYColors.lowRiskBorder},
-    ];
+    // 初始化默认风险类型数据
+    riskType.assignAll([
+      {'title': '高风险','count':10,'bgColor':FYColors.highRiskBg,'borderColor':FYColors.highRiskBorder},
+      {'title': '中风险','count':10,'bgColor':FYColors.middleRiskBg,'borderColor':FYColors.middleRiskBorder},
+      {'title': '低风险','count':10,'bgColor':FYColors.lowRiskBg,'borderColor':FYColors.lowRiskBorder},
+    ]);
+    
     homeItemList = [
       {'title': '舆情热点', 'image': FYImages.hotIcon, 'bgColor': FYColors.hotBgGridle},
       {'title': 'AI问答', 'image': FYImages.aiIcon, 'bgColor': FYColors.aiBgGridle},
@@ -56,6 +59,19 @@ class HomeState {
     ];
     
     _initData();
+  }
+  
+  /// 更新风险评分数量
+  void updateRiskScoreCount({
+    required int highRisk,
+    required int mediumRisk, 
+    required int lowRisk,
+  }) {
+    riskType.assignAll([
+      {'title': '高风险','count':highRisk,'bgColor':FYColors.highRiskBg,'borderColor':FYColors.highRiskBorder},
+      {'title': '中风险','count':mediumRisk,'bgColor':FYColors.middleRiskBg,'borderColor':FYColors.middleRiskBorder},
+      {'title': '低风险','count':lowRisk,'bgColor':FYColors.lowRiskBg,'borderColor':FYColors.lowRiskBorder},
+    ]);
   }
 
   void _initData() {

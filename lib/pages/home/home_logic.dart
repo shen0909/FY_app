@@ -28,6 +28,7 @@ class HomeLogic extends GetxController {
     await getBannerList();
     // 启动自动轮播
     _startAutoPlay();
+    await getRiskScoreCount(); // 获取风险评分数量
   }
 
   @override
@@ -214,6 +215,45 @@ class HomeLogic extends GetxController {
     } finally {
       // 确保无论成功还是失败都隐藏loading
       DialogUtils.hideLoading();
+    }
+  }
+
+  // 获取风险评分数量
+  Future<void> getRiskScoreCount() async {
+    try {
+      final result = await ApiService().getRiskScoreCount();
+      if (kDebugMode) {
+        print("获取风险评分数量结果: $result");
+      }
+      
+      if (result != null && result['执行结果'] == true) {
+        final returnData = result['返回数据'];
+        if (returnData != null) {
+          // 解析风险评分数量数据
+          int highRisk = returnData['高风险'] ?? 0;
+          int mediumRisk = returnData['中风险'] ?? 0;
+          int lowRisk = returnData['低风险'] ?? 0;
+          
+          // 更新状态
+          state.updateRiskScoreCount(
+            highRisk: highRisk,
+            mediumRisk: mediumRisk,
+            lowRisk: lowRisk,
+          );
+          
+          if (kDebugMode) {
+            print("成功更新风险评分数量 - 高风险:$highRisk, 中风险:$mediumRisk, 低风险:$lowRisk");
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print("风险评分数量接口返回数据异常，使用默认数据");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("获取风险评分数量出错: $e，使用默认数据");
+      }
     }
   }
 }
