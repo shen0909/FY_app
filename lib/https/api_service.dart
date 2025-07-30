@@ -768,7 +768,7 @@ class ApiService {
           'risk_analysis': resultData['risk_analysis'] ?? '',
           'news_source_url': resultData['news_source_url'] ?? '',
           'origin_context': resultData['origin_context'] ?? '',
-          'translated_context': resultData['news_summary'] ?? '', // 使用摘要作为译文
+          'translated_context': resultData['translated_context'] ?? '', // 使用摘要作为译文
           'publish_authors': resultData['publish_authors'] ?? '',
           'future_progression': resultData['future_progression'] ?? '',
           'relevant_news': resultData['relevant_news'] ?? '',
