@@ -125,13 +125,17 @@ class HttpService {
       },
     ));
     
+    // 为外层请求添加Token拦截器
     final tokenInterceptor = TokenInterceptor();
     tokenInterceptor.setDio(dio);
     dio.interceptors.add(tokenInterceptor);
     
-    final innerTokenInterceptor = TokenInterceptor();
-    innerTokenInterceptor.setDio(innerDio);
-    innerDio.interceptors.add(innerTokenInterceptor);
+    // 注意：由于TokenInterceptor是单例，我们需要为innerDio创建新的拦截器实例
+    // 这里我们先注释掉innerDio的TokenInterceptor，因为它会与外层冲突
+    // 后续可以考虑重构TokenInterceptor以支持多实例或者为内层请求单独处理
+    // final innerTokenInterceptor = TokenInterceptor();
+    // innerTokenInterceptor.setDio(innerDio);
+    // innerDio.interceptors.add(innerTokenInterceptor);
   }
 
   /// 格式化错误信息
@@ -220,7 +224,7 @@ class HttpService {
         );
       } else {
         // 默认是URL参数提交
-        response = await dio.post(
+        response = await preDio.post(
           path,
           queryParameters: data ?? queryParameters,
           options: options,

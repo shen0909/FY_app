@@ -31,6 +31,19 @@ class TokenInterceptor extends Interceptor {
   
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // 检查是否是登录已过期（状态码30001），如果是则直接跳转登录页
+    if (err.response?.data is Map) {
+      final data = err.response?.data as Map;
+      if (data.containsKey('状态码') && data['状态码'] == 30001) {
+        if (kDebugMode) {
+          print('$_tag onError检测到登录已过期（状态码30001），直接跳转登录页');
+        }
+        _navigateToLogin();
+        handler.next(err);
+        return;
+      }
+    }
+    
     // 检查是否是token过期错误
     if (_isTokenExpiredError(err)) {
       _handleTokenExpiredResponse(err, handler);
@@ -73,18 +86,35 @@ class TokenInterceptor extends Interceptor {
           data['result_string'] is String) {
         try {
           Map<String, dynamic> resultData = jsonDecode(data['result_string']);
-          // if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
-          //   isTokenExpired = true;
-          //   if (kDebugMode) {
-          //     print('$_tag 响应中检测到内层token失效，状态码: ${resultData['状态码']}');
-          //   }
-          // }
+          if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
+            isTokenExpired = true;
+            if (kDebugMode) {
+              print('$_tag 响应中检测到内层token失效，状态码: ${resultData['状态码']}');
+            }
+          }
         } catch (e) {
           // 解析错误，不处理
         }
       }
       
+      // 直接检测外层状态码30001（登录已过期）
+      if (data.containsKey('状态码') && data['状态码'] == 30001) {
+        isTokenExpired = true;
+        if (kDebugMode) {
+          print('$_tag 响应中检测到登录已过期，状态码: ${data['状态码']}，消息: ${data['返回消息']}');
+        }
+      }
+      
       if (isTokenExpired) {
+        // 检查是否是登录已过期（状态码30001），如果是则直接跳转登录页
+        if (data.containsKey('状态码') && data['状态码'] == 30001) {
+          if (kDebugMode) {
+            print('$_tag 检测到登录已过期（状态码30001），直接跳转登录页');
+          }
+          _navigateToLogin();
+          return;
+        }
+        
         // 创建一个DioException来触发错误处理流程
         final dioError = DioException(
           requestOptions: response.requestOptions,
@@ -170,6 +200,14 @@ class TokenInterceptor extends Interceptor {
         }
       }
       
+      // 直接检测外层状态码30001（登录已过期）
+      if (data.containsKey('状态码') && data['状态码'] == 30001) {
+        if (kDebugMode) {
+          print('$_tag 检测到登录已过期，状态码: ${data['状态码']}，消息: ${data['返回消息']}');
+        }
+        return true;
+      }
+      
       // 兼容旧接口
       if (data.containsKey('code') && (data['code'] == 401 || data['code'] == 10011)) {
         return true;
@@ -181,6 +219,10 @@ class TokenInterceptor extends Interceptor {
   
   // 跳转到登录页
   void _navigateToLogin() {
+    // 重置刷新状态
+    _isRefreshing = false;
+    // 清除待处理的请求队列
+    _pendingRequests.clear();
     // 清除登录数据
     FYSharedPreferenceUtils.clearLoginData();
     
@@ -196,6 +238,50 @@ class TokenInterceptor extends Interceptor {
       print('$_tag Token过期，准备刷新');
     }
     
+    // 检查是否是登录已过期（状态码30001）
+    if (err.response?.data is Map) {
+      final data = err.response?.data as Map;
+      
+      // 检查外层状态码30001
+      if (data.containsKey('状态码') && data['状态码'] == 30001) {
+        if (kDebugMode) {
+          print('$_tag 检测到登录已过期（状态码30001），直接跳转登录页');
+        }
+        _pendingRequests.clear();
+        _navigateToLogin();
+        if (handler is ErrorInterceptorHandler) {
+          handler.next(err);
+        } else if (handler is ResponseInterceptorHandler) {
+          handler.reject(err);
+        }
+        return;
+      }
+      
+      // 检查内层状态码30001
+      if (data.containsKey('is_success') && 
+          data.containsKey('result_string') && 
+          data['result_string'] is String) {
+        try {
+          Map<String, dynamic> resultData = jsonDecode(data['result_string']);
+          if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
+            if (kDebugMode) {
+              print('$_tag 检测到内层登录已过期（状态码30001），直接跳转登录页');
+            }
+            _pendingRequests.clear();
+            _navigateToLogin();
+            if (handler is ErrorInterceptorHandler) {
+              handler.next(err);
+            } else if (handler is ResponseInterceptorHandler) {
+              handler.reject(err);
+            }
+            return;
+          }
+        } catch (e) {
+          // 解析错误，继续正常的token刷新流程
+        }
+      }
+    }
+    
     // 保存原始请求
     RequestOptions options = err.requestOptions;
     
@@ -205,6 +291,35 @@ class TokenInterceptor extends Interceptor {
         print('$_tag 已经在刷新Token，将请求加入队列: ${options.path}');
       }
       _pendingRequests.add(options);
+      
+      // 等待刷新完成，然后重试请求
+      while (_isRefreshing) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+      
+      // 刷新完成后重试当前请求
+      try {
+        final response = await _dio.fetch(options);
+        if (handler is ErrorInterceptorHandler) {
+          handler.resolve(response);
+        } else if (handler is ResponseInterceptorHandler) {
+          handler.resolve(response);
+        }
+      } catch (e) {
+        if (handler is ErrorInterceptorHandler) {
+          handler.next(DioException(
+            requestOptions: options,
+            message: 'Token refresh retry failed: $e',
+            type: DioExceptionType.unknown,
+          ));
+        } else if (handler is ResponseInterceptorHandler) {
+          handler.reject(DioException(
+            requestOptions: options,
+            message: 'Token refresh retry failed: $e',
+            type: DioExceptionType.unknown,
+          ));
+        }
+      }
       return;
     }
     
@@ -283,7 +398,18 @@ class TokenInterceptor extends Interceptor {
     // 处理之前加入队列的请求
     for (RequestOptions request in _pendingRequests) {
       await _updateRequestWithNewToken(request, innerToken);
-      _dio.fetch(request);
+      try {
+        final response = await _dio.fetch(request);
+        // 注意：队列中的请求无法直接回调到原始的handler，
+        // 因为它们是在不同的上下文中发起的
+        if (kDebugMode) {
+          print('$_tag 队列请求重试成功: ${request.path}');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 队列请求重试失败: ${request.path}, 错误: $e');
+        }
+      }
     }
     _pendingRequests.clear();
     
@@ -313,7 +439,16 @@ class TokenInterceptor extends Interceptor {
     if (refreshed) {
       // 处理之前加入队列的请求
       for (RequestOptions request in _pendingRequests) {
-        _dio.fetch(request);
+        try {
+          final response = await _dio.fetch(request);
+          if (kDebugMode) {
+            print('$_tag 队列请求重试成功: ${request.path}');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('$_tag 队列请求重试失败: ${request.path}, 错误: $e');
+          }
+        }
       }
       _pendingRequests.clear();
       
