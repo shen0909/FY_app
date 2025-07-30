@@ -30,4 +30,10 @@ class RiskState {
   final RxString searchKeyword = "".obs; // 搜索关键词
   final RxString selectedRegionCode = "".obs; // 当前选择的地区代码（用于筛选）
   final RxString selectedRegionName = "全部".obs; // 当前选择的地区名称（用于显示）
+
+  // 分页相关状态
+  final RxInt currentPage = 1.obs; // 当前页数
+  final RxBool isLoading = false.obs; // 是否正在加载
+  final RxBool hasMoreData = true.obs; // 是否还有更多数据
+  final RxBool isLoadingMore = false.obs; // 是否正在加载更多（用于显示底部加载指示器）
 }

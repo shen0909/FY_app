@@ -29,16 +29,21 @@ class _RiskPageState extends State<RiskPage> {
       child: Scaffold(
         backgroundColor: FYColors.whiteColor,
         appBar: FYAppBar(title: '风险预警'),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildLocationSection(),
-              _buildUnitTypeSelector(),
-              _buildRiskStatCards(),
-              SizedBox(height: 14.w),
-              _buildRiskList(),
-            ],
+        body: SafeArea(
+          bottom: true,
+          child: SingleChildScrollView(
+            controller: logic.scrollController, // 使用logic中的scrollController
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLocationSection(),
+                _buildUnitTypeSelector(),
+                _buildRiskStatCards(),
+                SizedBox(height: 14.w),
+                _buildRiskList(), // 恢复原来的列表实现
+                _buildLoadMoreIndicator(), // 在列表后添加加载指示器
+              ],
+            ),
           ),
         ),
       ),
@@ -332,24 +337,97 @@ class _RiskPageState extends State<RiskPage> {
     );
   }
 
-  // 风险单位列表
+  // 恢复原来的风险单位列表实现
   Widget _buildRiskList() {
     return Obx(() {
       final currentList = state.currentRiskList;
-      return state.currentRiskList.isEmpty
-          ? FYWidget.buildEmptyContent()
-          : ListView.builder(
-              itemCount: currentList.length,
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return state.chooseUint.value == 0
-                    ? _buildRiskItem1(currentList[index]) // 一类单位
-                    : state.chooseUint.value == 1
-                        ? _buildRiskItem2(currentList[index])
-                        : _buildRiskItem3(currentList[index]);
-              },
-            );
+      
+      if (state.isLoading.value && currentList.isEmpty) {
+        // 首次加载显示loading
+        return Container(
+          height: 200,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      
+      if (currentList.isEmpty) {
+        return FYWidget.buildEmptyContent();
+      }
+      
+      return ListView.builder(
+        itemCount: currentList.length,
+        physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
+        shrinkWrap: true, // 让ListView适应内容高度
+        itemBuilder: (context, index) {
+          return state.chooseUint.value == 0
+              ? _buildRiskItem1(currentList[index]) // 一类单位
+              : state.chooseUint.value == 1
+                  ? _buildRiskItem2(currentList[index])
+                  : _buildRiskItem3(currentList[index]);
+        },
+      );
+    });
+  }
+
+  // 底部加载指示器
+  Widget _buildLoadMoreIndicator() {
+    return Obx(() {
+      if (state.isLoadingMore.value) {
+        // 正在加载更多
+        return Container(
+          padding: EdgeInsets.all(16),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              SizedBox(width: 8),
+              Text(
+                '加载中...',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (!state.hasMoreData.value && state.currentRiskList.isNotEmpty) {
+        // 没有更多数据（但有数据时才显示）
+        return Container(
+          padding: EdgeInsets.all(16),
+          alignment: Alignment.center,
+          child: Text(
+            '没有更多数据了',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        );
+      } else if (state.hasMoreData.value && state.currentRiskList.isNotEmpty) {
+        // 还有更多数据但当前未加载
+        return Container(
+          padding: EdgeInsets.all(16),
+          alignment: Alignment.center,
+          child: Text(
+            '上拉加载更多',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        );
+      } else {
+        // 没有数据时不显示指示器
+        return SizedBox.shrink();
+      }
     });
   }
 

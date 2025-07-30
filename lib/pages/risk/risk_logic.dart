@@ -16,32 +16,33 @@ class RiskLogic extends GetxController {
   // Overlay相关变量
   OverlayEntry? _overlayEntry;
   final GlobalKey locationKey = GlobalKey();
+  // 添加滚动控制器
+  late ScrollController scrollController;
 
   @override
   Future<void> onInit() async {
     super.onInit();
+    // 初始化滚动控制器
+    scrollController = ScrollController();
+    _addScrollListener();
+    
     try {
       await loadRegionData();
       await getRiskList();
-
       _updateCurrentUnitData();
       _updateCurrentRiskList();
-      
       // 监听单位类型变化
       ever(state.chooseUint, (_) {
-        _updateCurrentUnitData();
-        _updateCurrentRiskList();
+        _refreshData(); // 切换单位类型时刷新数据
       });
-      
+
       // 监听地区选择变化
       ever(state.selectedRegionCode, (_) {
-        _updateCurrentRiskList();
+        _refreshData(); // 切换地区时刷新数据
       });
 
       debounce(state.searchKeyword, (_) async {
-        await getRiskList();
-        _updateCurrentUnitData();
-        _updateCurrentRiskList();
+        _refreshData(); // 搜索时刷新数据
       }, time: Duration(milliseconds: 500));
       
     } catch (e, stackTrace) {
@@ -50,47 +51,105 @@ class RiskLogic extends GetxController {
       
       // 确保UI不会因为数据解析错误而崩溃
       state.currentUnitData.value = {
-        'high': {
-          'title': '高风险',
-          'count': 0,
-          'change': 0,
-          'color': 0xFFFF6850
-        },
-        'medium': {
-          'title': '中风险',
-          'count': 0,
-          'change': 0,
-          'color': 0xFFF6D500
-        },
-        'low': {
-          'title': '低风险',
-          'count': 0,
-          'change': 0,
-          'color': 0xFF07CC89
-        },
-        'total': {
-          'count': 0,
-          'color': 0xFF1A1A1A
-        },
+        'high': {'title': '高风险', 'count': 0, 'change': 0, 'color': 0xFFFF6850},
+        'medium': {'title': '中风险', 'count': 0, 'change': 0, 'color': 0xFFF6D500},
+        'low': {'title': '低风险', 'count': 0, 'change': 0, 'color': 0xFF07CC89},
+        'total': {'count': 0, 'color': 0xFF1A1A1A},
       };
       state.currentRiskList.clear();
     }
   }
 
-  // 获取风险预警列表数据
-  getRiskList() async {
+  // 添加滚动监听器
+  void _addScrollListener() {
+    scrollController.addListener(() {
+      // 当滚动到距离底部200像素时触发加载更多
+      if (scrollController.position.pixels >= 
+          scrollController.position.maxScrollExtent - 200) {
+        loadMoreData();
+      }
+    });
+  }
+
+  // 刷新数据（重置分页状态）
+  Future<void> _refreshData() async {
+    state.currentPage.value = 1;
+    state.hasMoreData.value = true;
+    state.isLoading.value = true;
+    
+    // 清空现有数据
+    state.fengyun1List.clear();
+    state.fengyun2List.clear();
+    state.xingyunList.clear();
+    
+    await getRiskList();
+    _updateCurrentUnitData();
+    _updateCurrentRiskList();
+    state.isLoading.value = false;
+  }
+
+  // 加载更多数据
+  Future<void> loadMoreData() async {
+    // 防止重复加载
+    if (state.isLoadingMore.value || !state.hasMoreData.value) {
+      return;
+    }
+    
+    state.isLoadingMore.value = true;
+    state.currentPage.value++;
+    
+    try {
+      await getRiskList(isLoadMore: true);
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+    } catch (e) {
+      print("加载更多数据失败: $e");
+      // 加载失败时回退页数
+      state.currentPage.value--;
+    } finally {
+      state.isLoadingMore.value = false;
+    }
+  }
+
+  // 获取风险预警列表数据（修改以支持分页）
+  Future<void> getRiskList({bool isLoadMore = false}) async {
     final result = await ApiService().getRiskLists(
+      currentPage: state.currentPage.value,
       zhName: state.searchKeyword.value.isEmpty ? null : state.searchKeyword.value,
       regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
     );
-    if(result!=null && result['执行结果'] == true ) {
+    
+    if(result != null && result['执行结果'] == true) {
       RiskyDataNew riskyDataNew = RiskyDataNew.fromJson(result['返回数据']);
-      state.fengyun1List.clear();
-      state.fengyun2List.clear();
-      state.xingyunList.clear();
-      state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customEntType == 1).toList());
-      state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customEntType == 2).toList());
-      state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customEntType == 3).toList());
+      int l0 = riskyDataNew.list.where((item) => item.customClassification == 0).length;
+      int l1 = riskyDataNew.list.where((item) => item.customClassification == 1).length;
+      int l2 = riskyDataNew.list.where((item) => item.customClassification == 2).length;
+      int l3 = riskyDataNew.list.where((item) => item.customClassification == 3).length;
+      if (isLoadMore) {
+        // 追加数据
+        state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customClassification == 1).toList());
+        state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customClassification == 2).toList());
+        state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customClassification == 3).toList());
+      } else {
+        // 首次加载，清空后添加
+        state.fengyun1List.clear();
+        state.fengyun2List.clear();
+        state.xingyunList.clear();
+        state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customEntType == 1).toList());
+        state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customEntType == 2).toList());
+        state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customEntType == 3).toList());
+      }
+      
+      // 判断是否还有更多数据
+      // 如果返回的数据少于每页大小，说明没有更多数据了
+      if (riskyDataNew.list.length < 10) {
+        state.hasMoreData.value = false;
+      }
+    } else {
+      // API调用失败时，如果是加载更多，则标记没有更多数据
+      if (isLoadMore) {
+        state.hasMoreData.value = false;
+      }
     }
   }
 
@@ -207,7 +266,6 @@ class RiskLogic extends GetxController {
       } else if (index == 1) {
         selectedList = state.fengyun2List;
       } else if (index == 2) {
-        // selectedList = state.fengyun2List;
         selectedList = state.xingyunList;
       }
 
@@ -301,11 +359,12 @@ class RiskLogic extends GetxController {
 
   @override
   void onClose() {
+    scrollController.dispose();
     _safeHideOverlay();
     super.onClose();
   }
 
-  // 切换单位
+  // 切换单位（重置分页状态）
   changeUnit(int index) {
     state.chooseUint.value = index;
   }
