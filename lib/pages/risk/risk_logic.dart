@@ -207,8 +207,8 @@ class RiskLogic extends GetxController {
       } else if (index == 1) {
         selectedList = state.fengyun2List;
       } else if (index == 2) {
-        selectedList = state.fengyun2List;
-        // selectedList = state.xingyunList;
+        // selectedList = state.fengyun2List;
+        selectedList = state.xingyunList;
       }
 
       // 应用地区筛选（本地筛选）

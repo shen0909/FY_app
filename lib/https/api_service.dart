@@ -1970,7 +1970,7 @@ class ApiService {
   /// 获取风险预警列表
   Future<Map<String, dynamic>?> getRiskLists({
     int currentPage = 1,
-    int page = 1,
+    int page = 50,
     String? zhName,
     String? regionCode,
   }) async {
@@ -1989,7 +1989,7 @@ class ApiService {
       "当前请求用户UUID": token,
       "命令具体内容": {
         "current_page": currentPage,
-        "page_size": page,
+        "page_size": 10,
         'zh_name': zhName,
         'region_code': regionCode
       }
