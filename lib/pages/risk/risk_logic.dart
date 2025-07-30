@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +8,7 @@ import 'package:safe_app/utils/dialog_utils.dart';
 import '../../models/risk_data_new.dart';
 import '../../models/region_data.dart';
 import 'risk_state.dart';
+import 'package:flutter/foundation.dart';
 
 class RiskLogic extends GetxController {
   final RiskState state = RiskState();
@@ -76,11 +76,17 @@ class RiskLogic extends GetxController {
     state.currentPage.value = 1;
     state.hasMoreData.value = true;
     state.isLoading.value = true;
-    
-    // 清空现有数据
-    state.fengyun1List.clear();
-    state.fengyun2List.clear();
-    state.xingyunList.clear();
+    switch (state.chooseUint.value) {
+      case 0:
+        state.fengyun1List.clear();
+        break;
+      case 1:
+        state.fengyun2List.clear();
+        break;
+      case 2:
+        state.xingyunList.clear();
+        break;
+    }
     
     await getRiskList();
     _updateCurrentUnitData();
@@ -111,41 +117,72 @@ class RiskLogic extends GetxController {
     }
   }
 
-  // 获取风险预警列表数据（修改以支持分页）
+  // 获取风险预警列表数据
   Future<void> getRiskList({bool isLoadMore = false}) async {
+    // 0-烽云一号 1-烽云二号 2-星云 -> 1-FY一号 2-FY二号 3-星云
+    int? classification;
+    switch (state.chooseUint.value) {
+      case 0:
+        classification = 1; // 烽云一号 -> FY一号
+        break;
+      case 1:
+        classification = 2; // 烽云二号 -> FY二号  
+        break;
+      case 2:
+        classification = 3; // 星云
+        break;
+    }
     final result = await ApiService().getRiskLists(
       currentPage: state.currentPage.value,
       zhName: state.searchKeyword.value.isEmpty ? null : state.searchKeyword.value,
       regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
+      classification: classification,
     );
     
     if(result != null && result['执行结果'] == true) {
       RiskyDataNew riskyDataNew = RiskyDataNew.fromJson(result['返回数据']);
-      int l0 = riskyDataNew.list.where((item) => item.customClassification == 0).length;
-      int l1 = riskyDataNew.list.where((item) => item.customClassification == 1).length;
-      int l2 = riskyDataNew.list.where((item) => item.customClassification == 2).length;
-      int l3 = riskyDataNew.list.where((item) => item.customClassification == 3).length;
       if (isLoadMore) {
-        // 追加数据
-        state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customClassification == 1).toList());
-        state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customClassification == 2).toList());
-        state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customClassification == 3).toList());
+        // 加载更多时，将数据追加到当前选择的列表
+        switch (state.chooseUint.value) {
+          case 0:
+            state.fengyun1List.addAll(riskyDataNew.list);
+            break;
+          case 1:
+            state.fengyun2List.addAll(riskyDataNew.list);
+            break;
+          case 2:
+            state.xingyunList.addAll(riskyDataNew.list);
+            break;
+        }
       } else {
-        // 首次加载，清空后添加
-        state.fengyun1List.clear();
-        state.fengyun2List.clear();
-        state.xingyunList.clear();
-        state.fengyun1List.addAll(riskyDataNew.list.where((item) => item.customEntType == 1).toList());
-        state.fengyun2List.addAll(riskyDataNew.list.where((item) => item.customEntType == 2).toList());
-        state.xingyunList.addAll(riskyDataNew.list.where((item) => item.customEntType == 3).toList());
+        // 首次加载时，清空当前选择的列表并添加新数据
+        switch (state.chooseUint.value) {
+          case 0:
+            state.fengyun1List.clear();
+            state.fengyun1List.addAll(riskyDataNew.list);
+            break;
+          case 1:
+            state.fengyun2List.clear();
+            state.fengyun2List.addAll(riskyDataNew.list);
+            break;
+          case 2:
+            state.xingyunList.clear();
+            state.xingyunList.addAll(riskyDataNew.list);
+            break;
+        }
       }
       
       // 判断是否还有更多数据
       // 如果返回的数据少于每页大小，说明没有更多数据了
       if (riskyDataNew.list.length < 10) {
         state.hasMoreData.value = false;
+      } else {
+        state.hasMoreData.value = true;
       }
     } else {
+      if (kDebugMode) {
+        print('❌ API调用失败');
+      }
       // API调用失败时，如果是加载更多，则标记没有更多数据
       if (isLoadMore) {
         state.hasMoreData.value = false;
@@ -195,114 +232,75 @@ class RiskLogic extends GetxController {
     }
   }
 
-  // 更新当前单位数据（支持地区筛选）
+  // 更新当前单位数据
   void _updateCurrentUnitData() {
-    dealCurrentData(int index){
-      List<RiskListElement> selectedList = [];
-      if (index == 0) {
-        selectedList = state.fengyun1List;
-      } else if (index == 1) {
-        selectedList = state.fengyun2List;
-      } else if (index == 2) {
-        selectedList = state.xingyunList;
-      }
-
-      // 应用地区筛选
-      if (state.selectedRegionCode.value.isNotEmpty && state.selectedRegionCode.value != "all") {
-        selectedList = selectedList.where((item) => 
-          item.regionCode == state.selectedRegionCode.value ||
-          item.regionCode.startsWith(state.selectedRegionCode.value)
-        ).toList();
-      }
-
-      state.currentUnitData.value = {
-        'high': {
-          'title': '高风险',
-          'count': selectedList.where((item) => item.riskType == 3).toList().length,
-          'change': 0,
-          'color': 0xFFFF6850
-        },
-        'medium': {
-          'title': '中风险',
-          'count': selectedList.where((item) => item.riskType == 2).toList().length,
-          'change': 0,
-          'color': 0xFFF6D500
-        },
-        'low': {
-          'title': '低风险',
-          'count': selectedList.where((item) => item.riskType == 1).toList().length,
-          'change': 0,
-          'color': 0xFF07CC89
-        },
-        'total': {
-          'count': selectedList.length,
-          'color': 0xFF1A1A1A
-        },
-      };
-    }
-
+    List<RiskListElement> currentList = [];
+    // 获取当前选择的列表
     switch (state.chooseUint.value) {
       case 0:
-        dealCurrentData(0);
+        currentList = state.fengyun1List;
         break;
       case 1:
-        dealCurrentData(1);
+        currentList = state.fengyun2List;
         break;
       case 2:
-        dealCurrentData(2);
+        currentList = state.xingyunList;
         break;
-      default:
-        state.currentUnitData.value = {};
     }
+    state.currentUnitData.value = {
+      'high': {
+        'title': '高风险',
+        'count': currentList.where((item) => item.riskType == 3).length,
+        'change': 0,
+        'color': 0xFFFF6850
+      },
+      'medium': {
+        'title': '中风险',
+        'count': currentList.where((item) => item.riskType == 2).length,
+        'change': 0,
+        'color': 0xFFF6D500
+      },
+      'low': {
+        'title': '低风险',
+        'count': currentList.where((item) => item.riskType == 1).length,
+        'change': 0,
+        'color': 0xFF07CC89
+      },
+      'total': {
+        'count': currentList.length,
+        'color': 0xFF1A1A1A
+      },
+    };
   }
 
-  // 更新当前风险列表（支持地区筛选）
+  // 更新当前风险列表
   void _updateCurrentRiskList() {
-    List<Map<String, dynamic>> newList = [];
-    dealCurrentList(int index){
-      List<RiskListElement> selectedList = [];
-      if (index == 0) {
-        selectedList = state.fengyun1List;
-      } else if (index == 1) {
-        selectedList = state.fengyun2List;
-      } else if (index == 2) {
-        selectedList = state.xingyunList;
-      }
-
-      // 应用地区筛选（本地筛选）
-      if (state.selectedRegionCode.value.isNotEmpty && state.selectedRegionCode.value != "all") {
-        selectedList = selectedList.where((item) => 
-          item.regionCode == state.selectedRegionCode.value ||
-          item.regionCode.startsWith(state.selectedRegionCode.value)
-        ).toList();
-      }
-
-      newList = selectedList.map((company) => {
-        'id': company.uuid,
-        'name': company.zhName,
-        'englishName': company.enName,
-        'description': company.entProfile,
-        'riskLevel': company.riskType,
-        'riskLevelText': company.riskType == 1 ? "低风险" : company.riskType == 2 ? "中风险" : "高风险",
-        'riskColor': _getRiskColor(company.riskType),
-        'borderColor': _getBorderColor(company.riskType),
-        'updateTime': company.updatedAt,
-        'unreadCount': 0,
-        'isRead': true,
-      }).toList();
-    }
-
+    List<RiskListElement> currentList = [];
     switch (state.chooseUint.value) {
       case 0:
-        dealCurrentList(0);
+        currentList = state.fengyun1List;
         break;
       case 1:
-        dealCurrentList(1);
+        currentList = state.fengyun2List;
         break;
       case 2:
-        dealCurrentList(2);
+        currentList = state.xingyunList;
         break;
     }
+    List<Map<String, dynamic>> newList = currentList.map((company) => {
+      'id': company.uuid,
+      'name': company.zhName,
+      'englishName': company.enName,
+      'description': company.entProfile,
+      'riskLevel': company.riskType,
+      'riskLevelText': company.riskType == 1 ? "低风险" : company.riskType == 2 ? "中风险" : "高风险",
+      'riskColor': _getRiskColor(company.riskType),
+      'borderColor': _getBorderColor(company.riskType),
+      'updateTime': company.updatedAt,
+      'unreadCount': 0,
+      'isRead': true,
+    }).toList();
+
     state.currentRiskList.assignAll(newList);
   }
 

@@ -1973,6 +1973,8 @@ class ApiService {
     int page = 50,
     String? zhName,
     String? regionCode,
+    int? classification, // 自定义分类
+    int? entType, // 自定义企业类型
   }) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
@@ -1991,7 +1993,9 @@ class ApiService {
         "current_page": currentPage,
         "page_size": 10,
         'zh_name': zhName,
-        'region_code': regionCode
+        'region_code': regionCode,
+        'custom_classification': classification, // 使用传入的参数而不是硬编码
+        'custom_ent_type': entType,
       }
     };
 
