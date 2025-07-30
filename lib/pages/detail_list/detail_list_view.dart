@@ -798,7 +798,7 @@ class DetailListPage extends StatelessWidget {
         return Container();
       }
       // 计算总页数
-      int totalPages = (state.totalCount / state.pageSize.value).ceil();
+      int totalPages = (state.searchCount / state.pageSize.value).ceil();
       if (totalPages == 0) totalPages = 1;
 
       // 当前页码
