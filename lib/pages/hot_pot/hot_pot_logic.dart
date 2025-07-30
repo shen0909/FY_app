@@ -11,10 +11,17 @@ import 'hot_pot_state.dart';
 class HotPotLogic extends GetxController {
   final HotPotState state = HotPotState();
   static const String _readNewsKey = 'read_news_ids';
+  
+  // 添加滚动控制器
+  late ScrollController scrollController;
 
   @override
   Future<void> onInit() async {
     super.onInit();
+    
+    // 初始化滚动控制器
+    scrollController = ScrollController();
+    _addScrollListener();
     
     // 设置默认日期范围为最近30天
     final now = DateTime.now();
@@ -28,8 +35,20 @@ class HotPotLogic extends GetxController {
     await getNewsList();
   }
 
+  // 添加滚动监听器
+  void _addScrollListener() {
+    scrollController.addListener(() {
+      // 当滚动到距离底部200像素时触发加载更多
+      if (scrollController.position.pixels >= 
+          scrollController.position.maxScrollExtent - 200) {
+        loadMore();
+      }
+    });
+  }
+
   @override
   void onClose() {
+    scrollController.dispose();
     super.onClose();
   }
   
@@ -198,8 +217,9 @@ class HotPotLogic extends GetxController {
     String? startDate = state.useCustomDateRange.value ? formatDate(state.startDate.value) : null;
     String? endDate = state.useCustomDateRange.value ? formatDate(state.endDate.value) : null;
     
-    // 重置分页状态
+    // 重置分页状态和清空数据
     state.resetPagination();
+    state.newsList.clear();
     
     // 根据筛选条件获取数据
     getNewsList(

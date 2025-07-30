@@ -22,14 +22,19 @@ class HotPotPage extends StatelessWidget {
       appBar: FYAppBar(title: '舆情热点'),
       body: Stack(
         children: [
-          Column(
-            children: [
-              _buildFilterBar(),
-              _buildSearchBar(),
-              Expanded(
-                child: _buildHotNewsList(),
-              ),
-            ],
+          SafeArea(
+            bottom: true,
+            child: Column(
+              children: [
+                _buildFilterBar(),
+                _buildSearchBar(),
+                !state.isLoading.value
+                    ? Expanded(
+                        child: _buildHotNewsList(),
+                      )
+                    : const Center(child: CircularProgressIndicator()),
+              ],
+            ),
           ),
           // 筛选选项浮层
           Positioned(
@@ -558,7 +563,7 @@ class HotPotPage extends StatelessWidget {
   Widget _buildHotNewsList() {
     return Obx(() {
       // 加载中
-      if (state.isLoading.value) {
+      if (state.newsList.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
 
@@ -597,44 +602,78 @@ class HotPotPage extends StatelessWidget {
       }
 
       // 显示列表
-      return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          // 检测是否滚动到底部
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            // 触发加载更多
-            if (state.hasMoreData.value && !state.isLoadingMore.value) {
-              logic.loadMore();
-            }
+      return ListView.builder(
+        controller: logic.scrollController, // 使用logic中的scrollController
+        padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+        itemCount: state.newsList.length + 1, // +1 为了显示底部加载指示器
+        itemBuilder: (context, index) {
+          // 如果是最后一项，显示加载指示器
+          if (index == state.newsList.length) {
+            return _buildLoadMoreIndicator();
           }
-          return true;
+          return _buildNewsCard(state.newsList[index], index);
         },
-        child: ListView.builder(
-          padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
-          itemCount: state.newsList.length + (state.hasMoreData.value ? 1 : 0),
-          itemBuilder: (context, index) {
-            // 如果是最后一项且还有更多数据，显示加载中
-            if (index == state.newsList.length) {
-              return Obx(() =>
-              state.isLoadingMore.value
-                  ? Container(
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                alignment: Alignment.center,
-                child: const CircularProgressIndicator(),
-              )
-                  : Container(
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                alignment: Alignment.center,
-                child: Text('上拉加载更多', style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey,
-                )),
-              )
-              );
-            }
-            return _buildNewsCard(state.newsList[index], index);
-          },
-        ),
       );
+    });
+  }
+
+  // 底部加载指示器
+  Widget _buildLoadMoreIndicator() {
+    return Obx(() {
+      if (state.isLoadingMore.value) {
+        // 正在加载更多
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              SizedBox(width: 8),
+              Text(
+                '加载中...',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (!state.hasMoreData.value && state.newsList.isNotEmpty) {
+        // 没有更多数据（但有数据时才显示）
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          alignment: Alignment.center,
+          child: Text(
+            '没有更多数据了',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        );
+      } else if (state.hasMoreData.value && state.newsList.isNotEmpty) {
+        // 还有更多数据但当前未加载
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          alignment: Alignment.center,
+          child: Text(
+            '上拉加载更多',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        );
+      } else {
+        // 没有数据时不显示指示器
+        return SizedBox.shrink();
+      }
     });
   }
 }
