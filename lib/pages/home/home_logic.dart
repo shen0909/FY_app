@@ -19,15 +19,15 @@ class HomeLogic extends GetxController {
   void onInit() {
     super.onInit();
     pageController = PageController();
-    // 启动自动轮播
-    _startAutoPlay();
     // 启动Token保活服务
     _startTokenKeepAlive();
   }
 
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
-    getBannerList();
+    await getBannerList();
+    // 启动自动轮播
+    _startAutoPlay();
   }
 
   @override
