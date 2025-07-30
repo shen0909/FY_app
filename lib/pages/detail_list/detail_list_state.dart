@@ -47,67 +47,67 @@ class SanctionType {
         bgColor: 0xFFFFECE9,
       ),
       SanctionType(
-        name: '实体清单(EL)',
-        code: 'EL',
-        description: '实体清单',
-        color: 0xFFFF2A08,
-        bgColor: 0xFFFFECE9,
-      ),
-      SanctionType(
-        name: '中国军工复合体清单 (NS-CMIC List)',
-        code: 'NS-CMIC',
-        description: '中国军工复合体清单',
-        color: 0xFFFFA408,
-        bgColor: 0xFFFFF7E9,
-      ),
-      SanctionType(
-        name: '中国涉军企业清单 (CMC List)',
+        name: '中国军工企业清单（CMC）',
         code: 'CMC',
-        description: '中国涉军企业清单',
+        description: '中国军工企业清单',
         color: 0xFF07CC89,
         bgColor: 0xFFE7FEF8,
       ),
       SanctionType(
-        name: '非SDN中国军事综合体企业清单 (Non-SDN CMIC)',
-        code: 'Non-SDN CMIC',
-        description: '非SDN中国军事综合体企业清单',
-        color: 0xFF33A9FE,
-        bgColor: 0xFFE7F4FE,
-      ),
-      SanctionType(
-        name: '行业制裁名单 (SSI)',
-        code: 'SSI',
-        description: '行业制裁名单',
-        color: 0xFF07CC89,
-        bgColor: 0xFFE7FEF8,
-      ),
-      SanctionType(
-        name: '未经核实清单 (UVL)',
-        code: 'UVL',
-        description: '未经核实清单',
-        color: 0xFF1A1A1A,
-        bgColor: 0xFFEDEDED,
-      ),
-      SanctionType(
-        name: '被拒绝人员清单 (DPL)',
-        code: 'DPL',
-        description: '被拒绝人员清单',
-        color: 0xFFFF2A08,
-        bgColor: 0xFFFFECE9,
-      ),
-      SanctionType(
-        name: '军事最终用户清单 (MEU)',
+        name: '军事最终用户清单（MEU）',
         code: 'MEU',
         description: '军事最终用户清单',
         color: 0xFF1A1A1A,
         bgColor: 0xFFEDEDED,
       ),
       SanctionType(
-        name: '最终军事用户清单 (MEUL)',
-        code: 'MEUL',
-        description: '最终军事用户清单',
+        name: '实体清单（EL）',
+        code: 'EL',
+        description: '实体清单',
+        color: 0xFFFF2A08,
+        bgColor: 0xFFFFECE9,
+      ),
+      SanctionType(
+        name: '未经核实清单（UVL）',
+        code: 'UVL',
+        description: '未经核实清单',
         color: 0xFF1A1A1A,
         bgColor: 0xFFEDEDED,
+      ),
+      SanctionType(
+        name: '特别指定国民清单（SDN）',
+        code: 'SDN',
+        description: '特别指定国民清单',
+        color: 0xFFFF2A08,
+        bgColor: 0xFFFFECE9,
+      ),
+      SanctionType(
+        name: '维吾尔强迫劳动预防法实体清单（UFLPA）',
+        code: 'UFLPA',
+        description: '维吾尔强迫劳动预防法实体清单',
+        color: 0xFF33A9FE,
+        bgColor: 0xFFE7F4FE,
+      ),
+      SanctionType(
+        name: '行业制裁清单（SSI）',
+        code: 'SSI',
+        description: '行业制裁清单',
+        color: 0xFF07CC89,
+        bgColor: 0xFFE7FEF8,
+      ),
+      SanctionType(
+        name: '被拒绝人员清单（DPL）',
+        code: 'DPL',
+        description: '被拒绝人员清单',
+        color: 0xFFFF2A08,
+        bgColor: 0xFFFFECE9,
+      ),
+      SanctionType(
+        name: '非SDN中国军事综合体企业清单（NS-CMIC）',
+        code: 'NS-CMIC',
+        description: '非SDN中国军事综合体企业清单',
+        color: 0xFFFFA408,
+        bgColor: 0xFFFFF7E9,
       ),
     ];
   }
@@ -138,6 +138,42 @@ class SanctionTypeDetail {
   static SanctionTypeDetail getDetailByCode(String code) {
     // 在实际应用中，这些数据应该从API获取
     switch (code) {
+      case 'CMC':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '中国军工企业清单（CMC）',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '由美国国防部制订，涉及"与解放军相关企业"、在军民两用领域。',
+            },
+            {
+              'title': '限制',
+              'content': '启发警示意义为主，但为其他制裁奠定基础和依据，可能伴随金融限制。',
+            },
+          ],
+        );
+      case 'MEU':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '军事最终用户清单（MEU）',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '针对可能将美国产品用于军事目的的最终用户实体。',
+            },
+            {
+              'title': '限制',
+              'content': '出口许可要求民用最终用途证明（如商业用途、研发用途），禁止军事用途。',
+            },
+          ],
+        );
       case 'EL':
         return SanctionTypeDetail(
           sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
@@ -160,84 +196,12 @@ class SanctionTypeDetail {
             },
           ],
         );
-      case 'NS-CMIC':
-        return SanctionTypeDetail(
-          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
-          details: [
-            {
-              'title': '中国军工复合体清单 (NS-CMIC List)',
-              'content': '',
-            },
-            {
-              'title': '定义',
-              'content': '针对与中国军工企业有关联的企业，限制美国投资者对此类企业进行投资。',
-            },
-            {
-              'title': '限制',
-              'content': '禁止美国人对列入名单的中国军工企业进行投资，禁止在美国资本市场上市，并要求美国投资者撤资。',
-            },
-          ],
-        );
-      case 'CMC':
-        return SanctionTypeDetail(
-          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
-          details: [
-            {
-              'title': '中国涉军企业清单 (CMC List)',
-              'content': '',
-            },
-            {
-              'title': '定义',
-              'content': '由美国国防部制订，涉及"与解放军相关企业"、在军民两用领域。',
-            },
-            {
-              'title': '限制',
-              'content': '启发警示意义为主，但为其他制裁奠定基础和依据，可能伴随金融限制。',
-            },
-          ],
-        );
-      case 'Non-SDN CMIC':
-        return SanctionTypeDetail(
-          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
-          details: [
-            {
-              'title': '非SDN中国军事综合体企业清单 (Non-SDN CMIC)',
-              'content': '',
-            },
-            {
-              'title': '定义',
-              'content': '针对与中国军事工业复合体相关的企业，限制美国投资者对此类企业进行投资。',
-            },
-            {
-              'title': '特点',
-              'content': '与SDN清单不同，重点针对限制美国投资者对企业的投资。',
-            },
-          ],
-        );
-      case 'SSI':
-        return SanctionTypeDetail(
-          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
-          details: [
-            {
-              'title': '行业制裁名单 (Sectoral Sanctions Identifications List, SSI)',
-              'content': '',
-            },
-            {
-              'title': '定义',
-              'content': '针对特定行业（如能源、金融）的制裁，限制特定领域的贸易和金融活动。',
-            },
-            {
-              'title': '限制',
-              'content': '美国人不得为限制清单内的公司、活动提供融资或服务，并禁止特定贸易活动。',
-            },
-          ],
-        );
       case 'UVL':
         return SanctionTypeDetail(
           sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
           details: [
             {
-              'title': '未经核实清单 (Unverified List, UVL)',
+              'title': '未经核实清单（Unverified List, UVL）',
               'content': '',
             },
             {
@@ -250,12 +214,74 @@ class SanctionTypeDetail {
             },
           ],
         );
+      case 'SDN':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '特别指定国民清单（Specially Designated Nationals, SDN）',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '由美国财政部外国资产管制办公室（OFAC）管理，包含被制裁的个人、企业和实体。',
+            },
+            {
+              'title': '限制',
+              'content': '美国人不得与SDN清单上的实体进行任何交易，其在美资产被冻结，禁止进入美国金融系统。',
+            },
+            {
+              'title': '特点',
+              'content': '这是最严厉的制裁措施之一，涉及全面的金融和贸易限制。',
+            },
+          ],
+        );
+      case 'UFLPA':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '维吾尔强迫劳动预防法实体清单（UFLPA）',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '根据《维吾尔强迫劳动预防法》建立，针对涉嫌使用强迫劳动的新疆地区实体。',
+            },
+            {
+              'title': '限制',
+              'content': '禁止进口来自新疆地区或与清单实体相关的商品，除非进口商能够证明未使用强迫劳动。',
+            },
+            {
+              'title': '影响范围',
+              'content': '主要涉及棉花、番茄、太阳能电池板等产业链，对相关供应链产生重大影响。',
+            },
+          ],
+        );
+      case 'SSI':
+        return SanctionTypeDetail(
+          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
+          details: [
+            {
+              'title': '行业制裁清单（Sectoral Sanctions Identifications List, SSI）',
+              'content': '',
+            },
+            {
+              'title': '定义',
+              'content': '针对特定行业（如能源、金融）的制裁，限制特定领域的贸易和金融活动。',
+            },
+            {
+              'title': '限制',
+              'content': '美国人不得为限制清单内的公司、活动提供融资或服务，并禁止特定贸易活动。',
+            },
+          ],
+        );
       case 'DPL':
         return SanctionTypeDetail(
           sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
           details: [
             {
-              'title': '被拒绝人员清单 (Denied Persons List, DPL)',
+              'title': '被拒绝人员清单（Denied Persons List, DPL）',
               'content': '',
             },
             {
@@ -268,35 +294,21 @@ class SanctionTypeDetail {
             },
           ],
         );
-      case 'MEU':
+      case 'NS-CMIC':
         return SanctionTypeDetail(
           sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
           details: [
             {
-              'title': '军事最终用户清单 (Military End User List, MEU)',
+              'title': '非SDN中国军事综合体企业清单（NS-CMIC）',
               'content': '',
             },
             {
               'title': '定义',
-              'content': '针对可能将美国产品用于军事目的的最终用户实体。',
+              'content': '针对与中国军事工业复合体相关的企业，限制美国投资者对此类企业进行投资。',
             },
             {
-              'title': '限制',
-              'content': '出口许可要求民用最终用途证明（如商业用途、研发用途），禁止军事用途。',
-            },
-          ],
-        );
-      case 'MEUL':
-        return SanctionTypeDetail(
-          sanctionType: SanctionType.mockSanctionType().firstWhere((type) => type.code == code),
-          details: [
-            {
-              'title': '最终军事用户清单 (Military End User List)',
-              'content': '',
-            },
-            {
-              'title': '定义',
-              'content': '与MEU列表类似，由美国商务部指定的保留用户用途限制的实体或个人出口管制。',
+              'title': '特点',
+              'content': '与SDN清单不同，重点针对限制美国投资者对企业的投资。',
             },
           ],
         );
