@@ -1970,7 +1970,7 @@ class AiQusLogic extends GetxController {
                                 ),
                                 // 编辑按钮
                                 Visibility(
-                                  visible: template['isDefault'],
+                                  visible: !template['isDefault'],
                                   child: Row(
                                     children: [
                                       GestureDetector(
@@ -2634,7 +2634,7 @@ class AiQusLogic extends GetxController {
               'uuid': template['uuid'] ?? '',
               'title': template['prompt_name'] ?? '',
               'content': template['prompt_content'] ?? '',
-              'isDefault': template['is_default'] == 1,
+              'isDefault': template['is_default'],
               'createdAt': template['created_at'] ?? '',
             });
           }
