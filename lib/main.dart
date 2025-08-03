@@ -1,13 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:safe_app/pages/settings/update_page.dart';
 import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'cache/cache_initializer.dart';
 import 'models/userDeviceInfo.dart';
 import 'services/realm_service.dart';
 
@@ -44,7 +45,24 @@ void main() async {
   FYSharedPreferenceUtils.saveUserDevice(idiom);
   userDeviceInfo = UserDeviceInfo(idiom: idiom);
   await ScreenUtil.ensureScreenSize();
+  await _initializeCacheService();
   runApp(const MyApp());
+}
+
+/// 确保缓存服务可用
+Future<void> _initializeCacheService() async {
+  try {
+    // 尝试确保缓存系统初始化（幂等操作）
+    await CacheInitializer.initialize();
+    if (kDebugMode) {
+      print('✅ 缓存系统初始化成功');
+      print('📊 缓存调试信息: ${CacheInitializer.getDebugInfo()}');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('❌ 确保缓存服务可用失败: $e');
+    }
+  }
 }
 
 // 检查并解决锁屏方式冲突

@@ -6,8 +6,8 @@ import 'dart:async';
 import 'package:safe_app/services/token_keep_alive_service.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:flutter/foundation.dart';
-import '../../models/banner_models.dart';
 import '../../utils/dialog_utils.dart';
+import '../../cache/business_cache_service.dart';
 import 'home_state.dart';
 
 class HomeLogic extends GetxController {
@@ -163,45 +163,66 @@ class HomeLogic extends GetxController {
     Get.toNamed(Routers.detailList);
   }
 
-  // 获取Banner列表
+  /// 获取轮播图列表 - 缓存优化版
   Future<void> getBannerList() async {
-    // 方案1：全局Dialog loading（当前方案）
-    DialogUtils.showLoading();
     try {
-      final result = await ApiService().getBannerLists();
-      if (kDebugMode) {
-        print("获取Banner列表结果: $result");
+      // 检查缓存服务是否可用
+      if (!Get.isRegistered<BusinessCacheService>()) {
+        if (kDebugMode) {
+          print('⚠️ BusinessCacheService 未注册，跳过轮播图加载');
+        }
+        return;
       }
       
-      if (result != null && result['执行结果'] == true) {
-        final bannerData = result['返回数据'];
-        if (bannerData is List) {
-          // 解析banner数据
-          final banners = bannerData
-              .map((item) => BannerModels.fromJson(item))
-              .where((banner) => banner.enable) // 只显示启用的banner
-              .toList();
-          // 按sort字段排序
-          banners.sort((a, b) => a.sort.compareTo(b.sort));
-          // 更新状态
-          state.bannerList.assignAll(banners);
-          if (kDebugMode) {
-            print("成功加载${banners.length}个Banner");
-          }
+      // 使用缓存服务获取轮播图（无需显示Loading）
+      final banners = await BusinessCacheService.instance.getBannerListWithCache();
+      
+      if (banners != null && banners.isNotEmpty) {
+        state.bannerList.assignAll(banners);
+        if (kDebugMode) {
+          print('✅ 成功加载${banners.length}个轮播图');
         }
       } else {
         if (kDebugMode) {
-          print("Banner接口返回数据异常，使用默认轮播图数据");
+          print('⚠️ 轮播图数据为空，保持当前状态');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print("获取Banner列表出错: $e，使用默认轮播图数据");
+        print('❌ 获取轮播图失败: $e');
+      }
+      // 发生错误时，可以选择显示默认轮播图
+      // _loadDefaultBanners();
+    }
+  }
+
+  /// 刷新轮播图列表
+  Future<void> refreshBannerList() async {
+    try {
+      // 显示刷新指示器
+      DialogUtils.showLoading();
+      
+      // 强制更新，跳过缓存
+      final banners = await BusinessCacheService.instance.getBannerListWithCache(forceUpdate: true);
+
+      if (banners != null) {
+        state.bannerList.assignAll(banners);
+        if (kDebugMode) {
+          print('🔄 轮播图刷新成功');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 刷新轮播图失败: $e');
       }
     } finally {
-      // 确保无论成功还是失败都隐藏loading
       DialogUtils.hideLoading();
     }
+  }
+
+  /// 预加载轮播图（应用启动时调用）
+  Future<void> preloadBannerData() async {
+    await BusinessCacheService.instance.preloadBannerData();
   }
 
   // 获取风险评分数量
