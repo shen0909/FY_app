@@ -47,9 +47,34 @@ class LoginLogic extends GetxController {
         state.userUid.value = loginData.userid ?? '';
         _setGreetingMessage();
       }
+
+      await _loadSavedCredentials();
     } catch (e) {
       print('加载用户信息错误: $e');
     }
+  }
+
+  // 🔑 新增：加载保存的用户凭据
+  Future<void> _loadSavedCredentials() async {
+    try {
+      bool hasCredentials = await FYSharedPreferenceUtils.hasUserCredentials();
+      if (hasCredentials) {
+        Map<String, String>? credentials = await FYSharedPreferenceUtils.getUserCredentials();
+        if (credentials != null) {
+          state.accountController.text = credentials['username'] ?? '';
+          state.passwordController.text = credentials['password'] ?? '';
+          state.rememberPassword.value = true;
+          print('已自动填充保存的用户凭据');
+        }
+      }
+    } catch (e) {
+      print('加载保存的用户凭据失败: $e');
+    }
+  }
+
+  // 🔑 新增：切换记住密码状态
+  void toggleRememberPassword() {
+    state.rememberPassword.value = !state.rememberPassword.value;
   }
 
   // 设置问候语
@@ -272,8 +297,15 @@ class LoginLogic extends GetxController {
       if (loginData != null) {
         await FYSharedPreferenceUtils.saveLoginData(loginData);
         
-        // 🔑 新增：登录成功后安全存储用户凭据供生物识别登录使用
-        await FYSharedPreferenceUtils.saveUserCredentials(account, password);
+        // 🔑 修改：根据用户选择决定是否保存凭据
+        if (state.rememberPassword.value) {
+          await FYSharedPreferenceUtils.saveUserCredentials(account, password);
+          print('用户选择记住密码，已保存凭据');
+        } else {
+          // 如果用户取消记住密码，清除之前保存的凭据
+          await FYSharedPreferenceUtils.clearUserCredentials();
+          print('用户取消记住密码，已清除保存的凭据');
+        }
         
         state.isLogging.value = false;
 

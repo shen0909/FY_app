@@ -70,7 +70,9 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               )),
-          SizedBox(height: 40.w),
+          SizedBox(height: 16.w),
+          _buildRememberPasswordOption(),
+          SizedBox(height: 24.w),
           _buildLoginButton(),
         ],
       ),
@@ -227,6 +229,51 @@ class LoginPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // 🔑 新增：记住密码选项
+  Widget _buildRememberPasswordOption() {
+    return Obx(() => Row(
+      children: [
+        GestureDetector(
+          onTap: () => logic.toggleRememberPassword(),
+          child: Container(
+            width: 20.w,
+            height: 20.w,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: state.rememberPassword.value 
+                    ? FYColors.color_3361FE 
+                    : FYColors.color_A6A6A6,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(4.w),
+              color: state.rememberPassword.value 
+                  ? FYColors.color_3361FE 
+                  : Colors.transparent,
+            ),
+            child: state.rememberPassword.value
+                ? Icon(
+                    Icons.check,
+                    size: 14.w,
+                    color: Colors.white,
+                  )
+                : null,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        GestureDetector(
+          onTap: () => logic.toggleRememberPassword(),
+          child: Text(
+            '记住账号密码',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.text1Color,
+            ),
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _buildLoginButton() {
