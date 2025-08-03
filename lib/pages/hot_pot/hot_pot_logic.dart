@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/newslist_data.dart';
+import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 
 import 'hot_pot_state.dart';
@@ -253,7 +254,7 @@ class HotPotLogic extends GetxController {
     print('标记新闻为已读: ${newsItem.newsId} - ${newsItem.newsTitle}');
     
     // 导航到详情页面并传递newsId
-    Get.toNamed('/hot_details', arguments: {
+    Get.toNamed(Routers.hotDetails, arguments: {
       'newsId': newsItem.newsId,
       'title': newsItem.newsTitle
     });

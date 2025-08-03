@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
 import '../../../models/order_event_model.dart';
 
+import '../../../routers/routers.dart';
 import 'order_event_detial_state.dart';
 
 class OrderEventDetialLogic extends GetxController {
@@ -279,13 +280,10 @@ class OrderEventDetialLogic extends GetxController {
   
   // 查看详情
   void viewUpdateDetail(Map<String, dynamic> update) {
-    Get.snackbar(
-      '提示', 
-      '正在查看 ${update['title']} 详情',
-      backgroundColor: Colors.white,
-      colorText: Color(0xFF1A1A1A),
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    Get.toNamed(Routers.hotDetails, arguments: {
+      'newsId': update['uuid'],
+      'title': update['title']
+    });
   }
   
   // 查看更多动态
