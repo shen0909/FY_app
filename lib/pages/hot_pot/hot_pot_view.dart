@@ -104,9 +104,9 @@ class HotPotPage extends StatelessWidget {
           onChanged: (value) => logic.setSearchKeyword(value),
           onSubmitted: (value) {
             // 显示建设中提示
-            DialogUtils.showUnderConstructionDialog();
+            // DialogUtils.showUnderConstructionDialog();
             // 注释掉原有逻辑
-            // logic.applyFilters();
+            logic.applyFilters();
           },
           decoration: InputDecoration(
             hintText: '搜索关键词',
