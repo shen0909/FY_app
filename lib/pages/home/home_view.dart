@@ -288,7 +288,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "实时监控风险，智能预警推送",
+                      "实时监测风险，智能预警推送",
                       style: TextStyle(
                         color: FYColors.color_555555,
                         fontSize: 16.sp,
