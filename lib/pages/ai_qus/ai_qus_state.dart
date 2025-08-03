@@ -135,7 +135,7 @@ class AiQusState {
     // 添加示例消息
     messages.add({
       'isUser': false,
-      'content': 'Hi~ 我是您身边的智能助手，可以为您答疑解惑、精读文档、尽情创作，让科技助你轻松工作，多点生活',
+      'content': 'Hi~我是烽云AI助手，已接入Perplexity、DeepSeek、Hunyuan大模型，提供实时检索与本地知识库无缝融合，为用户提供精准的回答，提供常用提示词模板。',
     });
     
     // 添加示例聊天历史
