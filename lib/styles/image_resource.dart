@@ -70,4 +70,5 @@ class FYImages {
   static const String analyse_tutorial = 'assets/images/analyse_tutorial.png';
   static const String tutorial_feedBack = 'assets/images/tutorial_feedBack.png';
   static const String export_data = 'assets/images/export_data.png'; // 数据导出
+  static const String bannerLoad = 'assets/loadImage.png'; // 轮播图占位图
 }

@@ -89,6 +89,7 @@ flutter:
      - assets/risk_region.json
      - assets/company-details/
      - assets/html/
+     - assets/loadImage.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

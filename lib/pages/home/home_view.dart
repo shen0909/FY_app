@@ -73,20 +73,28 @@ class HomePage extends StatelessWidget {
             GetBuilder<HomeLogic>(
               builder: (controller) {
                 return Obx(() {
-                  // 优先使用接口数据，如果没有则使用默认数据
-                  final bannerCount = state.bannerList.isNotEmpty 
-                      ? state.bannerList.length 
-                      : state.carouselItems.length;
-                  
+                  final bannerCount = state.bannerList.length;
                   if (bannerCount == 0) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: Center(
-                        child: Text('暂无轮播图数据'),
-                      ),
-                    );
-                  }
-                  return Listener(
+                  // 没有接口数据时显示占位图
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Image.asset(
+                      FYImages.bannerLoad,
+                      fit: BoxFit.fill,
+                      width: double.infinity,
+                      height: 172.h,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: Text('暂无轮播图数据'),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+                return Listener(
                     // 检测手指按下，暂停自动轮播
                     onPointerDown: (PointerDownEvent event) {
                       logic.setBannerTouchingState(true);
@@ -152,17 +160,18 @@ class HomePage extends StatelessWidget {
                 });
               }
             ),
-            // 轮播图指示器 - 修改为动态数量
+            // 轮播图指示器 - 只在有接口数据时显示
             Positioned(
               bottom: 10.h,
               right: 16.w,
               child: GetBuilder<HomeLogic>(
                 builder: (controller) {
                   return Obx(() {
-                    final bannerCount = state.bannerList.isNotEmpty 
-                        ? state.bannerList.length 
-                        : state.carouselItems.length;
-                    
+                    final bannerCount = state.bannerList.length;
+                    // 只有当有接口数据时才显示指示器
+                    if (bannerCount == 0) {
+                      return Container(); // 没有数据时不显示指示器
+                    }
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(bannerCount, (index) {
@@ -191,7 +200,6 @@ class HomePage extends StatelessWidget {
 
   // 构建轮播图图片
   Widget _buildBannerImage(int index) {
-    // 优先使用接口数据
     if (state.bannerList.isNotEmpty && index < state.bannerList.length) {
       final banner = state.bannerList[index];
       if (banner.image.isNotEmpty) {
@@ -208,7 +216,32 @@ class HomePage extends StatelessWidget {
           final bytes = base64Decode(imageData);
           return Image.memory(
             bytes,
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
+            width: double.infinity,
+            height: 172.h,
+            errorBuilder: (context, error, stackTrace) {
+              // base64解析失败，显示占位图
+              return Image.asset(
+                FYImages.bannerLoad,
+                fit: BoxFit.contain,
+                width: double.infinity,
+                height: 172.h,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Icon(Icons.image_not_supported),
+                    ),
+                  );
+                },
+              );
+            }
+          );
+        } catch (e) {
+          // base64解析失败，显示占位图
+          return Image.asset(
+            FYImages.bannerLoad,
+            fit: BoxFit.fill,
             width: double.infinity,
             height: 172.h,
             errorBuilder: (context, error, stackTrace) {
@@ -218,52 +251,34 @@ class HomePage extends StatelessWidget {
                   child: Icon(Icons.image_not_supported),
                 ),
               );
-            }
-          );
-        } catch (e) {
-          // base64解析失败，显示占位图
-          return Container(
-            color: Colors.grey[300],
-            child: Center(
-              child: Icon(Icons.image_not_supported),
-            ),
+            },
           );
         }
       }
     }
-    
-    // 使用默认数据
-    if (state.carouselItems.isNotEmpty && index < state.carouselItems.length) {
-      final item = state.carouselItems[index];
-      return Image.asset(
-        item.imageUrl,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: 172.h,
-      );
-    }
-    
-    // 兜底显示
-    return Container(
-      color: Colors.grey[300],
-      child: Center(
-        child: Icon(Icons.image),
-      ),
+    // 没有接口数据或图片为空时，显示占位图
+    return Image.asset(
+      FYImages.bannerLoad,
+      fit: BoxFit.contain,
+      width: double.infinity,
+      height: 172.h,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Colors.grey[300],
+          child: Center(
+            child: Icon(Icons.image),
+          ),
+        );
+      },
     );
   }
 
   // 获取轮播图标题
   String _getBannerTitle(int index) {
-    // 优先使用接口数据
+    // 只使用接口数据
     if (state.bannerList.isNotEmpty && index < state.bannerList.length) {
       return state.bannerList[index].title;
     }
-    
-    // 使用默认数据
-    if (state.carouselItems.isNotEmpty && index < state.carouselItems.length) {
-      return state.carouselItems[index].title;
-    }
-    
     return '暂无标题';
   }
 

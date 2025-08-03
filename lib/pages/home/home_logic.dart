@@ -82,12 +82,9 @@ class HomeLogic extends GetxController {
       if (state.isBannerTouching.value) {
         return;
       }
-      // 优先使用接口数据，如果没有则使用默认数据
-      final bannerCount = state.bannerList.isNotEmpty 
-          ? state.bannerList.length 
-          : state.carouselItems.length;
+      final bannerCount = state.bannerList.length;
       
-      if (bannerCount > 0) {
+      if (bannerCount > 1) {
         if (state.currentBannerIndex < bannerCount - 1) {
           pageController.nextPage(
             duration: Duration(milliseconds: 300),
@@ -124,9 +121,8 @@ class HomeLogic extends GetxController {
     update();
   }
 
-  // 处理轮播图点击 - 修改为跳转到markdown页面
+  // 处理轮播图点击
   void onBannerTap(int index) async {
-    // 优先使用接口数据
     if (state.bannerList.isNotEmpty && index < state.bannerList.length) {
       final banner = state.bannerList[index];
       // 跳转到markdown内容页面
@@ -134,26 +130,6 @@ class HomeLogic extends GetxController {
         'title': banner.title,
         'content': banner.content,
       });
-    } else if (state.carouselItems.isNotEmpty && index < state.carouselItems.length) {
-      // 如果没有接口数据，使用默认数据（保持原有逻辑作为兜底）
-      String fileName;
-      switch (index) {
-        case 0:
-          fileName = 'html1.html';
-          break;
-        case 1:
-          fileName = 'html2.html';
-          break;
-        case 2:
-          fileName = 'html3.html';
-          break;
-        default:
-          fileName = 'html1.html';
-          break;
-      }
-      
-      // 跳转到WebView页面显示HTML文件
-      Get.toNamed(Routers.webView, arguments: {'file': fileName});
     }
   }
 
