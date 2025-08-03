@@ -24,7 +24,7 @@ class OrderPage extends StatelessWidget {
           title: state.currentTabIndex.value == 0 ? '我的订阅' : state
               .currentTabIndex.value == 1 ? '专题订阅' : '我的关注',
           actions: [
-            state.currentTabIndex.value != 0 ?
+            state.currentTabIndex.value == 1 ?
             GestureDetector(
               onTap: () => logic.showSubscriptionManage(),
               child: Container(
