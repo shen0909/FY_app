@@ -42,6 +42,8 @@ class HomeState {
 
   // 新增：从接口获取的banner数据
   final bannerList = <BannerModels>[].obs;
+  
+  final RxBool isBannerTouching = false.obs; //是否触摸轮播图
 
   HomeState() {
     // 初始化默认风险类型数据

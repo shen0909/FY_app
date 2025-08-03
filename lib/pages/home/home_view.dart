@@ -86,13 +86,26 @@ class HomePage extends StatelessWidget {
                       ),
                     );
                   }
-                  return PageView.builder(
-                    controller: controller.pageController,
-                    itemCount: bannerCount,
-                    onPageChanged: (index) {
-                      logic.updateBannerIndex(index);
+                  return Listener(
+                    // 检测手指按下，暂停自动轮播
+                    onPointerDown: (PointerDownEvent event) {
+                      logic.setBannerTouchingState(true);
                     },
-                    itemBuilder: (context, index) {
+                    // 检测手指抬起，恢复自动轮播
+                    onPointerUp: (PointerUpEvent event) {
+                      logic.setBannerTouchingState(false);
+                    },
+                    // 检测手指取消（比如滑出屏幕），恢复自动轮播
+                    onPointerCancel: (PointerCancelEvent event) {
+                      logic.setBannerTouchingState(false);
+                    },
+                    child: PageView.builder(
+                      controller: controller.pageController,
+                      itemCount: bannerCount,
+                      onPageChanged: (index) {
+                        logic.updateBannerIndex(index);
+                      },
+                      itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () => logic.onBannerTap(index),
                         child: Container(
@@ -133,7 +146,8 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       );
-                    },
+                      },
+                    ),
                   );
                 });
               }

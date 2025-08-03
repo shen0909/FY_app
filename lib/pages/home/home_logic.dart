@@ -37,7 +37,6 @@ class HomeLogic extends GetxController {
     _stopAutoPlay();
     // 停止Token保活服务
     _stopTokenKeepAlive();
-    // TODO: implement onClose
     super.onClose();
   }
 
@@ -80,6 +79,9 @@ class HomeLogic extends GetxController {
   // 启动自动轮播
   void _startAutoPlay() {
     _autoPlayTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+      if (state.isBannerTouching.value) {
+        return;
+      }
       // 优先使用接口数据，如果没有则使用默认数据
       final bannerCount = state.bannerList.isNotEmpty 
           ? state.bannerList.length 
@@ -106,6 +108,14 @@ class HomeLogic extends GetxController {
   void _stopAutoPlay() {
     _autoPlayTimer?.cancel();
     _autoPlayTimer = null;
+  }
+
+  void setBannerTouchingState(bool isTouching) {
+    // 避免重复设置相同的状态
+    if (state.isBannerTouching.value == isTouching) {
+      return;
+    }
+    state.isBannerTouching.value = isTouching;
   }
 
   // 更新轮播图当前索引
