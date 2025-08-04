@@ -61,7 +61,7 @@ class HomePage extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      height: 172.h,
+      height: 220.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(12.r)),
       ),
@@ -82,7 +82,7 @@ class HomePage extends StatelessWidget {
                       FYImages.bannerLoad,
                       fit: BoxFit.fill,
                       width: double.infinity,
-                      height: 172.h,
+                      height: 220.h,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: Colors.grey[300],
@@ -218,14 +218,14 @@ class HomePage extends StatelessWidget {
             bytes,
             fit: BoxFit.fill,
             width: double.infinity,
-            height: 172.h,
-            errorBuilder: (context, error, stackTrace) {
+              height: 220.h,
+              errorBuilder: (context, error, stackTrace) {
               // base64解析失败，显示占位图
               return Image.asset(
                 FYImages.bannerLoad,
                 fit: BoxFit.contain,
                 width: double.infinity,
-                height: 172.h,
+                height: 220.h,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey[300],
@@ -243,7 +243,7 @@ class HomePage extends StatelessWidget {
             FYImages.bannerLoad,
             fit: BoxFit.fill,
             width: double.infinity,
-            height: 172.h,
+            height: 220.h,
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 color: Colors.grey[300],
@@ -261,7 +261,7 @@ class HomePage extends StatelessWidget {
       FYImages.bannerLoad,
       fit: BoxFit.contain,
       width: double.infinity,
-      height: 172.h,
+      height: 220.h,
       errorBuilder: (context, error, stackTrace) {
         return Container(
           color: Colors.grey[300],
