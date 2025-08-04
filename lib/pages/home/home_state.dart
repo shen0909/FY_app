@@ -15,8 +15,9 @@ class HomeState {
   // 通知数
   final int notificationCount = 3;
 
-  // 清单更新时间
-  final String listUpdateTime = "2025.07.07";
+  // 清单更新时间和总数（从接口获取）
+  final RxString listUpdateTime = "".obs;
+  final RxInt listTotalCount = 0.obs;
 
   final riskType = <Map<String, dynamic>>[].obs;
   List<Map<String, dynamic>> homeItemList = [];
@@ -56,6 +57,15 @@ class HomeState {
       {'title': '中风险','count':mediumRisk,'bgColor':FYColors.middleRiskBg,'borderColor':FYColors.middleRiskBorder},
       {'title': '低风险','count':lowRisk,'bgColor':FYColors.lowRiskBg,'borderColor':FYColors.lowRiskBorder},
     ]);
+  }
+
+  /// 更新实体清单数据
+  void updateSanctionData({
+    required int totalCount,
+    required String updateDate,
+  }) {
+    listTotalCount.value = totalCount;
+    listUpdateTime.value = updateDate;
   }
 
 }

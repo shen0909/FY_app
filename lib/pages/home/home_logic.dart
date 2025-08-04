@@ -8,6 +8,7 @@ import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:flutter/foundation.dart';
 import '../../utils/dialog_utils.dart';
 import '../../cache/business_cache_service.dart';
+import '../../models/banner_models.dart';
 import 'home_state.dart';
 
 class HomeLogic extends GetxController {
@@ -25,10 +26,9 @@ class HomeLogic extends GetxController {
 
   Future<void> onReady() async {
     super.onReady();
-    await getBannerList();
+    await getHomePageData(); // 获取首页数据（轮播图+风险预警+实体清单）
     // 启动自动轮播
     _startAutoPlay();
-    await getRiskScoreCount(); // 获取风险评分数量
   }
 
   @override
@@ -225,7 +225,140 @@ class HomeLogic extends GetxController {
     await BusinessCacheService.instance.preloadBannerData();
   }
 
-  // 获取风险评分数量
+  /// 获取首页数据（整合轮播图、风险预警、实体清单）
+  Future<void> getHomePageData() async {
+    try {
+      // 先尝试使用新的整合接口
+      final result = await ApiService().getHomePageData();
+      if (kDebugMode) {
+        print("🏠 获取首页数据结果: $result");
+      }
+      
+      if (result != null && result['执行结果'] == true) {
+        final returnData = result['返回数据'];
+        if (returnData != null) {
+          // 处理轮播图数据
+          await _processBannerData(returnData['banner']);
+          
+          // 处理风险预警数据
+          _processEnterpriseData(returnData['enterprise']);
+          
+          // 处理实体清单数据
+          _processSanctionData(returnData['sanction']);
+          
+          if (kDebugMode) {
+            print("✅ 首页数据处理完成");
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print("⚠️ 首页数据接口返回异常，尝试使用旧接口获取数据");
+        }
+        // 接口异常时，回退到原来的分离接口
+        await _fallbackToOldApis();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ 获取首页数据出错: $e，尝试使用旧接口");
+      }
+      // 出错时回退到原来的分离接口
+      await _fallbackToOldApis();
+    }
+  }
+
+  /// 处理轮播图数据
+  Future<void> _processBannerData(dynamic bannerData) async {
+    try {
+      if (bannerData != null && bannerData is List) {
+        List<BannerModels> banners = bannerData
+            .map<BannerModels>((item) => BannerModels.fromJson(item))
+            .where((banner) => banner.enable) // 只显示启用的轮播图
+            .toList();
+        
+        // 按sort字段排序
+        banners.sort((a, b) => a.sort.compareTo(b.sort));
+        
+        state.bannerList.assignAll(banners);
+        
+        if (kDebugMode) {
+          print("✅ 成功处理${banners.length}个轮播图数据");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ 处理轮播图数据失败: $e");
+      }
+    }
+  }
+
+  /// 处理企业风险数据
+  void _processEnterpriseData(dynamic enterpriseData) {
+    try {
+      if (enterpriseData != null) {
+        int highRisk = enterpriseData['高风险'] ?? 0;
+        int mediumRisk = enterpriseData['中风险'] ?? 0;
+        int lowRisk = enterpriseData['低风险'] ?? 0;
+        
+        state.updateRiskScoreCount(
+          highRisk: highRisk,
+          mediumRisk: mediumRisk,
+          lowRisk: lowRisk,
+        );
+        
+        if (kDebugMode) {
+          print("✅ 成功更新风险评分数量 - 高风险:$highRisk, 中风险:$mediumRisk, 低风险:$lowRisk");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ 处理企业风险数据失败: $e");
+      }
+    }
+  }
+
+  /// 处理实体清单数据
+  void _processSanctionData(dynamic sanctionData) {
+    try {
+      if (sanctionData != null) {
+        int allCount = sanctionData['all_count'] ?? 0;
+        String updateDate = sanctionData['update_date'] ?? '';
+        
+        state.updateSanctionData(
+          totalCount: allCount,
+          updateDate: updateDate,
+        );
+        
+        if (kDebugMode) {
+          print("✅ 成功更新实体清单数据 - 总数:$allCount, 更新时间:$updateDate");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ 处理实体清单数据失败: $e");
+      }
+    }
+  }
+
+  /// 回退到旧接口（作为备用方案）
+  Future<void> _fallbackToOldApis() async {
+    try {
+      // 获取轮播图数据
+      await getBannerList();
+      
+      // 获取风险评分数据
+      await getRiskScoreCount();
+      
+      if (kDebugMode) {
+        print("✅ 旧接口数据获取完成");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ 旧接口也失败了: $e");
+      }
+    }
+  }
+
+  // 获取风险评分数量（保留旧方法作为备用）
   Future<void> getRiskScoreCount() async {
     try {
       final result = await ApiService().getRiskScoreCount();

@@ -2086,7 +2086,41 @@ class ApiService {
     return null;
   }
 
-  /// 获取风险评分等级数量
+  /// 获取首页数据（轮播图+风险预警+实体清单）
+  Future<Map<String, dynamic>?> getHomePageData() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取首页数据失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "首页_获取首页数据",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析获取首页数据响应失败: $e');
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /// 获取风险评分等级数量（保留旧接口作为备用）
   Future<Map<String, dynamic>?> getRiskScoreCount() async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();

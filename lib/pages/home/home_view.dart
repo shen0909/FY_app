@@ -482,11 +482,13 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Column(
+              child:               Obx(() => Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "总数xxx家",
+                    state.listTotalCount.value > 0 
+                        ? "总数${state.listTotalCount.value}家"
+                        : "总数xxx家", // 默认显示
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
@@ -497,7 +499,9 @@ class HomePage extends StatelessWidget {
                   ),
                   SizedBox(height: 14.h),
                   Text(
-                    "${state.listUpdateTime}更新",
+                    state.listUpdateTime.value.isNotEmpty 
+                        ? "${state.listUpdateTime.value}更新"
+                        : "数据更新中...", // 默认显示
                     style: TextStyle(
                       color: Color(0xFF333333),
                       fontSize: 12.sp,
@@ -507,7 +511,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
+              )),
             ),
           ],
         ),
