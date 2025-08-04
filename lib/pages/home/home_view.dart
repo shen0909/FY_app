@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h),
+          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h,bottom: 20.h),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -296,14 +296,16 @@ class HomePage extends StatelessWidget {
           children: [
             Row(
               children: [
-                badges.Badge(
-                  badgeContent: Text(
-                    state.notificationCount.toString(),
-                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                  ),
-                  badgeStyle: const badges.BadgeStyle(badgeColor: Colors.red),
-                  child: Image.asset(FYImages.riskIcon),
-                ),
+                // todo：暂时去掉红点
+                // badges.Badge(
+                //   badgeContent: Text(
+                //     state.notificationCount.toString(),
+                //     style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                //   ),
+                //   badgeStyle: const badges.BadgeStyle(badgeColor: Colors.red),
+                //   child: Image.asset(FYImages.riskIcon),
+                // ),
+                Image.asset(FYImages.riskIcon),
                 SizedBox(width: 16.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,6 +399,7 @@ class HomePage extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
         padding: EdgeInsets.only(bottom: 10.w,top: 10.w),
+        height: 92.h,
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -450,40 +453,61 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => logic.goDetailList(),
       child: Container(
-        padding: EdgeInsets.only(top: 17.h, left: 16.w, bottom: 16.h),
+        padding:
+            EdgeInsets.only(top: 17.h, left: 16.w, bottom: 16.h, right: 16.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: LinearGradient(
+            colors: [
+              Color(0xffEEF8FF),
+              Color(0xffCEE8FF),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
           borderRadius: BorderRadius.circular(15.r),
         ),
         child: Row(
           children: [
-            Image.asset(FYImages.detailList, width: 44.w, height: 44.h, fit: BoxFit.contain),
+            Image.asset(FYImages.detailList,
+                width: 44.w, height: 44.h, fit: BoxFit.contain),
             SizedBox(width: 15.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "实体清单",
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF222222),
-                    height: 0.8,
-                    leadingDistribution: TextLeadingDistribution.even,
+            Text(
+              "实体清单",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF222222),
+                height: 0.8,
+                leadingDistribution: TextLeadingDistribution.even,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "总数xxx家",
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF222222),
+                      height: 0.8,
+                      leadingDistribution: TextLeadingDistribution.even,
+                    ),
                   ),
-                ),
-                SizedBox(height: 14.h),
-                Text(
-                  "${state.listUpdateTime}更新",
-                  style: TextStyle(
-                    color: Color(0xFF333333),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
-                    height: 0.8,
-                    leadingDistribution: TextLeadingDistribution.even,
+                  SizedBox(height: 14.h),
+                  Text(
+                    "${state.listUpdateTime}更新",
+                    style: TextStyle(
+                      color: Color(0xFF333333),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
+                      height: 0.8,
+                      leadingDistribution: TextLeadingDistribution.even,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

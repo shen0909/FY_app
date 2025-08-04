@@ -32,10 +32,10 @@ class FYColors {
   static const Color color_D8D8D8 = Color(0XFFD8D8D8); // 未选中的复选框颜色
 
   /// 线性颜色
-  static const List<Color> hotBgGridle = [Color(0XFFFF8C8C), Color(0XFFFFF0F0)];
-  static const List<Color> aiBgGridle = [Color(0XFF8C9FFF), Color(0XFFDDE3FF)];
-  static const List<Color> orderBgGridle = [Color(0XFFFBE690), Color(0XFFFFF0DF)];
-  static const List<Color> settingBgGridle = [Color(0XFFE4E4E4), Color(0XFFF0F0F0)];
+  static const List<Color> hotBgGridle = [Color(0XFFFFFEFE), Color(0XFFFFE4E8)];
+  static const List<Color> aiBgGridle = [Color(0XFFEBF5FF), Color(0XFFD9ECFF)];
+  static const List<Color> orderBgGridle = [Color(0XFFF9F1FF), Color(0XFFDFBCFA)];
+  static const List<Color> settingBgGridle = [Color(0XFFEBFFF7), Color(0XFFD9FFEF)];
   static const List<Color> loginBtn = [Color(0XFF345DFF), Color(0XFF2F89F8)];
 
   static const Color color_3361FE = Color(0xFF3361FE); // 单位类别未选中蓝色
