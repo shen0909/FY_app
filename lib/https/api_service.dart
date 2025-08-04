@@ -2087,6 +2087,47 @@ class ApiService {
     return null;
   }
 
+  /// 获取登录日志列表
+  Future<Map<String, dynamic>?> getLoginLogList({
+    required int currentPage,
+    required int pageSize,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取登录日志列表失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "用户认证_获取登录日志",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "current_page": currentPage,
+        "page_size": pageSize,
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析登录日志列表响应失败: $e');
+        }
+      }
+    }
+
+    return null;
+  }
+
   /// 获取轮播图
   Future<Map<String, dynamic>?> getBannerLists() async {
     // 获取内层token

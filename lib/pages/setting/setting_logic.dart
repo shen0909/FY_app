@@ -548,8 +548,8 @@ class SettingLogic extends GetxController {
   // 前往用户日志页面
   void goToUserLogs() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.userLoginData);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.userLoginData);
   }
   
   // 手动刷新用户数据
