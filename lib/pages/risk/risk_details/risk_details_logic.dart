@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/new_risk_detail.dart';
+import 'package:safe_app/models/enterprise_score_detail.dart';
+import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -35,12 +37,101 @@ class RiskDetailsLogic extends GetxController {
       final result = await ApiService().getRiskDetails(companyId);
       if(result != null && result['执行结果'] != false){
         state.riskCompanyDetail.value = RiskCompanyNew.fromJson(result['返回数据']);
+        // 获取企业UUID用于加载评分详情
+        final entUuid = state.riskCompanyDetail.value?.uuid;
+        if (entUuid != null && entUuid.isNotEmpty) {
+          await loadScoreDetail(entUuid);
+        }
       }
     } catch (e) {
       print('加载企业详情出错: $e');
     } finally {
       state.isLoading.value = false;
     }
+  }
+
+  /// 加载企业评分详情
+  Future<void> loadScoreDetail(String entUuid) async {
+    state.isLoadingScoreDetail.value = true;
+    
+    try {
+      final result = await ApiService().getEnterpriseScoreDetails(entUuid);
+      print('🏆 企业评分详情接口响应: $result');
+      
+      if (result != null && result['执行结果'] == true) {
+        final returnData = result['返回数据'];
+        if (returnData != null) {
+          // 处理四种可能的返回情况并记录日志
+          final baseScore = returnData['base_score'];
+          final newsScore = returnData['news_score'];
+          
+          if (baseScore != null && newsScore != null && (newsScore as Map).isNotEmpty) {
+            print('情况1: base_score和news_score都有数据');
+          } else if (baseScore != null && (newsScore == null || (newsScore as Map).isEmpty)) {
+            print(' 情况2: base_score有数据，news_score为空');
+          } else if (baseScore == null && newsScore != null && (newsScore as Map).isNotEmpty) {
+            print('情况3: base_score为null，news_score有数据');
+          } else {
+            print('情况4: base_score为null，news_score为空');
+          }
+          
+          // 解析评分详情数据
+          state.scoreDetail.value = EnterpriseScoreDetail.fromApiData(returnData);
+          final scoreDetail = state.scoreDetail.value!;
+          // 更新 riskCompanyDetail 中的相关字段
+          _updateRiskScoreComponents(scoreDetail);
+        }
+      } else {
+        print('企业评分详情接口返回异常: $result');
+        state.scoreDetail.value = null;
+      }
+    } catch (e) {
+      print('获取企业评分详情失败: $e');
+      state.scoreDetail.value = null;
+    } finally {
+      state.isLoadingScoreDetail.value = false;
+    }
+  }
+
+  /// 更新 riskCompanyDetail 中的评分组件数据以匹配现有UI
+  void _updateRiskScoreComponents(EnterpriseScoreDetail scoreDetail) {
+    if (state.riskCompanyDetail.value == null) return;
+    
+    // 更新总分
+    state.riskCompanyDetail.value!.riskScore = RiskScore(
+      totalScore: scoreDetail.totalScore,
+      riskLevel: _getRiskLevel(scoreDetail.totalScore),
+      components: RiskComponents(
+        externalRisk: ExternalRisk(
+          score: scoreDetail.externalTotalScore,
+          breakdown: null,
+        ),
+        internalRisk: InternalRisk(
+          score: scoreDetail.internalTotalScore,
+          breakdown: null,
+        ),
+        operationalImpact: {
+          'score': scoreDetail.otherScores['运营分数']?.totalScore ?? 0
+        },
+        securityImpact: {
+          'score': scoreDetail.otherScores['安全分数']?.totalScore ?? 0
+        },
+      ),
+      trend: state.riskCompanyDetail.value!.riskScore.trend, // 保持原有趋势数据
+    );
+    
+    print('🔄 已更新riskScore组件数据:');
+    print('   外部风险: ${scoreDetail.externalTotalScore}分');
+    print('   内部风险: ${scoreDetail.internalTotalScore}分');
+    print('   运营影响: ${scoreDetail.otherScores['运营分数']?.totalScore ?? 0}分');
+    print('   安全影响: ${scoreDetail.otherScores['安全分数']?.totalScore ?? 0}分');
+  }
+
+  /// 根据分数获取风险等级
+  String _getRiskLevel(int score) {
+    if (score >= 300) return '高风险';
+    if (score >= 200) return '中风险';
+    return '低风险';
   }
   
   /// 加载所有企业详情数据
@@ -93,13 +184,12 @@ class RiskDetailsLogic extends GetxController {
   }
 
   void showRiskScoreDetails() {
-    // todo: 点击分数弹窗，由于接口未给数据，避免崩溃暂时隐藏
-    // FYDialogUtils.showBottomSheet(
-    //     hasMaxHeightConstraint: true,
-    //     heightMaxFactor: 0.9,
-    //     SingleChildScrollView(
-    //   child: RiskDetailsPage().buildRiskScoreDialog(),
-    // ));
+    FYDialogUtils.showBottomSheet(
+        hasMaxHeightConstraint: true,
+        heightMaxFactor: 0.9,
+        SingleChildScrollView(
+      child: RiskDetailsPage().buildRiskScoreDialog(),
+    ));
   }
 
   showNewsResource(List<Source> listSource, String newsDate) {

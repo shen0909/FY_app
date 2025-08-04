@@ -929,30 +929,31 @@ class RiskDetailsPage extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16.w),
-          // 风险趋势图
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '风险分数趋势图',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF333333),
-                  ),
-                ),
-                SizedBox(height: 16.w),
-                Container(
-                  height: 200.w,
-                  child: _buildRiskTrendChart(),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 24.w),
+          // todo: 暂时隐藏风险趋势图
+          // SizedBox(height: 16.w),
+          // // 风险趋势图
+          // Container(
+          //   padding: EdgeInsets.symmetric(horizontal: 16.w),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         '风险分数趋势图',
+          //         style: TextStyle(
+          //           fontSize: 18.sp,
+          //           fontWeight: FontWeight.w500,
+          //           color: const Color(0xFF333333),
+          //         ),
+          //       ),
+          //       SizedBox(height: 16.w),
+          //       Container(
+          //         height: 200.w,
+          //         child: _buildRiskTrendChart(),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          SizedBox(height: 40.w),
         ],
       ),
     );
