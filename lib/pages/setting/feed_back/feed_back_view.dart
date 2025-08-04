@@ -147,7 +147,7 @@ class FeedBackPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: GestureDetector(
-              onTap: logic.submitFeedback,
+              onTap: () => logic.submitFeedback(),
               child: Container(
                 height: 48.h,
                 alignment: Alignment.center,

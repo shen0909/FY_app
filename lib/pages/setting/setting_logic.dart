@@ -454,8 +454,8 @@ class SettingLogic extends GetxController {
   // 前往用户反馈页面
   void goToFeedback() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.feedback);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.feedback);
   }
 
   // 前往用户行为分析页面

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import '../../../styles/colors.dart';
 import 'feed_back_state.dart';
@@ -155,7 +157,7 @@ class FeedBackLogic extends GetxController {
   }
 
   // 提交反馈
-  void submitFeedback() {
+  Future<void> submitFeedback() async {
     if (state.selectedType.isEmpty) {
       Get.snackbar('提示', '请选择反馈类型');
       return;
@@ -165,10 +167,18 @@ class FeedBackLogic extends GetxController {
       Get.snackbar('提示', '请填写反馈详情');
       return;
     }
-
+    DialogUtils.showLoading();
     // TODO: 实现反馈提交逻辑
-    Get.snackbar('提示', '反馈提交成功');
-    Get.back(); // 返回上一页
+    final result = await ApiService()
+        .submitFeedback(state.selectedType.value, state.feedbackDetail.value);
+    if (result != null && result['执行结果'] != false) {
+      DialogUtils.hideLoading();
+      Get.back(); // 返回上一页
+      Get.snackbar('提示', '反馈提交成功');
+    } else {
+      DialogUtils.hideLoading();
+      Get.snackbar('提示', '反馈提交失败，请重试');
+    }
   }
 
   @override
