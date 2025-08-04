@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import '../../../models/risk_company_details.dart';
+import '../../../models/risk_factor_new.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/widgets.dart';
 import 'risk_details_logic.dart';
@@ -317,15 +318,32 @@ class RiskDetailsPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 15.w),
-                Obx(() => Wrap(
-                      spacing: 8.w,
-                      runSpacing: 10.w,
-                      children: List.generate(
-                        state.riskCompanyDetail.value!.riskFactors.length,
-                        (index) => _buildRiskTag(
-                            state.riskCompanyDetail.value!.riskFactors[index]),
+                Obx(() {
+                  final riskFactors = state.riskCompanyDetail.value!.riskFactors;
+                  if (riskFactors.isEmpty) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 20.w),
+                      child: Center(
+                        child: Text(
+                          '暂无风险因素数据',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: FYColors.color_A6A6A6,
+                          ),
+                        ),
                       ),
-                    )),
+                    );
+                  }
+                  
+                  return Wrap(
+                    spacing: 8.w,
+                    runSpacing: 10.w,
+                    children: List.generate(
+                      riskFactors.length,
+                      (index) => _buildRiskTag(riskFactors[index]),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -335,9 +353,9 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 风险标签
-  Widget _buildRiskTag(RiskFactor riskFactor) {
+  Widget _buildRiskTag(RiskFactorNew riskFactor) {
     return GestureDetector(
-      onTap: () => _showRiskFactorDetails(riskFactor.details!, riskFactor.title!),
+      onTap: () => _showRiskFactorDetails(riskFactor.factorItems, riskFactor.factorName),
       child: Container(
         height: 36.w,
         constraints: BoxConstraints(minWidth: 124.w),
@@ -351,7 +369,7 @@ class RiskDetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              riskFactor.title!,
+              riskFactor.factorName,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: FYColors.color_3361FE,
@@ -371,7 +389,7 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 显示风险因素详情弹窗
-  void _showRiskFactorDetails(List<RiskFactorDetail> riskFactorDetailList, String title) {
+  void _showRiskFactorDetails(List<RiskFactorItem> riskFactorItems, String title) {
     FYDialogUtils.showBottomSheet(Container(
       decoration: BoxDecoration(
         color: FYColors.whiteColor,
@@ -426,10 +444,10 @@ class RiskDetailsPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
-              children: (riskFactorDetailList)
+              children: riskFactorItems
                   .map((item) => _buildRiskFactorItem(
-                item.title!,
-                item.description!,
+                item.factorItemName,
+                item.factorItemContent,
               ))
                   .toList(),
             ),

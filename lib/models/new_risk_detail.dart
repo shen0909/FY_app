@@ -1,5 +1,8 @@
 
+import 'dart:convert';
+
 import 'package:safe_app/models/risk_company_details.dart';
+import 'package:safe_app/models/risk_factor_new.dart';
 
 class RiskCompanyNew {
 
@@ -94,7 +97,8 @@ class RiskCompanyNew {
   ///企业中文名
   String zhName;
 
-  List<RiskFactor> riskFactors = [];
+
+  List<RiskFactorNew> riskFactors;
   List<LegalBasis> legalBasis = [];
   RiskScore riskScore = RiskScore(totalScore: 100,riskLevel: "高风险");
   List<TimelineEvent> timelineTracking = [];
@@ -131,41 +135,42 @@ class RiskCompanyNew {
     required this.updatedAt,
     required this.uuid,
     required this.zhName,
+    required this.riskFactors
   });
 
   factory RiskCompanyNew.fromJson(Map<String, dynamic> json) => RiskCompanyNew(
-    address: json["address"],
-    area: json["area"],
-    businessArea: json["business_area"],
-    businessScope: json["business_scope"],
-    city: json["city"],
-    createdAt: json["created_at"],
-    creditCode: json["credit_code"],
-    customClassification: json["custom_classification"],
-    customEntType: json["custom_ent_type"],
-    dataSource: json["data_source"],
-    enName: json["en_name"],
-    entDescribe: json["ent_describe"],
-    entProfile: json["ent_profile"],
-    enterpriseType: json["enterprise_type"],
-    establishmentDate: json["establishment_date"],
-    formerName: json["former_name"],
-    industry: json["industry"],
-    legalRepresentative: json["legal_representative"],
-    marketValue: json["market_value"],
-    organizationCode: json["organization_code"],
-    parentEnt: json["parent_ent"],
-    province: json["province"],
-    regionCode: json["region_code"],
-    registeredCapital: json["registered_capital"],
-    registrationNumber: json["registration_number"],
-    stockPrice: json["stock_price"],
-    taxpayerId: json["taxpayer_id"],
-    taxpayerType: json["taxpayer_type"],
-    updatedAt: json["updated_at"],
-    uuid: json["uuid"],
-    zhName: json["zh_name"],
-  );
+      address: json["address"],
+      area: json["area"],
+      businessArea: json["business_area"],
+      businessScope: json["business_scope"],
+      city: json["city"],
+      createdAt: json["created_at"],
+      creditCode: json["credit_code"],
+      customClassification: json["custom_classification"],
+      customEntType: json["custom_ent_type"],
+      dataSource: json["data_source"],
+      enName: json["en_name"],
+      entDescribe: json["ent_describe"],
+      entProfile: json["ent_profile"],
+      enterpriseType: json["enterprise_type"],
+      establishmentDate: json["establishment_date"],
+      formerName: json["former_name"],
+      industry: json["industry"],
+      legalRepresentative: json["legal_representative"],
+      marketValue: json["market_value"],
+      organizationCode: json["organization_code"],
+      parentEnt: json["parent_ent"],
+      province: json["province"],
+      regionCode: json["region_code"],
+      registeredCapital: json["registered_capital"],
+      registrationNumber: json["registration_number"],
+      stockPrice: json["stock_price"],
+      taxpayerId: json["taxpayer_id"],
+      taxpayerType: json["taxpayer_type"],
+      updatedAt: json["updated_at"],
+      uuid: json["uuid"],
+      zhName: json["zh_name"],
+      riskFactors: RiskFactorParser.parseRiskFactor(json['risk_factor']));
 
   Map<String, dynamic> toJson() => {
     "address": address,
@@ -199,5 +204,6 @@ class RiskCompanyNew {
     "updated_at": updatedAt,
     "uuid": uuid,
     "zh_name": zhName,
+    'risk_factor': riskFactors.map((factor) => factor.toJson()).toList()
   };
 }
