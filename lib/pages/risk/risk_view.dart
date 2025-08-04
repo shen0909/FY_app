@@ -6,6 +6,7 @@ import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/widgets.dart';
 
 import '../../widgets/custom_app_bar.dart';
+import '../../utils/datetime_utils.dart';
 import 'risk_logic.dart';
 import 'risk_state.dart';
 import 'package:safe_app/styles/text_styles.dart';
@@ -529,7 +530,7 @@ class _RiskPageState extends State<RiskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '更新: ${item['updateTime']}',
+                    '更新: ${DateTimeUtils.formatUpdateTime(item['updateTime'])}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
@@ -666,7 +667,7 @@ class _RiskPageState extends State<RiskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '更新: ${item['updateTime']}',
+                    '更新: ${DateTimeUtils.formatUpdateTime(item['updateTime'])}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
@@ -799,7 +800,7 @@ class _RiskPageState extends State<RiskPage> {
               Row(
                 children: [
                   Text(
-                    '更新: ${item['updateTime']}',
+                    '更新: ${DateTimeUtils.formatUpdateTime(item['updateTime'])}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,

@@ -5,6 +5,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import '../../widgets/custom_app_bar.dart';
+import '../../utils/datetime_utils.dart';
 import 'hot_pot_logic.dart';
 import 'hot_pot_state.dart';
 import 'package:safe_app/models/newslist_data.dart';
@@ -454,7 +455,7 @@ class HotPotPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        news.publishTime,
+                        DateTimeUtils.formatPublishTime(news.publishTime),
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_A6A6A6

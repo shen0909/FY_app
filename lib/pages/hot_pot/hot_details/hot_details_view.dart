@@ -9,6 +9,7 @@ import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 
 import '../../../widgets/custom_app_bar.dart';
+import '../../../utils/datetime_utils.dart';
 
 // 虚线绘制器
 class DashedLinePainter extends CustomPainter {
@@ -147,7 +148,7 @@ class HotDetailsView extends StatelessWidget {
           ),
           SizedBox(height: 12.w),
           Text(
-            "${detail.publishTime} | ${detail.newsMedium}",
+            "${DateTimeUtils.formatDetailTime(detail.publishTime)} | ${detail.newsMedium}",
             style: TextStyle(
               fontSize: 14.w,
               color: Color(0xFFA6A6A6),

@@ -9,6 +9,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 
 import '../../widgets/scroller_widget.dart';
+import '../../utils/datetime_utils.dart';
 import 'detail_list_logic.dart';
 import 'detail_list_state.dart';
 
@@ -94,7 +95,7 @@ class DetailListPage extends StatelessWidget {
           ),
           Obx(() {
             return Text(
-              "更新时间：${state.updateTime.value}",
+              "更新时间：${DateTimeUtils.formatUpdateTime(state.updateTime.value)}",
               style: TextStyle(
                 fontSize: 12.sp,
                 color: FYColors.color_A6A6A6,

@@ -4,6 +4,7 @@ import 'package:safe_app/https/api_service.dart';
 import '../../../models/order_event_model.dart';
 
 import '../../../routers/routers.dart';
+import '../../../utils/datetime_utils.dart';
 import 'order_event_detial_state.dart';
 
 class OrderEventDetialLogic extends GetxController {
@@ -139,7 +140,7 @@ class OrderEventDetialLogic extends GetxController {
             'uuid': update['uuid'] ?? '',
             'title': update['title'] ?? '',
             'content': update['summary'] ?? '',
-            'date': update['publish_time'] ?? '',
+            'date': DateTimeUtils.formatDetailTime(update['publish_time']),
             'type': update['types'] ?? '',
             'source': update['news_medium'] ?? '',
           });
@@ -196,7 +197,7 @@ class OrderEventDetialLogic extends GetxController {
             'uuid': update['uuid'] ?? '',
             'title': update['title'] ?? '',
             'content': update['summary'] ?? '',
-            'date': update['publish_time'] ?? '',
+            'date': DateTimeUtils.formatDetailTime(update['publish_time']),
             'type': update['types'] ?? '',
             'source': update['news_medium'] ?? '',
           });

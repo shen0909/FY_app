@@ -6,6 +6,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
 import 'dart:convert';
+import '../../utils/datetime_utils.dart';
 import 'home_logic.dart';
 import 'home_state.dart';
 
@@ -501,7 +502,7 @@ class HomePage extends StatelessWidget {
                   SizedBox(height: 14.h),
                   Text(
                     state.listUpdateTime.value.isNotEmpty 
-                        ? "${state.listUpdateTime.value}更新"
+                        ? "${DateTimeUtils.formatUpdateTime(state.listUpdateTime.value)}更新"
                         : "数据更新中...", // 默认显示
                     style: TextStyle(
                       color: Color(0xFF333333),
