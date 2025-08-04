@@ -574,7 +574,7 @@ class HotPotPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('获取数据失败：${state.errorMessage.value}'),
+              Text('网络异常，请重试'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => logic.getNewsList(),
