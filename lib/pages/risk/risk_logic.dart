@@ -7,6 +7,7 @@ import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import '../../models/risk_data_new.dart';
 import '../../models/region_data.dart';
+import '../../cache/business_cache_service.dart';
 import 'risk_state.dart';
 import 'package:flutter/foundation.dart';
 
@@ -30,6 +31,8 @@ class RiskLogic extends GetxController {
     
     try {
       await loadRegionData();
+      // 预加载当前分类的风险数据
+      await _preloadRiskData();
       await getRiskList();
       _updateCurrentUnitData();
       _updateCurrentRiskList();
@@ -123,72 +126,89 @@ class RiskLogic extends GetxController {
   }
 
   // 获取风险预警列表数据
-  Future<void> getRiskList({bool isLoadMore = false}) async {
-    // 0-烽云一号 1-烽云二号 2-星云 -> 1-FY一号 2-FY二号 3-星云
-    int? classification;
-    switch (state.chooseUint.value) {
-      case 0:
-        classification = 1; // 烽云一号 -> FY一号
-        break;
-      case 1:
-        classification = 2; // 烽云二号 -> FY二号  
-        break;
-      case 2:
-        classification = 3; // 星云
-        break;
-    }
-    final result = await ApiService().getRiskLists(
-      currentPage: state.currentPage.value,
-      zhName: state.searchKeyword.value.isEmpty ? null : state.searchKeyword.value,
-      regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
-      classification: classification,
-    );
-    
-    if(result != null && result['执行结果'] == true) {
-      RiskyDataNew riskyDataNew = RiskyDataNew.fromJson(result['返回数据']);
-      if (isLoadMore) {
-        // 加载更多时，将数据追加到当前选择的列表
-        switch (state.chooseUint.value) {
-          case 0:
-            state.fengyun1List.addAll(riskyDataNew.list);
-            break;
-          case 1:
-            state.fengyun2List.addAll(riskyDataNew.list);
-            break;
-          case 2:
-            state.xingyunList.addAll(riskyDataNew.list);
-            break;
-        }
-      } else {
-        // 首次加载时，清空当前选择的列表并添加新数据
-        switch (state.chooseUint.value) {
-          case 0:
-            state.fengyun1List.clear();
-            state.fengyun1List.addAll(riskyDataNew.list);
-            break;
-          case 1:
-            state.fengyun2List.clear();
-            state.fengyun2List.addAll(riskyDataNew.list);
-            break;
-          case 2:
-            state.xingyunList.clear();
-            state.xingyunList.addAll(riskyDataNew.list);
-            break;
-        }
+  Future<void> getRiskList({bool isLoadMore = false, bool forceRefresh = false}) async {
+    try {
+      // 0-烽云一号 1-烽云二号 2-星云 -> 1-FY一号 2-FY二号 3-星云
+      int? classification;
+      switch (state.chooseUint.value) {
+        case 0:
+          classification = 1; // 烽云一号 -> FY一号
+          break;
+        case 1:
+          classification = 2; // 烽云二号 -> FY二号  
+          break;
+        case 2:
+          classification = 3; // 星云
+          break;
       }
+
+      // 使用缓存服务获取数据
+      final cacheService = BusinessCacheService.instance;
+      final riskyDataNew = await cacheService.getRiskListWithCache(
+        currentPage: state.currentPage.value,
+        zhName: state.searchKeyword.value.isEmpty ? null : state.searchKeyword.value,
+        regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
+        classification: classification,
+        forceUpdate: forceRefresh,
+      );
       
-      // 判断是否还有更多数据
-      // 如果返回的数据少于每页大小，说明没有更多数据了
-      if (riskyDataNew.list.length < 10) {
-        state.hasMoreData.value = false;
+      if (riskyDataNew != null) {
+        if (isLoadMore) {
+          // 加载更多时，将数据追加到当前选择的列表
+          switch (state.chooseUint.value) {
+            case 0:
+              state.fengyun1List.addAll(riskyDataNew.list);
+              break;
+            case 1:
+              state.fengyun2List.addAll(riskyDataNew.list);
+              break;
+            case 2:
+              state.xingyunList.addAll(riskyDataNew.list);
+              break;
+          }
+        } else {
+          // 首次加载时，清空当前选择的列表并添加新数据
+          switch (state.chooseUint.value) {
+            case 0:
+              state.fengyun1List.clear();
+              state.fengyun1List.addAll(riskyDataNew.list);
+              break;
+            case 1:
+              state.fengyun2List.clear();
+              state.fengyun2List.addAll(riskyDataNew.list);
+              break;
+            case 2:
+              state.xingyunList.clear();
+              state.xingyunList.addAll(riskyDataNew.list);
+              break;
+          }
+        }
+        
+        // 判断是否还有更多数据
+        // 如果返回的数据少于每页大小，说明没有更多数据了
+        if (riskyDataNew.list.length < 10) {
+          state.hasMoreData.value = false;
+        } else {
+          state.hasMoreData.value = true;
+        }
+        
+        if (kDebugMode) {
+          print('✅ 风险数据获取成功 - 分类: $classification, 页数: ${state.currentPage.value}, 数据条数: ${riskyDataNew.list.length}');
+        }
       } else {
-        state.hasMoreData.value = true;
+        if (kDebugMode) {
+          print('❌ 风险数据获取失败');
+        }
+        // 数据获取失败时，如果是加载更多，则标记没有更多数据
+        if (isLoadMore) {
+          state.hasMoreData.value = false;
+        }
       }
-    } else {
+    } catch (e) {
       if (kDebugMode) {
-        print('❌ API调用失败');
+        print('❌ 获取风险列表异常: $e');
       }
-      // API调用失败时，如果是加载更多，则标记没有更多数据
+      // 异常处理：如果是加载更多，则标记没有更多数据
       if (isLoadMore) {
         state.hasMoreData.value = false;
       }
@@ -370,6 +390,127 @@ class RiskLogic extends GetxController {
   // 切换单位（重置分页状态）
   changeUnit(int index) {
     state.chooseUint.value = index;
+  }
+
+  // ==================== 缓存管理相关方法 ====================
+
+  /// 预加载风险数据
+  Future<void> _preloadRiskData() async {
+    try {
+      final cacheService = BusinessCacheService.instance;
+      
+      // 根据当前选择的单位类型预加载数据
+      int classification;
+      switch (state.chooseUint.value) {
+        case 0:
+          classification = 1; // 烽云一号
+          break;
+        case 1:
+          classification = 2; // 烽云二号
+          break;
+        case 2:
+          classification = 3; // 星云
+          break;
+        default:
+          classification = 1;
+      }
+      
+      // 预加载当前地区的风险数据
+      await cacheService.preloadRiskData(
+        classification: classification,
+        regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
+      );
+      
+      if (kDebugMode) {
+        print('📦 风险数据预加载完成 - 分类: $classification');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 风险数据预加载失败: $e');
+      }
+    }
+  }
+
+  /// 手动刷新数据（强制从网络获取）
+  Future<void> refreshData() async {
+    state.isLoading.value = true;
+    state.currentPage.value = 1;
+    state.hasMoreData.value = true;
+    
+    // 清空当前列表
+    switch (state.chooseUint.value) {
+      case 0:
+        state.fengyun1List.clear();
+        break;
+      case 1:
+        state.fengyun2List.clear();
+        break;
+      case 2:
+        state.xingyunList.clear();
+        break;
+    }
+    
+    try {
+      // 强制刷新数据
+      await getRiskList(forceRefresh: true);
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+      
+      if (kDebugMode) {
+        print('🔄 风险数据手动刷新完成');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 风险数据刷新失败: $e');
+      }
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  /// 清除当前分类的风险缓存
+  Future<void> clearCurrentRiskCache() async {
+    try {
+      final cacheService = BusinessCacheService.instance;
+      
+      int classification;
+      switch (state.chooseUint.value) {
+        case 0:
+          classification = 1;
+          break;
+        case 1:
+          classification = 2;
+          break;
+        case 2:
+          classification = 3;
+          break;
+        default:
+          classification = 1;
+      }
+      
+      await cacheService.clearRiskCache(classification: classification);
+      
+      if (kDebugMode) {
+        print('🗑️ 清除风险缓存完成 - 分类: $classification');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 清除风险缓存失败: $e');
+      }
+    }
+  }
+
+  /// 获取缓存统计信息（用于调试）
+  Map<String, dynamic> getCacheStats() {
+    try {
+      final cacheService = BusinessCacheService.instance;
+      return cacheService.getCacheStatistics();
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 获取缓存统计失败: $e');
+      }
+      return {};
+    }
   }
   
   // 显示未读消息弹窗

@@ -65,11 +65,22 @@ class CacheInitializer {
     try {
       if (Get.isRegistered<BusinessCacheService>()) {
         final cacheService = BusinessCacheService.instance;
-        
-        // 后台预加载轮播图数据（不阻塞UI）
-        cacheService.preloadBannerData().catchError((e) {
-          debugPrint('⚠️ 轮播图预加载失败: $e');
-        });
+
+        Future.wait([
+          // // 预加载轮播图数据
+          // cacheService.preloadBannerData().catchError((e) {
+          //   debugPrint('⚠️ 轮播图预加载失败: $e');
+          // }),
+          // 预加载高风险数据（烽云一号）
+          cacheService.preloadRiskData(classification: 1).catchError((e) {
+            debugPrint('⚠️ 高风险数据预加载失败: $e');
+          }),
+          
+          // // 预加载舆情热点数据
+          // cacheService.preloadHotPotData().catchError((e) {
+          //   debugPrint('⚠️ 舆情热点预加载失败: $e');
+          // }),
+        ]);
         
         debugPrint('🔄 关键数据预加载已启动');
       }
