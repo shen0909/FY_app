@@ -21,8 +21,9 @@ class HomePage extends StatelessWidget {
       backgroundColor: FYColors.color_F6F8FC,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
+        bottom: true,
         child: Padding(
-          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h,bottom: 20.h),
+          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -41,7 +42,7 @@ class HomePage extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 12.h),
                 _buildHeader(),
                 SizedBox(height: 16.h),
                 Obx(() => _buildRiskWarning()),
