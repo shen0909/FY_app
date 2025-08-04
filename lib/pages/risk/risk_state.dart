@@ -36,4 +36,5 @@ class RiskState {
   final RxBool isLoading = false.obs; // 是否正在加载
   final RxBool hasMoreData = true.obs; // 是否还有更多数据
   final RxBool isLoadingMore = false.obs; // 是否正在加载更多（用于显示底部加载指示器）
+  final RxBool isRefreshing = false.obs; // 是否正在下拉刷新
 }

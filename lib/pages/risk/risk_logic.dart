@@ -36,9 +36,9 @@ class RiskLogic extends GetxController {
       await getRiskList();
       _updateCurrentUnitData();
       _updateCurrentRiskList();
-      // 监听单位类型变化
+      // 监听单位类型变化 - 优化：使用智能切换
       ever(state.chooseUint, (_) {
-        _refreshData(); // 切换单位类型时刷新数据
+        _smartSwitchUnit(); // 智能切换单位类型
       });
 
       // 监听地区选择变化
@@ -100,6 +100,105 @@ class RiskLogic extends GetxController {
     _updateCurrentUnitData();
     _updateCurrentRiskList();
     state.isLoading.value = false;
+  }
+
+  /// 智能切换单位类型（优化版本）
+  Future<void> _smartSwitchUnit() async {
+    if (kDebugMode) {
+      print('🔄 智能切换到单位类型: ${state.chooseUint.value}');
+    }
+
+    // 获取当前选择的单位对应的列表
+    List<RiskListElement> currentList = _getCurrentUnitList();
+    
+    // 如果当前单位类型已有缓存数据，直接切换显示
+    if (currentList.isNotEmpty) {
+      if (kDebugMode) {
+        print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
+      }
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+    } else {
+      // 如果没有缓存数据，则后台加载
+      if (kDebugMode) {
+        print('🌐 缓存为空，后台加载数据');
+      }
+      _loadUnitDataInBackground();
+    }
+  }
+
+  /// 后台加载单位数据（不显示loading状态）
+  Future<void> _loadUnitDataInBackground() async {
+    try {
+      // 重置当前单位的分页状态
+      state.currentPage.value = 1;
+      state.hasMoreData.value = true;
+      
+      // 预加载当前分类的数据
+      await _preloadRiskData();
+      await getRiskList();
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+      
+      if (kDebugMode) {
+        print('✅ 后台数据加载完成');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 后台数据加载失败: $e');
+      }
+    }
+  }
+
+  /// 下拉刷新（强制刷新当前数据）
+  Future<void> onRefresh() async {
+    if (state.isRefreshing.value) return;
+    
+    state.isRefreshing.value = true;
+    
+    try {
+      if (kDebugMode) {
+        print('🔽 开始下拉刷新');
+      }
+      
+      // 重置分页状态但不清空显示数据
+      state.currentPage.value = 1;
+      state.hasMoreData.value = true;
+      
+      // 强制刷新当前单位类型的数据
+      await getRiskList(forceRefresh: true);
+      _updateCurrentUnitData();
+      _updateCurrentRiskList();
+      
+      if (kDebugMode) {
+        print('✅ 下拉刷新完成');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 下拉刷新失败: $e');
+      }
+      Get.snackbar(
+        '提示',
+        '刷新失败，请稍后重试',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      state.isRefreshing.value = false;
+    }
+  }
+
+  /// 获取当前单位类型对应的列表
+  List<RiskListElement> _getCurrentUnitList() {
+    switch (state.chooseUint.value) {
+      case 0:
+        return state.fengyun1List;
+      case 1:
+        return state.fengyun2List;
+      case 2:
+        return state.xingyunList;
+      default:
+        return state.fengyun1List;
+    }
   }
 
   // 加载更多数据
@@ -387,9 +486,13 @@ class RiskLogic extends GetxController {
     super.onClose();
   }
 
-  // 切换单位（重置分页状态）
-  changeUnit(int index) {
+  /// 切换单位类型
+  void changeUnit(int index) {
+    if (kDebugMode) {
+      print('🔄 用户切换到单位类型: $index');
+    }
     state.chooseUint.value = index;
+    // 智能切换逻辑由ever监听器处理
   }
 
   // ==================== 缓存管理相关方法 ====================

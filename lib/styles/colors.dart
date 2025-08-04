@@ -5,6 +5,8 @@ class FYColors {
   // 标题颜色
   static const Color color_1A1A1A = Color(0XFF1A1A1A);
   static const Color color_A6A6A6 = Color(0XFFA6A6A6);
+  static const Color color_999999 = Color(0XFF999999);
+  static const Color color_CCCCCC = Color(0XFFCCCCCC);
   static const Color color_000000 = Color(0XFF000000);
   static const Color whiteColor = Color(0XFFFFFFFF);
   static const Color text1Color = Color(0XFF2E90E7);

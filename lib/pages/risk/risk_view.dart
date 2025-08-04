@@ -31,20 +31,24 @@ class _RiskPageState extends State<RiskPage> {
         appBar: FYAppBar(title: '风险预警'),
         body: SafeArea(
           bottom: true,
-          child: Obx(() => state.isLoading.value
+          child: Obx(() => state.isLoading.value && state.currentRiskList.isEmpty
               ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  controller: logic.scrollController, // 使用logic中的scrollController
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLocationSection(),
-                      _buildUnitTypeSelector(),
-                      _buildRiskStatCards(),
-                      SizedBox(height: 14.w),
-                      _buildRiskList(), // 恢复原来的列表实现
-                      _buildLoadMoreIndicator(), // 在列表后添加加载指示器
-                    ],
+              : RefreshIndicator(
+                  onRefresh: logic.onRefresh,
+                  child: SingleChildScrollView(
+                    controller: logic.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLocationSection(),
+                        _buildUnitTypeSelector(),
+                        _buildRiskStatCards(),
+                        SizedBox(height: 14.w),
+                        _buildRiskList(),
+                        _buildLoadMoreIndicator(),
+                      ],
+                    ),
                   ),
                 ),
           ),
@@ -366,25 +370,29 @@ class _RiskPageState extends State<RiskPage> {
   // 底部加载指示器
   Widget _buildLoadMoreIndicator() {
     return Obx(() {
+      // 下拉刷新时不显示底部指示器
+      if (state.isRefreshing.value) {
+        return SizedBox(height: 20.h);
+      }
       if (state.isLoadingMore.value) {
         // 正在加载更多
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.w),
           alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 16,
-                height: 16,
+                width: 16.w,
+                height: 16.w,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Text(
                 '加载中...',
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
+                  fontSize: 14.sp,
+                  color: FYColors.color_999999,
                 ),
               ),
             ],
@@ -393,32 +401,32 @@ class _RiskPageState extends State<RiskPage> {
       } else if (!state.hasMoreData.value && state.currentRiskList.isNotEmpty) {
         // 没有更多数据（但有数据时才显示）
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.w),
           alignment: Alignment.center,
           child: Text(
-            '没有更多数据了',
+            '已显示全部 ${state.currentRiskList.length} 条数据',
             style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
+              fontSize: 14.sp,
+              color: FYColors.color_999999,
             ),
           ),
         );
       } else if (state.hasMoreData.value && state.currentRiskList.isNotEmpty) {
         // 还有更多数据但当前未加载
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.w),
           alignment: Alignment.center,
           child: Text(
             '上拉加载更多',
             style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
+              fontSize: 14.sp,
+              color: FYColors.color_999999,
             ),
           ),
         );
       } else {
-        // 没有数据时不显示指示器
-        return SizedBox.shrink();
+        // 其他情况
+        return SizedBox(height: 20.h);
       }
     });
   }
