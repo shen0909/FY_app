@@ -189,14 +189,31 @@ class FYSharedPreferenceUtils {
     await remove(USER_DATA_KEY);
     await remove(OUTER_ACCESS_TOKEN_KEY);
     await remove(OUTER_REFRESH_TOKEN_KEY);
-    await remove(INNER_ACCESS_TOKEN_KEY);
+    return remove(INNER_ACCESS_TOKEN_KEY);
     // 🔑 新增：同时清除存储的用户凭据
-    return clearUserCredentials();
+    // return clearUserCredentials();
   }
 
   // 清除所有数据
   static Future<bool> clearAll() async {
-    return prefs.clear();
+    await remove(user_device);
+    await remove(TOKEN_KEY);
+    await remove(USER_ID_KEY);
+    await remove(USER_NAME_KEY);
+    await remove(USER_ROLE_KEY);
+    await remove(USER_DATA_KEY);
+    await remove(USE_PASSWORD_LOGIN_KEY);
+    await remove(FINGERPRINT_ENABLED_KEY);
+    await remove(PATTERN_LOCK_FAILED_ATTEMPTS);
+    await remove(PATTERN_LOCK_TIMESTAMP);
+    await remove(PATTERN_LOCK_ENABLED);
+    await remove(IS_FIRST_LOGIN);
+    await remove(OUTER_ACCESS_TOKEN_KEY);
+    await remove(OUTER_REFRESH_TOKEN_KEY);
+    await remove(INNER_ACCESS_TOKEN_KEY);
+    // await remove(STORED_USERNAME_KEY);
+    // await remove(STORED_PASSWORD_KEY);
+    return true;
   }
 
   // 设置使用密码登录标记
