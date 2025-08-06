@@ -300,7 +300,7 @@ class HotPotLogic extends GetxController {
       state.isLoadingMore.value = true;
     } else {
       state.isLoading.value = true;
-      state.errorMessage.value = '';
+      // state.errorMessage.value = '';
     }
     
     try {
@@ -343,7 +343,7 @@ class HotPotLogic extends GetxController {
           state.hasMoreData.value = true;
         }
       } else {
-        state.errorMessage.value = result['msg'] ?? '获取数据失败';
+        // state.errorMessage.value = result['msg'] ?? '获取数据失败';
         
         if (isLoadMore) {
           // 加载更多失败，页码回退
@@ -353,7 +353,7 @@ class HotPotLogic extends GetxController {
         }
       }
     } catch (e) {
-      state.errorMessage.value = e.toString();
+      // state.errorMessage.value = e.toString();
       
       if (isLoadMore) {
         // 加载更多失败，页码回退

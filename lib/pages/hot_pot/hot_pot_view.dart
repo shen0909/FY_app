@@ -564,25 +564,8 @@ class HotPotPage extends StatelessWidget {
   Widget _buildHotNewsList() {
     return Obx(() {
       // 加载中
-      if (state.newsList.isEmpty) {
+      if (state.isLoading.value && state.newsList.isEmpty) {
         return const Center(child: CircularProgressIndicator());
-      }
-
-      // 发生错误
-      if (state.errorMessage.value.isNotEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('网络异常，请重试'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => logic.getNewsList(),
-                child: const Text('重试'),
-              ),
-            ],
-          ),
-        );
       }
 
       // 数据为空

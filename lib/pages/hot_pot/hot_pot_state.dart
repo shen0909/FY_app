@@ -9,7 +9,7 @@ class HotPotState {
   final RxBool isLoading = false.obs;
   
   // 添加错误信息
-  final RxString errorMessage = ''.obs;
+  // final RxString errorMessage = ''.obs;
 
   // 当前活跃标签页索引
   final RxInt activeTabIndex = 0.obs;
