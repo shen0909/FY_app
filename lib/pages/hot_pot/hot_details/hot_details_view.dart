@@ -162,11 +162,31 @@ class HotDetailsView extends StatelessWidget {
           ),
           SizedBox(height: 8.w),
           Text(
+            '【新闻热点】',
+            style: TextStyle(
+              fontSize: 14.w,
+              color: Color(0xFF1A1A1A),
+              height: 1.5,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
             detail.newsSummary,
             style: TextStyle(
               fontSize: 14.w,
               color: Color(0xFF1A1A1A),
               height: 1.5,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Text(
+            '全文详情见【原文与译文】',
+            style: TextStyle(
+              fontSize: 14.w,
+              color: Color(0xFF1A1A1A),
+              height: 1.5,
+              fontWeight: FontWeight.bold
             ),
           ),
         ],
