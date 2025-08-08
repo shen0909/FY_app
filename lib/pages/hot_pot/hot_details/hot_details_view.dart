@@ -72,42 +72,48 @@ class HotDetailsView extends StatelessWidget {
       body: SafeArea(
         bottom: true,
         child: Obx(() {
-          // 加载中状态
-          if (state.isLoading.value) {
+          if (!state.hasLoadedOnce.value && state.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
+          // 错误状态：
+          // 1) 首次加载失败：展示空态并可下拉刷新
+          // 2) 非首次加载失败：保留现有数据（如果有），由顶部下拉刷新触发重载
+          if (state.errorMessage.value.isNotEmpty && !state.hasLoadedOnce.value) {
+            return RefreshIndicator(
+              onRefresh: () => logic.fetchNewsDetail(),
+              child: Center(child: _buildEmptyContent()),
+            );
+          }
 
-          // 错误状态
-          if (state.errorMessage.value.isNotEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('获取数据失败：${state.errorMessage.value}'),
-                  SizedBox(height: 16.w),
-                  ElevatedButton(
-                    onPressed: () => logic.fetchNewsDetail(),
-                    child: const Text('重试'),
+          // 数据为空状态：仅在未加载成功过时展示空态；已加载过但空，仍可下拉刷新
+          if (state.newsDetail.value.isEmpty && !state.hasLoadedOnce.value) {
+            return RefreshIndicator(
+              onRefresh: () => logic.fetchNewsDetail(),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _buildEmptyContent(),
                   ),
                 ],
               ),
             );
           }
 
-          // 数据为空状态
-          if (state.newsDetail.value.isEmpty) {
-            return const Center(child: Text('暂无详情数据'));
-          }
-
-          // 显示详情数据
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeader(),
-                _buildTabBar(),
-                _buildTabContentForScrollView(), // 使用适合SingleChildScrollView的内容构建方法
-              ],
+          // 显示详情数据 + 下拉刷新
+          return RefreshIndicator(
+            onRefresh: () => logic.fetchNewsDetail(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildHeader(),
+                  _buildTabBar(),
+                  _buildTabContentForScrollView(), // 使用适合SingleChildScrollView的内容构建方法
+                ],
+              ),
             ),
           );
         }),

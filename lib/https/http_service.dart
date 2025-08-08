@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:io';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:safe_app/https/token_interceptor.dart';
@@ -8,7 +9,7 @@ class HttpService {
   static const String _tag = 'FYHttp';
   // static const String baseUrl = 'http://180.97.221.196:2033';
   static const String baseUrl = 'https://api2.fyclouds.com:2053';
-  static const String baseUrl1 = 'http://180.97.221.196:2032';
+  // static const String baseUrl1 = 'http://180.97.221.196:2032';
 
   factory HttpService() => _instance;
   late Dio dio;
@@ -25,7 +26,7 @@ class HttpService {
 
   HttpService._internal() {
     BaseOptions preOptions = BaseOptions(
-      baseUrl: baseUrl1,
+      baseUrl: baseUrl,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -129,18 +130,32 @@ class HttpService {
     final tokenInterceptor = TokenInterceptor();
     tokenInterceptor.setDio(dio);
     dio.interceptors.add(tokenInterceptor);
-    
-    // 注意：由于TokenInterceptor是单例，我们需要为innerDio创建新的拦截器实例
-    // 这里我们先注释掉innerDio的TokenInterceptor，因为它会与外层冲突
-    // 后续可以考虑重构TokenInterceptor以支持多实例或者为内层请求单独处理
-    // final innerTokenInterceptor = TokenInterceptor();
-    // innerTokenInterceptor.setDio(innerDio);
-    // innerDio.interceptors.add(innerTokenInterceptor);
   }
 
-  /// 格式化错误信息
+  /// 格式化错误信息（面向用户的友好提示）
   String formatError(DioException e) {
-    return 'uri: ${e.requestOptions.uri}, ${e.toString()}';
+    // 日志中保留原始错误，用户界面给出友好提示
+    final DioExceptionType type = e.type;
+    switch (type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return '网络超时，请检查网络后重试';
+      case DioExceptionType.badResponse:
+        final status = e.response?.statusCode;
+        return status != null ? '服务异常($status)，请稍后再试' : '服务异常，请稍后再试';
+      case DioExceptionType.cancel:
+        return '请求已取消';
+      case DioExceptionType.unknown:
+      case DioExceptionType.connectionError:
+        // host lookup、离线等
+        if (e.error is SocketException) {
+          return '网络异常，请检查网络后重试';
+        }
+        return '请求失败，请稍后再试';
+      case DioExceptionType.badCertificate:
+        return '证书异常，请稍后再试';
+    }
   }
 
   /// 统一错误处理

@@ -570,33 +570,41 @@ class HotPotPage extends StatelessWidget {
 
       // 数据为空
       if (state.newsList.isEmpty) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              FYImages.blank_page,
-              width: 120.w,
-              height: 120.w,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: 16.w),
-            Text('暂无数据'),
-          ],
+        return RefreshIndicator(
+          onRefresh: () => logic.refreshNewsList(),
+          child: ListView(
+            children: [
+              SizedBox(height: 120.w),
+              Image.asset(
+                FYImages.blank_page,
+                width: 120.w,
+                height: 120.w,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 16.w),
+              const Center(child: Text('暂无数据')),
+              SizedBox(height: 200.w),
+            ],
+          ),
         );
       }
 
       // 显示列表
-      return ListView.builder(
-        controller: logic.scrollController, // 使用logic中的scrollController
-        padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
-        itemCount: state.newsList.length + 1, // +1 为了显示底部加载指示器
-        itemBuilder: (context, index) {
-          // 如果是最后一项，显示加载指示器
-          if (index == state.newsList.length) {
-            return _buildLoadMoreIndicator();
-          }
-          return _buildNewsCard(state.newsList[index], index);
-        },
+      return RefreshIndicator(
+        onRefresh: () => logic.refreshNewsList(),
+        child: ListView.builder(
+          controller: logic.scrollController, // 使用logic中的scrollController
+          padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: state.newsList.length + 1, // +1 为了显示底部加载指示器
+          itemBuilder: (context, index) {
+            // 如果是最后一项，显示加载指示器
+            if (index == state.newsList.length) {
+              return _buildLoadMoreIndicator();
+            }
+            return _buildNewsCard(state.newsList[index], index);
+          },
+        ),
       );
     });
   }
@@ -604,6 +612,10 @@ class HotPotPage extends StatelessWidget {
   // 底部加载指示器
   Widget _buildLoadMoreIndicator() {
     return Obx(() {
+      // 下拉刷新时不显示底部指示器
+      if (state.isRefreshing.value) {
+        return SizedBox(height: 20.h);
+      }
       if (state.isLoadingMore.value) {
         // 正在加载更多
         return Container(

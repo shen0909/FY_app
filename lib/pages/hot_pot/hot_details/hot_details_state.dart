@@ -4,6 +4,10 @@ import 'package:safe_app/models/news_detail_data.dart';
 class HotDetailsState {
   // 加载状态
   final RxBool isLoading = false.obs;
+  // 是否已成功加载过一次
+  final RxBool hasLoadedOnce = false.obs;
+  // 是否处于下拉刷新中
+  final RxBool isRefreshing = false.obs;
   
   // 错误信息
   final RxString errorMessage = ''.obs;

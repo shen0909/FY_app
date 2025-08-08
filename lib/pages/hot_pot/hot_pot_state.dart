@@ -67,6 +67,7 @@ class HotPotState {
   final RxInt pageSize = 10.obs; // 每页条数
   final RxBool hasMoreData = true.obs; // 是否还有更多数据
   final RxBool isLoadingMore = false.obs; // 是否正在加载更多
+  final RxBool isRefreshing = false.obs; // 是否正在下拉刷新
 
   // 已读新闻ID集合 - 用于跟踪用户已查看过的新闻
   final RxSet<String> readNewsIds = <String>{}.obs;

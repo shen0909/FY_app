@@ -4,6 +4,7 @@ import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/news_detail_data.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/utils/toast_util.dart';
 
 class HotDetailsLogic extends GetxController {
   final HotDetailsState state = HotDetailsState();
@@ -31,7 +32,12 @@ class HotDetailsLogic extends GetxController {
 
   // 获取新闻详情
   Future<void> fetchNewsDetail() async {
-    state.isLoading.value = true;
+    // 区分首次加载与下拉刷新
+    if (!state.hasLoadedOnce.value) {
+      state.isLoading.value = true;
+    } else {
+      state.isRefreshing.value = true;
+    }
     state.errorMessage.value = '';
     
     try {
@@ -51,18 +57,30 @@ class HotDetailsLogic extends GetxController {
           // 捕获数据转换错误
           print('数据转换错误: $conversionError');
           state.errorMessage.value = '数据格式错误: $conversionError';
+          if (state.isRefreshing.value) {
+            ToastUtil.showShort('刷新失败，请检查网络后重试');
+          }
         }
+        // 成功后标记已加载
+        state.hasLoadedOnce.value = true;
       } else {
         // API响应错误
         print('API响应错误: ${result?['msg'] ?? '未知错误'}');
         state.errorMessage.value = result?['msg'] ?? '获取新闻详情失败';
+        if (state.isRefreshing.value) {
+          ToastUtil.showShort('刷新失败，请检查网络后重试');
+        }
       }
     } catch (e) {
       // 网络或其他错误
       print('请求异常: $e');
-      state.errorMessage.value = e.toString();
+      state.errorMessage.value = '网络异常，请检查网络后重试';
+      if (state.isRefreshing.value) {
+        ToastUtil.showShort('刷新失败，请检查网络后重试');
+      }
     } finally {
       state.isLoading.value = false;
+      state.isRefreshing.value = false;
     }
   }
 
