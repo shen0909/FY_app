@@ -298,7 +298,7 @@ class BusinessCacheService extends GetxService {
       // 首先尝试从缓存获取
       if (!forceUpdate) {
         final cachedData = await cacheManager.get<List<dynamic>>(cacheKey);
-        if (cachedData != null) {
+        if (cachedData != null && cachedData.length >0) {
           debugPrint('🎯 舆情热点缓存命中: $cacheKey');
           return cachedData.map((item) => NewsItem.fromJson(item)).toList();
         }
