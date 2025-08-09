@@ -21,7 +21,7 @@ class OrderPage extends StatelessWidget {
       return Scaffold(
         backgroundColor: FYColors.whiteColor,
         appBar: FYAppBar(
-          title: state.currentTabIndex.value == 0 ? '我的订阅' : state
+          title: state.currentTabIndex.value == 0 ? '事件订阅' : state
               .currentTabIndex.value == 1 ? '专题订阅' : '我的关注',
           actions: [
             state.currentTabIndex.value == 1 ?
