@@ -51,8 +51,9 @@ class OrderEventDetialPage extends StatelessWidget {
 
   // 事件头部信息
   Widget _buildEventHeader() {
-    return Padding(
+    return Container(
       padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -442,7 +443,7 @@ class OrderEventDetialPage extends StatelessWidget {
   // 底部操作栏
   Widget _buildBottomActionBar() {
     return Container(
-      // height: 71.w,
+      height: 71.w,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -497,11 +498,10 @@ class OrderEventDetialPage extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              // 生成报告按钮
+              // 导出DOCX按钮
               GestureDetector(
-                onTap: () => logic.generateReport(),
+                onTap: () => logic.exportToDocx(),
                 child: Container(
-                  // padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                   width: 80.w,
                   height: 40.w,
                   decoration: BoxDecoration(
@@ -514,10 +514,37 @@ class OrderEventDetialPage extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
+                      '导出DOCX',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              // 生成报告按钮
+              GestureDetector(
+                onTap: () => logic.generateReport(),
+                child: Container(
+                  // padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  width: 80.w,
+                  height: 40.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                      color: FYColors.color_3361FE,
+                      width: 1.w,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
                       '生成报告',
                       style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.white,
+                        fontSize: 14.sp,
+                        color: FYColors.color_3361FE,
                       ),
                     ),
                   ),

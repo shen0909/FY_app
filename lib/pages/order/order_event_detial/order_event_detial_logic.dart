@@ -5,6 +5,7 @@ import '../../../models/order_event_model.dart';
 
 import '../../../routers/routers.dart';
 import '../../../utils/datetime_utils.dart';
+import '../../../utils/docx_export_util.dart';
 import 'order_event_detial_state.dart';
 
 class OrderEventDetialLogic extends GetxController {
@@ -406,6 +407,114 @@ class OrderEventDetialLogic extends GetxController {
       
       Get.snackbar('成功', '报告生成完成');
     });
+  }
+
+  // 导出选中项目为DOCX文件
+  Future<void> exportToDocx() async {
+    if (state.selectedItems.isEmpty) {
+      Get.snackbar('提示', '请先选择要导出的项目');
+      return;
+    }
+
+    // 显示加载对话框
+    Get.dialog(
+      Center(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                '正在导出DOCX文件...',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '选中项目: ${state.selectedItems.length} 个',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    try {
+      // 执行导出
+      final filePath = await DocxExportUtil.exportEventUpdatesToDocx(
+        state.eventTitle.value,
+        state.latestUpdates,
+        state.selectedItems,
+      );
+
+      // 关闭加载对话框
+      Get.back();
+
+      if (filePath != null) {
+        // 导出成功，显示确认对话框
+        Get.dialog(
+          AlertDialog(
+            title: const Text('导出成功'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('已成功导出 ${state.selectedItems.length} 个项目'),
+                const SizedBox(height: 12),
+                Text(
+                  '文件已保存到：\n$filePath',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  // 导出成功后可以选择性地清空选中项目
+                  state.selectedItems.clear();
+                  state.isBatchCheck.value = false;
+                },
+                child: const Text('确定'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      // 关闭加载对话框
+      Get.back();
+      
+      // 显示错误信息
+      Get.dialog(
+        AlertDialog(
+          title: const Text('导出失败'),
+          content: Text('导出过程中出现错误：\n$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: const Text('确定'),
+            ),
+          ],
+        ),
+      );
+    }
   }
   
   // 取消选择模式
