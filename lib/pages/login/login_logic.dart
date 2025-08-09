@@ -393,7 +393,7 @@ class LoginLogic extends GetxController {
   // 切换到密码登录
   Future<void> switchToPasswordLogin() async {
     state.loginMethod.value = 0;
-    ToastUtil.showShort('请使用账号密码登录');
+    // ToastUtil.showShort('请使用账号密码登录');
   }
 
   // 检查是否已设置过锁屏方式
