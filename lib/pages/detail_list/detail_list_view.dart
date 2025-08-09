@@ -84,7 +84,7 @@ class DetailListPage extends StatelessWidget {
                 );
               }),
               Text(
-                "，移出数50条",
+                "，移出数${state.removeNum.value}条",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: FYColors.color_A6A6A6,

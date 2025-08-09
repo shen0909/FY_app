@@ -135,6 +135,7 @@ class DetailListLogic extends GetxController {
         state.totalCount.value = response.data!.allCount;
         state.searchCount.value = response.data!.search_all_num;
         state.updateTime.value = response.data!.update_time;
+        state.removeNum.value = response.data!.removeCount;
         // 检查是否还有更多数据
         final totalPages = (response.data!.allCount / state.pageSize.value).ceil();
         state.hasMoreData.value = state.currentPage.value < totalPages;
