@@ -630,41 +630,6 @@ class HotDetailsView extends StatelessWidget {
                     );
                   }
                 }),
-                SizedBox(height: 16.w),
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        // 显示建设中提示
-                        DialogUtils.showUnderConstructionDialog();
-                      },
-                      child: Container(
-                        width: 96.w,
-                        height: 32.w,
-                        decoration: BoxDecoration(
-                          color: FYColors.color_F5F5F5,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(FYImages.report_icon,width: 16.w,height: 16.w,fit: BoxFit.contain,),
-                            SizedBox(width: 8.w),
-                            Text('查看原文',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.sp),),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      "来源:${detail.newsMedium}",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFFA6A6A6),
-                      ),
-                    ),
-                  ],
-                ),
                 SizedBox(height: 35.w),
               ],
             ),
