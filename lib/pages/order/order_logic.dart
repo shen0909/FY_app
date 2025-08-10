@@ -44,7 +44,7 @@ class OrderLogic extends GetxController {
       DialogUtils.hideLoading();
       Get.snackbar(
         '错误', 
-        '加载订阅数据失败: $e',
+        '加载订阅数据失败',
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         snackPosition: SnackPosition.BOTTOM,
