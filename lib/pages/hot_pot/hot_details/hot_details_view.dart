@@ -340,26 +340,33 @@ class HotDetailsView extends StatelessWidget {
                     };
                     return _buildTimelineItem(
                       itemData, 
-                      index == detail.relevantNews.length - 1 && detail.futureProgression.isEmpty
+                      index == detail.relevantNews.length - 1 && detail.futureProgression.isEmpty // 是否是最后一条：长度是最后一条且未来发展预测是空的
                     );
                   }),
                 ],
 
                 // 情势预测
                 if (detail.futureProgression.isNotEmpty) ...[
-                  if (detail.relevantNews.isEmpty) ...[
-                    Text(
-                      '相关新闻',
+                  SizedBox(height: 24.w),
+                  Text(
+                    '未来发展预测',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.w),
+                    child: Text(
+                      "基于历史数据分析和政策动向，我们预测此次调查将经历以下阶段：",
                       style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        fontSize: 14.sp,
+                        color: FYColors.color_A6A6A6,
+                        height: 1.4,
                       ),
                     ),
-                    SizedBox(height: 16.w),
-                  ] else ...[
-                    SizedBox(height: 24.w),
-                  ],
+                  ),
                   ...List.generate(detail.futureProgression.length, (index) {
                     final future = detail.futureProgression[index];
                     // 转换数据格式
