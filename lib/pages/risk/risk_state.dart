@@ -37,4 +37,9 @@ class RiskState {
   final RxBool hasMoreData = true.obs; // 是否还有更多数据
   final RxBool isLoadingMore = false.obs; // 是否正在加载更多（用于显示底部加载指示器）
   final RxBool isRefreshing = false.obs; // 是否正在下拉刷新
+
+  // 风险评分数量（来自新接口）
+  final RxInt highRiskCount = 0.obs;
+  final RxInt mediumRiskCount = 0.obs;
+  final RxInt lowRiskCount = 0.obs;
 }

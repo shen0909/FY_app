@@ -2197,7 +2197,7 @@ class ApiService {
   }
 
   /// 获取风险评分等级数量（保留旧接口作为备用）
-  Future<Map<String, dynamic>?> getRiskScoreCount() async {
+  Future<Map<String, dynamic>?> getRiskScoreCount(int classification) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -2211,7 +2211,7 @@ class ApiService {
     Map<String, dynamic> paramData = {
       "消息类型": "预警企业_评分_获取评分等级数量",
       "当前请求用户UUID": token,
-      "命令具体内容": {}
+      "命令具体内容": {'custom_classification': classification}
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);

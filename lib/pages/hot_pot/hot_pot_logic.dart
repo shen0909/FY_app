@@ -9,6 +9,7 @@ import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
 
+import '../../https/api_service.dart';
 import 'hot_pot_state.dart';
 
 class HotPotLogic extends GetxController {

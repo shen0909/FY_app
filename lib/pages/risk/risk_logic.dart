@@ -36,9 +36,10 @@ class RiskLogic extends GetxController {
       await getRiskList();
       _updateCurrentUnitData();
       _updateCurrentRiskList();
+      await getRiskScoreCount(1); //获取风险评分数量
       // 监听单位类型变化 - 优化：使用智能切换
-      ever(state.chooseUint, (_) {
-        _smartSwitchUnit(); // 智能切换单位类型
+      ever(state.chooseUint, (_) async {
+        await _smartSwitchUnit(); // 智能切换单位类型
       });
 
       // 监听地区选择变化
@@ -314,6 +315,63 @@ class RiskLogic extends GetxController {
     }
   }
 
+  // 获取风险预警评分数据
+  Future<void> getRiskScoreCount(int classification) async {
+    try {
+      final result = await ApiService().getRiskScoreCount(classification);
+      if (kDebugMode) {
+        print("获取风险评分数量结果: $result");
+      }
+
+      if (result != null && result['执行结果'] == true) {
+        final returnData = result['返回数据'];
+        if (returnData != null) {
+          // 解析风险评分数量数据
+          int highRisk = returnData['高风险'] ?? 0;
+          int mediumRisk = returnData['中风险'] ?? 0;
+          int lowRisk = returnData['低风险'] ?? 0;
+          final int total = highRisk + mediumRisk + lowRisk;
+          // 更新数据
+          state.currentUnitData.value = {
+            'high': {
+              'title': '高风险',
+              'count': highRisk,
+              'change': 0,
+              'color': 0xFFFF6850,
+            },
+            'medium': {
+              'title': '中风险',
+              'count': mediumRisk,
+              'change': 0,
+              'color': 0xFFF6D500,
+            },
+            'low': {
+              'title': '低风险',
+              'count': lowRisk,
+              'change': 0,
+              'color': 0xFF07CC89,
+            },
+            'total': {
+              'count': total,
+              'color': 0xFF1A1A1A,
+            },
+          };
+          if (kDebugMode) {
+            print("成功更新风险评分数量 - 高风险:$highRisk, 中风险:$mediumRisk, 低风险:$lowRisk");
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print("风险评分数量接口返回数据异常，使用默认数据");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("获取风险评分数量出错: $e，使用默认数据");
+      }
+    }
+  }
+
   // 加载地区数据
   Future<void> loadRegionData() async {
     try {
@@ -357,7 +415,7 @@ class RiskLogic extends GetxController {
   }
 
   // 更新当前单位数据
-  void _updateCurrentUnitData() {
+  Future<void> _updateCurrentUnitData() async {
     List<RiskListElement> currentList = [];
     // 获取当前选择的列表
     switch (state.chooseUint.value) {
@@ -371,30 +429,7 @@ class RiskLogic extends GetxController {
         currentList = state.xingyunList;
         break;
     }
-    state.currentUnitData.value = {
-      'high': {
-        'title': '高风险',
-        'count': currentList.where((item) => item.riskType == 3).length,
-        'change': 0,
-        'color': 0xFFFF6850
-      },
-      'medium': {
-        'title': '中风险',
-        'count': currentList.where((item) => item.riskType == 2).length,
-        'change': 0,
-        'color': 0xFFF6D500
-      },
-      'low': {
-        'title': '低风险',
-        'count': currentList.where((item) => item.riskType == 1).length,
-        'change': 0,
-        'color': 0xFF07CC89
-      },
-      'total': {
-        'count': currentList.length,
-        'color': 0xFF1A1A1A
-      },
-    };
+    await getRiskScoreCount(state.chooseUint.value + 1); // 从接口获取风险数据
   }
 
   // 更新当前风险列表
