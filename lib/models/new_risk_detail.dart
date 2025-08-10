@@ -170,7 +170,60 @@ class RiskCompanyNew {
       updatedAt: json["updated_at"],
       uuid: json["uuid"],
       zhName: json["zh_name"],
-      riskFactors: RiskFactorParser.parseRiskFactor(json['risk_factor']));
+      riskFactors: RiskFactorParser.parseRiskFactor(json['risk_factor']))
+    ..legalBasis = _parsePrecedentToLegalBasis(json['precedent']);
+
+  /// 解析接口新增字段 precedent 为 UI 可用的 LegalBasis 列表
+  static List<LegalBasis> _parsePrecedentToLegalBasis(dynamic precedentRaw) {
+    final List<LegalBasis> result = [];
+    if (precedentRaw == null) return result;
+
+    try {
+      dynamic decoded;
+      if (precedentRaw is String) {
+        final trimmed = precedentRaw.trim();
+        if (trimmed.isEmpty) return result; // ""
+        decoded = jsonDecode(trimmed); // 可能是 "[]" 或 "[ {...} ]"
+      } else {
+        decoded = precedentRaw; // 容错：后端若直接返回数组
+      }
+      if (decoded is List) {
+        for (final item in decoded) {
+          if (item is Map<String, dynamic>) {
+            final String title = (item['precedent_name'] ?? '').toString();
+            final List<dynamic> items = (item['precedent_item'] is List)
+                ? (item['precedent_item'] as List)
+                : const [];
+
+            // 将子项拼接为一段 summary 文本
+            final List<String> parts = [];
+            for (final sub in items) {
+              if (sub is Map<String, dynamic>) {
+                final name = (sub['precedent_item_name'] ?? '').toString();
+                final content = (sub['precedent_item_content'] ?? '').toString();
+                if (name.isNotEmpty || content.isNotEmpty) {
+                  parts.add(name.isNotEmpty ? '$name：$content' : content);
+                }
+              }
+            }
+            final String summary = parts.isNotEmpty ? parts.join('；') : title;
+
+            result.add(LegalBasis(
+              category: 'precedent',
+              title: title.isNotEmpty ? title : null,
+              summary: summary.isNotEmpty ? summary : '',
+              details: null,
+            ));
+          }
+        }
+      }
+    } catch (_) {
+      // 忽略解析异常，保持空列表以避免 UI 崩溃
+      return result;
+    }
+
+    return result;
+  }
 
   Map<String, dynamic> toJson() => {
     "address": address,

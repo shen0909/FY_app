@@ -40,7 +40,7 @@ class RiskDetailsLogic extends GetxController {
         // 获取企业UUID用于加载评分详情
         final entUuid = state.riskCompanyDetail.value?.uuid;
         if (entUuid != null && entUuid.isNotEmpty) {
-          await loadScoreDetail(entUuid);
+          await loadScoreDetail(entUuid); // 加载企业评分详情
         }
       }
     } catch (e) {
