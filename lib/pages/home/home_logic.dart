@@ -254,15 +254,11 @@ class HomeLogic extends GetxController {
         if (kDebugMode) {
           print("⚠️ 首页数据接口返回异常，尝试使用旧接口获取数据");
         }
-        // 接口异常时，回退到原来的分离接口
-        await _fallbackToOldApis();
       }
     } catch (e) {
       if (kDebugMode) {
         print("❌ 获取首页数据出错: $e，尝试使用旧接口");
       }
-      // 出错时回退到原来的分离接口
-      await _fallbackToOldApis();
     }
   }
 
@@ -335,64 +331,6 @@ class HomeLogic extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         print("❌ 处理实体清单数据失败: $e");
-      }
-    }
-  }
-
-  /// 回退到旧接口（作为备用方案）
-  Future<void> _fallbackToOldApis() async {
-    try {
-      // 获取轮播图数据
-      await getBannerList();
-      
-      // 获取风险评分数据
-      await getRiskScoreCount();
-      
-      if (kDebugMode) {
-        print("✅ 旧接口数据获取完成");
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("❌ 旧接口也失败了: $e");
-      }
-    }
-  }
-
-  // 获取风险评分数量（保留旧方法作为备用）
-  Future<void> getRiskScoreCount() async {
-    try {
-      final result = await ApiService().getRiskScoreCount();
-      if (kDebugMode) {
-        print("获取风险评分数量结果: $result");
-      }
-      
-      if (result != null && result['执行结果'] == true) {
-        final returnData = result['返回数据'];
-        if (returnData != null) {
-          // 解析风险评分数量数据
-          int highRisk = returnData['高风险'] ?? 0;
-          int mediumRisk = returnData['中风险'] ?? 0;
-          int lowRisk = returnData['低风险'] ?? 0;
-          
-          // 更新状态
-          state.updateRiskScoreCount(
-            highRisk: highRisk,
-            mediumRisk: mediumRisk,
-            lowRisk: lowRisk,
-          );
-          
-          if (kDebugMode) {
-            print("成功更新风险评分数量 - 高风险:$highRisk, 中风险:$mediumRisk, 低风险:$lowRisk");
-          }
-        }
-      } else {
-        if (kDebugMode) {
-          print("风险评分数量接口返回数据异常，使用默认数据");
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("获取风险评分数量出错: $e，使用默认数据");
       }
     }
   }
