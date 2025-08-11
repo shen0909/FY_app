@@ -356,7 +356,7 @@ class BusinessCacheService extends GetxService {
       // 首先尝试从缓存获取
       if (!forceUpdate) {
         final cachedData = await cacheManager.get<List<dynamic>>(cacheKey);
-        if (cachedData != null) {
+        if (cachedData != null && cachedData.length> 1) {
           debugPrint('🎯 地区列表缓存命中');
           return cachedData.cast<Map<String, dynamic>>();
         }
@@ -367,7 +367,14 @@ class BusinessCacheService extends GetxService {
       final result = await apiService.getRegion();
 
       if (result != null && result['code'] == 10010 && result['data'] != null) {
-        final regionData = result['data'] as List;
+        final regionData = (result['data'] as List)
+            .cast<Map>()
+            .map((e) => {
+                  'id': (e['id'] ?? '').toString(),
+                  'region': (e['region'] ?? '').toString(),
+                })
+            .where((e) => (e['region'] as String).isNotEmpty)
+            .toList();
         final regions = [{"id": "0", "region": "全部"}, ...regionData];
         
         // 存入缓存（地区数据缓存时间较长）

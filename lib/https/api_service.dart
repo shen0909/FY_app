@@ -629,9 +629,71 @@ class ApiService {
     }
   }
 
-  /// 获取地区参数
-  Future<dynamic> getRegion() async {
-    return await _preGet(ServicePath.getRegion);
+  /// 获取地区参数（舆情热点_新闻_获取地区动态参数）
+  Future<Map<String, dynamic>> getRegion() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取地区动态参数失败：内层token为空');
+      }
+      return {'code': 0, 'msg': '内层token为空'};
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_新闻_获取地区动态参数",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        final Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        final List<dynamic> items = _extractList(resultData['返回数据']);
+
+        final List<Map<String, String>> regions = <Map<String, String>>[];
+        for (final item in items) {
+          final normalized = _normalizeRegionItem(item);
+          if (normalized != null) regions.add(normalized);
+        }
+        return {'code': 10010, 'data': regions};
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析地区动态参数响应失败: $e');
+        }
+        return {'code': 0, 'msg': '解析响应失败: $e'};
+      }
+    }
+
+    return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
+  }
+
+  List<dynamic> _extractList(dynamic raw) {
+    if (raw is List) return raw;
+    if (raw is Map) {
+      final v = raw['list'] ?? raw['data'] ?? raw['regions'];
+      if (v is List) return v;
+    }
+    return const <dynamic>[];
+  }
+
+  Map<String, String>? _normalizeRegionItem(dynamic e) {
+    if (e is Map) {
+      // 接口已确定：id + Region
+      final id = (e['id'] ?? '').toString();
+      final name = (e['Region'] ?? e['region'] ?? '').toString();
+      if (name.isEmpty) return null;
+      return {'id': id, 'region': name};
+    }
+    if (e != null) {
+      final name = e.toString();
+      if (name.isEmpty) return null;
+      return {'id': '', 'region': name};
+    }
+    return null;
   }
 
   /// 添加地区参数
