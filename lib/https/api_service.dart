@@ -728,6 +728,74 @@ class ApiService {
     }
   }
 
+  /// 获取企业相关新闻（舆情热点_新闻企业关联_获取企业相关新闻）
+  Future<Map<String, dynamic>> getEnterpriseRelatedNews({
+    required String enterpriseUuid,
+    required int currentPage,
+    int pageSize = 10,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取企业相关新闻失败：内层token为空');
+      }
+      return {'code': 0, 'msg': '内层token为空'};
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_新闻企业关联_获取企业相关新闻",
+      "当前请求用户UUID": token,
+      "服务类型": 0,
+      "命令具体内容": {
+        "enterprise_uuid": enterpriseUuid,
+        "current_page": currentPage,
+        "page_size": pageSize,
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        final data = resultData["返回数据"] ?? {};
+        List<dynamic> newsList = data['list'] ?? [];
+
+        List<Map<String, dynamic>> transformed = newsList.map((item) {
+          return {
+            'uuid': item['uuid'] ?? '',
+            'title': item['title'] ?? '',
+            'summary': item['summary'] ?? '',
+            'publish_time': item['publish_time'] ?? '',
+            'news_medium': item['news_medium'] ?? '',
+            'types': item['types'] ?? '',
+            'created_at': item['created_at'] ?? '',
+            'reason': item['reason'] ?? '',
+            'is_read': item['is_read'] ?? false,
+          };
+        }).toList();
+
+        return {
+          'code': 10010,
+          'data': transformed,
+          'all_count': data['all_count'] ?? 0,
+        };
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析企业相关新闻响应失败: $e');
+        }
+        return {'code': 0, 'msg': '解析响应失败: $e'};
+      }
+    } else {
+      if (kDebugMode) {
+        print('$_tag 获取企业相关新闻失败: ${result?['error_message'] ?? '未知错误'}');
+      }
+      return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
+    }
+  }
+
   /// 获取新闻详情
   Future<dynamic> getNewsDetail({required String newsId}) async {
     // 获取内层token

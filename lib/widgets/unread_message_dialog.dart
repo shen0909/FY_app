@@ -7,11 +7,19 @@ import 'package:safe_app/styles/colors.dart';
 class UnreadMessageDialog extends StatelessWidget {
   final List<Map<String, dynamic>> messages;
   final Function()? onClose;
+  final void Function(Map<String, dynamic> message, int index)? onTapItem;
+  final Future<void> Function()? onLoadMore;
+  final bool hasMore;
+  final bool isLoadingMore;
 
   const UnreadMessageDialog({
     Key? key,
     required this.messages,
     this.onClose,
+    this.onTapItem,
+    this.onLoadMore,
+    this.hasMore = false,
+    this.isLoadingMore = false,
   }) : super(key: key);
 
   @override
@@ -33,10 +41,49 @@ class UnreadMessageDialog extends StatelessWidget {
           _buildDialogHeader(),
           // 消息列表
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(bottom: 20.h),
-              itemCount: messages.length,
-              itemBuilder: (context, index) => _buildMessageItem(messages[index]),
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification notification) {
+                // 仅在用户滚动，并且确实到达底部且还有更多时触发
+                final isUserScroll = notification is UserScrollNotification ||
+                    notification is ScrollUpdateNotification ||
+                    notification is OverscrollNotification;
+                if (isUserScroll &&
+                    notification.metrics.pixels >=
+                        notification.metrics.maxScrollExtent - 16 &&
+                    hasMore == true &&
+                    isLoadingMore == false) {
+                  onLoadMore?.call();
+                }
+                return false;
+              },
+              child: ListView.builder(
+                padding: EdgeInsets.only(bottom: 20.h),
+                itemCount: messages.length + (hasMore || isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index < messages.length) {
+                    return GestureDetector(
+                      onTap: () => onTapItem?.call(messages[index], index),
+                      child: _buildMessageItem(messages[index]),
+                    );
+                  }
+                  // 底部加载/无更多
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    child: Center(
+                      child: isLoadingMore
+                          ? SizedBox(
+                              width: 20.w,
+                              height: 20.w,
+                              child: const CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              hasMore ? '' : '没有更多了',
+                              style: TextStyle(fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                            ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -112,23 +159,8 @@ class UnreadMessageDialog extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8.w),
-              // 未读标签
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: FYColors.color_FFD8D2,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  '未读',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_FF2A08,
-                    fontWeight: FontWeight.w400,
-                    height: 1,
-                  ),
-                ),
-              ),
+              // 未读/已读标签
+              _buildReadTag(message['is_read'] == true),
             ],
           ),
           SizedBox(height: 16.h),
@@ -155,6 +187,43 @@ class UnreadMessageDialog extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildReadTag(bool isRead) {
+    if (!isRead) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: FYColors.color_FFD8D2,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Text(
+          '未读',
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: FYColors.color_FF2A08,
+            fontWeight: FontWeight.w400,
+            height: 1,
+          ),
+        ),
+      );
+    }
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: FYColors.color_CEFFEE,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Text(
+        '已读',
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: FYColors.color_07CC89,
+          fontWeight: FontWeight.w400,
+          height: 1,
+        ),
       ),
     );
   }

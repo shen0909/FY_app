@@ -57,6 +57,9 @@ class RiskListElement {
   ///企业中文名
   String zhName;
 
+  ///未读新闻数量（后端返回为字符串，这里统一转为int）
+  int unreadNewsCount;
+
   RiskListElement({
     required this.createdAt,
     required this.customClassification,
@@ -68,6 +71,7 @@ class RiskListElement {
     required this.updatedAt,
     required this.uuid,
     required this.zhName,
+    required this.unreadNewsCount,
   });
 
   factory RiskListElement.fromJson(Map<String, dynamic> json) => RiskListElement(
@@ -81,6 +85,7 @@ class RiskListElement {
     updatedAt: json["updated_at"] ?? "",
     uuid: json["uuid"] ?? "",
     zhName: json["zh_name"] ?? "",
+    unreadNewsCount: int.tryParse((json["unread_news_count"] ?? '0').toString()) ?? 0,
   );
 
   Map<String, dynamic> toJson() => {
@@ -94,5 +99,6 @@ class RiskListElement {
     "updated_at": updatedAt,
     "uuid": uuid,
     "zh_name": zhName,
+    "unread_news_count": unreadNewsCount,
   };
 }

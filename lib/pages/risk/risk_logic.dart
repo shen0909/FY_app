@@ -5,6 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/widgets/unread_message_dialog.dart';
+import 'package:safe_app/utils/toast_util.dart';
+import 'package:safe_app/routers/routers.dart';
 import '../../models/risk_data_new.dart';
 import '../../models/region_data.dart';
 import '../../cache/business_cache_service.dart';
@@ -456,8 +459,8 @@ class RiskLogic extends GetxController {
       'riskColor': _getRiskColor(company.riskType),
       'borderColor': _getBorderColor(company.riskType),
       'updateTime': company.updatedAt,
-      'unreadCount': 0,
-      'isRead': true,
+      'unreadCount': company.unreadNewsCount,
+      'isRead': company.unreadNewsCount <= 0,
     }).toList();
 
     state.currentRiskList.assignAll(newList);
@@ -651,74 +654,130 @@ class RiskLogic extends GetxController {
     }
   }
   
-  // 显示未读消息弹窗
-  void showMessageDialog(String companyId) {
-    // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    return;
-    
-    // 注释掉原有逻辑
-    // if (state.riskyData.value == null) return;
+  // 显示未读消息弹窗（企业相关新闻）
+  Future<void> showMessageDialog(String enterpriseUuid) async {
+    try {
+      DialogUtils.showLoading('加载未读消息...');
+      // 拉取企业相关新闻（第一页）
+      final resp = await ApiService().getEnterpriseRelatedNews(
+        enterpriseUuid: enterpriseUuid,
+        currentPage: 1,
+        pageSize: 20,
+      );
+      DialogUtils.hideLoading();
 
-    // try {
-    //   // 获取当前单位类型对应的key
-    //   String unitKey;
-    //   switch (state.chooseUint.value) {
-    //     case 0:
-    //       unitKey = 'fengyun_1';
-    //       break;
-    //     case 1:
-    //       unitKey = 'fengyun_2';
-    //       break;
-    //     case 2:
-    //       unitKey = 'xingyun';
-    //       break;
-    //     default:
-    //       return;
-    //   }
+      if (resp['code'] != 10010) {
+        ToastUtil.showShort(resp['msg']?.toString() ?? '获取相关新闻失败');
+        return;
+      }
 
-    //   // 从riskyData中获取对应公司的未读消息
-    //   final unreadMessages = state.riskyData.value!.unreadMessages[companyId];
-    //   if (unreadMessages == null || unreadMessages.isEmpty) return;
+      // 记录弹窗分页状态
+      state.unreadCurrentPage.value = 1;
+      state.unreadHasMore.value = (resp['all_count'] ?? 0) > (resp['data']?.length ?? 0);
+      state.unreadIsLoadingMore.value = false;
+      state.currentDialogEnterpriseUuid.value = enterpriseUuid;
 
-    //   // 转换未读消息格式
-    //   final messages = unreadMessages.map((msg) => {
-    //     'title': msg.title,
-    //     'date': msg.date,
-    //     'content': msg.content,
-    //     'company': msg.sourceName,
-    //     'isRead': msg.read,
-    //     'category': msg.category,
-    //     'severity': msg.severity,
-    //     'tags': msg.tags,
-    //   }).toList();
+      final List<dynamic> list = resp['data'] ?? [];
+      final messages = list.map<Map<String, dynamic>>((item) {
+        return {
+          'uuid': item['uuid'] ?? '',
+          'title': item['title'] ?? '',
+          'date': item['publish_time'] ?? item['created_at'] ?? '',
+          'content': item['summary'] ?? '',
+          'company': '',
+          'is_read': item['is_read'] == true,
+          'category': item['types'] ?? '',
+          'severity': '',
+          'tags': <String>[],
+        };
+      }).toList();
 
-    //   state.currentUnreadMessages.assignAll(messages);
+      state.currentUnreadMessages.assignAll(messages);
 
-    //   showModalBottomSheet(
-    //     builder: (_){
-    //       return UnreadMessageDialog(
-    //         messages: state.currentUnreadMessages,
-    //         onClose: () => Get.back(),
-    //       );
-    //     },
-    //     constraints: BoxConstraints(
-    //       maxWidth: MediaQuery.of(Get.context!).size.width, // 强制宽度为屏幕宽度
-    //       minWidth: MediaQuery.of(Get.context!).size.width, // 防止最小宽度限制
-    //     ),
-    //     backgroundColor: Colors.transparent,
-    //     elevation: 0,
-    //     isDismissible: true,
-    //     enableDrag: true,
-    //     isScrollControlled: true,
-    //     shape:  RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-    //     ),
-    //     context: Get.context!,
-    //   );
-    // } catch (e) {
-    //   print("显示消息弹窗出错: $e");
-    // }
+      // 打开底部弹窗
+      showModalBottomSheet(
+        builder: (_) {
+          return Obx(() => UnreadMessageDialog(
+                messages: state.currentUnreadMessages,
+                onClose: () => Get.back(),
+                hasMore: state.unreadHasMore.value,
+                isLoadingMore: state.unreadIsLoadingMore.value,
+                onLoadMore: _loadMoreUnreadMessages,
+                onTapItem: (message, index) {
+                  final newsId = message['uuid'] as String?;
+                  if (newsId != null && newsId.isNotEmpty) {
+                    Get.back(); // 先关闭弹窗，再跳转详情
+                    Get.toNamed(Routers.hotDetails, arguments: {
+                      'newsId': newsId,
+                      'title': message['title'] ?? '',
+                    });
+                  }
+                },
+              ));
+        },
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(Get.context!).size.width,
+          minWidth: MediaQuery.of(Get.context!).size.width,
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        isDismissible: true,
+        enableDrag: true,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        ),
+        context: Get.context!,
+      );
+    } catch (e) {
+      DialogUtils.hideLoading();
+      if (kDebugMode) {
+        print('显示消息弹窗出错: $e');
+      }
+    }
+  }
+
+  // 加载更多未读消息
+  Future<void> _loadMoreUnreadMessages() async {
+    if (state.unreadIsLoadingMore.value || !state.unreadHasMore.value) return;
+    state.unreadIsLoadingMore.value = true;
+    try {
+      final nextPage = state.unreadCurrentPage.value + 1;
+      final resp = await ApiService().getEnterpriseRelatedNews(
+        enterpriseUuid: state.currentDialogEnterpriseUuid.value,
+        currentPage: nextPage,
+        pageSize: 20,
+      );
+      if (resp['code'] == 10010) {
+        final List<dynamic> list = resp['data'] ?? [];
+        final messages = list.map<Map<String, dynamic>>((item) {
+          return {
+            'uuid': item['uuid'] ?? '',
+            'title': item['title'] ?? '',
+            'date': item['publish_time'] ?? item['created_at'] ?? '',
+            'content': item['summary'] ?? '',
+            'company': '',
+            'is_read': item['is_read'] == true,
+            'category': item['types'] ?? '',
+            'severity': '',
+            'tags': <String>[],
+          };
+        }).toList();
+
+        state.currentUnreadMessages.addAll(messages);
+        state.unreadCurrentPage.value = nextPage;
+        final total = resp['all_count'] ?? 0;
+        final loaded = state.currentUnreadMessages.length;
+        state.unreadHasMore.value = loaded < total;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('加载更多未读消息失败: $e');
+      }
+    } finally {
+      state.unreadIsLoadingMore.value = false;
+      // 触发刷新弹窗（依赖Obx外层时自动），此处不强制
+    }
   }
   
   // 关闭未读消息弹窗

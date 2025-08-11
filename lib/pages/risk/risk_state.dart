@@ -9,6 +9,11 @@ class RiskState {
   final Rx<Map<String, dynamic>> currentUnitData = Rx<Map<String, dynamic>>({}); // 当前单位数据
   final RxList<Map<String, dynamic>> currentRiskList = RxList<Map<String, dynamic>>([]); // 当前风险列表
   final RxList<Map<String, dynamic>> currentUnreadMessages = RxList<Map<String, dynamic>>([]); // 当前未读消息列表
+  // 弹窗分页
+  final RxInt unreadCurrentPage = 1.obs; // 弹窗当前页
+  final RxBool unreadHasMore = true.obs; // 弹窗是否还有更多
+  final RxBool unreadIsLoadingMore = false.obs; // 弹窗是否在加载更多
+  final RxString currentDialogEnterpriseUuid = ''.obs; // 当前弹窗对应企业
 
   // 地区
   RxString location = "广东省全部".obs;
