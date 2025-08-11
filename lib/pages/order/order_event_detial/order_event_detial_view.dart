@@ -514,7 +514,7 @@ class OrderEventDetialPage extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      '导出DOCX',
+                      '生成报告',
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Colors.white,
@@ -524,7 +524,7 @@ class OrderEventDetialPage extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8.w),
-              // 生成报告按钮
+              /*// 生成报告按钮
               GestureDetector(
                 onTap: () => logic.generateReport(),
                 child: Container(
@@ -550,7 +550,7 @@ class OrderEventDetialPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 8.w),
+              SizedBox(width: 8.w),*/
               // 取消按钮
               GestureDetector(
                 onTap: () => logic.cancelSelection(),
