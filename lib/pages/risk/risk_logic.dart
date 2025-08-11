@@ -11,6 +11,7 @@ import 'package:safe_app/routers/routers.dart';
 import '../../models/risk_data_new.dart';
 import '../../models/region_data.dart';
 import '../../cache/business_cache_service.dart';
+import '../../utils/datetime_utils.dart';
 import 'risk_state.dart';
 import 'package:flutter/foundation.dart';
 
@@ -69,6 +70,26 @@ class RiskLogic extends GetxController {
     } finally {
       // 完成加载后隐藏loading
       state.isLoading.value = false;
+    }
+  }
+
+  // 本地将弹窗中的某条未读置为已读，并同步到企业列表的未读计数
+  void _markUnreadItemAsReadAndSyncList(int indexInDialog) {
+    if (indexInDialog < 0 || indexInDialog >= state.currentUnreadMessages.length) return;
+    final current = Map<String, dynamic>.from(state.currentUnreadMessages[indexInDialog]);
+    if (current['is_read'] == true) return; // 已是已读
+    current['is_read'] = true;
+    state.currentUnreadMessages[indexInDialog] = current;
+
+    final enterpriseId = state.currentDialogEnterpriseUuid.value;
+    final idx = state.currentRiskList.indexWhere((e) => e['id'] == enterpriseId);
+    if (idx != -1) {
+      final map = Map<String, dynamic>.from(state.currentRiskList[idx]);
+      final int oldCount = (map['unreadCount'] as int?) ?? 0;
+      final int newCount = (oldCount - 1).clamp(0, 1 << 30);
+      map['unreadCount'] = newCount;
+      map['isRead'] = newCount <= 0;
+      state.currentRiskList[idx] = map;
     }
   }
 
@@ -682,7 +703,7 @@ class RiskLogic extends GetxController {
         return {
           'uuid': item['uuid'] ?? '',
           'title': item['title'] ?? '',
-          'date': item['publish_time'] ?? item['created_at'] ?? '',
+          'date': DateTimeUtils.formatPublishTime(item['publish_time'] ?? item['created_at'] ?? ''),
           'content': item['summary'] ?? '',
           'company': '',
           'is_read': item['is_read'] == true,
@@ -706,6 +727,8 @@ class RiskLogic extends GetxController {
                 onTapItem: (message, index) {
                   final newsId = message['uuid'] as String?;
                   if (newsId != null && newsId.isNotEmpty) {
+                    // 本地标记为已读并同步列表未读数
+                    _markUnreadItemAsReadAndSyncList(index);
                     Get.back(); // 先关闭弹窗，再跳转详情
                     Get.toNamed(Routers.hotDetails, arguments: {
                       'newsId': newsId,
@@ -754,7 +777,7 @@ class RiskLogic extends GetxController {
           return {
             'uuid': item['uuid'] ?? '',
             'title': item['title'] ?? '',
-            'date': item['publish_time'] ?? item['created_at'] ?? '',
+            'date': DateTimeUtils.formatPublishTime(item['publish_time'] ?? item['created_at'] ?? ''),
             'content': item['summary'] ?? '',
             'company': '',
             'is_read': item['is_read'] == true,
