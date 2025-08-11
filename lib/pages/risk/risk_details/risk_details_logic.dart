@@ -7,6 +7,8 @@ import 'package:safe_app/models/enterprise_score_detail.dart';
 import 'package:safe_app/pages/risk/risk_details/risk_details_view.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
+import 'package:safe_app/routers/routers.dart';
+import 'package:safe_app/utils/datetime_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:async';
 import '../../../models/risk_company_details.dart';
@@ -41,6 +43,7 @@ class RiskDetailsLogic extends GetxController {
         final entUuid = state.riskCompanyDetail.value?.uuid;
         if (entUuid != null && entUuid.isNotEmpty) {
           await loadScoreDetail(entUuid); // 加载企业评分详情
+          await _buildFakeTimelineByRelatedNews(entUuid); // 用相关新闻构造假的时序跟踪
         }
       }
     } catch (e) {
@@ -48,6 +51,40 @@ class RiskDetailsLogic extends GetxController {
     } finally {
       state.isLoading.value = false;
     }
+  }
+
+  /// 使用企业相关新闻构造“假的时序跟踪”
+  Future<void> _buildFakeTimelineByRelatedNews(String entUuid) async {
+    try {
+      final resp = await ApiService().getEnterpriseRelatedNews(
+        enterpriseUuid: entUuid,
+        currentPage: 1,
+        pageSize: 20,
+      );
+      if (resp['code'] != 10010) return;
+
+      final List<dynamic> list = resp['data'] ?? [];
+      final events = list.map<TimelineEvent>((item) {
+        final date = item['publish_time'] ?? item['created_at'] ?? '';
+        final source = item['uuid'] ?? ''; // mock uuid进入 热点详情页面
+        final url = item['reason'] ?? '';
+        return TimelineEvent(
+          date: DateTimeUtils.formatPublishTime(date),
+          content: item['title'] ?? '',
+          sources: [
+            Source(
+              title: item['title'] ?? '',
+              url: url,
+              source: source,
+            )
+          ],
+        );
+      }).toList();
+
+      state.riskCompanyDetail.update((val) {
+        val?.timelineTracking = events;
+      });
+    } catch (_) {}
   }
 
   /// 加载企业评分详情
@@ -271,15 +308,21 @@ class RiskDetailsLogic extends GetxController {
               color: Color(0xFF333333),
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 8.w),
           GestureDetector(
-            onTap: () => openUrl(news.url!),
+            onTap: () {
+              if ((news.url ?? '').isNotEmpty) {
+                Get.toNamed(Routers.hotDetails, arguments: {
+                  'newsId': news.source,
+                  'title': news.title ?? '',
+                });
+              }
+            },
             child: Text(
               news.url ?? '',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: FYColors.color_3361FE,
-              ),
+              style: TextStyle(fontSize: 13.sp, color: FYColors.color_3361FE),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
