@@ -68,7 +68,7 @@ class OrderLogic extends GetxController {
         state.hotEvents.addAll(items);
         // 根据订阅的UUID列表更新isFollowed状态
         _updateHotEventsFollowedStatus(2);
-        state.allSubscriptionCategories.addAll(items);
+        // state.allSubscriptionCategories.addAll(items);
       }
     } catch (e) {
       print('加载热门事件失败: $e');
