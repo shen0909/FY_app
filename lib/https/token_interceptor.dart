@@ -5,6 +5,7 @@ import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
+import 'package:safe_app/utils/toast_util.dart';
 
 /// Token拦截器
 /// 用于处理token过期和刷新
@@ -264,6 +265,7 @@ class TokenInterceptor extends Interceptor {
         try {
           Map<String, dynamic> resultData = jsonDecode(data['result_string']);
           if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
+            ToastUtil.showShort('token已过期，请重新登录');
             if (kDebugMode) {
               print('$_tag 检测到内层登录已过期（状态码30001），直接跳转登录页');
             }

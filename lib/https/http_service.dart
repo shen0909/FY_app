@@ -128,8 +128,10 @@ class HttpService {
     
     // 为外层请求添加Token拦截器
     final tokenInterceptor = TokenInterceptor();
-    tokenInterceptor.setDio(dio);
-    dio.interceptors.add(tokenInterceptor);
+    // tokenInterceptor.setDio(dio);
+    // dio.interceptors.add(tokenInterceptor);
+    tokenInterceptor.setDio(innerDio);
+    innerDio.interceptors.add(tokenInterceptor);
   }
 
   /// 格式化错误信息（面向用户的友好提示）
