@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:safe_app/main.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
@@ -63,7 +64,7 @@ class HomePage extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      height: 220.h,
+      height: isPad ? 288.w : 220.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(12.r)),
       ),
@@ -84,7 +85,7 @@ class HomePage extends StatelessWidget {
                       FYImages.bannerLoad,
                       fit: BoxFit.fill,
                       width: double.infinity,
-                      height: 220.h,
+                      height: isPad ? 288.w : 220.w,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: Colors.grey[300],
@@ -220,14 +221,14 @@ class HomePage extends StatelessWidget {
             bytes,
             fit: BoxFit.fill,
             width: double.infinity,
-              height: 220.h,
+              height: isPad ? 288.w : 220.w,
               errorBuilder: (context, error, stackTrace) {
               // base64解析失败，显示占位图
               return Image.asset(
                 FYImages.bannerLoad,
                 fit: BoxFit.contain,
                 width: double.infinity,
-                height: 220.h,
+                height: isPad ? 288.w : 220.w,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey[300],
@@ -245,7 +246,7 @@ class HomePage extends StatelessWidget {
             FYImages.bannerLoad,
             fit: BoxFit.fill,
             width: double.infinity,
-            height: 220.h,
+            height: isPad ? 288.w : 220.w,
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 color: Colors.grey[300],
@@ -263,7 +264,7 @@ class HomePage extends StatelessWidget {
       FYImages.bannerLoad,
       fit: BoxFit.contain,
       width: double.infinity,
-      height: 220.h,
+      height: isPad ? 288.w : 220.w,
       errorBuilder: (context, error, stackTrace) {
         return Container(
           color: Colors.grey[300],
