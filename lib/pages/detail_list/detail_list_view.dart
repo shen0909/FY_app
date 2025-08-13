@@ -60,51 +60,50 @@ class DetailListPage extends StatelessWidget {
   Widget _buildInfoSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(
-                "当前总数：",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                  fontWeight: FontWeight.normal,
+      child: Obx(() {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "当前总数：",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-              ),
-              Obx(() {
-                return Text(
+                Text(
                   "${state.totalCount}",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: FYColors.color_3361FE,
                     fontWeight: FontWeight.normal,
                   ),
-                );
-              }),
-              Text(
-                "，移出数${state.removeNum.value}条",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                  fontWeight: FontWeight.normal,
                 ),
-              )
-            ],
-          ),
-          Obx(() {
-            return Text(
-              "更新时间：${DateTimeUtils.formatUpdateTime(state.updateTime.value)}",
+                Text(
+                  "，移出数${state.removeNum.value}条",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              "更新时间：${DateTimeUtils.formatUpdateTime(
+                  state.updateTime.value)}",
               style: TextStyle(
                 fontSize: 12.sp,
                 color: FYColors.color_A6A6A6,
                 fontWeight: FontWeight.normal,
               ),
-            );
-          }),
-        ],
-      ),
+            ),
+          ],
+        );
+      }),
     );
   }
 
