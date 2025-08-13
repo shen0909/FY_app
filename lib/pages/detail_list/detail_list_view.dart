@@ -93,8 +93,7 @@ class DetailListPage extends StatelessWidget {
               ],
             ),
             Text(
-              "更新时间：${DateTimeUtils.formatUpdateTime(
-                  state.updateTime.value)}",
+              "更新时间：${state.updateTime.value}",
               style: TextStyle(
                 fontSize: 12.sp,
                 color: FYColors.color_A6A6A6,
