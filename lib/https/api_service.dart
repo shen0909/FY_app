@@ -50,6 +50,83 @@ class ApiService {
     return response;
   }
 
+  /// 发起报告导出，返回记录UUID（报告ID）
+  Future<String?> startExportReport({
+    required String type, // "事件" 或 "专题"
+    required String typeName,
+    required List<String> newsUuids,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 发起报告导出失败：内层token为空');
+      }
+      return null;
+    }
+
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_报告_导出报告",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "type": type,
+        "type_name": typeName,
+        "news_uuids": newsUuids,
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        String? recordUuid;
+        if (resultData['返回数据'] is Map<String, dynamic>) {
+          recordUuid = (resultData['返回数据']['report_uuid']) as String?;
+        }
+        return recordUuid;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析发起报告导出响应失败: $e');
+        }
+      }
+    }
+    return null;
+  }
+
+  /// 查询报告导出结果
+  Future<Map<String, dynamic>?> queryExportReportResult({required String uuid}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 查询导出结果失败：内层token为空');
+      }
+      return null;
+    }
+
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_报告_查询导出结果",
+      "当前请求用户UUID": token,
+      "命令具体内容": { "uuid": uuid}
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['返回数据'] is Map<String, dynamic>) {
+          return Map<String, dynamic>.from(resultData['返回数据']);
+        }
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析查询导出结果响应失败: $e');
+        }
+      }
+    }
+    return null;
+  }
+
   Future<dynamic> _prePost(String path,
       {Map<String, dynamic>? data,
         bool isForm = false,

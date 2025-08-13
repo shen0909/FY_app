@@ -65,6 +65,77 @@ class DocxExportUtil {
     }
   }
 
+  /// 返回完整文件路径（包含 fileName）。
+  static Future<String> getExportFilePath(String fileName) async {
+    String filePath;
+    if (Platform.isAndroid) {
+      try {
+        Directory? downloadsDir;
+        if (await Permission.manageExternalStorage.isGranted) {
+          downloadsDir = Directory('/storage/emulated/0/Download');
+          if (!await downloadsDir.exists()) {
+            downloadsDir = Directory('/storage/emulated/0/Downloads');
+          }
+        }
+        if (downloadsDir == null || !await downloadsDir.exists()) {
+          final externalDir = await getExternalStorageDirectory();
+          if (externalDir != null) {
+            downloadsDir = Directory('${externalDir.path}/Downloads');
+            await downloadsDir.create(recursive: true);
+          }
+        }
+        if (downloadsDir == null || !await downloadsDir.exists()) {
+          final appDocDir = await getApplicationDocumentsDirectory();
+          downloadsDir = Directory('${appDocDir.path}/导出文件');
+          await downloadsDir.create(recursive: true);
+        }
+        filePath = '${downloadsDir.path}/$fileName';
+      } catch (_) {
+        final appDocDir = await getApplicationDocumentsDirectory();
+        final exportDir = Directory('${appDocDir.path}/导出文件');
+        await exportDir.create(recursive: true);
+        filePath = '${exportDir.path}/$fileName';
+      }
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      final exportDir = Directory('${directory.path}/导出文件');
+      await exportDir.create(recursive: true);
+      filePath = '${exportDir.path}/$fileName';
+    }
+    return filePath;
+  }
+
+  /// 如果文件位于应用私有目录，尽量复制到公共Downloads，并刷新媒体库；返回最终可见路径
+  static Future<String> ensurePublicVisibility(String filePath, String fileName) async {
+    try {
+      if (Platform.isAndroid) {
+        // 如果位于私有外部目录，将其复制到公共Downloads
+        if (filePath.contains('/Android/data/')) {
+          try {
+            const channel = MethodChannel('com.example.safe_app/media');
+            final publicPath = await channel.invokeMethod<String>('saveToDownloads', {
+              'path': filePath,
+              'fileName': fileName,
+            });
+            if (publicPath != null && publicPath.isNotEmpty) {
+              // 刷新媒体库
+              try {
+                await channel.invokeMethod('scanFile', {'path': publicPath});
+              } catch (_) {}
+              return publicPath;
+            }
+          } catch (_) {}
+        }
+        // 非私有路径，也尝试刷新媒体库
+        try {
+          const channel = MethodChannel('com.example.safe_app/media');
+          await channel.invokeMethod('scanFile', {'path': filePath});
+        } catch (_) {}
+      }
+    } catch (_) {}
+    return filePath;
+  }
+
   /// 导出事件动态列表为DOCX文件
   /// 
   /// [eventTitle] 事件标题

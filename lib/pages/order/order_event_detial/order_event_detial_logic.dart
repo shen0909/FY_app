@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:safe_app/https/api_service.dart';
 import '../../../models/order_event_model.dart';
-
 import '../../../routers/routers.dart';
 import '../../../utils/datetime_utils.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:open_file/open_file.dart';
 import '../../../utils/docx_export_util.dart';
 import 'order_event_detial_state.dart';
 
@@ -15,6 +19,9 @@ class OrderEventDetialLogic extends GetxController {
   // 添加变量来标识当前是事件还是专题
   bool _isEvent = true;
   OrderEventModels? _currentModel;
+
+  Timer? _pollTimer; // 当前查询导出结果的计时器
+  String? _currentExportUuid; // 当前导出的uuid
 
   @override
   void onReady() {
@@ -46,6 +53,8 @@ class OrderEventDetialLogic extends GetxController {
 
   @override
   void onClose() {
+    // 结束时停止轮询
+    _pollTimer?.cancel();
     super.onClose();
   }
   
@@ -383,30 +392,100 @@ class OrderEventDetialLogic extends GetxController {
   }
   
   // 生成报告
-  void generateReport() {
+  Future<void> generateReport() async {
     if (state.selectedItems.isEmpty) {
       Get.snackbar('提示', '请先选择要生成报告的项目');
       return;
     }
-    
+
+    // 打开生成报告弹窗，展示“生成中”
     state.isGeneratingReport.value = true;
     state.reportGenerationStatus.value = ReportGenerationStatus.generating;
-    
-    // 模拟报告生成过程
-    Future.delayed(const Duration(seconds: 3), () {
-      state.isGeneratingReport.value = false;
-      state.reportGenerationStatus.value = ReportGenerationStatus.success;
-      
-      // 设置报告信息
+
+    try {
+      // 取已选新闻UUID
+      final List<String> newsUuids = state.selectedItems
+          .map((i) => (i >= 0 && i < state.latestUpdates.length)
+              ? (state.latestUpdates[i]['uuid'] as String? ?? '')
+              : '')
+          .where((e) => e.isNotEmpty)
+          .toList();
+
+      if (newsUuids.isEmpty) {
+        state.reportGenerationStatus.value = ReportGenerationStatus.failed;
+        Get.snackbar('错误', '未获取到可用的UUID');
+        return;
+      }
+
+      final String type = _isEvent ? '事件' : '专题';
+      final String typeName = state.eventTitle.value;
+
+      // 发起导出
+      final recordUuid = await _apiService.startExportReport(
+        type: type,
+        typeName: typeName,
+        newsUuids: newsUuids,
+      );
+      // 发起导出失败
+      if (recordUuid == null || recordUuid.isEmpty) {
+        state.reportGenerationStatus.value = ReportGenerationStatus.failed;
+        Get.snackbar('错误', '提交导出失败');
+        return;
+      }
+      // 发起导出成功
+      _currentExportUuid = recordUuid;
+
+      // 先查一次结果
+      final bool finished = await _queryAndUpdate(recordUuid);
+      if (finished) return; // 已完成
+
+      // 未完成则轮询，直至完成/失败/超时
+      int tries = 0;
+      const int maxTries = 60; // 约2分钟
+      _pollTimer?.cancel();
+      _pollTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+        tries++;
+        final done = await _queryAndUpdate(recordUuid);
+        if (done || tries >= maxTries) {
+          if (tries >= maxTries && state.reportGenerationStatus.value == ReportGenerationStatus.generating) {
+            state.reportGenerationStatus.value = ReportGenerationStatus.failed;
+            Get.snackbar('超时', '报告生成超时，请稍后重试');
+          }
+          timer.cancel();
+        }
+      });
+    } catch (e) {
+      state.reportGenerationStatus.value = ReportGenerationStatus.failed;
+      Get.snackbar('错误', '生成报告失败: $e');
+    }
+  }
+
+  /// 查询一次导出结果并更新状态，返回是否已完成（成功或失败）
+  Future<bool> _queryAndUpdate(String uuid) async {
+    final data = await _apiService.queryExportReportResult(uuid: uuid);
+    if (data == null) return false;
+    final int? status = data['status'] is int ? data['status'] as int : int.tryParse('${data['status']}');
+    // 成功
+    if (status == 2) {
       state.reportInfo.value = {
-        'title': '事件分析报告',
-        'date': DateTime.now().toString(),
+        'title': data['file_name'] ?? '报告',
+        'file_name': data['file_name'] ?? '报告.docx',
+        'download_link': data['download_link'] ?? '',
+        'fileType': 'docx',
+        'date': DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
         'items': state.selectedItems.length,
         'eventName': state.eventTitle.value,
       };
-      
-      Get.snackbar('成功', '报告生成完成');
-    });
+      state.reportGenerationStatus.value = ReportGenerationStatus.success;
+      return true;
+    }
+    if (status == 3) {
+      state.reportGenerationStatus.value = ReportGenerationStatus.failed;
+      return true;
+    }
+    // 仍在处理中
+    state.reportGenerationStatus.value = ReportGenerationStatus.generating;
+    return false;
   }
 
   // 导出选中项目为DOCX文件
@@ -525,53 +604,62 @@ class OrderEventDetialLogic extends GetxController {
   
   // 关闭报告对话框
   void closeReportDialog() {
+    state.isGeneratingReport.value = false; // 关闭弹层
     state.reportGenerationStatus.value = ReportGenerationStatus.none;
     state.reportInfo.clear();
   }
   
-  // 预览报告
-  void previewReport() {
-    if (state.reportInfo.isEmpty) {
-      Get.snackbar('提示', '没有可预览的报告');
+  // 预览报告（直接打开下载链接）
+  void previewReport() async {
+    final link = state.reportInfo['download_link']?.toString() ?? '';
+    if (link.isEmpty) {
+      Get.snackbar('提示', '暂无可预览的报告链接');
       return;
     }
-    
-    Get.dialog(
-      AlertDialog(
-        title: const Text('报告预览'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('标题: ${state.reportInfo['title']}'),
-            Text('日期: ${state.reportInfo['date']}'),
-            Text('项目数: ${state.reportInfo['items']}'),
-            Text('事件名称: ${state.reportInfo['eventName']}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('关闭'),
-          ),
-        ],
-      ),
-    );
+    final lower = link.toLowerCase();
+    final isDoc = lower.endsWith('.doc') || lower.endsWith('.docx');
+    final previewUrl = isDoc
+        ? 'https://view.officeapps.live.com/op/view.aspx?src=${Uri.encodeComponent(link)}'
+        : link;
+    await launchUrlString(previewUrl, mode: LaunchMode.externalApplication);
   }
   
-  // 下载报告
-  void downloadReport() {
-    if (state.reportInfo.isEmpty) {
-      Get.snackbar('提示', '没有可下载的报告');
+  // 下载报告：保存到本地临时目录并调起系统应用打开
+  Future<void> downloadReport() async {
+    final link = state.reportInfo['download_link']?.toString() ?? '';
+    if (link.isEmpty) {
+      Get.snackbar('提示', '暂无下载链接');
       return;
     }
-    
-    // 模拟下载过程
-    Get.snackbar('下载中', '正在下载报告...');
-    
-    Future.delayed(const Duration(seconds: 2), () {
-      Get.snackbar('成功', '报告下载完成');
-    });
+    try {
+      Get.snackbar('下载中', '开始下载报告...');
+      // 文件名优先用后端返回，其次从URL截取
+      String fileName = (state.reportInfo['file_name']?.toString() ?? '').trim();
+      if (fileName.isEmpty) {
+        final uri = Uri.parse(link);
+        fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '报告.docx';
+      }
+      final savePath = await DocxExportUtil.getExportFilePath(fileName);
+
+      await Dio().download(
+        link,
+        savePath,
+        options: Options(responseType: ResponseType.bytes, followRedirects: true),
+        onReceiveProgress: (count, total) {
+          if (total > 0) {
+            final percent = (count / total * 100).toStringAsFixed(0);
+            // 可在此对接到UI进度条，如需要
+            // print('下载进度: $percent%');
+          }
+        },
+      );
+
+      final finalPath = await DocxExportUtil.ensurePublicVisibility(savePath, fileName);
+      Get.snackbar('成功', '报告已下载：$finalPath');
+      await OpenFile.open(finalPath);
+    } catch (e) {
+      Get.snackbar('下载失败', '$e');
+    }
   }
   
   // 刷新数据

@@ -498,9 +498,9 @@ class OrderEventDetialPage extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              // 导出DOCX按钮
+              // 生成报告按钮
               GestureDetector(
-                onTap: () => logic.exportToDocx(),
+                onTap: () => logic.generateReport(),
                 child: Container(
                   width: 80.w,
                   height: 40.w,
@@ -651,7 +651,9 @@ class OrderEventDetialPage extends StatelessWidget {
                     if (state.reportGenerationStatus.value == ReportGenerationStatus.generating)
                       _buildGeneratingContent()
                     else if (state.reportGenerationStatus.value == ReportGenerationStatus.success)
-                      _buildSuccessContent(),
+                      _buildSuccessContent()
+                      else if (state.reportGenerationStatus.value == ReportGenerationStatus.failed)
+                      _buildFailedContent(),
                     SizedBox(height: MediaQuery.of(Get.context!).padding.bottom),
                   ],
                 ),
@@ -869,6 +871,101 @@ class OrderEventDetialPage extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  // 生成失败的内容
+  Widget _buildFailedContent() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64.w,
+            height: 64.h,
+            decoration: BoxDecoration(
+              color: Colors.redAccent,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.close,
+              color: Colors.white,
+              size: 40.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            '报告生成失败',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            '请稍后重试，或减少选择的内容后再次尝试',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Color(0xFF666666),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.closeReportDialog(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1.w,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '关闭',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.generateReport(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: FYColors.loginBtn,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '重试',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
