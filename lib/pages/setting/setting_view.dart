@@ -511,7 +511,8 @@ class SettingPage extends StatelessWidget {
                     '今日访问',
                     '${state.statistics['todayVisits'] ?? 0}',
                     (state.statistics['visitTrend'] as int?) ?? 0,
-                    true,
+                    // 大于等于0 视为上升（红向上），小于0 视为下降（绿向下）。
+                    (state.statistics['visitTrend'] as int? ?? 0) >= 0,
                   ),
                 ),
                 SizedBox(width: 12.w),
@@ -519,8 +520,8 @@ class SettingPage extends StatelessWidget {
                   child: _buildStatCard(
                     '预警数量',
                     '${state.statistics['predictionCount'] ?? 0}',
-                    ((state.statistics['predictionTrend'] as int?) ?? 0).abs(),
-                    false,
+                    (state.statistics['predictionTrend'] as int?) ?? 0,
+                    (state.statistics['predictionTrend'] as int? ?? 0) >= 0,
                   ),
                 ),
               ],
@@ -574,8 +575,7 @@ class SettingPage extends StatelessWidget {
     });
   }
 
-  Widget _buildStatCard(String title, String value, int trendValue,
-      bool isPositive) {
+  Widget _buildStatCard(String title, String value, int trendValue, bool isPositive) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -607,15 +607,15 @@ class SettingPage extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+                    isPositive ? Icons.arrow_upward : Icons.arrow_downward,
                     size: 12.sp,
-                    color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                    color: isPositive ? Colors.red : FYColors.color_07CC89,
                   ),
                   Text(
-                    '$trendValue%',
+                    '${trendValue.abs()}%',
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                      color: isPositive ? Colors.red : FYColors.color_07CC89,
                     ),
                   ),
                 ],

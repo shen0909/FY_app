@@ -21,6 +21,8 @@ class SettingState {
   
   // 统计数据
   final RxMap<String, dynamic> statistics = <String, dynamic>{}.obs;
+  // 仪表盘 - 今日数据（完整缓存，用于传递至 user_analysis）
+  final RxMap<String, dynamic> dashboardToday = <String, dynamic>{}.obs;
   
   // 权限申请
   final RxInt permissionRequestCount = 3.obs;

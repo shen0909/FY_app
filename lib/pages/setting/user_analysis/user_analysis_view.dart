@@ -91,20 +91,17 @@ class UserAnalysisPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              _buildStatCard(
-                '今日访问用户',
-                state.todayVisits.toString(),
-                state.visitTrend,
-                true,
-                FYColors.color_07CC89,
-              ),
+              Obx(() => _buildStatCard(
+                  '今日访问用户',
+                  state.todayVisits.value.toString(),
+                  (state.todayVisitsTrend.value as int?) ?? 0,
+                  (state.todayVisitsTrend.value as int? ?? 0) >= 0)),
               SizedBox(width: 12.w),
               _buildStatCard(
                 '时间浏览次数',
                 state.browseTimes.toString(),
-                state.browseTrend,
+                state.browseTrend.toInt(),
                 false,
-                FYColors.color_FF3B30,
               ),
             ],
           ),
@@ -114,17 +111,15 @@ class UserAnalysisPage extends StatelessWidget {
               _buildStatCard(
                 'AI对话次数',
                 state.aiChatTimes.toString(),
-                state.aiChatTrend,
+                state.aiChatTrend.toInt(),
                 true,
-                FYColors.color_07CC89,
               ),
               SizedBox(width: 12.w),
               _buildStatCard(
                 '活跃度指数',
                 state.activityIndex.toString(),
-                state.activityTrend,
+                state.activityTrend.toInt(),
                 true,
-                FYColors.color_07CC89,
               ),
             ],
           ),
@@ -134,7 +129,7 @@ class UserAnalysisPage extends StatelessWidget {
   }
 
   // 统计卡片
-  Widget _buildStatCard(String title, String value, double trend, bool isPositive, Color trendColor) {
+  Widget _buildStatCard(String title, String value, int trend, bool isPositive) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12.w),
@@ -170,13 +165,13 @@ class UserAnalysisPage extends StatelessWidget {
                       '${trend.abs().toStringAsFixed(1)}%',
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: trendColor,
+                        color: isPositive ? Colors.red : FYColors.color_07CC89,
                       ),
                     ),
                     Icon(
                       isPositive ? Icons.arrow_upward : Icons.arrow_downward,
                       size: 12.sp,
-                      color: trendColor,
+                      color: isPositive ? Colors.red : FYColors.color_07CC89,
                     ),
                   ],
                 ),
@@ -319,7 +314,10 @@ class UserAnalysisPage extends StatelessWidget {
         maxY: 100,
         lineBarsData: [
           LineChartBarData(
-            spots: state.visitTrendData.asMap().entries.map((entry) {
+            spots: state.visitTrendData
+                .asMap()
+                .entries
+                .map((entry) {
               return FlSpot(entry.key.toDouble(), entry.value.value);
             }).toList(),
             isCurved: true,
@@ -398,60 +396,63 @@ class UserAnalysisPage extends StatelessWidget {
 
   // 用户活跃度分布
   Widget _buildUserDistributionSection() {
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '用户活跃度分布',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: FYColors.color_1A1A1A,
+    return Obx(() {
+      return Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '用户活跃度分布',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: FYColors.color_1A1A1A,
+                  ),
                 ),
-              ),
-              Text(
-                state.distributionDate,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
+                Text(
+                  state.distributionDate,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          _buildUserDistributionChart(),
-        ],
-      ),
-    );
+              ],
+            ),
+            SizedBox(height: 16.h),
+            _buildUserDistributionChart(),
+          ],
+        ),
+      );
+    });
   }
 
   // 自定义徽章组件（用于显示指示线和文本）
   Widget _Badge(String title, String value, Color color, int index, int total) {
     // 计算徽章的位置角度
     final double angle = 2 * pi * (index / total) - pi / 2;
-    
+
     // 根据角度确定文本对齐方式和指示线的方向
     final bool isRight = angle >= -pi / 2 && angle <= pi / 2;
-    
+
     // 计算指示线的起始位置（从饼图边缘开始）
     final double radius = 80.0;
     final double lineStartX = cos(angle) * radius;
     final double lineStartY = sin(angle) * radius;
-    
+
     // 计算指示线的弯折点（向外延伸20个单位）
     final double extendLength = 20.0;
     final double lineMidX = cos(angle) * (radius + extendLength);
     final double lineMidY = sin(angle) * (radius + extendLength);
-    
+
     // 计算水平延伸线的长度
     final double horizontalLineLength = 30.0;
-    final double endX = isRight ? lineMidX + horizontalLineLength : lineMidX - horizontalLineLength;
-    
+    final double endX = isRight ? lineMidX + horizontalLineLength : lineMidX -
+        horizontalLineLength;
+
     return Stack(
       children: [
         // 绘制指示线
@@ -475,7 +476,9 @@ class UserAnalysisPage extends StatelessWidget {
             width: 60,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: isRight ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+              crossAxisAlignment: isRight
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.end,
               children: [
                 Text(
                   title,
@@ -521,7 +524,11 @@ class UserAnalysisPage extends StatelessWidget {
                 PieChartData(
                   sectionsSpace: 2,
                   centerSpaceRadius: 50,
-                  sections: state.cityDistribution.entries.toList().asMap().entries.map((entry) {
+                  sections: state.cityDistribution.entries
+                      .toList()
+                      .asMap()
+                      .entries
+                      .map((entry) {
                     final index = entry.key;
                     final data = entry.value;
                     final color = colors[index % colors.length];
@@ -592,7 +599,11 @@ class UserAnalysisPage extends StatelessWidget {
                 PieChartData(
                   sectionsSpace: 2,
                   centerSpaceRadius: 50,
-                  sections: state.functionUsage.entries.toList().asMap().entries.map((entry) {
+                  sections: state.functionUsage.entries
+                      .toList()
+                      .asMap()
+                      .entries
+                      .map((entry) {
                     final index = entry.key;
                     final data = entry.value;
                     final color = colors[index % colors.length];
@@ -679,7 +690,8 @@ class UserAnalysisPage extends StatelessWidget {
                             return Container(
                               height: 48.h,
                               decoration: BoxDecoration(
-                                color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                                color: index.isEven ? Colors.white : FYColors
+                                    .color_F9F9F9,
                                 border: Border(
                                   bottom: BorderSide(
                                     color: FYColors.color_F5F5F5,
@@ -741,7 +753,9 @@ class UserAnalysisPage extends StatelessWidget {
                                 return Container(
                                   height: 48.h,
                                   decoration: BoxDecoration(
-                                    color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                                    color: index.isEven
+                                        ? Colors.white
+                                        : FYColors.color_F9F9F9,
                                     border: Border(
                                       bottom: BorderSide(
                                         color: FYColors.color_F5F5F5,
@@ -751,10 +765,13 @@ class UserAnalysisPage extends StatelessWidget {
                                   ),
                                   child: Row(
                                     children: [
-                                      _buildContentCell(item['visitCount'].toString(), 100.w),
+                                      _buildContentCell(
+                                          item['visitCount'].toString(), 100.w),
                                       _buildContentCell(item['avgTime'], 100.w),
-                                      _buildContentCell('${item['conversionRate']}%', 100.w),
-                                      _buildContentCell('${item['bounceRate']}%', 100.w),
+                                      _buildContentCell(
+                                          '${item['conversionRate']}%', 100.w),
+                                      _buildContentCell(
+                                          '${item['bounceRate']}%', 100.w),
                                     ],
                                   ),
                                 );
@@ -863,15 +880,16 @@ class UserAnalysisPage extends StatelessWidget {
             ),
             SizedBox(width: 8.w),
             Expanded(
-              child: Obx(() => Text(
-                state.selectedDepartment.value.isEmpty
-                    ? '所有部门'
-                    : state.selectedDepartment.value,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: FYColors.color_666666,
-                ),
-              )),
+              child: Obx(() =>
+                  Text(
+                    state.selectedDepartment.value.isEmpty
+                        ? '所有部门'
+                        : state.selectedDepartment.value,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_666666,
+                    ),
+                  )),
             ),
             Icon(
               Icons.arrow_forward_ios,
@@ -930,7 +948,8 @@ class UserAnalysisPage extends StatelessWidget {
                       return Container(
                         // height: 64.h,
                         decoration: BoxDecoration(
-                          color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                          color: index.isEven ? Colors.white : FYColors
+                              .color_F9F9F9,
                           border: Border(
                             bottom: BorderSide(
                               color: FYColors.color_F5F5F5,
@@ -938,7 +957,8 @@ class UserAnalysisPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 8.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1003,7 +1023,8 @@ class UserAnalysisPage extends StatelessWidget {
                           return Container(
                             // height: 64.h,
                             decoration: BoxDecoration(
-                              color: index.isEven ? Colors.white : FYColors.color_F9F9F9,
+                              color: index.isEven ? Colors.white : FYColors
+                                  .color_F9F9F9,
                               border: Border(
                                 bottom: BorderSide(
                                   color: FYColors.color_F5F5F5,
@@ -1015,9 +1036,11 @@ class UserAnalysisPage extends StatelessWidget {
                               children: [
                                 Container(
                                   width: 200.w,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w, vertical: 8.h),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
@@ -1040,7 +1063,8 @@ class UserAnalysisPage extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                _buildContentCell(item['pages'].toString(), 100.w),
+                                _buildContentCell(
+                                    item['pages'].toString(), 100.w),
                                 _buildContentCell(item['duration'], 100.w),
                                 _buildContentCell(item['details'], 100.w),
                               ],

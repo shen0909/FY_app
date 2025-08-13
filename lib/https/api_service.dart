@@ -50,6 +50,40 @@ class ApiService {
     return response;
   }
 
+  /// 仪表盘 - 获取今日数据
+  Future<Map<String, dynamic>?> getDashboardTodayData() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 仪表盘_获取今日数据失败：内层token为空');
+      }
+      return null;
+    }
+
+    final Map<String, dynamic> paramData = {
+      "消息类型": "仪表盘_获取今日数据",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+
+    final result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        final Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['返回数据'] is Map<String, dynamic>) {
+          return Map<String, dynamic>.from(resultData['返回数据']);
+        }
+        return resultData;
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析仪表盘_获取今日数据失败: $e');
+        }
+      }
+    }
+    return null;
+  }
+
   /// 发起报告导出，返回记录UUID（报告ID）
   Future<String?> startExportReport({
     required String type, // "事件" 或 "专题"

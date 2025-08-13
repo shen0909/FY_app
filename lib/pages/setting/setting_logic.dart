@@ -15,6 +15,7 @@ import 'package:safe_app/services/token_keep_alive_service.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../services/update_service.dart';
+import '../../https/api_service.dart';
 import 'setting_state.dart';
 
 class SettingLogic extends GetxController {
@@ -55,6 +56,53 @@ class SettingLogic extends GetxController {
     // 更新UI状态
     state.isLockEnabled.value = isPatternEnabled;
     state.isFingerprintEnabled.value = isFingerprintEnabled;
+
+    // 拉取仪表盘“今日数据”
+    await _loadDashboardToday();
+  }
+
+  // 拉取仪表盘数据
+  Future<void> _loadDashboardToday() async {
+    try {
+      DialogUtils.showLoading();
+      final data = await ApiService().getDashboardTodayData();
+      DialogUtils.hideLoading();
+      if (data != null) {
+        state.dashboardToday.assignAll(data);
+        final act = data['activate_count'] ?? data['activateCount'] ?? {};
+        final ent = data['enterprise_count'] ?? data['enterpriseCount'] ?? {};
+
+        int todayVisits = 0, yesterdayVisits = 0;
+        int todayEnterprise = 0, yesterdayEnterprise = 0;
+        if (act is Map) {
+          todayVisits = (act['today'] ?? 0) as int;
+          yesterdayVisits = (act['yesterday'] ?? 0) as int;
+        }
+        if (ent is Map) {
+          todayEnterprise = (ent['today'] ?? 0) as int;
+          yesterdayEnterprise = (ent['yesterday'] ?? 0) as int;
+        }
+
+        int calcTrend(int today, int yesterday) {
+          if (yesterday <= 0) return 0;
+          final diff = today - yesterday;
+          final pct = (diff / yesterday * 100).round();
+          return pct; // 负数=下降，正数=上升
+        }
+
+        final visitTrend = calcTrend(todayVisits, yesterdayVisits);
+        final predictionTrend = calcTrend(todayEnterprise, yesterdayEnterprise);
+
+        state.statistics.addAll({
+          'todayVisits': todayVisits,
+          'visitTrend': visitTrend,
+          'predictionCount': todayEnterprise,
+          'predictionTrend': predictionTrend,
+        });
+      }
+    } catch (_) {
+      DialogUtils.hideLoading();
+    }
   }
 
   // 切换锁屏开关
@@ -461,8 +509,17 @@ class SettingLogic extends GetxController {
   // 前往用户行为分析页面
   void goToUserAnalysis() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed('/user_analysis');
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(
+      '/user_analysis',
+      arguments: {
+        // 传入今日访问/昨日访问
+        'today_visit': state.statistics['todayVisits'] ?? 0,
+        'today_trend': state.statistics['visitTrend'] ?? 0,
+        'active_region_count': state.dashboardToday['active_region_count'] ?? state.dashboardToday['activeRegionCount'],
+        'time_range_active_count': state.dashboardToday['time_range_active_count'] ?? state.dashboardToday['timeRangeActiveCount'],
+      },
+    );
   }
 
   // 前往角色管理页面

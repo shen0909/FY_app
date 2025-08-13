@@ -17,11 +17,37 @@ class AreaDataManager {
     if (_isLoaded) return;
     
     try {
-      final String jsonString = await rootBundle.loadString('assets/area-data.json');
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
+      // 加载 risk_region.json（嵌套格式）
+      final String jsonString = await rootBundle.loadString('assets/risk_region.json');
+      final List<dynamic> jsonData = json.decode(jsonString);
       
-      _provinceList = Map<String, String>.from(jsonData['province_list'] ?? {});
-      _cityList = Map<String, String>.from(jsonData['city_list'] ?? {});
+      _provinceList = <String, String>{};
+      _cityList = <String, String>{};
+      
+      // 解析嵌套结构
+      for (final province in jsonData) {
+        if (province is Map<String, dynamic>) {
+          final provinceCode = province['code']?.toString() ?? '';
+          final provinceName = province['name']?.toString() ?? '';
+          if (provinceCode.isNotEmpty && provinceName.isNotEmpty) {
+            _provinceList![provinceCode] = provinceName;
+          }
+          
+          // 解析子城市
+          final children = province['children'];
+          if (children is List) {
+            for (final city in children) {
+              if (city is Map<String, dynamic>) {
+                final cityCode = city['code']?.toString() ?? '';
+                final cityName = city['name']?.toString() ?? '';
+                if (cityCode.isNotEmpty && cityName.isNotEmpty) {
+                  _cityList![cityCode] = cityName;
+                }
+              }
+            }
+          }
+        }
+      }
       
       _isLoaded = true;
       print('省市数据加载成功: ${_provinceList?.length}个省份, ${_cityList?.length}个城市');
@@ -120,4 +146,23 @@ class AreaDataManager {
 
   /// 获取城市数量  
   int get cityCount => _cityList?.length ?? 0;
+
+  /// 根据城市编码获取城市名称（尽量容错）
+  /// 支持：
+  /// - 直接匹配完整编码
+  /// - 若未匹配，则按 startsWith 方式匹配（适配如 4403 对 440300）
+  /// - 未加载或未匹配返回原始 code
+  String cityNameByCode(String code) {
+    if (!_isLoaded || _cityList == null || code.isEmpty) return code;
+    // 完整匹配
+    final direct = _cityList![code];
+    if (direct != null && direct.isNotEmpty) return direct;
+    // 前缀匹配（如 4403 -> 440300 系）
+    for (final entry in _cityList!.entries) {
+      if (entry.key.startsWith(code)) {
+        return entry.value;
+      }
+    }
+    return code;
+  }
 } 

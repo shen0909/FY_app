@@ -8,9 +8,10 @@ class VisitTrendData {
 }
 
 class UserAnalysisState {
-  // 统计数据
-  final int todayVisits = 126;
-  final double visitTrend = 12.5;
+  final RxInt todayVisits = 0.obs; // 今日访问数量
+  final RxInt todayVisitsTrend = 0.obs; // 今日访问趋势
+
+  // 其余统计（接口未返回，仍保留静态展示）
   final int browseTimes = 582;
   final double browseTrend = -12.0;
   final int aiChatTimes = 218;
@@ -25,30 +26,13 @@ class UserAnalysisState {
   final RxString timeRange = '今日 0:00-09:00'.obs;
 
   // 访问趋势数据
-  final RxList<VisitTrendData> visitTrendData = <VisitTrendData>[
-    VisitTrendData('0:00', 30),
-    VisitTrendData('1:00', 35),
-    VisitTrendData('2:00', 40),
-    VisitTrendData('3:00', 38),
-    VisitTrendData('4:00', 42),
-    VisitTrendData('5:00', 45),
-    VisitTrendData('6:00', 60),
-    VisitTrendData('7:00', 75),
-    VisitTrendData('8:00', 65),
-    VisitTrendData('9:00', 55),
-  ].obs;
+  final RxList<VisitTrendData> visitTrendData = <VisitTrendData>[].obs;
 
   // 用户活跃度分布日期
   final String distributionDate = '2024/5/11';
 
   // 城市分布数据
-  final RxMap<String, double> cityDistribution = <String, double>{
-    '广州市': 19,
-    '成都市': 27,
-    '北京市': 22,
-    '上海市': 12,
-    '广西市': 10,
-  }.obs;
+  final RxMap<String, double> cityDistribution = <String, double>{}.obs; // active_region_count
 
   // 功能使用占比
   final RxMap<String, double> functionUsage = <String, double>{

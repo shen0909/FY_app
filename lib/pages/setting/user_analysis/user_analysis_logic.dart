@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/utils/toast_util.dart';
+import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/utils/area_data_manager.dart';
 
 import 'user_analysis_state.dart';
 
@@ -10,98 +12,52 @@ class UserAnalysisLogic extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    // 加载数据
-    loadUserAnalysisData();
+    _initializeData();
+  }
+
+  /// 初始化数据（异步处理路由参数和接口调用）
+  Future<void> _initializeData() async {
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null) {
+      final activateArg = args['today_visit'];
+      final todayVisitsTrend = args['today_trend'];
+      state.todayVisits.value = activateArg;
+      state.todayVisitsTrend.value = todayVisitsTrend;
+
+      // active_region_count
+      final region = args['active_region_count'];
+      if (region is Map) {
+        final mapped = <String, double>{};
+        // 确保地区字典已加载（异步）
+        await AreaDataManager.instance.loadAreaData();
+        region.forEach((k, v) {
+          final doubleVal = v is num ? v.toDouble() : double.tryParse('$v') ?? 0.0;
+          if (doubleVal > 0) {
+            final name = AreaDataManager.instance.cityNameByCode(k.toString());
+            mapped[name] = doubleVal;
+          }
+        });
+        if (mapped.isNotEmpty) {
+          state.cityDistribution.assignAll(mapped);
+        }
+      }
+
+      // time_range_active_count
+      final timeRange = args['time_range_active_count'];
+      if (timeRange is List) {
+        state.visitTrendData.assignAll(
+          timeRange.map((e) => VisitTrendData(
+                e['time']?.toString() ?? '',
+                ((e['count'] ?? 0) as int).toDouble(),
+              )),
+        );
+      }
+    }
   }
 
   @override
   void onClose() {
     super.onClose();
-  }
-
-  // 加载用户行为分析数据
-  void loadUserAnalysisData() {
-    // 实际项目中应该从API获取数据
-    // 这里使用模拟数据
-    _loadMockData();
-
-    // 设置初始时间范围
-    updateTimeRange();
-  }
-
-  // 加载模拟数据
-  void _loadMockData() {
-    // 更新城市分布数据
-    state.cityDistribution.assignAll({
-      '广州市': 19.0,
-      '成都市': 27.0,
-      '北京市': 22.0,
-      '上海市': 12.0,
-      '广西市': 10.0,
-    });
-
-    // 更新功能使用占比数据
-    state.functionUsage.assignAll({
-      '内容浏览': 19.0,
-      'AI聊天': 27.0,
-      '智能分析': 22.0,
-      '文档管理': 12.0,
-      '其他功能': 15.0,
-    });
-
-    // 更新高频访问内容
-    state.highFrequencyContent.assignAll([
-      {
-        'title': '美国芯片出口',
-        'visitCount': 89,
-        'avgTime': '3:25',
-        'conversionRate': 12.5,
-        'bounceRate': 34.8,
-      },
-      {
-        'title': '静默GDP增长',
-        'visitCount': 72,
-        'avgTime': '2:48',
-        'conversionRate': 9.7,
-        'bounceRate': 28.3,
-      },
-      {
-        'title': '各国安全动态',
-        'visitCount': 65,
-        'avgTime': '4:12',
-        'conversionRate': 15.2,
-        'bounceRate': 42.1,
-      },
-      {
-        'title': '黑天鹅事件',
-        'visitCount': 58,
-        'avgTime': '3:42',
-        'conversionRate': 13.9,
-        'bounceRate': 35.4,
-      },
-    ]);
-
-    // 更新用户行为数据
-    state.userBehaviors.assignAll([
-      {
-        'department': '研发部门',
-        'user': '张三',
-        'action': '浏览报告',
-        'time': '2024-05-11 09:45',
-        'duration': '5分钟',
-        'pages': 28,
-        'details': '114页报告',
-      },
-      {
-        'department': '研发部门',
-        'user': '李四',
-        'action': '导出数据',
-        'time': '2024-05-11 09:30',
-        'duration': '15分钟',
-        'pages': 15,
-        'details': '48份数据',
-      },
-    ]);
   }
 
   // 更新时间范围显示
