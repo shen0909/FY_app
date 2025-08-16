@@ -40,15 +40,17 @@ class RiskLogic extends GetxController {
       await getRiskList();
       _updateCurrentUnitData();
       _updateCurrentRiskList();
-      await getRiskScoreCount(1); //获取风险评分数量
-      // 监听单位类型变化 - 优化：使用智能切换
-      ever(state.chooseUint, (_) async {
-        await _smartSwitchUnit(); // 智能切换单位类型
-      });
+      await getRiskScoreCount(1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value); //获取风险评分数量
 
       // 监听地区选择变化
-      ever(state.selectedRegionCode, (_) {
+      ever(state.selectedRegionCode, (_) async {
         _refreshData(); // 切换地区时刷新数据
+        // 地区变化时也需要刷新风险评分数量数据
+        await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value);
+      });
+
+      ever(state.chooseUint, (_) async {
+        await _smartSwitchUnit(); // 智能切换单位类型
       });
 
       debounce(state.searchKeyword, (_) async {
@@ -60,12 +62,23 @@ class RiskLogic extends GetxController {
       print("错误堆栈: $stackTrace");
       
       // 确保UI不会因为数据解析错误而崩溃
-      state.currentUnitData.value = {
-        'high': {'title': '高风险', 'count': 0, 'change': 0, 'color': 0xFFFF6850},
-        'medium': {'title': '中风险', 'count': 0, 'change': 0, 'color': 0xFFF6D500},
-        'low': {'title': '低风险', 'count': 0, 'change': 0, 'color': 0xFF07CC89},
+      // 根据当前单位类型设置默认的标题
+      String highTitle = '高风险';
+      String mediumTitle = '中风险';
+      String lowTitle = '低风险';
+      bool showLowRisk = true;
+      if (state.chooseUint.value == 2) {
+        highTitle = '重点关注';
+        mediumTitle = '一般关注';
+        showLowRisk = false;
+      }
+      Map<String, dynamic> defaultUnitData = {
+        'high': {'title': highTitle, 'count': 0, 'change': 0, 'color': 0xFFFF6850},
+        'medium': {'title': mediumTitle, 'count': 0, 'change': 0, 'color': 0xFFF6D500},
+        'low': {'title': 'lowTitle', 'count': 0, 'change': 0, 'color': 0xFF07CC89},
         'total': {'count': 0, 'color': 0xFF1A1A1A},
       };
+      state.currentUnitData.value = defaultUnitData;
       state.currentRiskList.clear();
     } finally {
       // 完成加载后隐藏loading
@@ -129,26 +142,37 @@ class RiskLogic extends GetxController {
 
   /// 智能切换单位类型（优化版本）
   Future<void> _smartSwitchUnit() async {
+    // 显示加载对话框
+    DialogUtils.showLoading('切换单位类型...');
     if (kDebugMode) {
       print('🔄 智能切换到单位类型: ${state.chooseUint.value}');
     }
 
-    // 获取当前选择的单位对应的列表
-    List<RiskListElement> currentList = _getCurrentUnitList();
-    
-    // 如果当前单位类型已有缓存数据，直接切换显示
-    if (currentList.isNotEmpty) {
-      if (kDebugMode) {
-        print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
+    try {
+      // 获取当前选择的单位对应的列表
+      List<RiskListElement> currentList = _getCurrentUnitList();
+
+      // 如果当前单位类型已有缓存数据，直接切换显示
+      if (currentList.isNotEmpty) {
+        if (kDebugMode) {
+          print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
+        }
+        await _updateCurrentUnitData();
+        _updateCurrentRiskList();
+      } else {
+        // 如果没有缓存数据，则后台加载
+        if (kDebugMode) {
+          print('🌐 缓存为空，后台加载数据');
+        }
+        await _loadUnitDataInBackground();
       }
-      _updateCurrentUnitData();
-      _updateCurrentRiskList();
-    } else {
-      // 如果没有缓存数据，则后台加载
+    } catch (e) {
       if (kDebugMode) {
-        print('🌐 缓存为空，后台加载数据');
+        print('❌ 智能切换单位类型失败: $e');
       }
-      _loadUnitDataInBackground();
+    } finally {
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
     }
   }
 
@@ -162,7 +186,7 @@ class RiskLogic extends GetxController {
       // 预加载当前分类的数据
       await _preloadRiskData();
       await getRiskList();
-      _updateCurrentUnitData();
+      await _updateCurrentUnitData();
       _updateCurrentRiskList();
       
       if (kDebugMode) {
@@ -340,9 +364,12 @@ class RiskLogic extends GetxController {
   }
 
   // 获取风险预警评分数据
-  Future<void> getRiskScoreCount(int classification) async {
+  Future<void> getRiskScoreCount(int classification, {String? regionCode}) async {
     try {
-      final result = await ApiService().getRiskScoreCount(classification);
+      // 显示加载对话框
+      DialogUtils.showLoading('获取风险评分数据...');
+      
+      final result = await ApiService().getRiskScoreCount(classification, regionCode: regionCode);
       if (kDebugMode) {
         print("获取风险评分数量结果: $result");
       }
@@ -355,31 +382,51 @@ class RiskLogic extends GetxController {
           int mediumRisk = returnData['中风险'] ?? 0;
           int lowRisk = returnData['低风险'] ?? 0;
           final int total = highRisk + mediumRisk + lowRisk;
+          
+          // 根据不同单位类型设置不同的显示标题
+          String highTitle = '高风险';
+          String mediumTitle = '中风险';
+          String lowTitle = '低风险';
+          bool showLowRisk = true;
+          
+          // 星云单位（chooseUint = 2）使用特殊显示逻辑
+          if (state.chooseUint.value == 2) {
+            highTitle = '重点关注';
+            mediumTitle = '一般关注';
+            showLowRisk = false; // 星云不显示低风险
+          }
+          
           // 更新数据
-          state.currentUnitData.value = {
+          Map<String, dynamic> unitData = {
             'high': {
-              'title': '高风险',
+              'title': highTitle,
               'count': highRisk,
               'change': 0,
               'color': 0xFFFF6850,
             },
             'medium': {
-              'title': '中风险',
+              'title': mediumTitle,
               'count': mediumRisk,
               'change': 0,
               'color': 0xFFF6D500,
-            },
-            'low': {
-              'title': '低风险',
-              'count': lowRisk,
-              'change': 0,
-              'color': 0xFF07CC89,
             },
             'total': {
               'count': total,
               'color': 0xFF1A1A1A,
             },
           };
+          
+          // 只有非星云单位才显示低风险
+          if (showLowRisk) {
+            unitData['low'] = {
+              'title': lowTitle,
+              'count': lowRisk,
+              'change': 0,
+              'color': 0xFF07CC89,
+            };
+          }
+          
+          state.currentUnitData.value = unitData;
           if (kDebugMode) {
             print("成功更新风险评分数量 - 高风险:$highRisk, 中风险:$mediumRisk, 低风险:$lowRisk");
           }
@@ -393,6 +440,9 @@ class RiskLogic extends GetxController {
       if (kDebugMode) {
         print("获取风险评分数量出错: $e，使用默认数据");
       }
+    } finally {
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
     }
   }
 
@@ -453,7 +503,7 @@ class RiskLogic extends GetxController {
         currentList = state.xingyunList;
         break;
     }
-    await getRiskScoreCount(state.chooseUint.value + 1); // 从接口获取风险数据
+    await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value); // 从接口获取风险数据
   }
 
   // 更新当前风险列表
@@ -546,12 +596,12 @@ class RiskLogic extends GetxController {
   }
 
   /// 切换单位类型
-  void changeUnit(int index) {
+  Future<void> changeUnit(int index) async {
     if (kDebugMode) {
       print('🔄 用户切换到单位类型: $index');
     }
     state.chooseUint.value = index;
-    // 智能切换逻辑由ever监听器处理
+    // await _smartSwitchUnit(); // 智能切换单位类型
   }
 
   // ==================== 缓存管理相关方法 ====================
@@ -627,51 +677,6 @@ class RiskLogic extends GetxController {
       }
     } finally {
       state.isLoading.value = false;
-    }
-  }
-
-  /// 清除当前分类的风险缓存
-  Future<void> clearCurrentRiskCache() async {
-    try {
-      final cacheService = BusinessCacheService.instance;
-      
-      int classification;
-      switch (state.chooseUint.value) {
-        case 0:
-          classification = 1;
-          break;
-        case 1:
-          classification = 2;
-          break;
-        case 2:
-          classification = 3;
-          break;
-        default:
-          classification = 1;
-      }
-      
-      await cacheService.clearRiskCache(classification: classification);
-      
-      if (kDebugMode) {
-        print('🗑️ 清除风险缓存完成 - 分类: $classification');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ 清除风险缓存失败: $e');
-      }
-    }
-  }
-
-  /// 获取缓存统计信息（用于调试）
-  Map<String, dynamic> getCacheStats() {
-    try {
-      final cacheService = BusinessCacheService.instance;
-      return cacheService.getCacheStatistics();
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ 获取缓存统计失败: $e');
-      }
-      return {};
     }
   }
   
