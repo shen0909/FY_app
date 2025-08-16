@@ -99,6 +99,13 @@ class AiQusLogic extends GetxController {
   Future<void> sendMessage() async {
     final text = state.messageController.text.trim();
     if (text.isEmpty) return;
+    // 防止重复发送：如果已有消息正在发送中，则直接返回
+    if (state.isSendingMessage.value) {
+      print('🚫 消息正在发送中，请等待当前消息处理完毕');
+      return;
+    }
+    // 设置发送状态
+    state.isSendingMessage.value = true;
 
     // 添加用户消息
     final userMessage = {
@@ -164,6 +171,8 @@ class AiQusLogic extends GetxController {
         _startPollingForReply(aiMessageIndex);
       } else {
         state.isLoading.value = false;
+        // 清除发送状态
+        state.isSendingMessage.value = false;
         // 更新AI消息为错误状态
         state.messages[aiMessageIndex] = {
           'isUser': false,
@@ -178,6 +187,8 @@ class AiQusLogic extends GetxController {
       }
     } catch (e) {
       state.isLoading.value = false;
+      // 清除发送状态
+      state.isSendingMessage.value = false;
       print('发送AI消息失败: $e');
       // 更新AI消息为错误状态
       state.messages[aiMessageIndex] = {
@@ -486,6 +497,8 @@ class AiQusLogic extends GetxController {
   void _finishStreaming(int messageIndex) {
     state.isLoading.value = false;
     state.isStreamingReply.value = false;
+    // 清除发送状态，允许发送下一条消息
+    state.isSendingMessage.value = false;
 
     // 最终更新消息
     if (messageIndex < state.messages.length) {

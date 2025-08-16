@@ -114,6 +114,9 @@ class AiQusState {
   // 是否正在初始化页面数据
   final RxBool isInitializing = false.obs;
   
+  // 是否有消息正在发送中（防止重复发送）
+  final RxBool isSendingMessage = false.obs;
+  
   // 预设的按钮位置（基于行数）
   double getButtonBottomByLines(int lines) {
     switch (lines) {
