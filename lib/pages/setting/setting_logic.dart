@@ -280,16 +280,16 @@ class SettingLogic extends GetxController {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            SizedBox(height: 8.h),
-            Text(
-              '退出登录后将清除所有本地缓存信息',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: FYColors.color_A6A6A6,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            // SizedBox(height: 8.h),
+            // Text(
+            //   '退出登录后将清除所有本地缓存信息',
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(
+            //     fontSize: 14.sp,
+            //     color: FYColors.color_A6A6A6,
+            //     fontWeight: FontWeight.w400,
+            //   ),
+            // ),
           ],
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
