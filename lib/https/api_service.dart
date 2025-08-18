@@ -2235,7 +2235,7 @@ class ApiService {
         "current_page": currentPage,
         "page_size": 10,
         'zh_name': zhName,
-        'region_code': regionCode,
+        'region_code': regionCode == 'all' ? null : regionCode,
         'custom_classification': classification, // 使用传入的参数而不是硬编码
         'custom_ent_type': entType,
       }
@@ -2437,8 +2437,8 @@ class ApiService {
     return null;
   }
 
-  /// 获取风险评分等级数量（保留旧接口作为备用）
-  Future<Map<String, dynamic>?> getRiskScoreCount(int classification) async {
+  /// 获取风险评分等级数量
+  Future<Map<String, dynamic>?> getRiskScoreCount(int classification, {String? regionCode}) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -2448,11 +2448,13 @@ class ApiService {
       return null;
     }
 
-    // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "预警企业_评分_获取评分等级数量",
       "当前请求用户UUID": token,
-      "命令具体内容": {'custom_classification': classification}
+      "命令具体内容": {
+        'custom_classification': classification,
+        'regionCode': regionCode == 'all' ? null : regionCode
+      }
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);

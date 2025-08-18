@@ -345,55 +345,56 @@ class RiskDetailsLogic extends GetxController {
             // 顶部标题区域
             dialogTitle('单位信息'),
             // 内容区域
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      // width: 342.w,
-                      height: 211.w,
-                      decoration: BoxDecoration(
-                          color: FYColors.color_F9FBFF,
-                          borderRadius: BorderRadius.all(Radius.circular(8.w))),
-                      padding: EdgeInsets.only(left: 16.w, top: 16.w),
-                      child: Column(
-                        children: [
-                          companyItem('地区', state.riskCompanyDetail.value!.area),
-                          companyItem('所处行业', state.riskCompanyDetail.value!.industry),
-                          companyItem('公司类型', state.riskCompanyDetail.value!.enterpriseType),
-                          companyItem('市值', state.riskCompanyDetail.value!.marketValue),
-                          companyItem('股价', state.riskCompanyDetail.value!.stockPrice),
-                        ],
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        // width: 342.w,
+                        height: 211.w,
+                        decoration: BoxDecoration(
+                            color: FYColors.color_F9FBFF,
+                            borderRadius: BorderRadius.all(Radius.circular(8.w))),
+                        padding: EdgeInsets.only(left: 16.w, top: 16.w),
+                        child: Column(
+                          children: [
+                            companyItem('地区', state.riskCompanyDetail.value!.area),
+                            companyItem('所处行业', state.riskCompanyDetail.value!.industry),
+                            companyItem('公司类型', state.riskCompanyDetail.value!.enterpriseType),
+                            companyItem('市值', state.riskCompanyDetail.value!.marketValue),
+                            companyItem('股价', state.riskCompanyDetail.value!.stockPrice),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 24.w),
-                    Text(
-                      '单位介绍',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w500,
-                        color: FYColors.color_1A1A1A,
-                      ),
-                    ),
-                    SizedBox(height: 16.w),
-                    Container(
-                      width: double.infinity,
-                      // width: 342.w,
-                      // height: 211.w,
-                      decoration: BoxDecoration(
-                          color: FYColors.color_F9FBFF,
-                          borderRadius: BorderRadius.all(Radius.circular(8.w))),
-                      padding: EdgeInsets.all(16.w),
-                      child: Text(
-                        state.riskCompanyDetail.value!.entProfile,
+                      SizedBox(height: 24.w),
+                      Text(
+                        '单位介绍',
                         style: TextStyle(
-                            fontSize: 14.sp, fontWeight: FontWeight.w400),
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w500,
+                          color: FYColors.color_1A1A1A,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 16.w),
+                      Container(
+                        width: double.infinity,
+                        // width: 342.w,
+                        // height: 211.w,
+                        decoration: BoxDecoration(
+                            color: FYColors.color_F9FBFF,
+                            borderRadius: BorderRadius.all(Radius.circular(8.w))),
+                        padding: EdgeInsets.all(16.w),
+                        child: Text(
+                          state.riskCompanyDetail.value!.entProfile,
+                          style: TextStyle(
+                              fontSize: 14.sp, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

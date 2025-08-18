@@ -46,12 +46,25 @@ class RiskLogic extends GetxController {
       ever(state.selectedRegionCode, (_) async {
         _refreshData(); // 切换地区时刷新数据
         // 地区变化时也需要刷新风险评分数量数据
-        await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value);
+        try {
+          await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value);
+        } catch (e) {
+          if (kDebugMode) {
+            print('❌ 地区切换时获取风险评分失败: $e');
+          }
+          // 地区切换时如果风险评分获取失败，给用户提示但不回滚地区选择
+          Get.snackbar(
+            '数据获取失败',
+            '风险评分数据获取失败，请稍后重试',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange.withOpacity(0.1),
+            colorText: Colors.orange,
+            duration: Duration(seconds: 3),
+          );
+        }
       });
 
-      ever(state.chooseUint, (_) async {
-        await _smartSwitchUnit(); // 智能切换单位类型
-      });
+      // 移除ever监听器，改为在changeUnit方法中直接处理切换逻辑
 
       debounce(state.searchKeyword, (_) async {
         _refreshData(); // 搜索时刷新数据
@@ -63,21 +76,27 @@ class RiskLogic extends GetxController {
       
       // 确保UI不会因为数据解析错误而崩溃
       // 根据当前单位类型设置默认的标题
-      String highTitle = '高风险';
-      String mediumTitle = '中风险';
-      String lowTitle = '低风险';
-      bool showLowRisk = true;
-      if (state.chooseUint.value == 2) {
-        highTitle = '重点关注';
-        mediumTitle = '一般关注';
-        showLowRisk = false;
-      }
+        String highTitle = '高风险';
+        String mediumTitle = '中风险';
+        String lowTitle = '低风险';
+        bool showLowRisk = true;
+        
+        // 星云单位使用特殊显示逻辑
+        if (state.chooseUint.value == 2) {
+          highTitle = '重点关注';
+          mediumTitle = '一般关注';
+          showLowRisk = false;
+        }
       Map<String, dynamic> defaultUnitData = {
         'high': {'title': highTitle, 'count': 0, 'change': 0, 'color': 0xFFFF6850},
         'medium': {'title': mediumTitle, 'count': 0, 'change': 0, 'color': 0xFFF6D500},
-        'low': {'title': 'lowTitle', 'count': 0, 'change': 0, 'color': 0xFF07CC89},
         'total': {'count': 0, 'color': 0xFF1A1A1A},
       };
+      
+      // 只有非星云单位才显示低风险
+      if (showLowRisk) {
+        defaultUnitData['low'] = {'title': lowTitle, 'count': 0, 'change': 0, 'color': 0xFF07CC89};
+      }
       state.currentUnitData.value = defaultUnitData;
       state.currentRiskList.clear();
     } finally {
@@ -140,41 +159,6 @@ class RiskLogic extends GetxController {
     state.isLoading.value = false;
   }
 
-  /// 智能切换单位类型（优化版本）
-  Future<void> _smartSwitchUnit() async {
-    // 显示加载对话框
-    DialogUtils.showLoading('切换单位类型...');
-    if (kDebugMode) {
-      print('🔄 智能切换到单位类型: ${state.chooseUint.value}');
-    }
-
-    try {
-      // 获取当前选择的单位对应的列表
-      List<RiskListElement> currentList = _getCurrentUnitList();
-
-      // 如果当前单位类型已有缓存数据，直接切换显示
-      if (currentList.isNotEmpty) {
-        if (kDebugMode) {
-          print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
-        }
-        await _updateCurrentUnitData();
-        _updateCurrentRiskList();
-      } else {
-        // 如果没有缓存数据，则后台加载
-        if (kDebugMode) {
-          print('🌐 缓存为空，后台加载数据');
-        }
-        await _loadUnitDataInBackground();
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ 智能切换单位类型失败: $e');
-      }
-    } finally {
-      // 隐藏加载对话框
-      DialogUtils.hideLoading();
-    }
-  }
 
   /// 后台加载单位数据（不显示loading状态）
   Future<void> _loadUnitDataInBackground() async {
@@ -186,7 +170,13 @@ class RiskLogic extends GetxController {
       // 预加载当前分类的数据
       await _preloadRiskData();
       await getRiskList();
-      await _updateCurrentUnitData();
+      try {
+        await _updateCurrentUnitData();
+      } catch (e) {
+        if (kDebugMode) {
+          print('❌ 后台加载数据时获取风险评分失败: $e');
+        }
+      }
       _updateCurrentRiskList();
       
       if (kDebugMode) {
@@ -364,7 +354,7 @@ class RiskLogic extends GetxController {
   }
 
   // 获取风险预警评分数据
-  Future<void> getRiskScoreCount(int classification, {String? regionCode}) async {
+  Future<void> getRiskScoreCount(int classification, {String? regionCode, int? targetUnitType}) async {
     try {
       // 显示加载对话框
       DialogUtils.showLoading('获取风险评分数据...');
@@ -389,8 +379,11 @@ class RiskLogic extends GetxController {
           String lowTitle = '低风险';
           bool showLowRisk = true;
           
-          // 星云单位（chooseUint = 2）使用特殊显示逻辑
-          if (state.chooseUint.value == 2) {
+          // 使用目标单位类型（如果指定）或当前单位类型来设置显示逻辑
+          final unitTypeForDisplay = targetUnitType ?? state.chooseUint.value;
+          
+          // 星云单位（unitType = 2）使用特殊显示逻辑
+          if (unitTypeForDisplay == 2) {
             highTitle = '重点关注';
             mediumTitle = '一般关注';
             showLowRisk = false; // 星云不显示低风险
@@ -406,7 +399,7 @@ class RiskLogic extends GetxController {
             },
             'medium': {
               'title': mediumTitle,
-              'count': mediumRisk,
+              'count': showLowRisk ? mediumRisk : lowRisk,
               'change': 0,
               'color': 0xFFF6D500,
             },
@@ -433,13 +426,19 @@ class RiskLogic extends GetxController {
         }
       } else {
         if (kDebugMode) {
-          print("风险评分数量接口返回数据异常，使用默认数据");
+          print("风险评分数量接口返回数据异常");
         }
+        
+        // 接口返回异常时，抛出异常让上层处理
+        throw Exception('风险评分数量接口返回数据异常');
       }
     } catch (e) {
       if (kDebugMode) {
-        print("获取风险评分数量出错: $e，使用默认数据");
+        print("获取风险评分数量出错: $e");
       }
+      
+      // 重新抛出异常，让调用方处理失败情况
+      rethrow;
     } finally {
       // 隐藏加载对话框
       DialogUtils.hideLoading();
@@ -503,7 +502,15 @@ class RiskLogic extends GetxController {
         currentList = state.xingyunList;
         break;
     }
-    await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value); // 从接口获取风险数据
+    
+    try {
+      await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value); // 从接口获取风险数据
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 更新单位数据时获取风险评分失败: $e');
+      }
+      rethrow;
+    }
   }
 
   // 更新当前风险列表
@@ -597,11 +604,77 @@ class RiskLogic extends GetxController {
 
   /// 切换单位类型
   Future<void> changeUnit(int index) async {
-    if (kDebugMode) {
-      print('🔄 用户切换到单位类型: $index');
+    // 如果点击的是当前已选择的单位，直接返回
+    if (state.chooseUint.value == index) {
+      return;
     }
-    state.chooseUint.value = index;
-    // await _smartSwitchUnit(); // 智能切换单位类型
+    
+    if (kDebugMode) {
+      print('🔄 用户尝试切换到单位类型: $index');
+    }
+    
+    // 记录原来的单位类型
+    final previousUnitType = state.chooseUint.value;
+    
+    // 显示加载对话框
+    DialogUtils.showLoading('切换单位类型...');
+    
+    try {
+      // 临时设置为目标单位类型，用于获取对应的数据
+      final targetUnitType = index;
+      
+      // 先尝试获取目标单位类型的风险评分数据
+      await getRiskScoreCount(
+        targetUnitType + 1, 
+        regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
+        targetUnitType: targetUnitType  // 传递目标单位类型用于正确设置标题
+      );
+      
+      // 数据获取成功，正式切换单位类型
+      state.chooseUint.value = index;
+      
+      // 获取当前选择的单位对应的列表
+      List<RiskListElement> currentList = _getCurrentUnitList();
+      
+      // 如果当前单位类型已有缓存数据，直接切换显示
+      if (currentList.isNotEmpty) {
+        if (kDebugMode) {
+          print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
+        }
+        _updateCurrentRiskList();
+      } else {
+        // 如果没有缓存数据，则后台加载
+        if (kDebugMode) {
+          print('🌐 缓存为空，后台加载数据');
+        }
+        await _loadUnitDataInBackground();
+      }
+      
+      if (kDebugMode) {
+        print('✅ 成功切换到单位类型: $index');
+      }
+      
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ 切换单位类型失败: $e');
+      }
+      
+      // 保持原来的单位类型不变
+      // state.chooseUint.value 保持为 previousUnitType，不需要回滚
+      
+      // 给用户错误提示
+      Get.snackbar(
+        '切换失败',
+        '单位类型切换失败，请稍后重试',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.1),
+        colorText: Colors.red,
+        duration: Duration(seconds: 3),
+      );
+    } finally {
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
+    }
   }
 
   // ==================== 缓存管理相关方法 ====================
