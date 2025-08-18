@@ -359,6 +359,10 @@ class DetailListState {
   // 年度统计数据
   var yearlyStats = <YearlyStats>[].obs;
 
+  // 实体清单趋势数据
+  var trendData = <EntityTrendData>[].obs;
+  var isTrendLoading = false.obs;
+
   // 制裁类型列表
   var sanctionTypes = <SanctionType>[].obs;
   
@@ -373,14 +377,14 @@ class DetailListState {
 
     // 初始化年度统计数据
     yearlyStats.addAll([
-      YearlyStats(year: '2018', newCount: 63, totalCount: 63),
-      YearlyStats(year: '2019', newCount: 151, totalCount: 214),
-      YearlyStats(year: '2020', newCount: 240, totalCount: 454),
-      YearlyStats(year: '2021', newCount: 157, totalCount: 611),
-      YearlyStats(year: '2022', newCount: 43, totalCount: 654),
-      YearlyStats(year: '2023', newCount: 73, totalCount: 727),
-      YearlyStats(year: '2024', newCount: 136, totalCount: 863),
-      YearlyStats(year: '2025(截至5月)', newCount: 54, totalCount: 917),
+      // YearlyStats(year: '2018', newCount: 63, totalCount: 63),
+      // YearlyStats(year: '2019', newCount: 151, totalCount: 214),
+      // YearlyStats(year: '2020', newCount: 240, totalCount: 454),
+      // YearlyStats(year: '2021', newCount: 157, totalCount: 611),
+      // YearlyStats(year: '2022', newCount: 43, totalCount: 654),
+      // YearlyStats(year: '2023', newCount: 73, totalCount: 727),
+      // YearlyStats(year: '2024', newCount: 136, totalCount: 863),
+      // YearlyStats(year: '2025(截至5月)', newCount: 54, totalCount: 917),
     ]);
   }
 }
@@ -396,4 +400,29 @@ class YearlyStats {
     required this.newCount,
     required this.totalCount,
   });
+}
+
+// 实体清单趋势数据模型
+class EntityTrendData {
+  final int count;
+  final int year;
+
+  EntityTrendData({
+    required this.count,
+    required this.year,
+  });
+
+  factory EntityTrendData.fromJson(Map<String, dynamic> json) {
+    return EntityTrendData(
+      count: json['count'] as int? ?? 0,
+      year: json['year'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+      'year': year,
+    };
+  }
 }

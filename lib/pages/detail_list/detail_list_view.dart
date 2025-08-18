@@ -617,16 +617,35 @@ class DetailListPage extends StatelessWidget {
           Container(
             height: 200.h,
             child: Obx(() {
-              // 如果没有数据，显示空视图
-              if (state.yearlyStats.isEmpty) {
+              // 优先使用接口趋势数据，如果为空则使用年度统计数据
+              final displayData = state.trendData.isNotEmpty ? state.trendData : null;
+              final fallbackData = state.yearlyStats;
+              
+              // 显示加载状态
+              if (state.isTrendLoading.value) {
+                return Center(child: CircularProgressIndicator());
+              }
+              
+              // 如果没有任何数据，显示空视图
+              if (displayData == null && fallbackData.isEmpty) {
                 return Center(child: Text("暂无数据"));
               }
               
-              // 计算Y轴最大值，使用固定逻辑
+              // 计算Y轴最大值
               double maxValue = 0;
-              for (var stat in state.yearlyStats) {
-                if (stat.newCount > maxValue) {
-                  maxValue = stat.newCount.toDouble();
+              if (displayData != null) {
+                // 使用接口趋势数据
+                for (var trend in displayData) {
+                  if (trend.count > maxValue) {
+                    maxValue = trend.count.toDouble();
+                  }
+                }
+              } else {
+                // 使用年度统计数据作为后备
+                for (var stat in fallbackData) {
+                  if (stat.newCount > maxValue) {
+                    maxValue = stat.newCount.toDouble();
+                  }
                 }
               }
               // 向上取整到最接近的50的倍数，确保图表美观
@@ -656,23 +675,44 @@ class DetailListPage extends StatelessWidget {
                         interval: 1, // 固定间隔，确保每个年份都显示
                         getTitlesWidget: (value, meta) {
                           // 年份标签
-                          if (value.toInt() >= 0 &&
-                              value.toInt() < state.yearlyStats.length) {
-                            final year = state.yearlyStats[value.toInt()].year;
-                            return Padding(
-                              padding: EdgeInsets.only(top: 8.h),
-                              child: Transform.rotate(
-                                angle: -0.785398, // 45度角
-                                child: Text(
-                                  year,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 9.sp, // 稍微减小字体避免重叠
+                          if (displayData != null) {
+                            // 使用接口趋势数据
+                            if (value.toInt() >= 0 && value.toInt() < displayData.length) {
+                              final year = displayData[value.toInt()].year.toString();
+                              return Padding(
+                                padding: EdgeInsets.only(top: 8.h),
+                                child: Transform.rotate(
+                                  angle: -0.785398, // 45度角
+                                  child: Text(
+                                    year,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xFF808080),
+                                      fontSize: 9.sp,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
+                          } else {
+                            // 使用年度统计数据作为后备
+                            if (value.toInt() >= 0 && value.toInt() < fallbackData.length) {
+                              final year = fallbackData[value.toInt()].year;
+                              return Padding(
+                                padding: EdgeInsets.only(top: 8.h),
+                                child: Transform.rotate(
+                                  angle: -0.785398, // 45度角
+                                  child: Text(
+                                    year,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xFF808080),
+                                      fontSize: 9.sp,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           }
                           return const SizedBox();
                         },
@@ -707,18 +747,27 @@ class DetailListPage extends StatelessWidget {
                   ),
                   borderData: FlBorderData(show: false),
                   minX: 0,
-                  maxX: (state.yearlyStats.length - 1).toDouble(),
+                  maxX: displayData != null 
+                      ? (displayData.length - 1).toDouble() 
+                      : (fallbackData.length - 1).toDouble(),
                   minY: 0,
                   maxY: yMaxValue,
                   lineBarsData: [
                     // 新增数量曲线
                     LineChartBarData(
-                      spots: List.generate(state.yearlyStats.length, (index) {
-                        return FlSpot(
-                          index.toDouble(),
-                          state.yearlyStats[index].newCount.toDouble(),
-                        );
-                      }),
+                      spots: displayData != null
+                          ? List.generate(displayData.length, (index) {
+                              return FlSpot(
+                                index.toDouble(),
+                                displayData[index].count.toDouble(),
+                              );
+                            })
+                          : List.generate(fallbackData.length, (index) {
+                              return FlSpot(
+                                index.toDouble(),
+                                fallbackData[index].newCount.toDouble(),
+                              );
+                            }),
                       isCurved: true,
                       color: Color(0xFF3361FE),
                       barWidth: 2,

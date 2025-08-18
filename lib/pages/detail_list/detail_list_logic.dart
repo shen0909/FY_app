@@ -28,6 +28,8 @@ class DetailListLogic extends GetxController {
     super.onInit();
     // 初始化数据
     loadData();
+    // 加载趋势数据
+    loadTrendData();
     // 初始化滚动控制器
     yearlyStatsController = ScrollController();
     leftVerticalController = ScrollController();
@@ -81,6 +83,36 @@ class DetailListLogic extends GetxController {
     // 确保关闭overlay
     hideOverlay();
     super.onClose();
+  }
+
+  /// 加载实体清单趋势数据
+  Future<void> loadTrendData() async {
+    try {
+      state.isTrendLoading.value = true;
+
+      final trendDataList = await ApiService().getEntityListTrendData();
+
+      if (trendDataList != null && trendDataList.isNotEmpty) {
+        final trends = trendDataList.map((item) => EntityTrendData.fromJson(item)).toList();
+        // 按年份排序
+        trends.sort((a, b) => a.year.compareTo(b.year));
+        // 更新状态
+        state.trendData.assignAll(trends);
+        print('实体清单趋势数据加载成功: ${trends.length}条数据');
+      } else {
+        print('实体清单趋势数据为空，保持现有数据');
+      }
+    } catch (e) {
+      print('加载实体清单趋势数据失败: $e');
+      // 出错时可以设置一些默认数据或显示错误提示
+    } finally {
+      state.isTrendLoading.value = false;
+    }
+  }
+
+  /// 刷新趋势数据
+  Future<void> refreshTrendData() async {
+    await loadTrendData();
   }
 
   // 返回拦截

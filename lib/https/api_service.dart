@@ -2509,4 +2509,48 @@ class ApiService {
 
     return null;
   }
+
+  /// 实体清单 - 获取清单趋势数据
+  Future<List<Map<String, dynamic>>?> getEntityListTrendData() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 实体清单_获取清单趋势数据失败：内层token为空');
+      }
+      return null;
+    }
+
+    final Map<String, dynamic> paramData = {
+      "消息类型": "实体清单_获取清单趋势数据",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+
+    final result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        List<dynamic>? trendList;
+        if (resultData['返回数据'] is List) {
+          trendList = resultData['返回数据'] as List<dynamic>;
+        } else if (resultData is List) {
+          trendList = resultData as List<dynamic>;
+        }
+
+        if (trendList != null) {
+          return trendList.map((item) => item as Map<String, dynamic>).toList();
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 实体清单_获取清单趋势数据解析失败: $e');
+        }
+      }
+    }
+    
+    if (kDebugMode) {
+      print('$_tag 实体清单_获取清单趋势数据失败或返回为空');
+    }
+    return null;
+  }
 }
