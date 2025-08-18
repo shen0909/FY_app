@@ -7,6 +7,7 @@ import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_logic.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/widgets/widgets.dart';
 
 import '../../../widgets/custom_app_bar.dart';
 import '../../../utils/datetime_utils.dart';
@@ -705,46 +706,66 @@ class HotDetailsView extends StatelessWidget {
   }
 
   // 影响范围
-  Widget _buildImpact(Effect effect){
+  Widget _buildImpact(Effect effect) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: FYColors.color_F9F9F9,
         borderRadius: BorderRadius.circular(8.r),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              impactItem("直接影响行业",effect.directEffect),
-              impactItem("间接影响行业",effect.indirectEffect)
-            ],
-          ),
-          SizedBox(height: 20.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("受影响企业",style: TextStyle(color: Color(0xff1A1A1A),fontSize: 14.sp,fontWeight: FontWeight.w500)),
-              SizedBox(height: 8.w),
-              Wrap(
-                spacing: 8.w,
-                runSpacing: 4.w,
-                children: effect.effectCompany.map<Widget>((element) {
-                  return Text(
-                    element,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: FYColors.color_666666,
-                    ),
-                  );
-                }).toList(),
-              )
-            ],
-          )
-        ],
-      ),
+      child: (effect.directEffect.isEmpty &&
+              effect.indirectEffect.isEmpty &&
+              effect.effectCompany.isEmpty)
+          ? FYWidget.buildEmptyContent() // 全部数据为空展示暂无数据
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Row for direct and indirect effects
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (effect.directEffect.isNotEmpty)
+                      impactItem("直接影响行业", effect.directEffect),
+                    if (effect.indirectEffect.isNotEmpty)
+                      impactItem("间接影响行业", effect.indirectEffect),
+                  ],
+                ),
+                // Add a spacer only if direct effects are present
+                if (effect.directEffect.isNotEmpty ||
+                    effect.indirectEffect.isNotEmpty)
+                  SizedBox(height: 20.w),
+                // Column for affected companies
+                if (effect.effectCompany.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "受影响企业",
+                        style: TextStyle(
+                          color: Color(0xff1A1A1A),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 8.w),
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 4.w,
+                        children: effect.effectCompany.map<Widget>((element) {
+                          return Text(
+                            element,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: FYColors.color_666666,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
     );
   }
 
