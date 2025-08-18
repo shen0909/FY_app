@@ -221,7 +221,7 @@ class LoginLogic extends GetxController {
         // 登录失败，可能是凭据已过期
         ToastUtil.showError(result['msg'] ?? '登录失败，请重新使用账号密码登录');
         // 清除可能已过期的凭据
-        await FYSharedPreferenceUtils.clearUserCredentials();
+        // await FYSharedPreferenceUtils.clearUserCredentials();
         // 登录失败时切换到密码登录
         state.loginMethod.value = 0;
       }
@@ -293,10 +293,8 @@ class LoginLogic extends GetxController {
 
     try {
       LoginData? loginData = await LoginApi.login(account, password);
-      print("登录排查:${loginData?.token}");
       if (loginData != null) {
         await FYSharedPreferenceUtils.saveLoginData(loginData);
-        
         // 🔑 修改：根据用户选择决定是否保存凭据
         if (state.rememberPassword.value) {
           await FYSharedPreferenceUtils.saveUserCredentials(account, password);
