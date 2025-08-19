@@ -537,7 +537,7 @@ class ApiService {
           (item['isUser'] == true ? 'user' : 'assistant');
       String content = item['content']?.toString() ?? '';
       String contentBase64 = base64Encode(utf8.encode(content));
-
+      print('历史消息列表:role--${role}\tcontent:${content}');
       return {
         'role': role,
         'content_base64': contentBase64,

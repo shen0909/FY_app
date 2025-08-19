@@ -316,29 +316,96 @@ class AiQusLogic extends GetxController {
   }
 
   /// 准备发送给API的历史对话数据
+  /// 根据后端要求：首次发送消息时传空列表，后续按一问一答形式传递历史
   List<Map<String, dynamic>> _prepareHistoryForAPI() {
     List<Map<String, dynamic>> apiHistory = [];
 
+    // 获取所有有效的非流式消息（排除当前正在发送的消息）
+    List<Map<String, dynamic>> validMessages = [];
+    
     for (var message in state.messages) {
-      // 跳过错误消息、系统消息和当前正在输入的消息
+      // 跳过错误消息、系统消息和当前正在流式传输的消息
       if (message['isError'] == true ||
           message['isSystem'] == true ||
-          message['isStreaming'] == true) {
+          message['isStreaming'] == true ||
+          message['isLoading'] == true) {
         continue;
       }
 
-      String role = message['isUser'] == true ? 'user' : 'assistant';
       String content = message['content']?.toString() ?? '';
-
       if (content.isNotEmpty) {
-        apiHistory.add({
-          'role': role,
-          'content': content,
-        });
+        validMessages.add(message);
       }
     }
 
-    return apiHistory;
+    // 🚀 关键逻辑：判断是否为新会话的首次消息
+    // 如果有效消息只有1条（当前用户刚发送的消息），说明是首次发送
+    if (validMessages.length <= 1) {
+      print('🎯 首次发送消息，历史记录为空列表');
+      return []; // 返回空列表
+    }
+
+    // 🔄 构建严格一问一答格式的历史记录
+    // 排除最后一条消息（当前正在发送的用户消息）
+    List<Map<String, dynamic>> historyMessages = validMessages.sublist(0, validMessages.length - 1);
+    
+    // 🚀 关键修复：确保严格的一问一答交替顺序
+    List<Map<String, dynamic>> validPairs = [];
+    
+    for (int i = 0; i < historyMessages.length; i++) {
+      var message = historyMessages[i];
+      String role = message['isUser'] == true ? 'user' : 'assistant';
+      String content = message['content']?.toString() ?? '';
+      
+      if (content.isEmpty) continue; // 跳过空内容消息
+      
+      // 确保交替顺序：user -> assistant -> user -> assistant
+      if (validPairs.isEmpty) {
+        // 第一条消息必须是用户消息
+        if (role == 'user') {
+          validPairs.add({
+            'role': role,
+            'content': content,
+          });
+        }
+      } else {
+        String lastRole = validPairs.last['role'];
+        // 确保角色交替：上一条是user，这一条必须是assistant；反之亦然
+        if ((lastRole == 'user' && role == 'assistant') || 
+            (lastRole == 'assistant' && role == 'user')) {
+          validPairs.add({
+            'role': role,
+            'content': content,
+          });
+        } else {
+          // 如果顺序不对，跳过这条消息，保持交替顺序
+          print('⚠️ 跳过顺序不正确的消息: $role (期望: ${lastRole == 'user' ? 'assistant' : 'user'})');
+        }
+      }
+    }
+    
+    // 🛡️ 最终检查：确保历史记录格式正确
+    // 历史记录应该包含完整的用户-助手对话对
+    // 如果最后一条是孤立的用户消息（没有对应的助手回复），才移除它
+    if (validPairs.isNotEmpty && validPairs.last['role'] == 'user') {
+      // 检查这是否是一个孤立的用户消息（前面没有assistant回复）
+      if (validPairs.length == 1) {
+        // 只有一条用户消息，没有回复，移除它避免发送不完整对话
+        validPairs.removeLast();
+        print('🔧 移除孤立的用户消息，避免发送不完整对话');
+      }
+      // 如果有多条消息且最后是user，说明是完整的对话历史，保持不变
+    }
+
+    print('📝 构建严格交替历史记录，共 ${validPairs.length} 条消息');
+    
+    // 🔍 调试信息：打印历史记录的角色顺序
+    if (validPairs.isNotEmpty) {
+      String roleSequence = validPairs.map((msg) => msg['role']).join(' -> ');
+      print('📋 历史记录角色顺序: $roleSequence');
+    }
+    
+    return validPairs;
   }
 
   /// 开始轮询获取AI回复 - 等待式轮询（正确实现）
