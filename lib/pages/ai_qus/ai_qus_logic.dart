@@ -260,6 +260,7 @@ class AiQusLogic extends GetxController {
       final unsyncedMessages = state.messages.where((msg) => 
         msg['isError'] != true && 
         msg['isSystem'] != true &&
+        msg['isTemporary'] != true && // 排除临时错误消息
         msg['content']?.toString().isNotEmpty == true &&
         msg['isSynced'] != true // 添加同步标记检查
       ).toList();
@@ -324,9 +325,10 @@ class AiQusLogic extends GetxController {
     List<Map<String, dynamic>> validMessages = [];
     
     for (var message in state.messages) {
-      // 跳过错误消息、系统消息和当前正在流式传输的消息
+      // 跳过错误消息、系统消息、临时消息和当前正在流式传输的消息
       if (message['isError'] == true ||
           message['isSystem'] == true ||
+          message['isTemporary'] == true || // 排除临时错误消息
           message['isStreaming'] == true ||
           message['isLoading'] == true) {
         continue;
@@ -569,24 +571,59 @@ class AiQusLogic extends GetxController {
 
     // 最终更新消息
     if (messageIndex < state.messages.length) {
-      final finalContent = state.currentAiReply.value.isEmpty
+      final isAiReplyEmpty = state.currentAiReply.value.isEmpty;
+      final finalContent = isAiReplyEmpty
           ? "抱歉，我现在无法回答您的问题，请稍后再试。"
           : state.currentAiReply.value;
 
-      state.messages[messageIndex] = {
-        'isUser': false,
-        'content': finalContent,
-        'isStreaming': false,
-        'timestamp': DateTime.now().toIso8601String(),
-        'aiModel': state.selectedModel.value,
-        'isSynced': false, // 标记最终AI消息需要同步
-      };
+      // 🚨 关键修复：如果AI回复失败，实现事务性回滚
+      if (isAiReplyEmpty) {
+        // AI回复失败，移除失败的对话对（用户消息 + AI错误回复）
+        print('🔧 AI回复失败，执行事务性回滚，移除失败的对话对');
+        
+        // 移除AI错误消息（当前消息）
+        if (messageIndex < state.messages.length) {
+          state.messages.removeAt(messageIndex);
+        }
+        
+        // 查找并移除对应的用户消息（最后一条用户消息）
+        for (int i = state.messages.length - 1; i >= 0; i--) {
+          if (state.messages[i]['isUser'] == true && state.messages[i]['isSynced'] == false) {
+            print('🗑️ 移除失败的用户消息: ${state.messages[i]['content']}');
+            state.messages.removeAt(i);
+            break;
+          }
+        }
+        
+        // 显示临时错误提示（不保存到历史记录）
+        state.messages.add({
+          'isUser': false,
+          'content': finalContent,
+          'isError': true,
+          'isTemporary': true, // 标记为临时消息，不同步
+          'timestamp': DateTime.now().toIso8601String(),
+        });
+        
+        print('💡 AI回复失败，已回滚用户消息，避免污染历史记录');
+        
+      } else {
+        // AI回复成功，正常处理
+        state.messages[messageIndex] = {
+          'isUser': false,
+          'content': finalContent,
+          'isStreaming': false,
+          'timestamp': DateTime.now().toIso8601String(),
+          'aiModel': state.selectedModel.value,
+          'isSynced': false, // 标记最终AI消息需要同步
+        };
 
-      // 添加到对话历史
-      state.addToConversationHistory('assistant', finalContent);
+        // 添加到对话历史
+        state.addToConversationHistory('assistant', finalContent);
 
-      // 立即更新数据库记录
-      _updateChatHistoryInDB();
+        // 只有成功时才同步到数据库
+        _updateChatHistoryInDB();
+        print('✅ AI回复成功，消息已保存到历史记录');
+      }
     }
 
     // 重置状态
@@ -601,6 +638,7 @@ class AiQusLogic extends GetxController {
         final hasUnsyncedMessages = state.messages.any((msg) => 
           msg['isError'] != true && 
           msg['isSystem'] != true &&
+          msg['isTemporary'] != true && // 排除临时错误消息
           msg['content']?.toString().isNotEmpty == true &&
           msg['isSynced'] != true
         );
