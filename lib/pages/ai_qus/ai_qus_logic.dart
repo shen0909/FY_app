@@ -1122,6 +1122,7 @@ class AiQusLogic extends GetxController {
       'isUser': false,
       'content': 'Hi~我是烽云AI助手，已接入Perplexity、DeepSeek、Hunyuan大模型，提供实时检索与本地知识库无缝融合，为用户提供精准的回答，提供常用提示词模板。',
       'isSynced': true, // ✅ 标记欢迎消息为已同步（系统消息不需要同步到服务端）
+      'isSystem': true, // 标记为系统消息，不会包含在历史对话API中
     });
 
     state.currentConversationId = null;
@@ -1266,6 +1267,7 @@ class AiQusLogic extends GetxController {
             'isUser': false,
             'content': 'Hi~我是烽云AI助手，已接入Perplexity、DeepSeek、Hunyuan大模型，提供实时检索与本地知识库无缝融合，为用户提供精准的回答，提供常用提示词模板。',
             'isSynced': true, // ✅ 欢迎消息也标记为已同步（系统消息）
+            'isSystem': true, // 标记为系统消息，不会包含在历史对话API中
           });
         }
 

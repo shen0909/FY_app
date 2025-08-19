@@ -135,10 +135,11 @@ class AiQusState {
   
   // 初始化演示数据
   void _initDemoData() {
-    // 添加示例消息
+    // 添加示例消息（开场白，标记为系统消息，不会发送到API）
     messages.add({
       'isUser': false,
       'content': 'Hi~我是烽云AI助手，已接入Perplexity、DeepSeek、Hunyuan大模型，提供实时检索与本地知识库无缝融合，为用户提供精准的回答，提供常用提示词模板。',
+      'isSystem': true, // 🔥 标记为系统消息，不会包含在历史对话API中
     });
     
     // 添加示例聊天历史
