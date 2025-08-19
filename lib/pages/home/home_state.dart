@@ -23,7 +23,7 @@ class HomeState {
   List<Map<String, dynamic>> homeItemList = [];
   
   // 轮播图当前索引
-  int currentBannerIndex = 0;
+  final RxInt currentBannerIndex = 0.obs;
 
   // 从接口获取的banner数据
   final bannerList = <BannerModels>[].obs;

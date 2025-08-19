@@ -167,33 +167,29 @@ class HomePage extends StatelessWidget {
             Positioned(
               bottom: 10.h,
               right: 16.w,
-              child: GetBuilder<HomeLogic>(
-                builder: (controller) {
-                  return Obx(() {
-                    final bannerCount = state.bannerList.length;
-                    // 只有当有接口数据时才显示指示器
-                    if (bannerCount == 0) {
-                      return Container(); // 没有数据时不显示指示器
-                    }
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(bannerCount, (index) {
-                        return Container(
-                          width: 8.w,
-                          height: 8.w,
-                          margin: EdgeInsets.symmetric(horizontal: 2.5.w),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: state.currentBannerIndex == index
-                                ? Colors.white
-                                : Colors.white54,
-                          ),
-                        );
-                      }),
-                    );
-                  });
+              child: Obx(() {
+                final bannerCount = state.bannerList.length;
+                // 只有当有接口数据时才显示指示器
+                if (bannerCount == 0) {
+                  return Container(); // 没有数据时不显示指示器
                 }
-              ),
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(bannerCount, (index) {
+                    return Container(
+                      width: 8.w,
+                      height: 8.w,
+                      margin: EdgeInsets.symmetric(horizontal: 2.5.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: state.currentBannerIndex.value == index
+                            ? Colors.white
+                            : Colors.white54,
+                      ),
+                    );
+                  }),
+                );
+              }),
             )
           ],
         ),

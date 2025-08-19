@@ -15,6 +15,8 @@ class HomeLogic extends GetxController {
   final HomeState state = HomeState();
   late PageController pageController;
   Timer? _autoPlayTimer;
+  Timer? _debounceTimer; // 防抖定时器
+  bool _isAnimating = false; // 是否正在执行动画
 
   @override
   void onInit() {
@@ -35,6 +37,7 @@ class HomeLogic extends GetxController {
   void onClose() {
     pageController.dispose();
     _stopAutoPlay();
+    _debounceTimer?.cancel(); // 取消防抖定时器
     // 停止Token保活服务
     _stopTokenKeepAlive();
     super.onClose();
@@ -79,23 +82,29 @@ class HomeLogic extends GetxController {
   // 启动自动轮播
   void _startAutoPlay() {
     _autoPlayTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      if (state.isBannerTouching.value) {
+      if (state.isBannerTouching.value || _isAnimating) {
         return;
       }
       final bannerCount = state.bannerList.length;
       
       if (bannerCount > 1) {
-        if (state.currentBannerIndex < bannerCount - 1) {
+        _isAnimating = true;
+        
+        if (state.currentBannerIndex.value < bannerCount - 1) {
           pageController.nextPage(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeIn,
-          );
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          ).then((_) {
+            _isAnimating = false;
+          });
         } else {
           pageController.animateToPage(
             0,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeIn,
-          );
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          ).then((_) {
+            _isAnimating = false;
+          });
         }
       }
     });
@@ -112,13 +121,24 @@ class HomeLogic extends GetxController {
     if (state.isBannerTouching.value == isTouching) {
       return;
     }
-    state.isBannerTouching.value = isTouching;
+    
+    if (isTouching) {
+      // 立即设置为触摸状态，停止自动轮播
+      state.isBannerTouching.value = true;
+      _debounceTimer?.cancel();
+    } else {
+      // 用户抬起手指时，延迟恢复自动轮播
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(Duration(milliseconds: 1500), () {
+        state.isBannerTouching.value = false;
+      });
+    }
   }
 
   // 更新轮播图当前索引
   void updateBannerIndex(int index) {
-    state.currentBannerIndex = index;
-    update();
+    state.currentBannerIndex.value = index;
+    // 移除 update() 调用，避免重建整个GetBuilder导致闪烁
   }
 
   // 处理轮播图点击
