@@ -24,36 +24,47 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         bottom: true,
-        child: Padding(
-          padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 12.0.w, right: 12.w, top: 8.h),
+                child: Column(
                   children: [
-                    Image.asset(
-                      FYImages.appIcon_32,
-                      width: 32.w,
-                      height: 32.h,
-                      fit: BoxFit.contain,
+                    Row(
+                      children: [
+                        Image.asset(
+                          FYImages.appIcon_32,
+                          width: 32.w,
+                          height: 32.h,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          'FY APP',
+                          style: FYTextStyles.getAppTitle(),
+                        )
+                      ],
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      'FY APP',
-                      style: FYTextStyles.getAppTitle(),
-                    )
+                    SizedBox(height: 12.h),
+                    _buildHeader(),
                   ],
                 ),
-                SizedBox(height: 12.h),
-                _buildHeader(),
-                SizedBox(height: 16.h),
-                Obx(() => _buildRiskWarning()),
-                SizedBox(height: 16.h),
-                _buildQuickMenu(),
-                SizedBox(height: 16.h),
-                _buildListUpdate(),
-              ],
-            ),
+              ),
+              SizedBox(height: 16.h),
+              Padding(
+                padding: EdgeInsets.only(left: 28.0.w, right: 28.w),
+                child: Column(
+                  children: [
+                    Obx(() => _buildRiskWarning()),
+                    SizedBox(height: 16.w),
+                    _buildQuickMenu(),
+                    SizedBox(height: 16.w),
+                    _buildListUpdate(),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -384,7 +395,7 @@ class HomePage extends StatelessWidget {
   // 底部快捷菜单
   Widget _buildQuickMenu() {
     return Wrap(
-      spacing: 11.w,
+      spacing: 10.w,
       runSpacing: 10.w,
       children:
           state.homeItemList.map((element) => _buildMenuItem(element)).toList(),
@@ -396,26 +407,27 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => _handleMenuItemClick(item['title']),
       child: Container(
-        width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
+        width: 153.w,
         padding: EdgeInsets.only(bottom: 10.w,top: 10.w),
-        height: 92.h,
+        height: 77.w,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
               colors: item['bgColor']),
           borderRadius: BorderRadius.circular(15.r),
         ),
-        child: Column(
+        child: Row(
+          // mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               item['image'],
-              width: 40.w,
-              height: 40.w,
+              width: 32.w,
+              height: 32.w,
               fit: BoxFit.contain,
             ),
-            SizedBox(height: 8.h),
+            SizedBox(width: 8.w),
             Text(
               item['title'],
               style: TextStyle(
@@ -457,8 +469,8 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => logic.goDetailList(),
       child: Container(
-        padding:
-            EdgeInsets.only(top: 17.h, left: 16.w, bottom: 16.h, right: 16.w),
+        padding: EdgeInsets.only(top: 28.w, left: 15.w, bottom: 33.w, right: 12.w),
+        // height: 105.w,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -504,7 +516,7 @@ class HomePage extends StatelessWidget {
                   SizedBox(height: 14.h),
                   Text(
                     state.listUpdateTime.value.isNotEmpty 
-                        ? "${DateTimeUtils.formatUpdateTime(state.listUpdateTime.value)}更新"
+                        ? "${state.listUpdateTime.value}更新"
                         : "数据更新中...", // 默认显示
                     style: TextStyle(
                       color: Color(0xFF333333),
