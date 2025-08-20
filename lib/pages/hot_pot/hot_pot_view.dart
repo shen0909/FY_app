@@ -438,18 +438,6 @@ class HotPotPage extends StatelessWidget {
                       color: isRead ? FYColors.color_A6A6A6 : FYColors.color_1A1A1A,
                     ),
                   ),
-                  SizedBox(height: 12.w),
-                  Text(
-                    news.newsSummary,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      // 已读状态使用较浅的颜色
-                      color: isRead ? FYColors.color_A6A6A6 : FYColors.color_1A1A1A,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                   SizedBox(height: 8.w),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
