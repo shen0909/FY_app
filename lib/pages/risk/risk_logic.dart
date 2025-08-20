@@ -252,7 +252,7 @@ class RiskLogic extends GetxController {
 
     try {
       await getRiskList(isLoadMore: true);
-      _updateCurrentUnitData();
+      // _updateCurrentUnitData();
       _updateCurrentRiskList();
     } catch (e) {
       print("加载更多数据失败: $e");
