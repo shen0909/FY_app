@@ -807,10 +807,10 @@ class _RiskPageState extends State<RiskPage> {
                     ),
                   ),
                   const Spacer(),
-                  Text(
-                    '风险等级 ',
-                    style: FYTextStyles.commonTextStyle(),
-                  ),
+                  // Text(
+                  //   '风险等级 ',
+                  //   style: FYTextStyles.commonTextStyle(),
+                  // ),
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(12.w)),

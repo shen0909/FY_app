@@ -32,7 +32,7 @@ class RiskLogic extends GetxController {
     // 初始化滚动控制器
     scrollController = ScrollController();
     _addScrollListener();
-    
+
     try {
       await loadRegionData();
       // 预加载当前分类的风险数据
@@ -69,18 +69,18 @@ class RiskLogic extends GetxController {
       debounce(state.searchKeyword, (_) async {
         _refreshData(); // 搜索时刷新数据
       }, time: Duration(milliseconds: 500));
-      
+
     } catch (e, stackTrace) {
       print("解析风险数据出错: $e");
       print("错误堆栈: $stackTrace");
-      
+
       // 确保UI不会因为数据解析错误而崩溃
       // 根据当前单位类型设置默认的标题
         String highTitle = '高风险';
         String mediumTitle = '中风险';
         String lowTitle = '低风险';
         bool showLowRisk = true;
-        
+
         // 星云单位使用特殊显示逻辑
         if (state.chooseUint.value == 2) {
           highTitle = '重点关注';
@@ -92,7 +92,7 @@ class RiskLogic extends GetxController {
         'medium': {'title': mediumTitle, 'count': 0, 'change': 0, 'color': 0xFFF6D500},
         'total': {'count': 0, 'color': 0xFF1A1A1A},
       };
-      
+
       // 只有非星云单位才显示低风险
       if (showLowRisk) {
         defaultUnitData['low'] = {'title': lowTitle, 'count': 0, 'change': 0, 'color': 0xFF07CC89};
@@ -129,7 +129,7 @@ class RiskLogic extends GetxController {
   void _addScrollListener() {
     scrollController.addListener(() {
       // 当滚动到距离底部200像素时触发加载更多
-      if (scrollController.position.pixels >= 
+      if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent - 200) {
         loadMoreData();
       }
@@ -152,7 +152,7 @@ class RiskLogic extends GetxController {
         state.xingyunList.clear();
         break;
     }
-    
+
     await getRiskList();
     _updateCurrentUnitData();
     _updateCurrentRiskList();
@@ -166,7 +166,7 @@ class RiskLogic extends GetxController {
       // 重置当前单位的分页状态
       state.currentPage.value = 1;
       state.hasMoreData.value = true;
-      
+
       // 预加载当前分类的数据
       await _preloadRiskData();
       await getRiskList();
@@ -178,7 +178,7 @@ class RiskLogic extends GetxController {
         }
       }
       _updateCurrentRiskList();
-      
+
       if (kDebugMode) {
         print('✅ 后台数据加载完成');
       }
@@ -192,23 +192,23 @@ class RiskLogic extends GetxController {
   /// 下拉刷新（强制刷新当前数据）
   Future<void> onRefresh() async {
     if (state.isRefreshing.value) return;
-    
+
     state.isRefreshing.value = true;
-    
+
     try {
       if (kDebugMode) {
         print('🔽 开始下拉刷新');
       }
-      
+
       // 重置分页状态但不清空显示数据
       state.currentPage.value = 1;
       state.hasMoreData.value = true;
-      
+
       // 强制刷新当前单位类型的数据
       await getRiskList(forceRefresh: true);
       _updateCurrentUnitData();
       _updateCurrentRiskList();
-      
+
       if (kDebugMode) {
         print('✅ 下拉刷新完成');
       }
@@ -246,10 +246,10 @@ class RiskLogic extends GetxController {
     if (state.isLoadingMore.value || !state.hasMoreData.value) {
       return;
     }
-    
+
     state.isLoadingMore.value = true;
     state.currentPage.value++;
-    
+
     try {
       await getRiskList(isLoadMore: true);
       _updateCurrentUnitData();
@@ -273,7 +273,7 @@ class RiskLogic extends GetxController {
           classification = 1; // 烽云一号 -> FY一号
           break;
         case 1:
-          classification = 2; // 烽云二号 -> FY二号  
+          classification = 2; // 烽云二号 -> FY二号
           break;
         case 2:
           classification = 3; // 星云
@@ -289,7 +289,7 @@ class RiskLogic extends GetxController {
         classification: classification,
         forceUpdate: forceRefresh,
       );
-      
+
       if (riskyDataNew != null) {
         if (isLoadMore) {
           // 加载更多时，将数据追加到当前选择的列表
@@ -321,7 +321,7 @@ class RiskLogic extends GetxController {
               break;
           }
         }
-        
+
         // 判断是否还有更多数据
         // 如果返回的数据少于每页大小，说明没有更多数据了
         if (riskyDataNew.list.length < 10) {
@@ -329,7 +329,7 @@ class RiskLogic extends GetxController {
         } else {
           state.hasMoreData.value = true;
         }
-        
+
         if (kDebugMode) {
           print('✅ 风险数据获取成功 - 分类: $classification, 页数: ${state.currentPage.value}, 数据条数: ${riskyDataNew.list.length}');
         }
@@ -358,7 +358,7 @@ class RiskLogic extends GetxController {
     try {
       // 显示加载对话框
       DialogUtils.showLoading('获取风险评分数据...');
-      
+
       final result = await ApiService().getRiskScoreCount(classification, regionCode: regionCode);
       if (kDebugMode) {
         print("获取风险评分数量结果: $result");
@@ -372,23 +372,23 @@ class RiskLogic extends GetxController {
           int mediumRisk = returnData['中风险'] ?? 0;
           int lowRisk = returnData['低风险'] ?? 0;
           final int total = highRisk + mediumRisk + lowRisk;
-          
+
           // 根据不同单位类型设置不同的显示标题
           String highTitle = '高风险';
           String mediumTitle = '中风险';
           String lowTitle = '低风险';
           bool showLowRisk = true;
-          
+
           // 使用目标单位类型（如果指定）或当前单位类型来设置显示逻辑
           final unitTypeForDisplay = targetUnitType ?? state.chooseUint.value;
-          
+
           // 星云单位（unitType = 2）使用特殊显示逻辑
           if (unitTypeForDisplay == 2) {
             highTitle = '重点关注';
             mediumTitle = '一般关注';
             showLowRisk = false; // 星云不显示低风险
           }
-          
+
           // 更新数据
           Map<String, dynamic> unitData = {
             'high': {
@@ -408,7 +408,7 @@ class RiskLogic extends GetxController {
               'color': 0xFF1A1A1A,
             },
           };
-          
+
           // 只有非星云单位才显示低风险
           if (showLowRisk) {
             unitData['low'] = {
@@ -418,7 +418,7 @@ class RiskLogic extends GetxController {
               'color': 0xFF07CC89,
             };
           }
-          
+
           state.currentUnitData.value = unitData;
           if (kDebugMode) {
             print("成功更新风险评分数量 - 高风险:$highRisk, 中风险:$mediumRisk, 低风险:$lowRisk");
@@ -428,7 +428,7 @@ class RiskLogic extends GetxController {
         if (kDebugMode) {
           print("风险评分数量接口返回数据异常");
         }
-        
+
         // 接口返回异常时，抛出异常让上层处理
         throw Exception('风险评分数量接口返回数据异常');
       }
@@ -436,7 +436,7 @@ class RiskLogic extends GetxController {
       if (kDebugMode) {
         print("获取风险评分数量出错: $e");
       }
-      
+
       // 重新抛出异常，让调用方处理失败情况
       rethrow;
     } finally {
@@ -466,24 +466,24 @@ class RiskLogic extends GetxController {
     if (state.selectedProvince.value != null) {
       List<String> cities = ["全部"];
       cities.addAll(state.selectedProvince.value!.children.map((city) => city.name));
-      
+
       // 分离优先城市和其他城市
       List<String> priority = ["全部"];
       List<String> others = [];
-      
+
       for (var city in state.selectedProvince.value!.children) {
         // 广东省的重要城市优先显示
-        if (state.selectedProvince.value!.name == "广东省" && 
+        if (state.selectedProvince.value!.name == "广东省" &&
             ["广州市", "深圳市", "珠海市", "佛山市", "东莞市", "中山市"].contains(city.name)) {
           priority.add(city.name);
         } else {
           others.add(city.name);
         }
       }
-      
+
       state.priorityCities.assignAll(priority);
       state.otherCities.assignAll(others);
-      
+
     }
   }
 
@@ -502,7 +502,7 @@ class RiskLogic extends GetxController {
         currentList = state.xingyunList;
         break;
     }
-    
+
     try {
       await getRiskScoreCount(state.chooseUint.value + 1, regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value); // 从接口获取风险数据
     } catch (e) {
@@ -533,7 +533,15 @@ class RiskLogic extends GetxController {
       'englishName': company.enName,
       'description': company.entProfile,
       'riskLevel': company.riskType,
-      'riskLevelText': company.riskType == 1 ? "低风险" : company.riskType == 2 ? "中风险" : "高风险",
+      'riskLevelText': state.chooseUint.value == 2
+                  ? company.riskType == 1
+                      ? "一般关注"
+                      : '重点关注'
+                  : company.riskType == 1
+                      ? "低风险"
+                      : company.riskType == 2
+                          ? "中风险"
+                          : "高风险",
       'riskColor': _getRiskColor(company.riskType),
       'borderColor': _getBorderColor(company.riskType),
       'updateTime': company.updatedAt,
@@ -608,34 +616,34 @@ class RiskLogic extends GetxController {
     if (state.chooseUint.value == index) {
       return;
     }
-    
+
     if (kDebugMode) {
       print('🔄 用户尝试切换到单位类型: $index');
     }
-    
+
     // 记录原来的单位类型
     final previousUnitType = state.chooseUint.value;
-    
+
     // 显示加载对话框
     DialogUtils.showLoading('切换单位类型...');
-    
+
     try {
       // 临时设置为目标单位类型，用于获取对应的数据
       final targetUnitType = index;
-      
+
       // 先尝试获取目标单位类型的风险评分数据
       await getRiskScoreCount(
-        targetUnitType + 1, 
+        targetUnitType + 1,
         regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
         targetUnitType: targetUnitType  // 传递目标单位类型用于正确设置标题
       );
-      
+
       // 数据获取成功，正式切换单位类型
       state.chooseUint.value = index;
-      
+
       // 获取当前选择的单位对应的列表
       List<RiskListElement> currentList = _getCurrentUnitList();
-      
+
       // 如果当前单位类型已有缓存数据，直接切换显示
       if (currentList.isNotEmpty) {
         if (kDebugMode) {
@@ -649,19 +657,19 @@ class RiskLogic extends GetxController {
         }
         await _loadUnitDataInBackground();
       }
-      
+
       if (kDebugMode) {
         print('✅ 成功切换到单位类型: $index');
       }
-      
+
     } catch (e) {
       if (kDebugMode) {
         print('❌ 切换单位类型失败: $e');
       }
-      
+
       // 保持原来的单位类型不变
       // state.chooseUint.value 保持为 previousUnitType，不需要回滚
-      
+
       // 给用户错误提示
       Get.snackbar(
         '切换失败',
@@ -683,7 +691,7 @@ class RiskLogic extends GetxController {
   Future<void> _preloadRiskData() async {
     try {
       final cacheService = BusinessCacheService.instance;
-      
+
       // 根据当前选择的单位类型预加载数据
       int classification;
       switch (state.chooseUint.value) {
@@ -699,13 +707,13 @@ class RiskLogic extends GetxController {
         default:
           classification = 1;
       }
-      
+
       // 预加载当前地区的风险数据
       await cacheService.preloadRiskData(
         classification: classification,
         regionCode: state.selectedRegionCode.value.isEmpty ? null : state.selectedRegionCode.value,
       );
-      
+
       if (kDebugMode) {
         print('📦 风险数据预加载完成 - 分类: $classification');
       }
@@ -721,7 +729,7 @@ class RiskLogic extends GetxController {
     state.isLoading.value = true;
     state.currentPage.value = 1;
     state.hasMoreData.value = true;
-    
+
     // 清空当前列表
     switch (state.chooseUint.value) {
       case 0:
@@ -734,13 +742,13 @@ class RiskLogic extends GetxController {
         state.xingyunList.clear();
         break;
     }
-    
+
     try {
       // 强制刷新数据
       await getRiskList(forceRefresh: true);
       _updateCurrentUnitData();
       _updateCurrentRiskList();
-      
+
       if (kDebugMode) {
         print('🔄 风险数据手动刷新完成');
       }
@@ -752,7 +760,7 @@ class RiskLogic extends GetxController {
       state.isLoading.value = false;
     }
   }
-  
+
   // 显示未读消息弹窗（企业相关新闻）
   Future<void> showMessageDialog(String enterpriseUuid) async {
     try {
@@ -880,12 +888,12 @@ class RiskLogic extends GetxController {
       // 触发刷新弹窗（依赖Obx外层时自动），此处不强制
     }
   }
-  
+
   // 关闭未读消息弹窗
   void closeMessageDialog() {
     Get.back();
   }
-  
+
   // 将消息标记为已读
   void markMessageAsRead(int index) {
     if (index >= 0 && index < state.currentUnreadMessages.length) {
@@ -894,7 +902,7 @@ class RiskLogic extends GetxController {
       state.currentUnreadMessages[index] = updatedMessage;
     }
   }
-  
+
   // 将所有消息标记为已读
   void markAllMessagesAsRead() {
     final updatedMessages = state.currentUnreadMessages.map((message) {
@@ -902,7 +910,7 @@ class RiskLogic extends GetxController {
       updatedMessage['isRead'] = true;
       return updatedMessage;
     }).toList();
-    
+
     state.currentUnreadMessages.assignAll(updatedMessages);
   }
 
@@ -951,14 +959,14 @@ class RiskLogic extends GetxController {
     final List<Map<String, String>> regionOptions = [
       {'name': '全部', 'code': 'all'}
     ];
-    
+
     if (state.selectedProvince.value != null) {
       regionOptions.addAll(state.selectedProvince.value!.children.map((city) => {
         'name': city.name,
         'code': city.code
       }).toList());
     }
-    
+
     return Material(
       color: Colors.transparent,
       child: Stack(
@@ -972,7 +980,7 @@ class RiskLogic extends GetxController {
               height: double.infinity,
             ),
           ),
-          
+
           // 地区选择内容
           Positioned(
             left: (position.dx - 16).w,
@@ -1010,7 +1018,7 @@ class RiskLogic extends GetxController {
                           final isSelected = state.selectedRegionCode.value == region['code'] ||
                                            (state.selectedRegionCode.value.isEmpty && region['code'] == 'all');
                           final isPriority = state.priorityCities.contains(region['name']);
-                          
+
                           return InkWell(
                             onTap: () {
                               selectRegion(region['name']!, region['code']!);
@@ -1052,7 +1060,7 @@ class RiskLogic extends GetxController {
       hideOverlay();
       return;
     }
-    
+
     // 否则正常返回
     Get.back();
   }
@@ -1062,13 +1070,13 @@ class RiskLogic extends GetxController {
 class _DynamicScrollbarWrapper extends StatefulWidget {
   final ScrollController scrollController;
   final Widget child;
-  
+
   const _DynamicScrollbarWrapper({
     Key? key,
     required this.scrollController,
     required this.child,
   }) : super(key: key);
-  
+
   @override
   State<_DynamicScrollbarWrapper> createState() => _DynamicScrollbarWrapperState();
 }
@@ -1078,7 +1086,7 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
   double _contentHeight = 0.0;
   double _viewportHeight = 0.0;
   final double _thumbHeight = 32.0;
-  
+
   @override
   void initState() {
     super.initState();
@@ -1089,13 +1097,13 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       }
     });
   }
-  
+
   @override
   void dispose() {
     widget.scrollController.removeListener(_handleScrollChange);
     super.dispose();
   }
-  
+
   void _handleScrollChange() {
     if (mounted) {
       setState(() {
@@ -1103,7 +1111,7 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       });
     }
   }
-  
+
   void _updateScrollData() {
     try {
       if (widget.scrollController.hasClients) {
@@ -1115,7 +1123,7 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       print("Error updating scroll data: $e");
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     double thumbPositionRatio = 0.0;
@@ -1123,17 +1131,17 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
       thumbPositionRatio = _scrollPosition / (_contentHeight - _viewportHeight);
       thumbPositionRatio = thumbPositionRatio.clamp(0.0, 1.0);
     }
-    
+
     double trackHeight = _viewportHeight > 0 ? _viewportHeight : 100;
     double availableTrackSpace = trackHeight - _thumbHeight;
     double thumbPosition = thumbPositionRatio * availableTrackSpace;
-    
+
     bool showScrollbar = _contentHeight > _viewportHeight;
-    
+
     return Stack(
       children: [
         widget.child,
-        
+
         Positioned(
           right: 2,
           top: 0,
@@ -1146,8 +1154,8 @@ class _DynamicScrollbarWrapperState extends State<_DynamicScrollbarWrapper> {
             ),
           ),
         ),
-        
-        if (showScrollbar) 
+
+        if (showScrollbar)
           Positioned(
             right: 2,
             top: thumbPosition,
