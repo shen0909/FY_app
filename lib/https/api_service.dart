@@ -2455,7 +2455,7 @@ class ApiService {
       "当前请求用户UUID": token,
       "命令具体内容": {
         'custom_classification': classification,
-        'regionCode': regionCode == 'all' ? null : regionCode
+        'region_code': regionCode == 'all' ? null : regionCode
       }
     };
 
