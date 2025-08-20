@@ -69,8 +69,8 @@ class HotPotState {
   final RxBool isLoadingMore = false.obs; // 是否正在加载更多
   final RxBool isRefreshing = false.obs; // 是否正在下拉刷新
 
-  // 已读新闻ID集合 - 用于跟踪用户已查看过的新闻
-  final RxSet<String> readNewsIds = <String>{}.obs;
+  // 本地已读新闻ID集合 - 用于即时UI反馈，结合服务器数据
+  final RxSet<String> localReadNewsIds = <String>{}.obs;
 
   HotPotState() {
     ///Initialize variables
@@ -107,19 +107,30 @@ class HotPotState {
     hasMoreData.value = true;
   }
 
-  // 标记新闻为已读
+  // 标记新闻为已读（本地即时更新）
   void markNewsAsRead(String newsId) {
-    readNewsIds.add(newsId);
+    localReadNewsIds.add(newsId);
   }
 
-  // 检查新闻是否已读
+  // 检查新闻是否已读（结合服务器数据和本地状态）
   bool isNewsRead(String newsId) {
-    return readNewsIds.contains(newsId);
+    // 首先查找新闻在列表中的服务器状态
+    final newsItem = newsList.firstWhereOrNull((item) => item.newsId == newsId);
+    if (newsItem != null) {
+      // 如果服务器标记为已读，或者本地标记为已读，都认为是已读
+      return newsItem.isRead || localReadNewsIds.contains(newsId);
+    }
+    // 如果新闻不在当前列表中，只检查本地状态
+    return localReadNewsIds.contains(newsId);
   }
 
-  // 设置已读新闻ID集合（从本地存储加载时使用）
-  void setReadNewsIds(Set<String> ids) {
-    readNewsIds.clear();
-    readNewsIds.addAll(ids);
+  // 清理本地已读状态（当服务器数据更新时）
+  void syncServerReadStatus() {
+    // 移除已经被服务器标记为已读的本地状态
+    final serverReadIds = newsList
+        .where((item) => item.isRead)
+        .map((item) => item.newsId)
+        .toSet();
+    localReadNewsIds.removeWhere((id) => serverReadIds.contains(id));
   }
 }

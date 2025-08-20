@@ -29,11 +29,9 @@ class HotPotPage extends StatelessWidget {
               children: [
                 _buildFilterBar(),
                 _buildSearchBar(),
-                !state.isLoading.value
-                    ? Expanded(
-                        child: _buildHotNewsList(),
-                      )
-                    : const Center(child: CircularProgressIndicator()),
+                Expanded(
+                  child: _buildHotNewsList(),
+                ),
               ],
             ),
           ),
@@ -418,53 +416,114 @@ class HotPotPage extends StatelessWidget {
             ),
           ],
         ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => logic.navigateToDetails(index),
-            borderRadius: BorderRadius.circular(8.r),
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: 16.0.w, bottom: 12.w, left: 16.w, right: 16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    news.newsTitle,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      // 已读状态使用较浅的颜色
-                      color: isRead ? FYColors.color_A6A6A6 : FYColors.color_1A1A1A,
-                    ),
-                  ),
-                  SizedBox(height: 8.w),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => logic.navigateToDetails(index),
+                borderRadius: BorderRadius.circular(8.r),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16.0.w, left: 6.w, bottom: 12.w, right: 16.w),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        DateTimeUtils.formatPublishTime(news.publishTime),
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: FYColors.color_A6A6A6
-                        ),
-                      ),
-                      Text(
-                        news.newsMedium,
-                        style: TextStyle(
-                            fontSize: 12.sp,
-                            color: FYColors.color_A6A6A6
+                      // 热点排名图标
+                      news.isHot && index < 5
+                          ? Padding(
+                            padding: EdgeInsets.only(right: 4.w),
+                            child: Image.asset(
+                              _getHotRankImage(index),
+                              width: 16.w,
+                              height: 21.w,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                          : Container(
+                              width: 16.w,
+                              height: 21.w,
+                            ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 标题行，包含热点排名图标
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // 标题和已读标记
+                                Expanded(
+                                  child: Text(
+                                    news.newsTitle,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      // 已读状态使用较浅的颜色
+                                      color: isRead
+                                          ? FYColors.color_A6A6A6
+                                          : FYColors.color_1A1A1A,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8.w),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  DateTimeUtils.formatPublishTime(news.publishTime),
+                                  style: TextStyle(
+                                      fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                ),
+                                Text(
+                                  news.newsMedium,
+                                  style: TextStyle(
+                                      fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+            // 已读图标
+            if(isRead)
+              Positioned(
+                right: 0,
+                child: Image.asset(
+                  FYImages.hotIsRead,
+                  width: 64.w,
+                  height: 64.w,
+                  fit: BoxFit.fitWidth,
+                ),
+              )
+          ],
         ),
       );
     });
+  }
+
+  // 获取热点排名图标
+  String _getHotRankImage(int index) {
+    switch (index) {
+      case 0:
+        return FYImages.hot1;
+      case 1:
+        return FYImages.hot2;
+      case 2:
+        return FYImages.hot3;
+      case 3:
+        return FYImages.hot4;
+      case 4:
+        return FYImages.hot5;
+      default:
+        return FYImages.hot1;
+    }
   }
 
   // 构建单个类型选项

@@ -14,7 +14,7 @@ import 'hot_pot_state.dart';
 
 class HotPotLogic extends GetxController {
   final HotPotState state = HotPotState();
-  static const String _readNewsKey = 'read_news_ids';
+  static const String _readNewsKey = 'local_read_news_ids';
   
   // 添加滚动控制器
   late ScrollController scrollController;
@@ -31,8 +31,8 @@ class HotPotLogic extends GetxController {
     final now = DateTime.now();
     state.endDate.value = now;
     state.startDate.value = now.subtract(const Duration(days: 30));
-    // 加载已读新闻状态
-    await _loadReadNewsIds();
+    // 加载本地已读状态
+    await _loadLocalReadNewsIds();
     await getNewsList();
     await getRegionList();
   }
@@ -54,14 +54,14 @@ class HotPotLogic extends GetxController {
     super.onClose();
   }
   
-  // 从本地存储加载已读新闻ID
-  Future<void> _loadReadNewsIds() async {
+  // 加载本地已读新闻ID
+  Future<void> _loadLocalReadNewsIds() async {
     try {
       final readNewsString = FYSharedPreferenceUtils.getString(_readNewsKey);
       if (readNewsString.isNotEmpty) {
         final List<dynamic> readNewsList = json.decode(readNewsString);
         final Set<String> readNewsIds = readNewsList.map((id) => id.toString()).toSet();
-        state.setReadNewsIds(readNewsIds);
+        state.localReadNewsIds.addAll(readNewsIds);
         print('从本地存储加载已读新闻ID: ${readNewsIds.length}条');
       }
     } catch (e) {
@@ -69,12 +69,12 @@ class HotPotLogic extends GetxController {
     }
   }
 
-  // 保存已读新闻ID到本地存储
-  Future<void> _saveReadNewsIds() async {
+  // 保存本地已读新闻ID到本地存储
+  Future<void> _saveLocalReadNewsIds() async {
     try {
-      final readNewsList = state.readNewsIds.toList();
+      final readNewsList = state.localReadNewsIds.toList();
       await FYSharedPreferenceUtils.setString(_readNewsKey, json.encode(readNewsList));
-      print('保存已读新闻ID到本地存储: ${readNewsList.length}条');
+      print('保存本地已读新闻ID: ${readNewsList.length}条');
     } catch (e) {
       print('保存已读新闻状态失败: $e');
     }
@@ -246,13 +246,13 @@ class HotPotLogic extends GetxController {
     // 获取对应的新闻项
     NewsItem newsItem = state.newsList[index];
     
-    // 标记该新闻为已读
+    // 立即标记为已读（本地状态，用于即时UI反馈）
     state.markNewsAsRead(newsItem.newsId);
     
-    // 保存已读状态到本地存储
-    _saveReadNewsIds();
+    // 保存到本地存储
+    _saveLocalReadNewsIds();
     
-    print('标记新闻为已读: ${newsItem.newsId} - ${newsItem.newsTitle}');
+    print('标记新闻为已读并导航: ${newsItem.newsId} - ${newsItem.newsTitle}');
     
     // 导航到详情页面并传递newsId
     Get.toNamed(Routers.hotDetails, arguments: {
@@ -321,6 +321,9 @@ class HotPotLogic extends GetxController {
           state.newsList.value = items;
         }
         
+        // 同步服务器已读状态，清理重复的本地状态
+        state.syncServerReadStatus();
+        
         // 更新页码
         state.currentPage.value = page;
         
@@ -381,6 +384,10 @@ class HotPotLogic extends GetxController {
       
       if (items != null) {
         state.newsList.value = items;
+        
+        // 同步服务器已读状态
+        state.syncServerReadStatus();
+        
         state.currentPage.value = 1;
         state.hasMoreData.value = items.length >= state.pageSize.value;
         if (kDebugMode) {

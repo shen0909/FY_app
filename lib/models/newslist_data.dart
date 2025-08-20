@@ -8,6 +8,8 @@ class NewsItem {
   final String newsSummary;
   final String? newsSourceUrl;
   final String? region;
+  final bool isRead;        // 是否已读
+  final bool isHot;         // 是否为热点新闻
 
   NewsItem({
     required this.newsId,
@@ -19,6 +21,8 @@ class NewsItem {
     required this.newsSummary,
     this.newsSourceUrl,
     this.region,
+    this.isRead = false,
+    this.isHot = false,
   });
 
   factory NewsItem.fromJson(Map<String, dynamic> json) {
@@ -32,6 +36,8 @@ class NewsItem {
       newsSummary: json['news_summary'] ?? '',
       newsSourceUrl: json['news_source_url'],
       region: json['region'],
+      isRead: json['is_read'] ?? false,
+      isHot: json['is_hot'] ?? false,
     );
   }
 
@@ -46,6 +52,8 @@ class NewsItem {
       'news_summary': newsSummary,
       'news_source_url': newsSourceUrl ?? '',
       'region': region ?? '',
+      'is_read': isRead,
+      'is_hot': isHot,
     };
   }
 }

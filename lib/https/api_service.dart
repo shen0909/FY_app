@@ -878,6 +878,8 @@ class ApiService {
             'news_medium': item['news_medium'] ?? '',
             'publish_time': item['publish_time'] ?? '',
             'news_summary': item['summary'] ?? '',
+            'is_read': item['is_read'] ?? false,  // 是否已读
+            'is_hot': item['is_hot'] ?? false,    // 是否为热点新闻
           };
         }).toList();
 
