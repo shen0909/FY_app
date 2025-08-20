@@ -71,4 +71,10 @@ class FYImages {
   static const String tutorial_feedBack = 'assets/images/tutorial_feedBack.png';
   static const String export_data = 'assets/images/export_data.png'; // 数据导出
   static const String bannerLoad = 'assets/loadImage.png'; // 轮播图占位图
+  static const String hotIsRead = 'assets/images/hot_isRead.png'; // 舆情热点已读
+  static const String hot1 = 'assets/images/hot1.png'; // 舆情热点1
+  static const String hot2 = 'assets/images/hot2.png'; // 舆情热点2
+  static const String hot3 = 'assets/images/hot3.png'; // 舆情热点3
+  static const String hot4 = 'assets/images/hot4.png'; // 舆情热点4
+  static const String hot5 = 'assets/images/hot5.png'; // 舆情热点5
 }
