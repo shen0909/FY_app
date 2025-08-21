@@ -802,7 +802,7 @@ class RiskLogic extends GetxController {
       state.currentUnreadMessages.assignAll(messages);
 
       // 打开底部弹窗
-      showModalBottomSheet(
+      await showModalBottomSheet(
         builder: (_) {
           return Obx(() => UnreadMessageDialog(
                 messages: state.currentUnreadMessages,
@@ -842,6 +842,7 @@ class RiskLogic extends GetxController {
         ),
         context: Get.context!,
       );
+      onRefresh();
     } catch (e) {
       DialogUtils.hideLoading();
       if (kDebugMode) {
