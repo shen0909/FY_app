@@ -210,7 +210,7 @@ class _RiskPageState extends State<RiskPage> {
           runSpacing: 8.0.w, // 纵向间距
           children: [
             ...currentData.entries
-                .where((entry) => entry.key != 'total')
+                // .where((entry) => entry.key != 'total')
                 .map((entry) {
               final item = entry.value;
               return _buildRiskStatCard(
@@ -218,13 +218,9 @@ class _RiskPageState extends State<RiskPage> {
                 count: item['count'] as int? ?? 0,
                 change: item['change'] as int? ?? 0,
                 color: Color(item['color'] as int? ?? 0xFF000000),
+                isTotal: entry.key == 'total',
               );
             }),
-            // 总数卡片单独处理
-            _buildTotalStatCard(
-              total: currentData['total']['count'] as int? ?? 0,
-              color: Color(currentData['total']['color'] as int? ?? 0xFF000000),
-            ),
           ],
         );
       }),
@@ -233,6 +229,7 @@ class _RiskPageState extends State<RiskPage> {
 
   // 风险统计卡片
   Widget _buildRiskStatCard({
+    required bool isTotal,
     required String title,
     required int count,
     required int change,
@@ -245,6 +242,7 @@ class _RiskPageState extends State<RiskPage> {
       ),
       width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
       padding: EdgeInsets.all(10.w),
+      height: 64.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -252,7 +250,7 @@ class _RiskPageState extends State<RiskPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                isTotal ? '总数' : title,
                 style: FYTextStyles.riskStatHighRiskStyle(),
               ),
               Row(
@@ -278,7 +276,7 @@ class _RiskPageState extends State<RiskPage> {
             ],
           ),
           SizedBox(height: 4.h),
-          RichText(
+          isTotal ? Container() : RichText(
               text: TextSpan(
                   style: TextStyle(
                     color: FYColors.color_A6A6A6,

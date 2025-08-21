@@ -87,15 +87,16 @@ class RiskLogic extends GetxController {
           mediumTitle = '一般关注';
           showLowRisk = false;
         }
-      Map<String, dynamic> defaultUnitData = {
-        'high': {'title': highTitle, 'count': 0, 'change': 0, 'color': 0xFFFF6850},
-        'medium': {'title': mediumTitle, 'count': 0, 'change': 0, 'color': 0xFFF6D500},
-        'total': {'count': 0, 'color': 0xFF1A1A1A},
-      };
-
-      // 只有非星云单位才显示低风险
-      if (showLowRisk) {
+      Map<String, dynamic> defaultUnitData = {      };
+      if(showLowRisk){
+        defaultUnitData['high'] = {'title': highTitle, 'count': 0, 'change': 0, 'color': 0xFFFF6850};
+        defaultUnitData['medium'] = {'title': mediumTitle, 'count': 0, 'change': 0, 'color': 0xFFF6D500};
         defaultUnitData['low'] = {'title': lowTitle, 'count': 0, 'change': 0, 'color': 0xFF07CC89};
+        defaultUnitData['total'] = {'count': 0, 'color': 0xFF1A1A1A};
+      }else{
+        defaultUnitData['high'] = {'title': highTitle, 'count': 0, 'change': 0, 'color': 0xFFFF6850};
+        defaultUnitData['medium'] = {'title': mediumTitle, 'count': 0, 'change': 0, 'color': 0xFFF6D500};
+        defaultUnitData['total'] = {'count': 0, 'color': 0xFF1A1A1A};
       }
       state.currentUnitData.value = defaultUnitData;
       state.currentRiskList.clear();
@@ -403,10 +404,6 @@ class RiskLogic extends GetxController {
               'change': 0,
               'color': 0xFFF6D500,
             },
-            'total': {
-              'count': total,
-              'color': 0xFF1A1A1A,
-            },
           };
 
           // 只有非星云单位才显示低风险
@@ -418,6 +415,12 @@ class RiskLogic extends GetxController {
               'color': 0xFF07CC89,
             };
           }
+          unitData.addAll({
+            'total': {
+              'count': total,
+              'color': 0xFF1A1A1A,
+            },
+          });
 
           state.currentUnitData.value = unitData;
           if (kDebugMode) {
