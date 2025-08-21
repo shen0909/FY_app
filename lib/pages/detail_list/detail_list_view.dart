@@ -182,8 +182,15 @@ class DetailListPage extends StatelessWidget {
                   context, "省份", state.provinceFilter, logic.provinceKey)),
           SizedBox(width: 12.w),
           Expanded(
-              child: _buildFilterChip(
-                  context, "城市", state.cityFilter, logic.cityKey)),
+              child: Obx(() {
+                // 检查是否禁用城市选择
+                final isDisabled = state.provinceFilter.value.isEmpty || 
+                                   state.provinceFilter.value == '全部';
+                return _buildFilterChip(
+                  context, "城市", state.cityFilter, logic.cityKey, 
+                  isDisabled: isDisabled
+                );
+              })),
         ],
       ),
     );
@@ -191,22 +198,24 @@ class DetailListPage extends StatelessWidget {
 
   // 筛选按钮
   Widget _buildFilterChip(BuildContext context, String title, Rx<String> filter,
-      GlobalKey key) {
+      GlobalKey key, {bool isDisabled = false}) {
     return Obx(() {
       final bool hasValue = filter.value.isNotEmpty;
 
       return InkWell(
         key: key,
-        onTap: () {
+        onTap: isDisabled ? null : () {
           logic.showFilterOverlay(context, title, key);
         },
         child: Container(
           height: 36.h,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: hasValue ? Color(0xFFF0F5FF) : Color(0xFFF9F9F9),
+            color: isDisabled 
+                ? Color(0xFFF0F0F0) 
+                : (hasValue ? Color(0xFFF0F5FF) : Color(0xFFF9F9F9)),
             borderRadius: BorderRadius.circular(8.r),
-            border: hasValue
+            border: hasValue && !isDisabled
                 ? Border.all(color: Color(0xFF3361FE), width: 1)
                 : null,
           ),
@@ -215,18 +224,24 @@ class DetailListPage extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  hasValue ? filter.value : title,
+                  isDisabled 
+                      ? "请先选择省份" 
+                      : (hasValue ? filter.value : title),
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                    color: isDisabled 
+                        ? Color(0xFFA6A6A6) 
+                        : (hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A)),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(
-                hasValue ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                hasValue && !isDisabled ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                 size: 16.w,
-                color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                color: isDisabled 
+                    ? Color(0xFFA6A6A6) 
+                    : (hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A)),
               ),
             ],
           ),

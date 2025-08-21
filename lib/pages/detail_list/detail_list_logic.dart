@@ -471,16 +471,13 @@ class DetailListLogic extends GetxController {
 
   // 获取城市选项
   List<String> getCityOptions() {
-    // 根据当前选择的省份获取对应的城市列表
-    String selectedProvince = state.provinceFilter.value;
-    
-    if (selectedProvince.isEmpty || selectedProvince == '全部') {
-      // 如果没有选择省份或选择了"全部"，返回所有城市
-      return AreaDataManager.instance.getAllCities();
-    } else {
-      // 根据选择的省份返回对应的城市列表
-      return AreaDataManager.instance.getCityListByProvince(selectedProvince);
+    // 如果没有选择省份，返回空列表禁用城市选择
+    if (state.provinceFilter.value.isEmpty || state.provinceFilter.value == '全部') {
+      return [];
     }
+    
+    // 根据选择的省份返回对应的城市列表
+    return AreaDataManager.instance.getCityListByProvince(state.provinceFilter.value);
   }
 
   // 根据类型名称获取类型数据
