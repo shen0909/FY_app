@@ -15,7 +15,7 @@ class FYColors {
   /// 背景色
   static const Color highRiskBg = Color(0XFFFFF3F3);
   static const Color middleRiskBg = Color(0XFFFFF5E5);
-  static const Color lowRiskBg = Color(0XFFF5F7FF);
+  static const Color lowRiskBg = Color(0XFFD6FFF0);
   static const Color color_F9F9F9 = Color(0XFFF9F9F9);
   static const Color color_F5F5F5 = Color(0XFFF5F5F5); // Perplexity按钮背景色
   static const Color color_F0F5FF = Color(0XFFF0F5FF); // 批量选择按钮背景色
@@ -28,7 +28,7 @@ class FYColors {
   /// 边框颜色
   static const Color highRiskBorder = Color(0XFFD41018);
   static const Color middleRiskBorder = Color(0XFFFF9719);
-  static const Color lowRiskBorder = Color(0XFF3371FF);
+  static const Color lowRiskBorder = Color(0XFF1BC487);
   static const Color color_FF6850 = Color(0XFFFF6850);
   static const Color color_07CC89 = Color(0XFF07CC89);
   static const Color color_D8D8D8 = Color(0XFFD8D8D8); // 未选中的复选框颜色
