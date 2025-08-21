@@ -813,9 +813,13 @@ class RiskLogic extends GetxController {
                 onTapItem: (message, index) {
                   final newsId = message['uuid'] as String?;
                   if (newsId != null && newsId.isNotEmpty) {
+                    final current = Map<String, dynamic>.from(state.currentUnreadMessages[index]);
+                    current['is_read'] =true;
+                    state.currentUnreadMessages[index] = current;
+                    state.currentUnreadMessages.refresh();
                     // 本地标记为已读并同步列表未读数
                     _markUnreadItemAsReadAndSyncList(index);
-                    Get.back(); // 先关闭弹窗，再跳转详情
+                    // Get.back(); // 先关闭弹窗，再跳转详情
                     Get.toNamed(Routers.hotDetails, arguments: {
                       'newsId': newsId,
                       'title': message['title'] ?? '',

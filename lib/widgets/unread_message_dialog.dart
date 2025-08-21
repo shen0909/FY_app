@@ -5,7 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:safe_app/styles/colors.dart';
 
 class UnreadMessageDialog extends StatelessWidget {
-  final List<Map<String, dynamic>> messages;
+  final RxList<Map<String, dynamic>> messages; // 改为响应式列表
   final Function()? onClose;
   final void Function(Map<String, dynamic> message, int index)? onTapItem;
   final Future<void> Function()? onLoadMore;
@@ -61,10 +61,13 @@ class UnreadMessageDialog extends StatelessWidget {
                 itemCount: messages.length + (hasMore || isLoadingMore ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index < messages.length) {
-                    return GestureDetector(
-                      onTap: () => onTapItem?.call(messages[index], index),
-                      child: _buildMessageItem(messages[index]),
-                    );
+                    return Obx(() {
+                      final message = messages[index]; // 在Obx内部获取最新的消息数据
+                      return GestureDetector(
+                        onTap: () => onTapItem?.call(message, index),
+                        child: _buildMessageItem(message),
+                      );
+                    });
                   }
                   // 底部加载/无更多
                   return Padding(
