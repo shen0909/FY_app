@@ -360,7 +360,8 @@ class RiskLogic extends GetxController {
       // 显示加载对话框
       DialogUtils.showLoading('获取风险评分数据...');
 
-      final result = await ApiService().getRiskScoreCount(classification, regionCode: regionCode);
+      final result = await ApiService().getRiskScoreCount(classification,
+          regionCode: regionCode, zhName: state.searchKeyword.value);
       if (kDebugMode) {
         print("获取风险评分数量结果: $result");
       }

@@ -2440,7 +2440,7 @@ class ApiService {
   }
 
   /// 获取风险评分等级数量
-  Future<Map<String, dynamic>?> getRiskScoreCount(int classification, {String? regionCode}) async {
+  Future<Map<String, dynamic>?> getRiskScoreCount(int classification, {String? regionCode,String? zhName}) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -2455,7 +2455,8 @@ class ApiService {
       "当前请求用户UUID": token,
       "命令具体内容": {
         'custom_classification': classification,
-        'region_code': regionCode == 'all' ? null : regionCode
+        'region_code': regionCode == 'all' ? null : regionCode,
+        'zh_name' : zhName
       }
     };
 
