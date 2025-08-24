@@ -645,21 +645,22 @@ class RiskLogic extends GetxController {
       state.chooseUint.value = index;
 
       // 获取当前选择的单位对应的列表
-      List<RiskListElement> currentList = _getCurrentUnitList();
-
-      // 如果当前单位类型已有缓存数据，直接切换显示
-      if (currentList.isNotEmpty) {
-        if (kDebugMode) {
-          print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
-        }
-        _updateCurrentRiskList();
-      } else {
-        // 如果没有缓存数据，则后台加载
-        if (kDebugMode) {
-          print('🌐 缓存为空，后台加载数据');
-        }
-        await _loadUnitDataInBackground();
-      }
+      // List<RiskListElement> currentList = _getCurrentUnitList();
+      await getRiskList();
+      _updateCurrentRiskList();
+      // // 如果当前单位类型已有缓存数据，直接切换显示
+      // if (currentList.isNotEmpty) {
+      //   if (kDebugMode) {
+      //     print('📦 使用缓存数据，避免重新加载 - 数据条数: ${currentList.length}');
+      //   }
+      //   _updateCurrentRiskList();
+      // } else {
+      //   // 如果没有缓存数据，则后台加载
+      //   if (kDebugMode) {
+      //     print('🌐 缓存为空，后台加载数据');
+      //   }
+      //   await _loadUnitDataInBackground();
+      // }
 
       if (kDebugMode) {
         print('✅ 成功切换到单位类型: $index');

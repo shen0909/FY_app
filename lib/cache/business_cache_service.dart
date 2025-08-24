@@ -197,7 +197,7 @@ class BusinessCacheService extends GetxService {
       // 首先尝试从缓存获取
       if (!forceUpdate) {
         final cachedData = await cacheManager.get<Map<String, dynamic>>(cacheKey);
-        if (cachedData != null) {
+        if (cachedData != null && cachedData['list'] != null && (cachedData['list'] as List).length > 0) {
           debugPrint('🎯 风险列表缓存命中: $cacheKey');
           return RiskyDataNew.fromJson(cachedData);
         }
