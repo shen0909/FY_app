@@ -120,11 +120,13 @@ class RiskDetailsPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Obx(() => Text(
-                    state.riskCompanyDetail.value!.zhName,
-                    style: FYTextStyles.riskLocationTitleStyle()
-                        .copyWith(fontSize: 20.sp),
-                  )),
+              Expanded(
+                child: Obx(() => Text(
+                      state.riskCompanyDetail.value!.zhName,
+                      style: FYTextStyles.riskLocationTitleStyle()
+                          .copyWith(fontSize: 20.sp),
+                    )),
+              ),
               SizedBox(width: 8.w),
               GestureDetector(
                 onTap: () => logic.companyDetail(),
