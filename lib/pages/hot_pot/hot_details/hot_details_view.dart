@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/models/news_detail_data.dart';
+import 'package:safe_app/models/news_effect_company.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_logic.dart';
@@ -736,34 +737,55 @@ class HotDetailsView extends StatelessWidget {
                     effect.indirectEffect.isNotEmpty)
                   SizedBox(height: 20.w),
                 // Column for affected companies
-                if (effect.effectCompany.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "受影响企业",
-                        style: TextStyle(
-                          color: Color(0xff1A1A1A),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "受影响企业",
+                      style: TextStyle(
+                        color: Color(0xff1A1A1A),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
                       ),
-                      SizedBox(height: 8.w),
-                      Wrap(
-                        spacing: 8.w,
-                        runSpacing: 4.w,
-                        children: effect.effectCompany.map<Widget>((element) {
-                          return Text(
-                            element,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: FYColors.color_666666,
+                    ),
+                    SizedBox(height: 8.w),
+                    // 显示影响企业列表
+                    Obx(() {
+                      if (state.effectCompanyList.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20.w),
+                            child: Text(
+                              '暂无受影响企业数据',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: FYColors.color_666666,
+                              ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: [
+                          Wrap(
+                            spacing: 8.w,
+                            runSpacing: 4.w,
+                            children: state.effectCompanyList.map((company) {
+                              return Text(
+                                company.zhName.isNotEmpty ? company.zhName : company.enName,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: FYColors.color_666666,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      );
+                    }),
+                  ],
+                ),
               ],
             ),
     );

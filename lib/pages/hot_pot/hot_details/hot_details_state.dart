@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:safe_app/models/news_detail_data.dart';
+import 'package:safe_app/models/news_effect_company.dart';
 
 class HotDetailsState {
   // 加载状态
@@ -26,6 +27,15 @@ class HotDetailsState {
   // 当前活跃标签页索引
   final RxInt activeTabIndex = 0.obs;
   final RxInt activeTranslateIndex = 0.obs;
+
+  // 影响企业相关状态
+  final RxBool isLoadingEffectCompany = false.obs;
+  final RxList<EffectCompany> effectCompanyList = <EffectCompany>[].obs;
+  final RxInt effectCompanyTotalCount = 0.obs;
+  final RxInt effectCompanyCurrentPage = 1.obs;
+  final RxInt effectCompanyPageSize = 10.obs;
+  final RxBool hasMoreEffectCompany = true.obs;
+  final RxString effectCompanyErrorMessage = ''.obs;
 
   HotDetailsState() {
     ///Initialize variables

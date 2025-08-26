@@ -2556,4 +2556,57 @@ class ApiService {
     }
     return null;
   }
+
+  /// 获取新闻影响企业（舆情热点_新闻企业关联_获取新闻影响企业）
+  Future<Map<String, dynamic>?> getNewsEffectCompany({
+    required String newsUuid,
+    required int currentPage,
+    required int pageSize,
+    int? effectType,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "舆情热点_新闻企业关联_获取新闻影响企业",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "news_uuid": newsUuid,
+        "current_page": currentPage,
+        "page_size": pageSize,
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        final data = resultData["返回数据"] ?? {};
+        
+        return {
+          'code': 10010,
+          'data': data,
+          'msg': '获取成功',
+        };
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析新闻影响企业响应失败: $e');
+        }
+        return {'code': 0, 'msg': '解析响应失败: $e'};
+      }
+    } else {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败: ${result?['error_message'] ?? '未知错误'}');
+      }
+      return {'code': 0, 'msg': result?['error_message'] ?? '获取数据失败'};
+    }
+  }
 }

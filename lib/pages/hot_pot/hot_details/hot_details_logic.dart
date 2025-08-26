@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/news_detail_data.dart';
+import 'package:safe_app/models/news_effect_company.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import 'package:safe_app/utils/toast_util.dart';
@@ -55,6 +56,8 @@ class HotDetailsLogic extends GetxController {
           print('开始转换NewsDetail对象');
           state.newsDetailData.value = NewsDetail.fromJson(result['data']);
           print('NewsDetail对象转换成功');
+          // 获取新闻详情成功后，自动获取影响企业数据
+          await fetchEffectCompanyData();
         } catch (conversionError) {
           // 捕获数据转换错误
           print('数据转换错误: $conversionError');
@@ -89,7 +92,85 @@ class HotDetailsLogic extends GetxController {
   // 切换标签页
   void changeTab(int index) {
     state.activeTabIndex.value = index;
-    ;
+  }
+
+  /// 获取新闻影响企业数据
+  Future<void> fetchEffectCompanyData({bool isRefresh = false}) async {
+    if (state.newsId.value.isEmpty) {
+      print('新闻ID为空，无法获取影响企业数据');
+      return;
+    }
+
+    if (isRefresh) {
+      // 刷新时重置分页状态
+      state.effectCompanyCurrentPage.value = 1;
+      state.effectCompanyList.clear();
+      state.hasMoreEffectCompany.value = true;
+    }
+
+    if (state.isLoadingEffectCompany.value || !state.hasMoreEffectCompany.value) {
+      return;
+    }
+
+    state.isLoadingEffectCompany.value = true;
+    state.effectCompanyErrorMessage.value = '';
+
+    try {
+      print('正在获取新闻影响企业数据，页码: ${state.effectCompanyCurrentPage.value}');
+      
+      final result = await ApiService().getNewsEffectCompany(
+        newsUuid: state.newsId.value,
+        currentPage: state.effectCompanyCurrentPage.value,
+        pageSize: state.effectCompanyPageSize.value,
+        // effectType: null, // 暂时不传影响类型，获取所有类型
+      );
+      if (result != null && result['code'] == 10010 && result['data'] != null) {
+        final responseData = result['data'];
+        
+        try {
+          final response = NewsEffectCompanyResponse.fromJson(responseData);
+          
+          if (isRefresh) {
+            state.effectCompanyList.clear();
+          }
+          
+          state.effectCompanyList.addAll(response.list);
+          state.effectCompanyTotalCount.value = response.allCount;
+          
+          // 判断是否还有更多数据
+          if (response.list.length < state.effectCompanyPageSize.value) {
+            state.hasMoreEffectCompany.value = false;
+          } else {
+            state.effectCompanyCurrentPage.value++;
+          }
+          
+          print('成功获取影响企业数据，总数: ${response.allCount}, 当前列表长度: ${state.effectCompanyList.length}');
+        } catch (e) {
+          print('解析影响企业数据失败: $e');
+          state.effectCompanyErrorMessage.value = '数据解析失败';
+        }
+      } else {
+        print('获取影响企业数据失败: ${result?['msg'] ?? '未知错误'}');
+        state.effectCompanyErrorMessage.value = result?['msg'] ?? '获取数据失败';
+      }
+    } catch (e) {
+      print('获取影响企业数据异常: $e');
+      state.effectCompanyErrorMessage.value = '网络异常，请重试';
+    } finally {
+      state.isLoadingEffectCompany.value = false;
+    }
+  }
+
+  /// 加载更多影响企业数据
+  Future<void> loadMoreEffectCompanyData() async {
+    if (state.hasMoreEffectCompany.value && !state.isLoadingEffectCompany.value) {
+      await fetchEffectCompanyData();
+    }
+  }
+
+  /// 刷新影响企业数据
+  Future<void> refreshEffectCompanyData() async {
+    await fetchEffectCompanyData(isRefresh: true);
   }
 
   // 下载相关文件
