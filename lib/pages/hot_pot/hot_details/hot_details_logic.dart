@@ -210,8 +210,11 @@ class HotDetailsLogic extends GetxController {
     );
 
     try {
-      // 执行导出
-      final filePath = await DocxExportUtil.exportNewsDetailToDocx(state.newsDetailData.value!);
+      // 执行导出 - 传递新的影响企业数据
+      final filePath = await DocxExportUtil.exportNewsDetailToDocx(
+        state.newsDetailData.value!,
+        effectCompanyList: state.effectCompanyList.toList(),
+      );
       // 关闭加载对话框
       Get.back();
 
@@ -229,6 +232,9 @@ class HotDetailsLogic extends GetxController {
             ],
           ),
         );
+      }
+      else{
+        Get.back();
       }
     } catch (e) {
       // 关闭加载对话框

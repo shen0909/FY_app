@@ -11,6 +11,8 @@ import 'package:safe_app/utils/toast_util.dart';
 import 'package:safe_app/utils/datetime_utils.dart';
 import 'package:safe_app/services/permission_service.dart';
 
+import '../models/news_effect_company.dart';
+
 /// DOCX文件导出工具类
 /// 用于将舆情热点详情和事件动态导出为DOCX格式的文档
 class DocxExportUtil {
@@ -18,11 +20,13 @@ class DocxExportUtil {
   /// 导出舆情热点详情为DOCX文件
   /// 
   /// [newsDetail] 新闻详情数据
+  /// [effectCompanyList] 影响企业列表（可选，用于覆盖原有数据）
   /// [fileName] 可选的文件名，如果不提供将使用默认格式
   /// 
   /// 返回生成的文件路径，失败返回null
   static Future<String?> exportNewsDetailToDocx(
     NewsDetail newsDetail, {
+    List<EffectCompany>? effectCompanyList,
     String? fileName,
   }) async {
     try {
@@ -44,7 +48,7 @@ class DocxExportUtil {
       print('📄 文件名: $docFileName');
 
       // 创建DOCX文档内容
-      final docxContent = _generateNewsDetailDocxContent(newsDetail);
+      final docxContent = _generateNewsDetailDocxContent(newsDetail, effectCompanyList);
       print('📝 文档内容生成完成，长度: ${docxContent.length}');
       
       // 生成DOCX文件
@@ -157,7 +161,7 @@ class DocxExportUtil {
       final hasPermission = await PermissionService.requestStoragePermission(Get.context);
       if (!hasPermission) {
         print('❌ 权限被拒绝');
-        ToastUtil.showShort('需要存储权限才能导出文件');
+        // 不显示Toast，让调用方处理错误提示
         return null;
       }
       
@@ -215,7 +219,7 @@ class DocxExportUtil {
   }
 
   /// 生成新闻详情的DOCX文档内容
-  static String _generateNewsDetailDocxContent(NewsDetail newsDetail) {
+  static String _generateNewsDetailDocxContent(NewsDetail newsDetail, List<EffectCompany>? effectCompanyList) {
     final buffer = StringBuffer();
 
     // 文档标题
@@ -288,7 +292,16 @@ class DocxExportUtil {
       buffer.writeln();
     }
     
-    if (newsDetail.effect.effectCompany.isNotEmpty) {
+    // 影响企业 - 优先使用新接口数据
+    if (effectCompanyList != null && effectCompanyList.isNotEmpty) {
+      buffer.writeln('受影响企业:');
+      effectCompanyList.forEach((element) {
+        buffer.writeln('• ${element.zhName.isNotEmpty ? element.zhName : element.enName}');
+      });
+      buffer.writeln('总计: ${effectCompanyList.length} 家企业');
+      buffer.writeln();
+    } else if (newsDetail.effect.effectCompany.isNotEmpty) {
+      // 兼容旧数据
       buffer.writeln('影响企业:');
       for (final company in newsDetail.effect.effectCompany) {
         buffer.writeln('• $company');
