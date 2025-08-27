@@ -609,19 +609,27 @@ class OrderEventDetialLogic extends GetxController {
     state.reportInfo.clear();
   }
   
-  // 预览报告（直接打开下载链接）
+  // 预览报告（应用内预览）
   void previewReport() async {
     final link = state.reportInfo['download_link']?.toString() ?? '';
     if (link.isEmpty) {
       Get.snackbar('提示', '暂无可预览的报告链接');
       return;
     }
-    final lower = link.toLowerCase();
-    final isDoc = lower.endsWith('.doc') || lower.endsWith('.docx');
-    final previewUrl = isDoc
-        ? 'https://view.officeapps.live.com/op/view.aspx?src=${Uri.encodeComponent(link)}'
-        : link;
-    await launchUrlString(previewUrl, mode: LaunchMode.externalApplication);
+    
+    // 获取文件名
+    String fileName = (state.reportInfo['file_name']?.toString() ?? '').trim();
+    if (fileName.isEmpty) {
+      final uri = Uri.parse(link);
+      fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '报告.docx';
+    }
+    
+    // 跳转到应用内预览页面
+    Get.toNamed('/document_preview', arguments: {
+      'documentUrl': link,
+      'documentTitle': fileName,
+      'documentType': fileName,
+    });
   }
   
   // 下载报告：保存到本地临时目录并调起系统应用打开

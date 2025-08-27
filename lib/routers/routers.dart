@@ -24,6 +24,7 @@ import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
 import '../pages/setting/update_page/update_page_view.dart';
 import '../pages/home/webview.dart';
+import '../pages/document_preview/document_preview_view.dart';
 
 class Routers {
   static const String splash = '/splash';
@@ -54,6 +55,7 @@ class Routers {
   static const String fingerprintAuth = '/fingerprint_auth';
   static const String webView = '/webview';
   static const String bannerContent = '/banner_content';
+  static const String documentPreview = '/document_preview';
 
   static final List<GetPage> pages = [
     // GetPage(name: splash, page: () => SplashPage()),
@@ -82,5 +84,6 @@ class Routers {
     GetPage(name: userAnalysis, page: () => UserAnalysisPage()),
     GetPage(name: webView, page: () => FYWebView()),
     GetPage(name: bannerContent, page: () => BannerContentPage()),
+    GetPage(name: documentPreview, page: () => DocumentPreviewView()),
   ];
 }
