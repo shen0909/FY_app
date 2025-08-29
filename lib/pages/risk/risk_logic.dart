@@ -66,9 +66,10 @@ class RiskLogic extends GetxController {
 
       // 移除ever监听器，改为在changeUnit方法中直接处理切换逻辑
 
-      debounce(state.searchKeyword, (_) async {
-        _refreshData(); // 搜索时刷新数据
-      }, time: Duration(milliseconds: 500));
+      // 搜索时不刷新数据
+      // debounce(state.searchKeyword, (_) async {
+      //   _refreshData(); // 搜索时刷新数据
+      // }, time: Duration(milliseconds: 500));
 
     } catch (e, stackTrace) {
       print("解析风险数据出错: $e");
