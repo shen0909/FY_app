@@ -129,6 +129,9 @@ class _RiskPageState extends State<RiskPage> {
                     onChanged: (value) {
                       logic.searchCompany(value);
                     },
+                    onSubmitted: (_) {
+                      logic.refreshData();
+                    },
                   ),
                 ),
               ],
