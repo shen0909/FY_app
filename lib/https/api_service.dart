@@ -2579,8 +2579,6 @@ class ApiService {
       "当前请求用户UUID": token,
       "命令具体内容": {
         "news_uuid": newsUuid,
-        "current_page": currentPage,
-        "page_size": pageSize,
       }
     };
 
