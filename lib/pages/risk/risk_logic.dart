@@ -360,8 +360,8 @@ class RiskLogic extends GetxController {
         final returnData = result['返回数据'];
         if (returnData != null) {
           // 解析风险评分数量数据
-          int highRisk = returnData['高风险'] ?? 0;
-          int mediumRisk = returnData['中风险'] ?? 0;
+          int highRisk = returnData['高风险'] ?? returnData['重点关注'] ?? 0;
+          int mediumRisk = returnData['中风险'] ?? returnData['一般关注'] ?? 0;
           int lowRisk = returnData['低风险'] ?? 0;
           final int total = highRisk + mediumRisk + lowRisk;
 
@@ -391,7 +391,7 @@ class RiskLogic extends GetxController {
             },
             'medium': {
               'title': mediumTitle,
-              'count': showLowRisk ? mediumRisk : lowRisk,
+              'count': !showLowRisk ? mediumRisk : lowRisk,
               'change': 0,
               'color': 0xFFF6D500,
             },
