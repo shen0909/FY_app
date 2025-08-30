@@ -546,22 +546,28 @@ class RiskDetailsPage extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 16.w),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 8.w,
                 height: 8.w,
+                margin: EdgeInsets.only(top: 6.w), // 调整圆点位置，与标题对齐
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.w),
                   color: FYColors.color_3361FE,
                 ),
               ),
               SizedBox(width: 8.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF333333),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF333333),
+                  ),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
                 ),
               ),
             ],
@@ -576,6 +582,9 @@ class RiskDetailsPage extends StatelessWidget {
               color: const Color(0xFFA6A6A6),
               height: 1.5,
             ),
+            softWrap: true,
+            overflow: TextOverflow.visible,
+            textAlign: TextAlign.justify, // 两端对齐，更美观
           ),
         ),
       ],
