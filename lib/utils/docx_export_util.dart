@@ -36,7 +36,6 @@ class DocxExportUtil {
       final hasPermission = await PermissionService.requestStoragePermission(Get.context);
       if (!hasPermission) {
         print('❌ 权限被拒绝');
-        ToastUtil.showShort('需要存储权限才能导出文件');
         return null;
       }
       
@@ -59,12 +58,12 @@ class DocxExportUtil {
         return filePath;
       } else {
         print('❌ 文件创建失败');
-        ToastUtil.showShort('导出失败');
+        // 不显示Toast，让调用方处理错误提示
         return null;
       }
     } catch (e) {
       print('❌ 导出DOCX文件异常: $e');
-      ToastUtil.showShort('导出失败: $e');
+      // 不显示Toast，让调用方处理错误提示
       return null;
     }
   }

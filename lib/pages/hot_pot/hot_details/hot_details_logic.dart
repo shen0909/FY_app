@@ -180,34 +180,8 @@ class HotDetailsLogic extends GetxController {
       ToastUtil.showShort('暂无可导出的数据');
       return;
     }
-
     // 显示加载对话框
-    Get.dialog(
-      Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(
-                '正在导出DOCX文件...',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    );
+    DialogUtils.showLoading('正在导出DOCX文件');
 
     try {
       // 执行导出 - 传递新的影响企业数据
@@ -216,7 +190,7 @@ class HotDetailsLogic extends GetxController {
         effectCompanyList: state.effectCompanyList.toList(),
       );
       // 关闭加载对话框
-      Get.back();
+      DialogUtils.hideLoading();
 
       if (filePath != null) {
         // 导出成功，显示确认对话框
@@ -232,13 +206,24 @@ class HotDetailsLogic extends GetxController {
             ],
           ),
         );
-      }
-      else{
-        Get.back();
+      } else {
+        // 导出失败（包括权限被拒绝），显示错误提示
+        // Get.dialog(
+        //   AlertDialog(
+        //     title: const Text('导出失败'),
+        //     content: const Text('导出失败，请检查存储权限或重试'),
+        //     actions: [
+        //       TextButton(
+        //         onPressed: () => Get.back(),
+        //         child: const Text('确定'),
+        //       ),
+        //     ],
+        //   ),
+        // );
       }
     } catch (e) {
       // 关闭加载对话框
-      Get.back();
+      DialogUtils.hideLoading();
       
       // 显示错误信息
       Get.dialog(
