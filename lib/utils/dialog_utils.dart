@@ -66,9 +66,13 @@ class DialogUtils {
     if (!_isLoading) return;
     
     _isLoading = false;
-    
-    if (Get.isDialogOpen == true) {
-      Get.back();
+    try {
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+    } catch (e) {
+      print('关闭加载对话框时出现异常: $e');
+      // 忽略异常，确保不会影响主流程
     }
   }
 
