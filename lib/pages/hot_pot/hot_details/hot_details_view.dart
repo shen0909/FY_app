@@ -737,72 +737,114 @@ class HotDetailsView extends StatelessWidget {
                     effect.indirectEffect.isNotEmpty)
                   SizedBox(height: 20.w),
                 // Column for affected companies
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "受影响企业",
-                      style: TextStyle(
-                        color: Color(0xff1A1A1A),
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
+                Obx(() {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "受直接影响企业",
+                        style: TextStyle(
+                          color: Color(0xff1A1A1A),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8.w),
-                    // 显示影响企业列表
-                    Obx(() {
-                      if (state.effectCompanyList.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.w),
-                            child: Text(
-                              '暂无受影响企业数据',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: FYColors.color_666666,
+                      SizedBox(height: 8.w),
+                      state.effectCompanyList
+                              .where((company) => company.effectType == '1')
+                              .toList()
+                              .isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.w),
+                                child: Text(
+                                  '暂无受直接影响企业数据',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: FYColors.color_666666,
+                                  ),
+                                ),
                               ),
+                            )
+                          : Wrap(
+                              spacing: 8.w,
+                              runSpacing: 4.w,
+                              children: state.effectCompanyList.where((company) => company.effectType == '1').map((company) {
+                                return Text(
+                                  company.zhName.isNotEmpty
+                                      ? company.zhName
+                                      : company.enName,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: FYColors.color_666666,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                      SizedBox(height: 20.w),
+                      Text(
+                        "受间接影响企业",
+                        style: TextStyle(
+                          color: Color(0xff1A1A1A),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 8.w),
+                      state.effectCompanyList
+                          .where((company) => company.effectType == '2')
+                          .toList()
+                          .isEmpty
+                          ? Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          child: Text(
+                            '暂无受直接影响企业数据',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: FYColors.color_666666,
                             ),
                           ),
-                        );
-                      }
-
-                      return Column(
-                        children: [
-                          Wrap(
-                            spacing: 8.w,
-                            runSpacing: 4.w,
-                            children: state.effectCompanyList.map((company) {
-                              return Text(
-                                company.zhName.isNotEmpty ? company.zhName : company.enName,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: FYColors.color_666666,
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
+                        ),
+                      )
+                          : Wrap(
+                        spacing: 8.w,
+                        runSpacing: 4.w,
+                        children: state.effectCompanyList.where((company) => company.effectType == '2').map((company) {
+                          return Text(
+                            company.zhName.isNotEmpty
+                                ? company.zhName
+                                : company.enName,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: FYColors.color_666666,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  );
+                }),
               ],
             ),
     );
   }
 
   // 影响范围item
-  Widget impactItem(String title,List<String> items){
+  Widget impactItem(String title, List<String> items) {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,style: TextStyle(color: Color(0xff1A1A1A),fontSize: 14.sp,fontWeight: FontWeight.w500)),
-          SizedBox(height: 8.w),
-          ...items.map((element){
-            return Text(element,style: TextStyle(fontSize: 14.sp,color: FYColors.color_666666));
-          })
-        ],
-      );
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: TextStyle(color: Color(0xff1A1A1A),
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500)),
+        SizedBox(height: 8.w),
+        ...items.map((element) {
+          return Text(element,
+              style: TextStyle(fontSize: 14.sp, color: FYColors.color_666666));
+        })
+      ],
+    );
   }
 
   // 构建风险措施表格
