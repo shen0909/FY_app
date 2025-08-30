@@ -128,23 +128,23 @@ class HotDetailsLogic extends GetxController {
         final responseData = result['data'];
         
         try {
-          final response = NewsEffectCompanyResponse.fromJson(responseData);
-          
-          if (isRefresh) {
-            state.effectCompanyList.clear();
-          }
-          
-          state.effectCompanyList.addAll(response.list);
-          state.effectCompanyTotalCount.value = response.allCount;
-          
-          // 判断是否还有更多数据
-          if (response.list.length < state.effectCompanyPageSize.value) {
+          if (responseData is List) {
+            // 直接处理列表数据
+            List<EffectCompany> effectCompanies = responseData
+                .map((element) => EffectCompany.fromJson(element))
+                .toList();
+            
+            if (isRefresh) {
+              state.effectCompanyList.clear();
+            }
+            
+            // 添加新的企业数据
+            state.effectCompanyList.addAll(effectCompanies);
+            state.effectCompanyTotalCount.value = effectCompanies.length;
             state.hasMoreEffectCompany.value = false;
-          } else {
-            state.effectCompanyCurrentPage.value++;
+            
+            print('成功获取影响企业数据，总数: ${effectCompanies.length}, 当前列表长度: ${state.effectCompanyList.length}');
           }
-          
-          print('成功获取影响企业数据，总数: ${response.allCount}, 当前列表长度: ${state.effectCompanyList.length}');
         } catch (e) {
           print('解析影响企业数据失败: $e');
           state.effectCompanyErrorMessage.value = '数据解析失败';
@@ -161,11 +161,10 @@ class HotDetailsLogic extends GetxController {
     }
   }
 
-  /// 加载更多影响企业数据
+  /// 加载更多影响企业数据（新接口没有分页，此方法保留但不再使用）
   Future<void> loadMoreEffectCompanyData() async {
-    if (state.hasMoreEffectCompany.value && !state.isLoadingEffectCompany.value) {
-      await fetchEffectCompanyData();
-    }
+    // 新接口返回所有数据，不需要分页加载
+    print('新接口不支持分页加载，所有数据已在首次请求中返回');
   }
 
   /// 刷新影响企业数据
