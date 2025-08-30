@@ -126,10 +126,11 @@ class _RiskPageState extends State<RiskPage> {
                       contentPadding: EdgeInsets.zero,
                       border: InputBorder.none,
                     ),
-                    onChanged: (value) {
-                      logic.searchCompany(value);
-                    },
-                    onSubmitted: (_) {
+                    // onChanged: (value) {
+                    //   logic.searchCompany(value);
+                    // },
+                    onSubmitted: (value) {
+                      state.searchKeyword.value = value;
                       logic.refreshData();
                     },
                   ),
