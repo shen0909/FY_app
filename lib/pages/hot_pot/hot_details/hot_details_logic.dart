@@ -244,31 +244,19 @@ class HotDetailsLogic extends GetxController {
   // 复制内容
   void copyContent(String content) {
     Clipboard.setData(ClipboardData(text: content));
-    Get.snackbar(
-      '复制成功',
-      '内容已复制到剪贴板',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('内容已复制到剪贴板', title: '复制成功');
   }
 
   // 分享内容
   void shareContent() {
     // 实际应用中这里会调用分享API
-    Get.snackbar(
-      '分享提示',
-      '分享功能已触发',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('分享功能已触发', title: '分享提示');
   }
 
   // 添加到收藏
   void addToFavorites() {
     // 实际应用中这里会实现收藏功能
-    Get.snackbar(
-      '收藏提示',
-      '已添加到收藏',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('已添加到收藏', title: '收藏提示');
   }
 
   changeTranslate(int index) {

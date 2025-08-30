@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:safe_app/utils/toast_util.dart';
 
 import 'use_tutorial_state.dart';
 
@@ -35,11 +36,7 @@ class UseTutorialLogic extends GetxController {
   // 发送教程反馈
   void sendFeedback(bool isHelpful) {
     // 实际应用中这里应该发送反馈到后端
-    Get.snackbar(
-      '反馈成功',
-      '感谢您的反馈，我们将不断完善教程内容',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('感谢您的反馈，我们将不断完善教程内容', title: '反馈成功');
   }
   
   // 播放视频教程
@@ -53,11 +50,7 @@ class UseTutorialLogic extends GetxController {
       bool hasPermission = false; // 从用户状态或服务获取
       
       if (!hasPermission) {
-        Get.snackbar(
-          '权限不足',
-          '该视频仅对管理员和审核员开放',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        ToastUtil.showShort('该视频仅对管理员和审核员开放', title: '权限不足');
         return;
       }
     }
@@ -71,11 +64,7 @@ class UseTutorialLogic extends GetxController {
   
   // 联系技术支持
   void contactSupport() {
-    Get.snackbar(
-      '联系技术支持',
-      '已经复制技术支持联系方式到剪贴板',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('已经复制技术支持联系方式到剪贴板', title: '联系技术支持');
   }
 
   /// 处理收起逻辑

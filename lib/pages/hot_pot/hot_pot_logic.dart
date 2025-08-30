@@ -88,41 +88,25 @@ class HotPotLogic extends GetxController {
   // 下载相关文件
   void downloadFile() {
     // 实际应用中这里会实现文件下载功能
-    Get.snackbar(
-      '下载提示', 
-      '文件下载功能已触发',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('文件下载功能已触发', title: '下载提示');
   }
   
   // 复制内容
   void copyContent(String content) {
     Clipboard.setData(ClipboardData(text: content));
-    Get.snackbar(
-      '复制成功', 
-      '内容已复制到剪贴板',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('内容已复制到剪贴板', title: '复制成功');
   }
   
   // 分享内容
   void shareContent() {
     // 实际应用中这里会调用分享API
-    Get.snackbar(
-      '分享提示', 
-      '分享功能已触发',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('分享功能已触发', title: '分享提示');
   }
   
   // 添加到收藏
   void addToFavorites() {
     // 实际应用中这里会实现收藏功能
-    Get.snackbar(
-      '收藏提示', 
-      '已添加到收藏',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('已添加到收藏', title: '收藏提示');
   }
   
   // 显示筛选选项
@@ -152,11 +136,7 @@ class HotPotLogic extends GetxController {
   // 自定义时间范围
   void customTimeRange() {
     // 实际应用中这里会打开日期选择器
-    Get.snackbar(
-      '自定义时间', 
-      '打开自定义时间选择器',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('打开自定义时间选择器', title: '自定义时间');
   }
   
   // 设置搜索关键词

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/utils/toast_util.dart';
 
 import '../../../styles/colors.dart';
 import 'feed_back_state.dart';
@@ -159,12 +160,12 @@ class FeedBackLogic extends GetxController {
   // 提交反馈
   Future<void> submitFeedback() async {
     if (state.selectedType.isEmpty) {
-      Get.snackbar('提示', '请选择反馈类型');
+      ToastUtil.showShort('请选择反馈类型', title: '提示');
       return;
     }
 
     if (state.feedbackDetail.isEmpty) {
-      Get.snackbar('提示', '请填写反馈详情');
+      ToastUtil.showShort('请填写反馈详情', title: '提示');
       return;
     }
     DialogUtils.showLoading();
@@ -174,10 +175,10 @@ class FeedBackLogic extends GetxController {
     if (result != null && result['执行结果'] != false) {
       DialogUtils.hideLoading();
       Get.back(); // 返回上一页
-      Get.snackbar('提示', '反馈提交成功');
+      ToastUtil.showShort('反馈提交成功', title: '提示');
     } else {
       DialogUtils.hideLoading();
-      Get.snackbar('提示', '反馈提交失败，请重试');
+      ToastUtil.showShort('反馈提交失败，请重试', title: '提示');
     }
   }
 

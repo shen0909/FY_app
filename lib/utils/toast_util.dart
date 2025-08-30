@@ -28,12 +28,12 @@ class ToastUtil {
   }
 
   // 显示短时间提示（带防抖）
-  static void showShort(String message) {
+  static void showShort(String message,{String title = '提示'}) {
     if (!_shouldShowToast(message)) return;
     
     try {
       Get.snackbar(
-        '提示',
+        title,
         message,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../https/api_service.dart';
 import '../../../models/login_log_list.dart';
+import '../../../utils/toast_util.dart';
 import 'user_login_data_state.dart';
 
 class UserLoginDataLogic extends GetxController {
@@ -52,21 +53,13 @@ class UserLoginDataLogic extends GetxController {
         if (kDebugMode) {
           print('登录日志列表接口返回数据异常: ${result?['错误信息'] ?? '未知错误'}');
         }
-        Get.snackbar(
-          '提示',
-          '获取登录日志失败，请稍后重试',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        ToastUtil.showShort('获取登录日志失败，请稍后重试', title: '提示');
       }
     } catch (e) {
       if (kDebugMode) {
         print('获取登录日志列表失败: $e');
       }
-      Get.snackbar(
-        '提示',
-        '网络请求失败，请检查网络连接',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('网络请求失败，请检查网络连接', title: '提示');
     } finally {
       state.isLoading.value = false;
     }
@@ -102,21 +95,13 @@ class UserLoginDataLogic extends GetxController {
         if (kDebugMode) {
           print('刷新登录日志接口返回数据异常: ${result?['错误信息'] ?? '未知错误'}');
         }
-        Get.snackbar(
-          '提示',
-          '刷新失败，请稍后重试',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        ToastUtil.showShort('刷新失败，请稍后重试', title: '提示');
       }
     } catch (e) {
       if (kDebugMode) {
         print('刷新登录日志失败: $e');
       }
-      Get.snackbar(
-        '提示',
-        '网络请求失败，请检查网络连接',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('网络请求失败，请检查网络连接', title: '提示');
     } finally {
       state.isRefreshing.value = false;
     }
@@ -148,11 +133,7 @@ class UserLoginDataLogic extends GetxController {
       } else {
         // 加载失败，回退页数
         state.currentPage.value--;
-        Get.snackbar(
-          '提示',
-          '加载更多失败，请稍后重试',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        ToastUtil.showShort('加载更多失败，请稍后重试', title: '提示');
       }
     } catch (e) {
       // 加载失败，回退页数
@@ -160,11 +141,7 @@ class UserLoginDataLogic extends GetxController {
       if (kDebugMode) {
         print('加载更多登录日志失败: $e');
       }
-      Get.snackbar(
-        '提示',
-        '网络请求失败，请检查网络连接',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('网络请求失败，请检查网络连接', title: '提示');
     } finally {
       state.isLoadingMore.value = false;
     }

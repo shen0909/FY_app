@@ -53,14 +53,7 @@ class RiskLogic extends GetxController {
             print('❌ 地区切换时获取风险评分失败: $e');
           }
           // 地区切换时如果风险评分获取失败，给用户提示但不回滚地区选择
-          Get.snackbar(
-            '数据获取失败',
-            '风险评分数据获取失败，请稍后重试',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.orange.withOpacity(0.1),
-            colorText: Colors.orange,
-            duration: Duration(seconds: 3),
-          );
+          ToastUtil.showShort('风险评分数据获取失败，请稍后重试', title: '数据获取失败');
         }
       });
 
@@ -218,11 +211,7 @@ class RiskLogic extends GetxController {
       if (kDebugMode) {
         print('❌ 下拉刷新失败: $e');
       }
-      Get.snackbar(
-        '提示',
-        '刷新失败，请稍后重试',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('刷新失败，请稍后重试', title: '提示');
     } finally {
       state.isRefreshing.value = false;
     }
@@ -677,14 +666,7 @@ class RiskLogic extends GetxController {
       // state.chooseUint.value 保持为 previousUnitType，不需要回滚
 
       // 给用户错误提示
-      Get.snackbar(
-        '切换失败',
-        '单位类型切换失败，请稍后重试',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.1),
-        colorText: Colors.red,
-        duration: Duration(seconds: 3),
-      );
+      ToastUtil.showShort('单位类型切换失败，请稍后重试', title: '切换失败');
     } finally {
       // 隐藏加载对话框
       DialogUtils.hideLoading();

@@ -7,6 +7,7 @@ import 'package:safe_app/https/api_service.dart';
 import '../../models/order_event_model.dart';
 import '../../routers/routers.dart';
 import '../../utils/dialog_utils.dart';
+import '../../utils/toast_util.dart';
 import 'order_state.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -42,13 +43,7 @@ class OrderLogic extends GetxController {
       DialogUtils.hideLoading();
     } catch (e) {
       DialogUtils.hideLoading();
-      Get.snackbar(
-        '错误', 
-        '加载订阅数据失败',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('加载订阅数据失败', title: '错误');
     }
   }
   
@@ -166,7 +161,6 @@ class OrderLogic extends GetxController {
       DialogUtils.hideLoading();
     } catch (e) {
       DialogUtils.hideLoading();
-      Get.snackbar('错误', '操作失败: $e');
     }
   }
 
@@ -183,7 +177,7 @@ class OrderLogic extends GetxController {
     } catch (e) {
       DialogUtils.hideLoading();
       Get.back();
-      Get.snackbar('错误', '操作失败: $e');
+      ToastUtil.showShort('操作失败: $e', title: '错误');
     }
   }
 

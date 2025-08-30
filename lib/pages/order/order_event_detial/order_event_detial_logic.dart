@@ -10,6 +10,7 @@ import '../../../utils/datetime_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:open_file/open_file.dart';
 import '../../../utils/docx_export_util.dart';
+import '../../../utils/toast_util.dart';
 import 'order_event_detial_state.dart';
 
 class OrderEventDetialLogic extends GetxController {
@@ -85,13 +86,7 @@ class OrderEventDetialLogic extends GetxController {
       Get.back();
     } catch (e) {
       Get.back(); // 关闭加载对话框
-      Get.snackbar(
-        '错误', 
-        '加载事件详情失败: $e',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('加载事件详情失败: $e', title: '错误');
     }
   }
   
@@ -111,13 +106,7 @@ class OrderEventDetialLogic extends GetxController {
       Get.back();
     } catch (e) {
       Get.back(); // 关闭加载对话框
-      Get.snackbar(
-        '错误', 
-        '加载专题详情失败: $e',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastUtil.showShort('加载专题详情失败: $e', title: '错误');
     }
   }
 
@@ -297,17 +286,6 @@ class OrderEventDetialLogic extends GetxController {
     });
   }
   
-  // 查看更多动态
-  void viewMoreUpdates() {
-    Get.snackbar(
-      '提示', 
-      '查看更多${state.eventTitle.value}的动态',
-      backgroundColor: Colors.white,
-      colorText: Color(0xFF1A1A1A),
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-  
   // 批量选择开关
   void batchCheck() {
     state.isBatchCheck.value = !state.isBatchCheck.value;
@@ -334,7 +312,7 @@ class OrderEventDetialLogic extends GetxController {
   // 删除选中的项目
   void deleteSelectedItems() {
     if (state.selectedItems.isEmpty) {
-      Get.snackbar('提示', '请先选择要删除的项目');
+      ToastUtil.showShort('请先选择要删除的项目', title: '提示');
       return;
     }
     
@@ -374,7 +352,7 @@ class OrderEventDetialLogic extends GetxController {
     state.selectedItems.clear();
     state.isBatchCheck.value = false;
     
-    Get.snackbar('成功', '已删除选中的项目');
+    ToastUtil.showShort('已删除选中的项目', title: '成功');
   }
   
   // 检查项目是否被选中
@@ -394,7 +372,7 @@ class OrderEventDetialLogic extends GetxController {
   // 生成报告
   Future<void> generateReport() async {
     if (state.selectedItems.isEmpty) {
-      Get.snackbar('提示', '请先选择要生成报告的项目');
+      ToastUtil.showShort('请先选择要生成报告的项目', title: '提示');
       return;
     }
 
@@ -413,7 +391,7 @@ class OrderEventDetialLogic extends GetxController {
 
       if (newsUuids.isEmpty) {
         state.reportGenerationStatus.value = ReportGenerationStatus.failed;
-        Get.snackbar('错误', '未获取到可用的UUID');
+        ToastUtil.showShort('未获取到可用的UUID',title: '错误');
         return;
       }
 
@@ -429,7 +407,7 @@ class OrderEventDetialLogic extends GetxController {
       // 发起导出失败
       if (recordUuid == null || recordUuid.isEmpty) {
         state.reportGenerationStatus.value = ReportGenerationStatus.failed;
-        Get.snackbar('错误', '提交导出失败');
+        ToastUtil.showShort('提交导出失败', title: '错误');
         return;
       }
       // 发起导出成功
@@ -449,14 +427,14 @@ class OrderEventDetialLogic extends GetxController {
         if (done || tries >= maxTries) {
           if (tries >= maxTries && state.reportGenerationStatus.value == ReportGenerationStatus.generating) {
             state.reportGenerationStatus.value = ReportGenerationStatus.failed;
-            Get.snackbar('超时', '报告生成超时，请稍后重试');
+            ToastUtil.showShort('报告生成超时，请稍后重试', title: '超时');
           }
           timer.cancel();
         }
       });
     } catch (e) {
       state.reportGenerationStatus.value = ReportGenerationStatus.failed;
-      Get.snackbar('错误', '生成报告失败: $e');
+      ToastUtil.showShort('生成报告失败: $e', title: '错误');
     }
   }
 
@@ -491,7 +469,7 @@ class OrderEventDetialLogic extends GetxController {
   // 导出选中项目为DOCX文件
   Future<void> exportToDocx() async {
     if (state.selectedItems.isEmpty) {
-      Get.snackbar('提示', '请先选择要导出的项目');
+      ToastUtil.showShort('请先选择要导出的项目', title: '提示');
       return;
     }
 
@@ -613,7 +591,7 @@ class OrderEventDetialLogic extends GetxController {
   void previewReport() async {
     final link = state.reportInfo['download_link']?.toString() ?? '';
     if (link.isEmpty) {
-      Get.snackbar('提示', '暂无可预览的报告链接');
+      ToastUtil.showShort('暂无可预览的报告链接');
       return;
     }
     final lower = link.toLowerCase();
@@ -628,11 +606,11 @@ class OrderEventDetialLogic extends GetxController {
   Future<void> downloadReport() async {
     final link = state.reportInfo['download_link']?.toString() ?? '';
     if (link.isEmpty) {
-      Get.snackbar('提示', '暂无下载链接');
+      ToastUtil.showShort('暂无下载链接', title: '提示');
       return;
     }
     try {
-      Get.snackbar('下载中', '开始下载报告...');
+      ToastUtil.showShort('开始下载报告...', title: '下载中');
       // 文件名优先用后端返回，其次从URL截取
       String fileName = (state.reportInfo['file_name']?.toString() ?? '').trim();
       if (fileName.isEmpty) {
@@ -655,10 +633,10 @@ class OrderEventDetialLogic extends GetxController {
       );
 
       final finalPath = await DocxExportUtil.ensurePublicVisibility(savePath, fileName);
-      Get.snackbar('成功', '报告已下载：$finalPath');
+      ToastUtil.showShort('报告已下载：$finalPath', title: '成功');
       await OpenFile.open(finalPath);
     } catch (e) {
-      Get.snackbar('下载失败', '$e');
+      ToastUtil.showShort('$e', title: '下载失败');
     }
   }
   
@@ -693,14 +671,14 @@ class OrderEventDetialLogic extends GetxController {
           if (state.isFollowed.value) {
             state.isFollowed.value = false;
             state.followCount.value--;
-            Get.snackbar('成功', '已取消关注该事件');
+            ToastUtil.showShort('已取消关注该事件', title: '成功');
           } else {
             state.isFollowed.value = true;
             state.followCount.value++;
-            Get.snackbar('成功', '已关注该事件');
+            ToastUtil.showShort('已关注该事件', title: '成功');
           }
         } else {
-          Get.snackbar('错误', '操作失败');
+          ToastUtil.showShort('操作失败', title: '错误');
         }
       } else {
         // 调用专题关注API
@@ -713,18 +691,18 @@ class OrderEventDetialLogic extends GetxController {
           if (state.isFollowed.value) {
             state.isFollowed.value = false;
             state.followCount.value--;
-            Get.snackbar('成功', '已取消关注该专题');
+            ToastUtil.showShort('已取消关注该专题', title: '成功');
           } else {
             state.isFollowed.value = true;
             state.followCount.value++;
-            Get.snackbar('成功', '已关注该专题');
+            ToastUtil.showShort('已关注该专题', title: '成功');
           }
         } else {
-          Get.snackbar('错误', '操作失败');
+          ToastUtil.showShort('操作失败', title: '错误');
         }
       }
     } catch (e) {
-      Get.snackbar('错误', '操作失败: $e');
+      ToastUtil.showShort('操作失败: $e', title: '错误');
     }
   }
   
