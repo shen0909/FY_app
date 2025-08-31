@@ -65,52 +65,6 @@ class OrderEventDetialPage extends StatelessWidget {
               color: FYColors.color_1A1A1A,
             ),
           ),
-          SizedBox(height: 8.h),
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                state.eventDate.value,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Icon(
-                Icons.remove_red_eye_outlined,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                '已查看数: ${state.viewCount.value}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Icon(
-                Icons.person_add_alt_1_outlined,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                '已关注数: ${state.followCount.value}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
