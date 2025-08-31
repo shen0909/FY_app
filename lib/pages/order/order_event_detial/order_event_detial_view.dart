@@ -150,7 +150,7 @@ class OrderEventDetialPage extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: '${state.latestUpdates.length} ',
+                        text: '${state.totalCount.value} ',
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
