@@ -5,6 +5,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 
 import '../../models/order_event_model.dart';
+import '../../utils/datetime_utils.dart';
 import '../../widgets/custom_app_bar.dart';
 import 'order_logic.dart';
 import 'order_state.dart';
@@ -241,7 +242,7 @@ class OrderPage extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    event.updatedAt,
+                    DateTimeUtils.formatUpdateTime(event.updatedAt),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Color(0xFFA6A6A6),
