@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:badges/badges.dart' as badges;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:safe_app/main.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
-import 'dart:convert';
-import '../../utils/datetime_utils.dart';
 import 'home_logic.dart';
 import 'home_state.dart';
 
@@ -212,61 +210,33 @@ class HomePage extends StatelessWidget {
   Widget _buildBannerImage(int index) {
     if (state.bannerList.isNotEmpty && index < state.bannerList.length) {
       final banner = state.bannerList[index];
-      if (banner.image.isNotEmpty) {
-        try {
-          String imageData = banner.image;
-          if (imageData.contains(',')) {
-            final parts = imageData.split(',');
-            if (parts.length > 1) {
-              imageData = parts[1]; // 取逗号后面的部分
-            }
-          }
-          
-          // 解析base64图片
-          final bytes = base64Decode(imageData);
-          return Image.memory(
-            bytes,
-            fit: BoxFit.fill,
-            width: double.infinity,
+      // 检查是否有图片URL
+      if (banner.imageUrl.isNotEmpty) {
+        return CachedNetworkImage(
+          imageUrl: banner.imageUrl,
+          fit: BoxFit.fill,
+          width: double.infinity,
+          height: isPad ? 288.w : 220.w,
+          errorWidget: (context, url, error) {
+            // 网络图片加载失败，显示占位图
+            return Image.asset(
+              FYImages.bannerLoad,
+              fit: BoxFit.contain,
+              width: double.infinity,
               height: isPad ? 288.w : 220.w,
-              errorBuilder: (context, error, stackTrace) {
-              // base64解析失败，显示占位图
-              return Image.asset(
-                FYImages.bannerLoad,
-                fit: BoxFit.contain,
-                width: double.infinity,
-                height: isPad ? 288.w : 220.w,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Icon(Icons.image_not_supported),
-                    ),
-                  );
-                },
-              );
-            }
-          );
-        } catch (e) {
-          // base64解析失败，显示占位图
-          return Image.asset(
-            FYImages.bannerLoad,
-            fit: BoxFit.fill,
-            width: double.infinity,
-            height: isPad ? 288.w : 220.w,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[300],
-                child: Center(
-                  child: Icon(Icons.image_not_supported),
-                ),
-              );
-            },
-          );
-        }
+            );
+          },
+          // 缓存配置
+          cacheKey: 'banner_${banner.uuid}',
+          maxWidthDiskCache: 800,
+          maxHeightDiskCache: 600,
+          memCacheWidth: 800,
+          memCacheHeight: 600,
+        );
       }
     }
-    // 没有接口数据或图片为空时，显示占位图
+    
+    // 没有图片数据时，显示占位图
     return Image.asset(
       FYImages.bannerLoad,
       fit: BoxFit.contain,

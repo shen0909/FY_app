@@ -193,8 +193,7 @@ class HomeLogic extends GetxController {
         }
         return;
       }
-      
-      // 使用缓存服务获取轮播图（无需显示Loading）
+
       final banners = await BusinessCacheService.instance.getBannerListWithCache();
       
       if (banners != null && banners.isNotEmpty) {

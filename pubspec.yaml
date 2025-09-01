@@ -60,6 +60,7 @@ dependencies:
   share_plus: ^10.1.2
   intl: ^0.19.0
   device_info_plus: ^11.3.0
+  cached_network_image: ^3.3.1  # 网络图片缓存
   # DOCX 文件导出相关依赖
   archive: ^3.6.1  # 处理压缩文件（DOCX是压缩格式）
   xml: ^6.5.0     # XML处理
