@@ -59,7 +59,73 @@ class BusinessCacheService extends GetxService {
     }
   }
 
-  // ==================== 轮播图相关缓存 (新增) ====================
+  // ==================== 首页数据相关缓存 (新增) ====================
+
+  /// 获取首页完整数据（带缓存）
+  Future<Map<String, dynamic>?> getHomePageDataWithCache({bool forceUpdate = false}) async {
+    try {
+      const cacheKey = 'home_page_data';
+
+      // 首先尝试从缓存获取
+      if (!forceUpdate) {
+        final cachedData = await cacheManager.get<Map<String, dynamic>>(cacheKey);
+        if (cachedData != null) {
+          debugPrint('🎯 首页数据缓存命中');
+          return cachedData;
+        }
+      }
+
+      // 缓存未命中，从网络获取
+      debugPrint('🌐 首页数据网络请求');
+      final result = await apiService.getHomePageData();
+
+      if (result != null && result['执行结果'] == true) {
+        final returnData = result['返回数据'];
+        if (returnData != null) {
+          // 存入缓存
+          await cacheManager.set(
+            cacheKey,
+            returnData,
+            ttl: const Duration(minutes: 10), // 首页数据10分钟缓存
+            priority: CachePriority.high,
+            metadata: {
+              'requestTime': DateTime.now().millisecondsSinceEpoch,
+              'dataType': 'home_page_data',
+            },
+          );
+
+          return returnData;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('❌ 获取首页数据失败: $e');
+      return null;
+    }
+  }
+
+  /// 预加载首页数据
+  Future<void> preloadHomePageData() async {
+    try {
+      await getHomePageDataWithCache();
+      debugPrint('✅ 首页数据预加载完成');
+    } catch (e) {
+      debugPrint('❌ 首页数据预加载失败: $e');
+    }
+  }
+
+  /// 清理首页数据缓存
+  Future<void> clearHomePageCache() async {
+    try {
+      await cacheManager.remove('home_page_data');
+      debugPrint('🗑️ 首页数据缓存已清理');
+    } catch (e) {
+      debugPrint('❌ 清理首页数据缓存失败: $e');
+    }
+  }
+
+  // ==================== 轮播图相关缓存 ====================
 
   /// 获取轮播图列表（带缓存）
   Future<List<BannerModels>?> getBannerListWithCache({bool forceUpdate = false}) async {

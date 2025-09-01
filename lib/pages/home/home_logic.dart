@@ -183,103 +183,106 @@ class HomeLogic extends GetxController {
     Get.toNamed(Routers.detailList);
   }
 
-  /// 获取轮播图列表 - 缓存优化版
-  Future<void> getBannerList() async {
-    try {
-      // 检查缓存服务是否可用
-      if (!Get.isRegistered<BusinessCacheService>()) {
-        if (kDebugMode) {
-          print('⚠️ BusinessCacheService 未注册，跳过轮播图加载');
-        }
-        return;
-      }
-
-      final banners = await BusinessCacheService.instance.getBannerListWithCache();
-      
-      if (banners != null && banners.isNotEmpty) {
-        state.bannerList.assignAll(banners);
-        if (kDebugMode) {
-          print('✅ 成功加载${banners.length}个轮播图');
-        }
-      } else {
-        if (kDebugMode) {
-          print('⚠️ 轮播图数据为空，保持当前状态');
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ 获取轮播图失败: $e');
-      }
-      // 发生错误时，可以选择显示默认轮播图
-      // _loadDefaultBanners();
-    }
-  }
-
-  /// 刷新轮播图列表
-  Future<void> refreshBannerList() async {
-    try {
-      // 显示刷新指示器
-      DialogUtils.showLoading();
-      
-      // 强制更新，跳过缓存
-      final banners = await BusinessCacheService.instance.getBannerListWithCache(forceUpdate: true);
-
-      if (banners != null) {
-        state.bannerList.assignAll(banners);
-        if (kDebugMode) {
-          print('🔄 轮播图刷新成功');
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ 刷新轮播图失败: $e');
-      }
-    } finally {
-      DialogUtils.hideLoading();
-    }
-  }
-
-  /// 预加载轮播图（应用启动时调用）
-  Future<void> preloadBannerData() async {
-    await BusinessCacheService.instance.preloadBannerData();
-  }
-
-  /// 获取首页数据（整合轮播图、风险预警、实体清单）
+  /// 获取首页数据（缓存优先，后台更新策略）
   Future<void> getHomePageData() async {
     try {
-      // 先尝试使用新的整合接口
-      final result = await ApiService().getHomePageData();
+      // 1. 首先尝试从缓存加载数据（立即显示）
+      await _loadHomeDataFromCache();
+
+      // 2. 后台调用接口更新数据
+      _updateHomeDataInBackground();
+      
+    } catch (e) {
       if (kDebugMode) {
-        print("🏠 获取首页数据结果: $result");
+        print("❌ 获取首页数据出错: $e");
+      }
+    }
+  }
+
+  /// 从缓存加载首页数据（立即显示）
+  Future<void> _loadHomeDataFromCache() async {
+    try {
+      if (kDebugMode) {
+        print("🔄 尝试从缓存加载首页数据");
       }
       
-      if (result != null && result['执行结果'] == true) {
-        final returnData = result['返回数据'];
-        if (returnData != null) {
-          // 处理轮播图数据
-          await _processBannerData(returnData['banner']);
-          
-          // 处理风险预警数据
-          _processEnterpriseData(returnData['enterprise']);
-          
-          // 处理实体清单数据
-          _processSanctionData(returnData['sanction']);
-          
-          if (kDebugMode) {
-            print("✅ 首页数据处理完成");
-          }
+      // 尝试从首页数据缓存加载
+      final cachedHomeData = await BusinessCacheService.instance.getHomePageDataWithCache();
+      
+      if (cachedHomeData != null) {
+        // 处理轮播图数据
+        if (cachedHomeData['banner'] != null) {
+          await _processBannerData(cachedHomeData['banner']);
+        }
+        
+        // 处理风险预警数据
+        if (cachedHomeData['enterprise'] != null) {
+          _processEnterpriseData(cachedHomeData['enterprise']);
+        }
+        
+        // 处理实体清单数据
+        if (cachedHomeData['sanction'] != null) {
+          _processSanctionData(cachedHomeData['sanction']);
+        }
+        
+        if (kDebugMode) {
+          print("✅ 成功从缓存加载首页数据");
         }
       } else {
         if (kDebugMode) {
-          print("⚠️ 首页数据接口返回异常，尝试使用旧接口获取数据");
+          print("⚠️ 缓存中没有首页数据");
+        }
+      }
+      
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ 从缓存加载首页数据失败: $e");
+      }
+    }
+  }
+
+  /// 后台更新首页数据
+  Future<void> _updateHomeDataInBackground() async {
+    try {
+      if (kDebugMode) {
+        print("🔄 后台更新首页数据");
+      }
+      
+      // 强制更新首页数据缓存
+      final updatedHomeData = await BusinessCacheService.instance.getHomePageDataWithCache(forceUpdate: true);
+      
+      if (updatedHomeData != null) {
+        // 处理轮播图数据
+        if (updatedHomeData['banner'] != null) {
+          await _processBannerData(updatedHomeData['banner']);
+        }
+        
+        // 处理风险预警数据
+        if (updatedHomeData['enterprise'] != null) {
+          _processEnterpriseData(updatedHomeData['enterprise']);
+        }
+        
+        // 处理实体清单数据
+        if (updatedHomeData['sanction'] != null) {
+          _processSanctionData(updatedHomeData['sanction']);
+        }
+        
+        if (kDebugMode) {
+          print("✅ 后台数据更新完成");
+        }
+      } else {
+        if (kDebugMode) {
+          print("⚠️ 后台数据更新失败，保持缓存数据");
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print("❌ 获取首页数据出错: $e，尝试使用旧接口");
+        print("❌ 后台数据更新异常: $e，保持缓存数据");
       }
     }
   }
+
+
 
   /// 处理轮播图数据
   Future<void> _processBannerData(dynamic bannerData) async {
