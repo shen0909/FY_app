@@ -107,12 +107,16 @@ class AiQusLogic extends GetxController {
     // 设置发送状态
     state.isSendingMessage.value = true;
 
+    // 发送时固化当前选择的机器人/模型，写入每条消息，避免中途切换导致来源显示不一致
+    final String robotAtSend = state.selectedModel.value;
+
     // 添加用户消息
     final userMessage = {
       'isUser': true,
       'content': text,
       'timestamp': DateTime.now().toIso8601String(),
       'isSynced': false, // 标记新用户消息需要同步
+      'aiSource': robotAtSend, // 记录当次对话的目标机器人，便于追溯
     };
     state.messages.add(userMessage);
 
@@ -138,6 +142,7 @@ class AiQusLogic extends GetxController {
       'isLoading': true, // 添加loading标识
       'timestamp': DateTime.now().toIso8601String(),
       'isSynced': false, // 标记新AI消息需要同步
+      'aiSource': robotAtSend, // 固化当前机器人来源
     });
 
     // 滚动到底部显示AI消息占位符
@@ -165,6 +170,7 @@ class AiQusLogic extends GetxController {
           'isLoading': false,
           'timestamp': DateTime.now().toIso8601String(),
           'isSynced': false, // 保持未同步状态
+          'aiSource': robotAtSend, // 保持来源一致
         };
 
         // 开始轮询获取回复
@@ -448,12 +454,14 @@ class AiQusLogic extends GetxController {
           hasNewContent = true;
           // 更新UI中的消息
           if (messageIndex < state.messages.length) {
+            final prev = state.messages[messageIndex];
             state.messages[messageIndex] = {
               'isUser': false,
               'content': state.currentAiReply.value,
               'isStreaming': true,
               'timestamp': DateTime.now().toIso8601String(),
               'isSynced': false, // 保持流式消息的未同步状态
+              'aiSource': prev['aiSource'], // 继承来源
             };
 
             // 流式回复时自动滚动到底部
@@ -602,12 +610,15 @@ class AiQusLogic extends GetxController {
           'isError': true,
           'isTemporary': true, // 标记为临时消息，不同步
           'timestamp': DateTime.now().toIso8601String(),
+          // 系统/错误提示不显示来源标题
+          'isSystem': true,
         });
         
         print('💡 AI回复失败，已回滚用户消息，避免污染历史记录');
         
       } else {
         // AI回复成功，正常处理
+        final prev = state.messages[messageIndex];
         state.messages[messageIndex] = {
           'isUser': false,
           'content': finalContent,
@@ -615,6 +626,7 @@ class AiQusLogic extends GetxController {
           'timestamp': DateTime.now().toIso8601String(),
           'aiModel': state.selectedModel.value,
           'isSynced': false, // 标记最终AI消息需要同步
+          'aiSource': prev['aiSource'], // 保持本条消息来源
         };
 
         // 添加到对话历史
@@ -1362,6 +1374,7 @@ class AiQusLogic extends GetxController {
             'content': record['content'] ?? '',
             'timestamp': record['created_at'] ?? DateTime.now().toIso8601String(),
             'aiModel': record['model'] ?? 'Unknown',
+            'aiSource': record['model'] ?? 'Unknown', // 从云端记录恢复来源
             'isSynced': true, // ✅ 标记从云端加载的消息已同步
           });
         }

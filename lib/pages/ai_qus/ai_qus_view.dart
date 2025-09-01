@@ -182,8 +182,10 @@ class AiQusPage extends StatelessWidget {
                         content: message['content']?.toString() ?? '',
                         isUser: isUser,
                         isStreaming: isStreaming,
-                        isShowName: !isUser,
-                        title: '智能体FY+AI(${state.selectedModel.value.substring(0, 1)})',
+                        // 仅非系统AI消息展示名称
+                        isShowName: !isUser && message['isSystem'] != true,
+                        // 优先使用消息自带来源字段，其次回退当前选择
+                        title: '智能体FY+AI(' + ((message['aiSource']?.toString().isNotEmpty == true ? (message['aiSource'] as String) : state.selectedModel.value).substring(0, 1)) + ')',
                       )
                     : Container(
                         padding: EdgeInsets.all(12.w),
