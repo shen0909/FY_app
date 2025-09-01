@@ -391,7 +391,7 @@ class RiskLogic extends GetxController {
             },
             'medium': {
               'title': mediumTitle,
-              'count': !showLowRisk ? mediumRisk : lowRisk,
+              'count': mediumRisk,
               'change': 0,
               'color': 0xFFF6D500,
             },
