@@ -205,8 +205,8 @@ class HomeLogic extends GetxController {
       if (kDebugMode) {
         print("🔄 尝试从缓存加载首页数据");
       }
-      
-      // 尝试从首页数据缓存加载
+
+      // 从缓存加载数据（不强制更新）
       final cachedHomeData = await BusinessCacheService.instance.getHomePageDataWithCache();
       
       if (cachedHomeData != null) {
@@ -245,30 +245,30 @@ class HomeLogic extends GetxController {
   Future<void> _updateHomeDataInBackground() async {
     try {
       if (kDebugMode) {
-        print("🔄 后台更新首页数据");
+        print("🔄 后台调用接口更新首页数据");
       }
-      
-      // 强制更新首页数据缓存
-      final updatedHomeData = await BusinessCacheService.instance.getHomePageDataWithCache(forceUpdate: true);
-      
-      if (updatedHomeData != null) {
-        // 处理轮播图数据
-        if (updatedHomeData['banner'] != null) {
-          await _processBannerData(updatedHomeData['banner']);
-        }
-        
-        // 处理风险预警数据
-        if (updatedHomeData['enterprise'] != null) {
-          _processEnterpriseData(updatedHomeData['enterprise']);
-        }
-        
-        // 处理实体清单数据
-        if (updatedHomeData['sanction'] != null) {
-          _processSanctionData(updatedHomeData['sanction']);
-        }
-        
-        if (kDebugMode) {
-          print("✅ 后台数据更新完成");
+      // 直接调用接口获取最新数据
+      final result = await ApiService().getHomePageData();
+      if (result != null && result['执行结果'] == true) {
+        final returnData = result['返回数据'];
+        if (returnData != null) {
+          // 更新缓存
+          await BusinessCacheService.instance.updateHomePageCache(returnData);
+          // 处理轮播图数据
+          if (returnData['banner'] != null) {
+            await _processBannerData(returnData['banner']);
+          }
+          // 处理风险预警数据
+          if (returnData['enterprise'] != null) {
+            _processEnterpriseData(returnData['enterprise']);
+          }
+          // 处理实体清单数据
+          if (returnData['sanction'] != null) {
+            _processSanctionData(returnData['sanction']);
+          }
+          if (kDebugMode) {
+            print("✅ 后台数据更新完成");
+          }
         }
       } else {
         if (kDebugMode) {

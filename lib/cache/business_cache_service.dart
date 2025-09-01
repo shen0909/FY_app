@@ -125,6 +125,30 @@ class BusinessCacheService extends GetxService {
     }
   }
 
+  /// 更新首页数据缓存
+  Future<void> updateHomePageCache(Map<String, dynamic> homeData) async {
+    try {
+      const cacheKey = 'home_page_data';
+      
+      // 更新缓存
+      await cacheManager.set(
+        cacheKey,
+        homeData,
+        ttl: const Duration(minutes: 10), // 首页数据10分钟缓存
+        priority: CachePriority.high,
+        metadata: {
+          'requestTime': DateTime.now().millisecondsSinceEpoch,
+          'dataType': 'home_page_data',
+          'updateTime': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+      
+      debugPrint('✅ 首页数据缓存已更新');
+    } catch (e) {
+      debugPrint('❌ 更新首页数据缓存失败: $e');
+    }
+  }
+
   // ==================== 轮播图相关缓存 ====================
 
   /// 获取轮播图列表（带缓存）
