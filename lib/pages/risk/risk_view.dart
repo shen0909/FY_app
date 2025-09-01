@@ -302,51 +302,6 @@ class _RiskPageState extends State<RiskPage> {
     );
   }
 
-  // 总数统计卡片
-  Widget _buildTotalStatCard({required int total, required Color color}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xffF4F4F4),
-        borderRadius: BorderRadius.circular(8.w),
-      ),
-      // elevation: 0,
-      padding: EdgeInsets.all(10.r),
-      // color: Colors.red,
-      height: 64.w,
-      width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '总数',
-              style: FYTextStyles.riskStatHighRiskStyle(),
-            ),
-            Row(
-              children: [
-                Text(
-                  '$total',
-                  style: TextStyle(
-                    color: FYColors.color_1A1A1A,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                    height: 1.5,
-                    leadingDistribution: TextLeadingDistribution.even,
-                  ),
-                ),
-                Text('家',
-                    style: FYTextStyles.riskStatHighRiskStyle().copyWith(
-                        color: FYColors.color_1A1A1A,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12.sp)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildRiskList() {
     return Obx(() {
       final currentList = state.currentRiskList;
@@ -630,19 +585,19 @@ class _RiskPageState extends State<RiskPage> {
                         ? null
                         : () => logic.showMessageDialog(item['id']),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color:
-                            isRead ? FYColors.color_CEFFEE : Colors.transparent,
+                        color: isRead
+                            ? FYColors.color_CEFFEE
+                            : FYColors.color_FFD8D2,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        isRead ? '全部已读' : '',
+                        isRead ? '全部已读' : '${item['unreadCount']}条未读',
                         style: TextStyle(
                           color: isRead
                               ? FYColors.color_07CC89
-                              : Colors.transparent,
+                              : FYColors.color_FF2A08,
                           fontSize: 12,
                         ),
                       ),
