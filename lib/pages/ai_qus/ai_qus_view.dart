@@ -182,6 +182,8 @@ class AiQusPage extends StatelessWidget {
                         content: message['content']?.toString() ?? '',
                         isUser: isUser,
                         isStreaming: isStreaming,
+                        isShowName: !isUser,
+                        title: '智能体FY+AI(${state.selectedModel.value.substring(0, 1)})',
                       )
                     : Container(
                         padding: EdgeInsets.all(12.w),

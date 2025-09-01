@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safe_app/styles/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Markdown消息渲染组件
 class MarkdownMessageWidget extends StatelessWidget {
   final String content;
+  final String title;
   final bool isUser;
   final bool isStreaming;
+  final bool isShowName; //是否展示智能体名称
 
   const MarkdownMessageWidget({
     Key? key,
     required this.content,
+    required this.title,
     required this.isUser,
     this.isStreaming = false,
+    required this.isShowName
   }) : super(key: key);
 
   @override
@@ -56,6 +61,11 @@ class MarkdownMessageWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if(isShowName)
+            Padding(
+              padding: EdgeInsets.only(bottom: 6.w),
+              child: Text('${title}: ',style: TextStyle(fontSize: 10.sp,color: FYColors.color_3361FE,fontWeight: FontWeight.w400)),
+            ),
           MarkdownBody(
             data: content,
             fitContent: true,
