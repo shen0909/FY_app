@@ -128,6 +128,7 @@ class OrderEventDetialLogic extends GetxController {
         final Map<String, dynamic> returnData = result['返回数据'] ?? {};
         final List<dynamic> updatesData = returnData['list'] ?? [];
         final int allCount = returnData['all_count'] ?? 0;
+        // 如果不是加载更多传重置数据
         if (!isLoadMore) {
           state.latestUpdates.clear();
           state.currentPage.value = 1;
@@ -143,11 +144,6 @@ class OrderEventDetialLogic extends GetxController {
             'type': update['types'] ?? '',
             'source': update['news_medium'] ?? '',
           });
-        }
-        
-        // 更新分页状态
-        if (isLoadMore) {
-          state.currentPage.value++;
         }
         // 判断是否还有更多数据
         state.hasMoreData.value = state.latestUpdates.length < allCount;
@@ -202,11 +198,6 @@ class OrderEventDetialLogic extends GetxController {
           });
         }
         
-        // 更新分页状态
-        if (isLoadMore) {
-          state.currentPage.value++;
-        }
-        
         // 判断是否还有更多数据
         state.hasMoreData.value = state.latestUpdates.length < allCount;
         
@@ -228,6 +219,7 @@ class OrderEventDetialLogic extends GetxController {
     if (state.isLoadingMore.value || !state.hasMoreData.value) {
       return;
     }
+    state.currentPage.value++;
     if (state.eventUuid.value.isNotEmpty) {
       if (_isEvent) {
         await loadEventLatestUpdates(state.eventUuid.value, isLoadMore: true);
