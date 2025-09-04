@@ -666,9 +666,11 @@ class _RiskPageState extends State<RiskPage> {
 
   // 星云
   Widget _buildRiskItem3(Map<String, dynamic> item) {
-    final String attentionLevel = item['riskLevel'] == 1 ? "low" : item['riskLevel']== 2 ? "general_focus" : "key_focus";
+    final String attentionLevel = item['xyRiskType'] == 1 ? "general_focus" : "key_focus";
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
+    Color textColor = Colors.black;
+
     // 关注度级别颜色
     Color attentionColor = Colors.grey;
     Color backgroundColor = Colors.white;
@@ -681,11 +683,13 @@ class _RiskPageState extends State<RiskPage> {
       backgroundColor = Color(0xFFFEE2E2).withOpacity(0.6);
       borderColor = Color(0xFFF87171).withOpacity(0.4);
       textBg = FYColors.color_FFD8D2;
+      textColor = Color(0xFFFF6850);
     } else if (attentionLevel == 'general_focus') {
       attentionColor = Color(0xFFFF9719);
       backgroundColor = Color(0xFFFFF7E6);
       borderColor = Color(0xFFF6D500);
       textBg = FYColors.color_CEFFEE;
+      textColor = Color(0xFF07CC89);
     }
 
     return GestureDetector(
@@ -775,10 +779,10 @@ class _RiskPageState extends State<RiskPage> {
                     padding:
                         EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.w),
                     child: Text(
-                      item['riskLevelText'],
+                      item['xyRiskTypeText'],
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: riskColor,
+                        color: textColor,
                         height: 1,
                         fontWeight: FontWeight.w400,
                       ),

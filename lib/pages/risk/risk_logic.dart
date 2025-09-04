@@ -527,6 +527,8 @@ class RiskLogic extends GetxController {
       'englishName': company.enName,
       'description': company.entProfile,
       'riskLevel': company.riskType,
+      'xyRiskType': company.xyRiskType,
+      'xyRiskTypeText': company.xyRiskType == 2 ? "重点关注" : "一般关注",
       'riskLevelText': state.chooseUint.value == 2
                   ? company.riskType == 1
                       ? "一般关注"

@@ -60,6 +60,9 @@ class RiskListElement {
   ///未读新闻数量（后端返回为字符串，这里统一转为int）
   int unreadNewsCount;
 
+  /// 星云风险等级
+  int xyRiskType;
+
   RiskListElement({
     required this.createdAt,
     required this.customClassification,
@@ -72,6 +75,7 @@ class RiskListElement {
     required this.uuid,
     required this.zhName,
     required this.unreadNewsCount,
+    required this.xyRiskType
   });
 
   factory RiskListElement.fromJson(Map<String, dynamic> json) => RiskListElement(
@@ -86,6 +90,7 @@ class RiskListElement {
     uuid: json["uuid"] ?? "",
     zhName: json["zh_name"] ?? "",
     unreadNewsCount: int.tryParse((json["unread_news_count"] ?? '0').toString()) ?? 0,
+    xyRiskType: json["xy_risk_type"] ?? 1, // 提供默认值1（一般关注）
   );
 
   Map<String, dynamic> toJson() => {
