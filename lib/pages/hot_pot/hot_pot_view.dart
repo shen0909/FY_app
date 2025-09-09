@@ -469,20 +469,24 @@ class HotPotPage extends StatelessWidget {
                             ),
                             SizedBox(height: 8.w),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   DateTimeUtils.formatPublishTime(news.publishTime),
                                   style: TextStyle(
                                       fontSize: 12.sp, color: FYColors.color_A6A6A6),
                                 ),
-                                Text(
-                                  news.newsMedium,
-                                  style: TextStyle(
-                                      fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                Expanded(
+                                  child: Flexible(
+                                    child: Text(
+                                      news.newsMedium,
+                                      style: TextStyle(
+                                          fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                      textAlign: TextAlign.right, // 让文本靠右对齐
+                                    ),
+                                  ),
                                 ),
                               ],
-                            ),
+                            )
                           ],
                         ),
                       ),
