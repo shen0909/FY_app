@@ -31,6 +31,9 @@ class UpdatePageLogic extends GetxController {
   // 使用全局单例管理下载状态
   final UpdateManager updateManager = UpdateManager();
 
+  // 添加一个变量来记录上次通知的进度百分比，防止频繁更新
+  int _lastNotifiedProgress = 0;
+
   @override
   void onInit() {
     super.onInit();
@@ -64,17 +67,17 @@ class UpdatePageLogic extends GetxController {
   Future<void> _initNotifications() async {
     // 请求通知权限
     await _requestNotificationPermission();
-    
-    const AndroidInitializationSettings initializationSettingsAndroid = 
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    
-    const DarwinInitializationSettings initializationSettingsIOS = 
-        DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true,
-        );
-    
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings initializationSettingsIOS =
+    DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
     const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
@@ -147,7 +150,10 @@ class UpdatePageLogic extends GetxController {
     if (updateManager.isDownloading || updateManager.isInstalling) {
       return;
     }
-    
+
+    // 重置上次通知的进度
+    _lastNotifiedProgress = 0;
+
     // 更新全局状态
     updateManager.isDownloading = true;
     updateManager.downloadProgress = 0;
@@ -165,19 +171,23 @@ class UpdatePageLogic extends GetxController {
     
     try {
       final filePath = await UpdateService().downloadUpdate(
-        state.updateInfo!['uuid'],
-        state.updateInfo!['filename'],
-        onProgress: (progress) {
-          // 更新全局进度
-          updateManager.downloadProgress = progress;
-          // 同步到本地状态（如果页面还在显示）
-          state.downloadProgress = progress;
-          update();
-          
-          // 同时更新通知进度
-          _updateDownloadNotification(progress);
-        },
-        cancelToken: updateManager.cancelToken
+          state.updateInfo!['uuid'],
+          state.updateInfo!['filename'],
+          onProgress: (progress) {
+            // 更新全局进度
+            updateManager.downloadProgress = progress;
+            // 同步到本地状态（如果页面还在显示）
+            state.downloadProgress = progress;
+            update();
+
+            // 基于进度百分比更新通知，每增加5%或下载完成时更新一次
+            final int currentProgressInt = (progress * 100).round();
+            if (currentProgressInt - _lastNotifiedProgress >= 5 || progress == 1.0) {
+              _updateDownloadNotification(progress);
+              _lastNotifiedProgress = currentProgressInt;
+            }
+          },
+          cancelToken: updateManager.cancelToken
       );
       
       // 更新全局状态
@@ -272,7 +282,7 @@ class UpdatePageLogic extends GetxController {
   // 更新下载进度通知
   Future<void> _updateDownloadNotification(double progress) async {
     final int progressInt = (progress * 100).round();
-    
+    print("更新下载进度:$progressInt");
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'update_channel',
       '应用更新',
