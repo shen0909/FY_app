@@ -1693,49 +1693,6 @@ class ApiService {
     return null;
   }
 
-  /// 下载更新文件块 (已废弃，保留兼容性)
-  @Deprecated('使用 getUpdateDownloadUrl 替代')
-  Future<Map<String, dynamic>?> downloadUpdateFile(String fileUuid,
-      int fileIndex, {CancelToken? cancelToken}) async {
-    // 获取内层token
-    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
-    if (token == null || token.isEmpty) {
-      if (kDebugMode) {
-        print('$_tag 下载更新文件失败：内层token为空');
-      }
-      return null;
-    }
-
-    // 构造请求参数
-    Map<String, dynamic> paramData = {
-      "消息类型": "app热更新_下载文件",
-      "当前请求用户UUID": token,
-      "命令具体内容": {
-        "file_uuid": fileUuid,
-        "file_index": fileIndex
-      }
-    };
-
-    dynamic result = await _sendChannelEvent(
-        paramData: paramData, cancelToken: cancelToken);
-    if (result != null && result['is_success'] == true &&
-        result['result_string'] != null) {
-      try {
-        // 解析result_string
-        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
-        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
-          return resultData['返回数据'];
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          print('$_tag 解析下载文件响应失败: $e');
-        }
-      }
-    }
-
-    return null;
-  }
-
   /// Token保活ping接口 - 每分钟调用一次以刷新token时效
   Future<bool> pingTokenKeepAlive() async {
     // 获取内层token
