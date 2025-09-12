@@ -1,11 +1,16 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:open_file/open_file.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/detail_list_data.dart';
 import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/utils/area_data_manager.dart';
-
+import 'package:safe_app/utils/toast_util.dart';
+import '../../styles/colors.dart';
+import '../../utils/dialog_utils.dart';
+import '../../utils/file_utils.dart';
 import 'detail_list_state.dart';
 
 class DetailListLogic extends GetxController {
@@ -639,6 +644,116 @@ class DetailListLogic extends GetxController {
       }
       
       loadData();
+    }
+  }
+
+  downloadExcel() async {
+    DialogUtils.showLoading('正在导出Excel文件');
+    final result = await ApiService().getEntityListExcel();
+    DialogUtils.hideLoading();
+    if(result == null) {
+      ToastUtil.showShort('导出失败');
+      return false;
+    }
+    DialogUtils.showCustomDialog(Container(
+      padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 成功图标
+          Container(
+            width: 64.w,
+            height: 64.h,
+            decoration: const BoxDecoration(
+              color: Color(0xFF3361FE),
+              shape: BoxShape.circle
+            ),
+            child: Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 40.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'Excel生成成功',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          // 操作按钮
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => downloadAndPreviewReport(result),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: FYColors.loginBtn,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '下载并预览',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ));
+  }
+
+  downloadAndPreviewReport(String link) async {
+    // 1. 检查链接是否为空
+    if (link.isEmpty) {
+      ToastUtil.showShort('暂无下载链接', title: '提示');
+      return;
+    }
+    Get.back(); // 关闭前一个弹窗
+    try {
+      ToastUtil.showShort('开始下载报告...', title: '下载中');
+
+      final uri = Uri.parse(link);
+      String fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '报告.xlsx';
+
+      if (!fileName.toLowerCase().endsWith('.xlsx')) {
+        fileName = '$fileName.xlsx';
+      }
+      final dirPath = await FileUtil.getDownloadDirectoryPath();
+      if (dirPath == null) {
+        ToastUtil.showShort('获取存储权限或路径失败', title: '下载失败');
+        return Future.value(false);
+      }
+      final savePath = '$dirPath/$fileName';
+      await Dio().download(
+        link,
+        savePath,
+        options: Options(responseType: ResponseType.bytes, followRedirects: true),
+        onReceiveProgress: (count, total) {
+          if (total > 0) {
+            final percent = (count / total * 100).toStringAsFixed(0);
+            print('下载进度: $percent%');
+          }
+        },
+      );
+      ToastUtil.showShort('报告已下载', title: '成功');
+      await OpenFile.open(savePath);
+    } catch (e) {
+      ToastUtil.showShort('下载失败');
     }
   }
 }

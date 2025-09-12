@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/utils/toast_util.dart';
+
+import '../styles/colors.dart';
 
 class DialogUtils {
   static bool _isLoading = false;
@@ -136,6 +139,26 @@ class DialogUtils {
 
   /// 显示自定义对话框
   static Future<T?> showCustomDialog<T>(Widget dialog) {
-    return Get.dialog<T>(dialog);
+    Widget child = Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.r),
+          topRight: Radius.circular(16.r),
+        ),
+      ),
+      child: Material(
+        color: FYColors.whiteColor,
+        borderRadius: BorderRadius.only(topRight: Radius.circular(16.r),topLeft: Radius.circular(16.r)),
+        child: dialog,
+      ),
+    );
+    return Get.dialog<T>(
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: child,
+      ),
+      barrierDismissible: true,
+    );
   }
 } 

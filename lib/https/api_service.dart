@@ -2553,6 +2553,43 @@ class ApiService {
     return null;
   }
 
+  /// 获取实体清单下载链接
+  Future getEntityListExcel() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 实体清单_获取清单趋势数据失败：内层token为空');
+      }
+      return null;
+    }
+
+    final Map<String, dynamic> paramData = {
+      "消息类型": "实体清单_导出Excel",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "limit": 1000,
+        "sanction_type": "",
+        "province": "",
+        "city": ""
+      }
+    };
+
+    final result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true && result['result_string'] != null) {
+      try {
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        return resultData['返回数据']['url'];
+
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 实体清单_excel下载链接失败: $e');
+        }
+      }
+    }
+    return null;
+  }
+
   /// 获取新闻影响企业（舆情热点_新闻企业关联_获取新闻影响企业）
   Future<Map<String, dynamic>?> getNewsEffectCompany({
     required String newsUuid,

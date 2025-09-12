@@ -27,7 +27,18 @@ class DetailListPage extends StatelessWidget {
       onPopInvoked: (didPop) => logic.canPopFunction(didPop),
       child: Scaffold(
         backgroundColor: FYColors.whiteColor,
-        appBar: const FYAppBar(title: '实体清单'),
+        appBar:  FYAppBar(title: '实体清单',
+          actions: [
+            GestureDetector(
+              onTap: () => logic.downloadExcel(),
+              child: Container(
+                margin: EdgeInsets.only(right: 16.w),
+                child: Image.asset(FYImages.download_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+
+              ),
+            ),
+          ],
+        ),
         body: SafeArea(
           bottom: true,
           child: SingleChildScrollView(
