@@ -389,43 +389,50 @@ class AiQusPage extends StatelessWidget {
           top: BorderSide(color: FYColors.color_E6E6E6, width: 1.w),
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              constraints: BoxConstraints(minHeight: 36.w),
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
-              decoration: BoxDecoration(
-                color: FYColors.color_F5F5F5,
-                borderRadius: BorderRadius.circular(4.w),
-              ),
-              alignment: Alignment.center,
-              child: TextField(
-                controller: state.messageController,
-                decoration: InputDecoration.collapsed(
-                  hintText: '输入您的问题...',
-                  hintStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: FYColors.color_A6A6A6,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                style: TextStyle(
+      child: Container(
+        constraints: BoxConstraints(minHeight: 36.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+        decoration: BoxDecoration(
+          color: FYColors.color_F5F5F5,
+          borderRadius: BorderRadius.circular(4.w),
+        ),
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            TextField(
+              controller: state.messageController,
+              decoration: InputDecoration.collapsed(
+                hintText: '输入您的问题...',
+                hintStyle: TextStyle(
                   fontSize: 14.sp,
-                  color: FYColors.color_1A1A1A,
+                  color: FYColors.color_A6A6A6,
+                  fontWeight: FontWeight.w400,
                 ),
-                maxLines: 4,
-                minLines: 1,
-                keyboardType: TextInputType.multiline,
               ),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_1A1A1A,
+              ),
+              maxLines: 4,
+              minLines: 1,
+              keyboardType: TextInputType.multiline,
             ),
-          ),
-          SizedBox(width: 16.w),
-          GestureDetector(
-              onTap: () => logic.sendMessage(),
-              child: Image.asset(FYImages.sendIcon,
-                  width: 36.w, height: 36.w, fit: BoxFit.contain)),
-        ],
+            SizedBox(height: 11.w),
+            Row(
+              children: [
+                GestureDetector(
+                    onTap: () => logic.switchKnowledge(),
+                    child: Image.asset(state.isOpenKnowledge.value ? FYImages.checkKnowledge : FYImages.uncheckKnowledge,
+                        width: 55.w, height: 22.w, fit: BoxFit.contain)),
+                const Spacer(),
+                GestureDetector(
+                    onTap: () => logic.sendMessage(),
+                    child: Image.asset(FYImages.sendIcon,
+                        width: 21.w, height: 21.w, fit: BoxFit.contain)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

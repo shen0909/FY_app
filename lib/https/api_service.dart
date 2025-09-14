@@ -518,8 +518,7 @@ class ApiService {
   }
 
   /// 发送AI对话
-  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history,
-      String robotUID) async {
+  Future<String?> sendAIChat(String content, List<Map<String, dynamic>> history, String robotUID,bool isOpenKnowledge) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -551,7 +550,8 @@ class ApiService {
       "命令具体内容": {
         "对话内容Base64": contentBase64,
         "历史对话json队列": historyJson,
-        "对话RobotUID": robotUID
+        "对话RobotUID": robotUID,
+        'is_knowledge_base' : isOpenKnowledge
       }
     };
 

@@ -153,8 +153,7 @@ class AiQusLogic extends GetxController {
       final historyForAPI = _prepareHistoryForAPI();
 
       // 发送AI对话请求
-      final chatUuid = await ApiService()
-          .sendAIChat(text, historyForAPI, state.selectedModel.value);
+      final chatUuid = await ApiService().sendAIChat(text, historyForAPI, state.selectedModel.value, state.isOpenKnowledge.value);
 
       // 添加到对话历史
       state.addToConversationHistory('user', text);
@@ -3044,5 +3043,10 @@ class AiQusLogic extends GetxController {
   void clearEditTemplateData() {
     editTitleController.clear();
     editContentController.clear();
+  }
+
+  /// 切换知识库开关
+  switchKnowledge() {
+    state.isOpenKnowledge.value = !state.isOpenKnowledge.value;
   }
 }

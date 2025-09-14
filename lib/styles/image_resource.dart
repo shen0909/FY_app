@@ -77,4 +77,6 @@ class FYImages {
   static const String hot3 = 'assets/images/hot3.png'; // 舆情热点3
   static const String hot4 = 'assets/images/hot4.png'; // 舆情热点4
   static const String hot5 = 'assets/images/hot5.png'; // 舆情热点5
+  static const String uncheckKnowledge = 'assets/images/uncheck_knowledge.png'; // 未选中知识库
+  static const String checkKnowledge = 'assets/images/check_knowledge.png'; // 选中知识库
 }

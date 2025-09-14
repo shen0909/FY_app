@@ -12,6 +12,7 @@ enum ExportStatus {
 }
 
 class AiQusState {
+  RxBool isOpenKnowledge = false.obs;
   // 对话消息列表
   final RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
   
