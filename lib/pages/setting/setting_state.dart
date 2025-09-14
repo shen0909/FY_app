@@ -112,11 +112,6 @@ class SettingState {
     if (loginData.city.isNotEmpty && loginData.city != loginData.province) {
       locationParts.add(loginData.city);
     }
-    if (loginData.county_level_city.isNotEmpty && 
-        loginData.county_level_city != loginData.city) {
-      locationParts.add(loginData.county_level_city);
-    }
-    
     return locationParts.isNotEmpty ? locationParts.join('') : '未知地区';
   }
   
