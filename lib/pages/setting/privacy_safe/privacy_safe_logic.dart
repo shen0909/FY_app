@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
+import '../../../cache/business_cache_service.dart';
 import 'privacy_safe_state.dart';
 
 class PrivacySafeLogic extends GetxController {
@@ -18,13 +20,13 @@ class PrivacySafeLogic extends GetxController {
   }
   
   // 加载隐私政策
-  void loadPrivacyPolicy() {
-    // 实际项目中应该从API获取数据
-    // 这里使用了state中的示例数据
-  }
-  
-  // 跳转到隐私政策详情页面
-  void goToPrivacyPolicy() {
-    Get.toNamed('/privacy_policy');
+  Future<void> loadPrivacyPolicy() async {
+    DialogUtils.showLoading();
+    final result = await BusinessCacheService.instance.getPrivacyContentWithCache();
+    DialogUtils.hideLoading();
+    if(result != null) {
+      state.privacyContent.value = result['content'];
+      state.lastUpdated.value = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(result['created_at']));
+    }
   }
 }

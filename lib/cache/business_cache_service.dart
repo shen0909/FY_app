@@ -105,26 +105,6 @@ class BusinessCacheService extends GetxService {
     }
   }
 
-  /// 预加载首页数据
-  Future<void> preloadHomePageData() async {
-    try {
-      await getHomePageDataWithCache();
-      debugPrint('✅ 首页数据预加载完成');
-    } catch (e) {
-      debugPrint('❌ 首页数据预加载失败: $e');
-    }
-  }
-
-  /// 清理首页数据缓存
-  Future<void> clearHomePageCache() async {
-    try {
-      await cacheManager.remove('home_page_data');
-      debugPrint('🗑️ 首页数据缓存已清理');
-    } catch (e) {
-      debugPrint('❌ 清理首页数据缓存失败: $e');
-    }
-  }
-
   /// 更新首页数据缓存
   Future<void> updateHomePageCache(Map<String, dynamic> homeData) async {
     try {
@@ -613,6 +593,49 @@ class BusinessCacheService extends GetxService {
         return CachePriority.low; // 历史数据低优先级
       default:
         return CachePriority.normal;
+    }
+  }
+
+  // ==================== 隐私内容相关缓存 ====================
+
+  /// 获取隐私内容（带缓存）
+  Future<Map<String, dynamic>?> getPrivacyContentWithCache({bool forceUpdate = false}) async {
+    try {
+      const cacheKey = 'privacy_content';
+
+      // 1. 首先尝试从缓存获取
+      if (!forceUpdate) {
+        final cachedData = await cacheManager.get<Map<String, dynamic>>(cacheKey);
+        if (cachedData != null) {
+          debugPrint('🎯 隐私内容缓存命中');
+          return cachedData;
+        }
+      }
+
+      // 2. 缓存未命中或强制更新，从网络获取
+      debugPrint('🌐 隐私内容网络请求');
+      final result = await apiService.getPrivacyContent();
+
+      if (result != null) {
+        // 3. 存入缓存
+        await cacheManager.set(
+          cacheKey,
+          result,
+          ttl: const Duration(days: 30), // 隐私内容不常变动，可以设置较长的缓存时间
+          priority: CachePriority.low,
+          metadata: {
+            'requestTime': DateTime.now().millisecondsSinceEpoch,
+            'dataType': 'privacy_content',
+          },
+        );
+
+        return result;
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('❌ 获取隐私内容失败: $e');
+      return null;
     }
   }
 

@@ -495,8 +495,8 @@ class SettingLogic extends GetxController {
   // 前往隐私保护页面
   void goToPrivacySafe() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.privacySafe);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.privacySafe);
   }
 
   // 前往用户反馈页面

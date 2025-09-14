@@ -11,13 +11,15 @@ class MarkdownMessageWidget extends StatelessWidget {
   final bool isUser;
   final bool isStreaming;
   final bool isShowName; //是否展示智能体名称
+  final bool isAI;
 
   const MarkdownMessageWidget({
     Key? key,
     required this.content,
-    required this.title,
-    required this.isUser,
+    this.title = '',
+    this.isUser = true,
     this.isStreaming = false,
+    this.isAI = true,
     required this.isShowName
   }) : super(key: key);
 
@@ -55,7 +57,7 @@ class MarkdownMessageWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: isAI ?  Color(0xFFF5F5F5) : Colors.white,
         borderRadius: BorderRadius.circular(8.w),
       ),
       child: Column(
@@ -95,10 +97,10 @@ class MarkdownMessageWidget extends StatelessWidget {
                   SizedBox(
                     width: 12.w,
                     height: 12.w,
-                    child: CircularProgressIndicator(
+                    child: const CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFF3361FE),
+                        Color(0xFF3361FE),
                       ),
                     ),
                   ),
