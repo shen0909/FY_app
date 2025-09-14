@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 
@@ -221,23 +222,13 @@ class UserLoginDataPage extends StatelessWidget {
                         : FYColors.highRiskBorder,
                   ),
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  'UUID: ${log.userUuid}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_A6A6A6,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
               ],
             ),
           ),
           
           // 登录时间
           Text(
-            state.formatTime(log.createdAt),
+              DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(log.createdAt)),
             style: TextStyle(
               fontSize: 12.sp,
               color: FYColors.color_A6A6A6,
