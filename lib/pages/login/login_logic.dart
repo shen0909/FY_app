@@ -47,7 +47,6 @@ class LoginLogic extends GetxController {
         state.userUid.value = loginData.userid ?? '';
         _setGreetingMessage();
       }
-
       await _loadSavedCredentials();
     } catch (e) {
       print('加载用户信息错误: $e');

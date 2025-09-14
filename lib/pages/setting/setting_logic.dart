@@ -346,10 +346,8 @@ class SettingLogic extends GetxController {
                         print('SettingLogic: 停止Token保活服务时出错: $e');
                       }
                     }
-                    
-                    // 清除所有缓存数据
-                    FYSharedPreferenceUtils.clearAll();
-                    
+                    // // 清除所有缓存数据
+                    // FYSharedPreferenceUtils.clearAll();
                     // 跳转到登录页面
                     Get.offAllNamed(Routers.login);
                     Get.back();

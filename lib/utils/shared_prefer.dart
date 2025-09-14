@@ -43,11 +43,7 @@ class FYSharedPreferenceUtils {
 
   static const String user_device = 'user_device'; // 用户设备
   static const String TOKEN_KEY = 'token';
-  static const String USER_ID_KEY = 'user_id';
-  static const String USER_NAME_KEY = 'user_name';
-  static const String USER_ROLE_KEY = 'user_role';
   static const String USER_DATA_KEY = 'user_data';
-  static const String USE_PASSWORD_LOGIN_KEY = 'use_password_login';
   static const String FINGERPRINT_ENABLED_KEY = 'fingerprint_enabled';
   static const String PATTERN_LOCK_FAILED_ATTEMPTS = 'pattern_lock_failed_attempts';
   static const String PATTERN_LOCK_TIMESTAMP = 'pattern_lock_timestamp';
@@ -154,55 +150,20 @@ class FYSharedPreferenceUtils {
     return getString(INNER_ACCESS_TOKEN_KEY);
   }
 
-  // 保存用户信息
-  static Future<bool> saveUserInfo({
-    required String userId,
-    required String userName,
-    required int userRole,
-  }) async {
-    await setString(USER_ID_KEY, userId);
-    await setString(USER_NAME_KEY, userName);
-    return setInt(USER_ROLE_KEY, userRole);
-  }
-
-  // 获取用户ID
-  static Future<String?> getUserId() async {
-    return getString(USER_ID_KEY);
-  }
-
-  // 获取用户名
-  static Future<String?> getUserName() async {
-    return getString(USER_NAME_KEY);
-  }
-
-  // 获取用户角色
-  static Future<int?> getUserRole() async {
-    return getInt(USER_ROLE_KEY);
-  }
-
   // 清除登录数据
   static Future<bool> clearLoginData() async {
     await remove(TOKEN_KEY);
-    await remove(USER_ID_KEY);
-    await remove(USER_NAME_KEY);
-    await remove(USER_ROLE_KEY);
     await remove(USER_DATA_KEY);
     await remove(OUTER_ACCESS_TOKEN_KEY);
     await remove(OUTER_REFRESH_TOKEN_KEY);
     return remove(INNER_ACCESS_TOKEN_KEY);
-    // 🔑 新增：同时清除存储的用户凭据
-    // return clearUserCredentials();
   }
 
   // 清除所有数据
   static Future<bool> clearAll() async {
     await remove(user_device);
     await remove(TOKEN_KEY);
-    await remove(USER_ID_KEY);
-    await remove(USER_NAME_KEY);
-    await remove(USER_ROLE_KEY);
     await remove(USER_DATA_KEY);
-    await remove(USE_PASSWORD_LOGIN_KEY);
     await remove(FINGERPRINT_ENABLED_KEY);
     await remove(PATTERN_LOCK_FAILED_ATTEMPTS);
     await remove(PATTERN_LOCK_TIMESTAMP);
@@ -211,24 +172,7 @@ class FYSharedPreferenceUtils {
     await remove(OUTER_ACCESS_TOKEN_KEY);
     await remove(OUTER_REFRESH_TOKEN_KEY);
     await remove(INNER_ACCESS_TOKEN_KEY);
-    // await remove(STORED_USERNAME_KEY);
-    // await remove(STORED_PASSWORD_KEY);
     return true;
-  }
-
-  // 设置使用密码登录标记
-  static Future<bool> setUsePasswordLogin(bool value) async {
-    return setBool(USE_PASSWORD_LOGIN_KEY, value);
-  }
-
-  // 获取使用密码登录标记
-  static Future<bool> getUsePasswordLogin() async {
-    return getBool(USE_PASSWORD_LOGIN_KEY,defValue: false);
-  }
-
-  // 移除使用密码登录标记
-  static Future<bool> removeUsePasswordLogin() async {
-    return remove(USE_PASSWORD_LOGIN_KEY);
   }
 
   // 设置指纹登录启用状态

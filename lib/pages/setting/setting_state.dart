@@ -40,8 +40,7 @@ class SettingState {
     try {
       packageInfo.value = await PackageInfo.fromPlatform();
       print('🔄 开始加载用户数据...');
-      
-      // 从SharedPreferences获取登录数据
+
       final loginData = await FYSharedPreferenceUtils.getLoginData();
       
       if (loginData != null) {
