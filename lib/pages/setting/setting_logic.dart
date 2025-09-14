@@ -523,15 +523,15 @@ class SettingLogic extends GetxController {
   // 前往角色管理页面
   void goToRoleManagement() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.role_manager);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.role_manager);
   }
 
   // 前往权限申请列表页面
   void goToPermissionRequests() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.permissionRequest);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.permissionRequest);
   }
 
   // 添加新用户

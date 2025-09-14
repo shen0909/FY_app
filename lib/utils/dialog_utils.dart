@@ -138,7 +138,7 @@ class DialogUtils {
   }
 
   /// 显示自定义对话框
-  static Future<T?> showCustomDialog<T>(Widget dialog) {
+  static Future<T?> showCustomDialog<T>(Widget dialog, {Alignment alignment = Alignment.bottomCenter}) {
     Widget child = Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -155,7 +155,7 @@ class DialogUtils {
     );
     return Get.dialog<T>(
       Align(
-        alignment: Alignment.bottomCenter,
+        alignment: alignment,
         child: child,
       ),
       barrierDismissible: true,

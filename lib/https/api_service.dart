@@ -2691,5 +2691,96 @@ class ApiService {
       final data = resultData["返回数据"] ?? {};
       return data;
     }
+    return null;
+  }
+
+  /// =================== 用户管理 ==================
+  Future<Map<String,dynamic>?> getUserList({required int currentPage, String? userName}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "用户管理_查看用户列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        'current_page' : currentPage,
+        'page_size' : 20
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if(result != null && result['is_success'] == true && result['result_string'] != null) {
+      Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+      final data = resultData["返回数据"] ?? {};
+      return data;
+    }
+    return null;
+  }
+
+  // 删除用户
+  Future<Map<String,dynamic>?> deleteUserListItem({required String uuid}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "用户管理_申请_申请删除用户",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        'application_content': {'uuid': uuid},
+        'application_reason': '员工离职'
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if(result != null && result['is_success'] == true && result['result_string'] != null) {
+      Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+      final data = resultData["返回数据"] ?? {};
+      return {'result' : true};
+    }
+    return null;
+  }
+
+  /// =================== 权限申请
+  Future<Map<String,dynamic>?> getPermissionList({required int currentPage, String? userName}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "用户管理_查看用户列表",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        'current_page' : currentPage,
+        'page_size' : 20
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if(result != null && result['is_success'] == true && result['result_string'] != null) {
+      Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+      final data = resultData["返回数据"] ?? {};
+      return data;
+    }
+    return null;
   }
 }
