@@ -639,6 +639,47 @@ class BusinessCacheService extends GetxService {
     }
   }
 
+  /// 获取使用教程数据
+  Future<Map<String, dynamic>?> getTutorialContentWithCache({bool forceUpdate = false}) async {
+    try {
+      const cacheKey = 'tutorial_content';
+
+      // 1. 首先尝试从缓存获取
+      if (!forceUpdate) {
+        final cachedData = await cacheManager.get<Map<String, dynamic>>(cacheKey);
+        if (cachedData != null) {
+          debugPrint('🎯 使用教程缓存命中');
+          return cachedData;
+        }
+      }
+
+      // 2. 缓存未命中或强制更新，从网络获取
+      debugPrint('🌐 使用教程网络请求');
+      final result = await apiService.getTutorialContent();
+
+      if (result != null) {
+        // 3. 存入缓存
+        await cacheManager.set(
+          cacheKey,
+          result,
+          ttl: const Duration(days: 30), // 隐私内容不常变动，可以设置较长的缓存时间
+          priority: CachePriority.low,
+          metadata: {
+            'requestTime': DateTime.now().millisecondsSinceEpoch,
+            'dataType': 'privacy_content',
+          },
+        );
+
+        return result;
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('❌ 获取隐私内容失败: $e');
+      return null;
+    }
+  }
+
   // ==================== 缓存管理方法 ====================
 
   /// 应用启动时的缓存预热

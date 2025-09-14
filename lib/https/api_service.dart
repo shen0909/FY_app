@@ -2666,4 +2666,30 @@ class ApiService {
       return data;
     }
   }
+
+  /// 获取使用教程
+  Future<Map<String,dynamic>?> getTutorialContent() async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "系统设置_使用教程_获取使用教程",
+      "当前请求用户UUID": token,
+      "命令具体内容": {}
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if(result != null && result['is_success'] == true && result['result_string'] != null) {
+      Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+      final data = resultData["返回数据"] ?? {};
+      return data;
+    }
+  }
 }

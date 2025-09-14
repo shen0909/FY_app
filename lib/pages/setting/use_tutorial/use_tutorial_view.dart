@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
+import 'package:safe_app/widgets/markdown_message_widget.dart';
 
 import 'use_tutorial_logic.dart';
 import 'use_tutorial_state.dart';
@@ -12,7 +13,9 @@ class UseTutorialPage extends StatelessWidget {
   UseTutorialPage({Key? key}) : super(key: key);
 
   final UseTutorialLogic logic = Get.put(UseTutorialLogic());
-  final UseTutorialState state = Get.find<UseTutorialLogic>().state;
+  final UseTutorialState state = Get
+      .find<UseTutorialLogic>()
+      .state;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +73,8 @@ class UseTutorialPage extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 14.sp,
-                color: isSelected ? FYColors.color_3361FE : FYColors.color_A6A6A6,
+                color: isSelected ? FYColors.color_3361FE : FYColors
+                    .color_A6A6A6,
               ),
             ),
             SizedBox(height: 5.h),
@@ -92,23 +96,34 @@ class UseTutorialPage extends StatelessWidget {
     });
   }
 
-  // 基础功能教程
+  // // 基础功能教程
   Widget _buildBasicFunctions() {
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        children: [
-          ...state.basicTutorials.map((tutorial) {
-            return _buildTutorialCard(tutorial);
-          }).toList(),
-          SizedBox(height: 20.h),
-          _buildFeedbackSection(),
-        ],
-      ),
-    );
+    return Obx(() {
+      return Padding(
+        padding: EdgeInsets.all(16.w),
+        child: MarkdownMessageWidget(content: state.tutorialContent.value, isShowName: false,isAI: false,isUser: false,),
+      );
+    });
   }
 
+  // // 基础功能教程
+  // Widget _buildBasicFunctions() {
+  //   return Padding(
+  //     padding: EdgeInsets.all(16.w),
+  //     child: Column(
+  //       children: [
+  //         ...state.basicTutorials.map((tutorial) {
+  //           return _buildTutorialCard(tutorial);
+  //         }).toList(),
+  //         SizedBox(height: 20.h),
+  //         _buildFeedbackSection(),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   // 高级功能教程
+
   Widget _buildAdvancedFunctions() {
     return Padding(
       padding: EdgeInsets.all(16.w),
@@ -130,7 +145,10 @@ class UseTutorialPage extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
-          ...state.videoTutorials.asMap().entries.map((entry) {
+          ...state.videoTutorials
+              .asMap()
+              .entries
+              .map((entry) {
             int index = entry.key;
             Map<String, dynamic> tutorial = entry.value;
             return _buildVideoCard(tutorial, index);
@@ -174,7 +192,9 @@ class UseTutorialPage extends StatelessWidget {
             padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
-                Image.asset(tutorial['icon_path'],width: 24.w,height: 24.w,fit: BoxFit.contain,),
+                Image.asset(tutorial['icon_path'], width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.contain,),
                 SizedBox(width: 8.w),
                 Text(
                   tutorial['title'],
@@ -253,47 +273,52 @@ class UseTutorialPage extends StatelessWidget {
                   ),
                 ),
               )
-            else if (tutorial['features'] is List<Map<String, dynamic>>)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Row(
-                  children: [
-                    ...(tutorial['features'] as List<Map<String, dynamic>>).map((feature) {
-                      return Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: (feature == tutorial['features'].last) ? 0 : 8.w),
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: FYColors.color_F9F9F9,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                feature['title'],
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: FYColors.color_1A1A1A,
+            else
+              if (tutorial['features'] is List<Map<String, dynamic>>)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    children: [
+                      ...(tutorial['features'] as List<Map<String, dynamic>>)
+                          .map((feature) {
+                        return Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(
+                                right: (feature == tutorial['features'].last)
+                                    ? 0
+                                    : 8.w),
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: FYColors.color_F9F9F9,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  feature['title'],
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: FYColors.color_1A1A1A,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                feature['description'],
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: FYColors.color_A6A6A6,
+                                SizedBox(height: 8.h),
+                                Text(
+                                  feature['description'],
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: FYColors.color_A6A6A6,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ],
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
-              ),
           ],
           SizedBox(height: 16.h),
           Padding(
@@ -347,7 +372,7 @@ class UseTutorialPage extends StatelessWidget {
     } else if (tutorial['title'] == '数据导出功能') {
       index = 2;
     }
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
@@ -369,11 +394,18 @@ class UseTutorialPage extends StatelessWidget {
             child: Row(
               children: [
                 if (tutorial['title'] == 'AI问答功能')
-                  Image.asset(FYImages.aiIcon,width: 24.w,height: 24.w,fit: BoxFit.contain,)
-                else if (tutorial['title'] == '权限管理')
-                  Image.asset(FYImages.setting_person,width: 24.w,height: 24.w,fit: BoxFit.contain,)
+                  Image.asset(FYImages.aiIcon, width: 24.w,
+                    height: 24.w,
+                    fit: BoxFit.contain,)
                 else
-                  Image.asset(FYImages.export_data,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+                  if (tutorial['title'] == '权限管理')
+                    Image.asset(FYImages.setting_person, width: 24.w,
+                      height: 24.w,
+                      fit: BoxFit.contain,)
+                  else
+                    Image.asset(FYImages.export_data, width: 24.w,
+                      height: 24.w,
+                      fit: BoxFit.contain,),
                 SizedBox(width: 8.w),
                 Text(
                   tutorial['title'],
@@ -397,7 +429,7 @@ class UseTutorialPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          
+
           // AI问答功能
           if (tutorial['title'] == 'AI问答功能') ...[
             Padding(
@@ -477,14 +509,17 @@ class UseTutorialPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ...(tutorial['steps'] as List<String>).asMap().entries.map((step) {
+                        ...(tutorial['steps'] as List<String>)
+                            .asMap()
+                            .entries
+                            .map((step) {
                           return Padding(
                             padding: EdgeInsets.only(top: 8.h),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${step.key+1}.',
+                                  '${step.key + 1}.',
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     color: FYColors.color_A6A6A6,
@@ -536,7 +571,8 @@ class UseTutorialPage extends StatelessWidget {
                     child: Wrap(
                       spacing: 7.w,
                       runSpacing: 8.h,
-                      children: (tutorial['templates'] as List<String>).map((template) {
+                      children: (tutorial['templates'] as List<String>).map((
+                          template) {
                         return Container(
                           width: 152.w,
                           height: 36.w,
@@ -561,7 +597,7 @@ class UseTutorialPage extends StatelessWidget {
                 ],
               )
           ],
-          
+
           // 权限管理
           if (tutorial['title'] == '权限管理') ...[
             // 角色卡片
@@ -569,11 +605,14 @@ class UseTutorialPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
                 children: [
-                  _buildRoleCard('管理员', FYColors.color_F0F5FF, FYColors.color_3361FE),
+                  _buildRoleCard(
+                      '管理员', FYColors.color_F0F5FF, FYColors.color_3361FE),
                   SizedBox(width: 8.w),
-                  _buildRoleCard('审核员', Colors.orange.withOpacity(0.1), Colors.orange),
+                  _buildRoleCard(
+                      '审核员', Colors.orange.withOpacity(0.1), Colors.orange),
                   SizedBox(width: 8.w),
-                  _buildRoleCard('平台用户', FYColors.color_F9F9F9, FYColors.color_1A1A1A),
+                  _buildRoleCard(
+                      '平台用户', FYColors.color_F9F9F9, FYColors.color_1A1A1A),
                 ],
               ),
             ),
@@ -594,7 +633,8 @@ class UseTutorialPage extends StatelessWidget {
               SizedBox(height: 8.h),
               ...(tutorial['roles'] as List<Map<String, dynamic>>).map((role) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 16.w, vertical: 4.h),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -639,7 +679,10 @@ class UseTutorialPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...(tutorial['process'] as List<String>).asMap().entries.map((step) {
+                    ...(tutorial['process'] as List<String>)
+                        .asMap()
+                        .entries
+                        .map((step) {
                       return Padding(
                         padding: EdgeInsets.only(top: 8.h),
                         child: Row(
@@ -671,7 +714,7 @@ class UseTutorialPage extends StatelessWidget {
               ),
             ],
           ],
-          
+
           // 数据导出功能
           if (tutorial['title'] == '数据导出功能') ...[
             Padding(
@@ -774,7 +817,7 @@ class UseTutorialPage extends StatelessWidget {
               ),
             ],
           ],
-          
+
           SizedBox(height: 16.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -792,22 +835,30 @@ class UseTutorialPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      index == 0 
+                      index == 0
                           ? (state.isExpandAi.value ? '收起详情' : '展开详情')
-                          : index == 1 
-                              ? (state.isExpandPermission.value ? '收起详情' : '展开详情')
-                              : (state.isExpandData.value ? '收起详情' : '展开详情'),
+                          : index == 1
+                          ? (state.isExpandPermission.value
+                          ? '收起详情'
+                          : '展开详情')
+                          : (state.isExpandData.value
+                          ? '收起详情'
+                          : '展开详情'),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: FYColors.color_3361FE,
                       ),
                     ),
                     Transform.rotate(
-                      angle: index == 0 
-                          ? (state.isExpandAi.value ? -3.14159 / 2 : 3.14159 / 2)
-                          : index == 1 
-                              ? (state.isExpandPermission.value ? -3.14159 / 2 : 3.14159 / 2)
-                              : (state.isExpandData.value ? -3.14159 / 2 : 3.14159 / 2),
+                      angle: index == 0
+                          ? (state.isExpandAi.value ? -3.14159 / 2 : 3.14159 /
+                          2)
+                          : index == 1
+                          ? (state.isExpandPermission.value
+                          ? -3.14159 / 2
+                          : 3.14159 / 2)
+                          : (state.isExpandData.value ? -3.14159 / 2 : 3.14159 /
+                          2),
                       child: Icon(
                         Icons.arrow_forward_ios,
                         size: 14.w,
@@ -943,7 +994,8 @@ class UseTutorialPage extends StatelessWidget {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.w, vertical: 8.h),
                       child: Row(
                         children: [
                           GestureDetector(
@@ -1015,7 +1067,7 @@ class UseTutorialPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          
+
           // 管理员权限提示
           if (tutorial['requiresPermission'] == true)
             Padding(
@@ -1046,7 +1098,7 @@ class UseTutorialPage extends StatelessWidget {
                 ),
               ),
             ),
-          
+
           SizedBox(height: 16.h),
         ],
       ),
@@ -1075,10 +1127,10 @@ class UseTutorialPage extends StatelessWidget {
           Row(
             children: [
               Image.asset(
-                FYImages.tutorial_feedBack,
-                height: 24.w,
-                width: 24.w,
-                fit: BoxFit.contain
+                  FYImages.tutorial_feedBack,
+                  height: 24.w,
+                  width: 24.w,
+                  fit: BoxFit.contain
               ),
               SizedBox(width: 8.w),
               Text(
@@ -1103,11 +1155,13 @@ class UseTutorialPage extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildFeedbackButton('有帮助', true, Icons.thumb_up_outlined),
+                child: _buildFeedbackButton(
+                    '有帮助', true, Icons.thumb_up_outlined),
               ),
               SizedBox(width: 16.w),
               Expanded(
-                child: _buildFeedbackButton('需改进', false, Icons.thumb_down_outlined),
+                child: _buildFeedbackButton(
+                    '需改进', false, Icons.thumb_down_outlined),
               ),
             ],
           ),

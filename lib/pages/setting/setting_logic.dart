@@ -488,8 +488,8 @@ class SettingLogic extends GetxController {
   // 前往使用教程页面
   void goToUseTutorial() {
     // 显示建设中提示
-    DialogUtils.showUnderConstructionDialog();
-    // Get.toNamed(Routers.useTutorial);
+    // DialogUtils.showUnderConstructionDialog();
+    Get.toNamed(Routers.useTutorial);
   }
 
   // 前往隐私保护页面

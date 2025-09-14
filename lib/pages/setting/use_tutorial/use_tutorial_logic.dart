@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:safe_app/utils/toast_util.dart';
 
+import '../../../cache/business_cache_service.dart';
+import '../../../utils/dialog_utils.dart';
 import 'use_tutorial_state.dart';
 
 class UseTutorialLogic extends GetxController {
@@ -10,6 +12,7 @@ class UseTutorialLogic extends GetxController {
   void onReady() {
     // TODO: implement onReady
     super.onReady();
+    getTutorialContent();
   }
 
   @override
@@ -77,6 +80,15 @@ class UseTutorialLogic extends GetxController {
     }
     if(index == 2){
       state.isExpandData.value = !state.isExpandData.value;
+    }
+  }
+
+  Future<void> getTutorialContent() async {
+    DialogUtils.showLoading();
+    final result = await BusinessCacheService.instance.getTutorialContentWithCache();
+    DialogUtils.hideLoading();
+    if(result != null) {
+      state.tutorialContent.value = result['content'];
     }
   }
 }
