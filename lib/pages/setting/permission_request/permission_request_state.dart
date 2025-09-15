@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import 'package:safe_app/models/setting/permission_list.dart';
 
 class PermissionRequestState {
+
+  // 使用两个同步滚动控制器，确保左右两侧列表同步滚动
+  final ScrollController verticalControllerLeft = ScrollController();
+  final ScrollController verticalControllerRight = ScrollController();
+
   RxList<PermissionListElement> permissionRequests = <PermissionListElement>[].obs;
 
   // 当前选中的标签索引：0-待审核，1-已批准申请，2-已驳回

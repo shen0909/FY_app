@@ -774,19 +774,19 @@ class RoleManagerPage extends StatelessWidget {
     Color textColor;
     String roleText;
     switch (role) {
-      case '0':
-        roleText = '管理员';
+      case 0:
+        roleText = '普通用户';
         bgColor = const Color(0xFFFFF7E9);
         textColor = const Color(0xFFFF9719);
         break;
-      case '1':
-        roleText = '审核员';
+      case 1:
+        roleText = '管理员';
         bgColor = const Color(0xFFE7FEF8);
         textColor = const Color(0xFF07CC89);
         break;
-      case '2':
+      case 2:
       default:
-        roleText = '普通用户';
+        roleText = '审核员';
         bgColor = const Color(0xFFEDEDED);
         textColor = FYColors.color_1A1A1A;
         break;

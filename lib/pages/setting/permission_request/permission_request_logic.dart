@@ -12,6 +12,24 @@ class PermissionRequestLogic extends GetxController {
   final PermissionRequestState state = PermissionRequestState();
 
   @override
+  void onInit() {
+    super.onInit();
+    // 监听左侧列表的滚动，并同步到右侧
+    state.verticalControllerLeft.addListener(() {
+      if (state.verticalControllerLeft.position.pixels != state.verticalControllerRight.position.pixels) {
+        state.verticalControllerRight.jumpTo(state.verticalControllerLeft.position.pixels);
+      }
+    });
+
+    // 监听右侧列表的滚动，并同步到左侧
+    state.verticalControllerRight.addListener(() {
+      if (state.verticalControllerRight.position.pixels != state.verticalControllerLeft.position.pixels) {
+        state.verticalControllerLeft.jumpTo(state.verticalControllerRight.position.pixels);
+      }
+    });
+  }
+
+  @override
   void onReady() {
     super.onReady();
     // 加载默认数据
@@ -37,7 +55,7 @@ class PermissionRequestLogic extends GetxController {
   Future<void> approveRequest(PermissionListElement request) async {
     final result = await showDialog(
       context: Get.context!,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => AlertDialog(
         backgroundColor: FYColors.whiteColor,
         content: Column(
