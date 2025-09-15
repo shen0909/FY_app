@@ -392,13 +392,12 @@ class ApiService {
       'msg': '登录成功',
       'data': {
         'token': innerResponse.data!['access_token'],
-        'userid': username,
-        'username': username,
-        'province': '',
-        'city': '',
-        'county_level_city': '',
-        'user_role': 1,
-        'nickname': username,
+        'userid': innerResponse.data!['user_uuid'],
+        'username': innerResponse.data!['username'],
+        'nickname': innerResponse.data!['nickname'],
+        'region': innerResponse.data!['region'],
+        'user_role': innerResponse.data!['role'],
+        'last_login_at': innerResponse.data!['last_login_at'],
       }
     };
   }
@@ -2755,6 +2754,7 @@ class ApiService {
   }
 
   /// =================== 权限申请
+  // 获取权限列表
   Future<Map<String,dynamic>?> getPermissionList({required int currentPage, String? userName}) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
@@ -2767,7 +2767,7 @@ class ApiService {
 
     // 构造请求参数
     Map<String, dynamic> paramData = {
-      "消息类型": "用户管理_查看用户列表",
+      "消息类型": "用户管理_申请_查看申请列表",
       "当前请求用户UUID": token,
       "命令具体内容": {
         'current_page' : currentPage,
@@ -2783,4 +2783,36 @@ class ApiService {
     }
     return null;
   }
+
+  // 处理权限
+  Future<Map<String,dynamic>?> dealPermission({required String applicationUuid, required bool isApproved , required String processReason}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "用户管理_申请_审批申请",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        'application_uuid' : applicationUuid,
+        'is_approved' : isApproved,
+        'process_reason' : processReason
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if(result != null && result['is_success'] == true && result['result_string'] != null) {
+      Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+      return resultData;
+    }
+    return null;
+  }
+
+
 }

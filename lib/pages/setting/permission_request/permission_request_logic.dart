@@ -1,5 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/models/setting/permission_list.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
+import '../../../styles/colors.dart';
 import 'permission_request_state.dart';
 
 class PermissionRequestLogic extends GetxController {
@@ -9,7 +15,7 @@ class PermissionRequestLogic extends GetxController {
   void onReady() {
     super.onReady();
     // 加载默认数据
-    _loadMockData();
+    _loadData();
   }
 
   @override
@@ -19,48 +25,111 @@ class PermissionRequestLogic extends GetxController {
   
   // 切换标签
   void switchTab(int index) {
-    state.selectedTabIndex = index;
-    update();
+    state.selectedTabIndex.value = index;
   }
   
   // 搜索用户
   void searchUser(String keyword) {
-    state.searchKeyword = keyword;
-    update();
+    state.searchKeyword.value = keyword;
   }
   
   // 批准申请
-  void approveRequest(PermissionRequest request) {
-    final index = state.permissionRequests.indexOf(request);
-    if (index != -1) {
-      final updatedRequest = PermissionRequest(
-        userId: request.userId,
-        permissionType: request.permissionType,
-        applyTime: request.applyTime,
-        approveTime: DateTime.now().toString().substring(0, 16),
-        status: 0,
-        remark: "已批准",
-      );
-      state.permissionRequests[index] = updatedRequest;
-      update();
+  Future<void> approveRequest(PermissionListElement request) async {
+    final result = await showDialog(
+      context: Get.context!,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: FYColors.whiteColor,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '是否批准该申请',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18.sp,
+                color: const Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w400,
+                fontFamily: 'AlibabaPuHuiTi',
+              ),
+            ),
+          ],
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+        contentPadding: EdgeInsets.symmetric(vertical: 24.w, horizontal: 16.w),
+        actionsPadding: EdgeInsets.zero,
+        buttonPadding: EdgeInsets.zero,
+        actions: [
+          // 分割线
+          Container(
+            height: 1.w,
+            color: const Color(0xFFEFEFEF),
+          ),
+          // 按钮区域
+          Row(
+            children: [
+              // 不批准按钮
+              Expanded(
+                child: InkWell(
+                  onTap: () => Get.back(result: false),
+                  child: Container(
+                    height: 44.w,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(
+                          color: const Color(0xFFEFEFEF),
+                          width: 1.w,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      '驳回',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // 确定按钮
+              Expanded(
+                child: InkWell(
+                  onTap: () => Get.back(result: true),
+                  child: Container(
+                    height: 44.w,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '批准',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF3361FE),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    final resultPermission = await ApiService().dealPermission(
+        applicationUuid: request.applicant.uuid,
+        isApproved: result,
+        processReason: '');
+    if(resultPermission!= null && resultPermission['返回数据'] != null) {
+      await _loadData(); //重新加载数据
     }
   }
   
   // 驳回申请
   void rejectRequest(PermissionRequest request) {
-    final index = state.permissionRequests.indexOf(request);
-    if (index != -1) {
-      final updatedRequest = PermissionRequest(
-        userId: request.userId,
-        permissionType: request.permissionType,
-        applyTime: request.applyTime,
-        approveTime: DateTime.now().toString().substring(0, 16),
-        status: 2,
-        remark: "权限不符合申请条件",
-      );
-      state.permissionRequests[index] = updatedRequest;
-      update();
-    }
+
   }
   
   // 获取当前标签的申请数量
@@ -68,74 +137,24 @@ class PermissionRequestLogic extends GetxController {
     return state.permissionRequests.where((request) => request.status == tabIndex).length;
   }
   
-  // 获取当前选中标签下的权限申请
-  List<PermissionRequest> get currentRequests {
-    final filteredByStatus = state.permissionRequests.where(
-      (request) => request.status == state.selectedTabIndex
+  // // 获取当前选中标签下的权限申请
+  List<PermissionListElement> get currentRequests {
+    List<PermissionListElement> filteredByStatus = state.permissionRequests.where(
+      (request) => request.status == state.selectedTabIndex.value
     ).toList();
-    
-    if (state.searchKeyword.isEmpty) {
-      return filteredByStatus;
-    }
-    
-    return filteredByStatus.where(
-      (request) => request.userId.toLowerCase().contains(state.searchKeyword.toLowerCase())
-    ).toList();
+    return filteredByStatus;
   }
 
   
-  // 加载模拟数据
-  void _loadMockData() {
-    state.permissionRequests = [
-      // 已批准的申请
-      PermissionRequest(
-        userId: 'USER_10086',
-        permissionType: '创建普通用户',
-        applyTime: '2024-05-11 09:45',
-        approveTime: '2024-05-11 10:15',
-        status: 0,
-        remark: '符合申请条件',
-      ),
-      PermissionRequest(
-        userId: 'USER_10087',
-        permissionType: '创建管理员用户',
-        applyTime: '2024-05-10 14:30',
-        approveTime: '2024-05-10 15:20',
-        status: 0,
-        remark: '经理审批通过',
-      ),
-      // 待审核的申请
-      PermissionRequest(
-        userId: 'USER_10088',
-        permissionType: '创建普通用户',
-        applyTime: '2024-05-11 09:45',
-        status: 1,
-        remark: '待处理',
-      ),
-      PermissionRequest(
-        userId: 'USER_10089',
-        permissionType: '创建管理员用户',
-        applyTime: '2024-05-11 09:45',
-        status: 1,
-        remark: '待处理',
-      ),
-      PermissionRequest(
-        userId: 'USER_10090',
-        permissionType: '创建管理员用户',
-        applyTime: '2024-05-11 09:45',
-        status: 1,
-        remark: '待处理',
-      ),
-      // 已驳回的申请
-      PermissionRequest(
-        userId: 'USER_10091',
-        permissionType: '创建普通用户',
-        applyTime: '2024-05-09 11:20',
-        approveTime: '2024-05-09 14:30',
-        status: 2,
-        remark: '权限申请不符合规定',
-      ),
-    ];
-    update();
+  // 加载数据
+  Future<void> _loadData() async {
+    DialogUtils.showLoading();
+   final result = await ApiService().getPermissionList(currentPage: 1);
+   DialogUtils.hideLoading();
+   if(result != null) {
+     PermissionList permissionList = PermissionList.fromMap(result);
+     state.permissionRequests.value = permissionList.list;
+   }
+   print("result:$result");
   }
 }
