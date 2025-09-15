@@ -2747,8 +2747,49 @@ class ApiService {
     dynamic result = await _sendChannelEvent(paramData: paramData);
     if(result != null && result['is_success'] == true && result['result_string'] != null) {
       Map<String, dynamic> resultData = jsonDecode(result['result_string']);
-      final data = resultData["返回数据"] ?? {};
-      return {'result' : true};
+      return resultData;
+    }
+    return null;
+  }
+
+  // 添加用户
+  Future<Map<String, dynamic>?> addUserListItem({
+    required String username,
+    required String password,
+    required int role,
+    required String applicationReason,
+  }) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取新闻影响企业失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "用户管理_申请_申请添加用户",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        'application_content' : {
+          'username': username,
+          'nickname': username,
+          'password': password,
+          'role': role,
+          'region': '4003',
+          'application_reason': applicationReason
+        }
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null &&
+        result['is_success'] == true &&
+        result['result_string'] != null) {
+      Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+      return resultData;
     }
     return null;
   }

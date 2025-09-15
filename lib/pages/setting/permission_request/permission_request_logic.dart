@@ -155,6 +155,5 @@ class PermissionRequestLogic extends GetxController {
      PermissionList permissionList = PermissionList.fromMap(result);
      state.permissionRequests.value = permissionList.list;
    }
-   print("result:$result");
   }
 }

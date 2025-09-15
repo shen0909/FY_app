@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/setting/user_list.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/utils/toast_util.dart';
 
 import '../../../styles/colors.dart';
 import 'role_manager_state.dart';
@@ -102,20 +103,16 @@ class RoleManagerLogic extends GetxController {
   void showAddUserDialog() {
     Get.dialog(
       const AddUserDialog(),
-      barrierDismissible: false,
+      barrierDismissible: true,
     );
   }
 
   // 添加用户
-  void addUser(String name, String role, String password, String remark) {
-    final newUser = UserRole(
-      id: 'ZQP${state.userList.length + 1}'.padLeft(6, '0'),
-      name: name,
-      role: role,
-      status: role == '管理员' || role == '审核员' ? '申请中' : '离线',
-      lastLoginTime: '2024-05-11 09:45',
-    );
+  Future<void> addUser(String name, int role, String password, String remark) async {
     Get.back();
+    DialogUtils.showLoading('正在添加用户');
+    final result = await ApiService().addUserListItem(username: name, password: password, role: role, applicationReason: remark);
+    DialogUtils.hideLoading();
   }
 
   // 编辑用户
@@ -229,6 +226,11 @@ class RoleManagerLogic extends GetxController {
     DialogUtils.showLoading("正在删除用户");
     final result = await ApiService().deleteUserListItem(uuid: uuid);
     DialogUtils.hideLoading();
-
+    if(result != null && result['状态码'] == 10010 && result['执行结果']) {
+      ToastUtil.showShort('删除成功');
+      await getUserList();
+      return;
+    }
+    ToastUtil.showShort('删除失败');
   }
 }
