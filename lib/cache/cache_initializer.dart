@@ -51,7 +51,8 @@ class CacheInitializer {
         debugPrint('🎉 缓存系统初始化完成');
         
         // 可选：预加载关键数据
-        await _preloadCriticalData();
+        // 初始化时不预加载数据
+        // await _preloadCriticalData();
       }
       
     } catch (e) {
@@ -72,9 +73,9 @@ class CacheInitializer {
           //   debugPrint('⚠️ 轮播图预加载失败: $e');
           // }),
           // 预加载高风险数据（烽云一号）
-          cacheService.preloadRiskData(classification: 1).catchError((e) {
-            debugPrint('⚠️ 高风险数据预加载失败: $e');
-          }),
+          // cacheService.preloadRiskData(classification: 1).catchError((e) {
+          //   debugPrint('⚠️ 高风险数据预加载失败: $e');
+          // }),
           
           // // 预加载舆情热点数据
           // cacheService.preloadHotPotData().catchError((e) {
