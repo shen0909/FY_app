@@ -25,33 +25,42 @@ class SettingPage extends StatelessWidget {
       appBar: FYAppBar(title: '安全设置'),
       body: SafeArea(
         bottom: true,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildUserInfoCard(),
-              _buildDivider(),
-              _buildTitleSection('账户与安全', FYImages.setting_person),
-              _buildSecuritySection(),
-              _buildDivider(),
-              _buildTitleSection('系统设置', FYImages.setting_phone),
-              _buildSystemSettingSection(),
-              _buildDivider(),
-              _buildTitleSection('消息推送设置', FYImages.setting_message),
-              _buildNotificationSection(),
-              _buildDivider(),
-              _buildTitleSection('数据管理', FYImages.setting_data),
-              _buildDataSection(),
-              _buildDivider(),
-              _buildTitleSection('权限管理', FYImages.setting_permission),
-              _buildPermissionCard(),
-              _buildDivider(),
-              _buildTitleSection('统计信息', FYImages.setting_tongji),
-              _buildStatisticsSection(),
-              SizedBox(height: 20.h),
-            ],
-          ),
-        ),
+        child: Obx(() {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildUserInfoCard(),
+                _buildDivider(),
+                _buildTitleSection('账户与安全', FYImages.setting_person),
+                _buildSecuritySection(),
+                _buildDivider(),
+                _buildTitleSection('系统设置', FYImages.setting_phone),
+                _buildSystemSettingSection(),
+                _buildDivider(),
+                _buildTitleSection('消息推送设置', FYImages.setting_message),
+                _buildNotificationSection(),
+                _buildDivider(),
+                _buildTitleSection('数据管理', FYImages.setting_data),
+                _buildDataSection(),
+                _buildDivider(),
+                // 普通用户没有权限管理功能
+                if(state.userInfo['role'] != 0)
+                  ...[
+                    _buildTitleSection('权限管理', FYImages.setting_permission),
+                    _buildPermissionCard(),
+                    _buildDivider(),
+                  ],
+                // 只有管理员可以看到统计信息
+                if(state.userInfo['role'] == 1)
+                  ...[
+                    _buildTitleSection('统计信息', FYImages.setting_tongji),
+                    _buildStatisticsSection(),
+                  ],
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -325,7 +334,7 @@ class SettingPage extends StatelessWidget {
                     color: Colors.red,
                     borderRadius: BorderRadius.all(Radius.circular(12.r))
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 4.w),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.w),
                 child: Text(
                   subtitle!,
                   style: TextStyle(
@@ -382,7 +391,11 @@ class SettingPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '管理员',
+                        state.userInfo['role'] == 0
+                            ? '普通用户'
+                            : state.userInfo['role'] == 1
+                                ? '管理员'
+                                : '审核员',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -390,7 +403,11 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '系统最高权限，操作需审核员审核',
+                        state.userInfo['role'] == 0
+                            ? '基本浏览和使用权限'
+                            : state.userInfo['role'] == 1
+                            ? '负责审核管理员的操作，确保系统安全'
+                            : '负责审核管理员的操作，确保系统安全',
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_A6A6A6,
@@ -472,9 +489,12 @@ class SettingPage extends StatelessWidget {
             ],
           ),
         ),
-        _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
-        _buildNavigationItem(
-            '权限申请审核', null, logic.goToPermissionRequests),
+        if(state.userInfo['role'] == 1 )
+          _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
+
+        if(state.userInfo['role'] == 2 )
+          _buildNavigationItem(
+              '权限申请审核', null, logic.goToPermissionRequests),
       ],
     );
   }
