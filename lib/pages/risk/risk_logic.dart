@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
+import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/widgets/unread_message_dialog.dart';
 import 'package:safe_app/utils/toast_util.dart';
 import 'package:safe_app/routers/routers.dart';
@@ -27,10 +28,11 @@ class RiskLogic extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    scrollController = ScrollController();
+    state.loginData = await FYSharedPreferenceUtils.getLoginData();
     // 设置初始加载状态
     state.isLoading.value = true;
     // 初始化滚动控制器
-    scrollController = ScrollController();
     _addScrollListener();
 
     try {

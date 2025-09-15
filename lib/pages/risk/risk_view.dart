@@ -76,7 +76,9 @@ class _RiskPageState extends State<RiskPage> {
           const SizedBox(width: 8),
           GestureDetector(
             key: logic.locationKey,
-            onTap: () => logic.showCitySelector(context),
+            onTap: () => state.loginData?.user_role != 0
+                ? logic.showCitySelector(context)
+                : null,
             child: Row(
               children: [
                 Obx(() => Text(
@@ -84,12 +86,13 @@ class _RiskPageState extends State<RiskPage> {
                       style: FYTextStyles.riskLocationTitleStyle(),
                     )),
                 const SizedBox(width: 8),
+                state.loginData?.user_role != 0 ?
                 Image.asset(
                   FYImages.down_icon,
                   width: 8.w,
                   height: 8.w,
                   fit: BoxFit.contain,
-                ),
+                ) : Container(),
               ],
             ),
           ),

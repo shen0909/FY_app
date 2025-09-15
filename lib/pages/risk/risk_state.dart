@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../models/login_data.dart';
 import '../../models/risk_data_new.dart';
 import '../../models/region_data.dart';
 
@@ -47,4 +48,5 @@ class RiskState {
   final RxInt highRiskCount = 0.obs;
   final RxInt mediumRiskCount = 0.obs;
   final RxInt lowRiskCount = 0.obs;
+  LoginData? loginData;
 }
