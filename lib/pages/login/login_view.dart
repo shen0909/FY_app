@@ -95,8 +95,7 @@ class LoginPage extends StatelessWidget {
         SizedBox(height: 42.h),
         // 用户信息和问候语
         Obx(() {
-          String displayName =
-          state.userUid.value.isNotEmpty ? state.userUid.value : '用户';
+          String displayName = state.userName.value.isNotEmpty ? state.userName.value : '用户';
           String greeting = state.greetingMessage.value.isNotEmpty
               ? state.greetingMessage.value
               : '你好';

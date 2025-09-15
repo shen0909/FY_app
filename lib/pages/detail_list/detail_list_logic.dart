@@ -46,14 +46,6 @@ class DetailListLogic extends GetxController {
       state.sanctionTypes.addAll(SanctionType.mockSanctionType());
     }
 
-    // 初始化省市数据
-    try {
-      await AreaDataManager.instance.loadAreaData();
-      print('省市数据初始化完成');
-    } catch (e) {
-      print('省市数据初始化失败: $e');
-    }
-
     // 同步左右两侧的垂直滚动
     leftVerticalController.addListener(() {
       if (rightVerticalController.offset != leftVerticalController.offset) {

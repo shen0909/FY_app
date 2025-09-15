@@ -9,8 +9,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/login_data.dart';
-
 import '../../services/biometric_service.dart';
+import '../../utils/area_data_manager.dart';
 import 'login_state.dart';
 
 class LoginLogic extends GetxController {
@@ -22,6 +22,13 @@ class LoginLogic extends GetxController {
   void onInit() {
     super.onInit();
     _loadUserInfo();
+    // 初始化省市数据
+    try {
+      AreaDataManager.instance.loadAreaData();
+      print('省市数据初始化完成');
+    } catch (e) {
+      print('省市数据初始化失败: $e');
+    }
   }
 
   @override
@@ -196,18 +203,7 @@ class LoginLogic extends GetxController {
       );
       
       if (result['code'] == 10010) {
-        // 登录成功，保存登录数据
-        LoginData loginData = LoginData(
-          token: result['data']['token'] ?? '',
-          userid: result['data']['userid'] ?? '',
-          username: result['data']['username'] ?? '',
-          province: result['data']['province'] ?? '',
-          city: result['data']['city'] ?? '',
-          county_level_city: result['data']['county_level_city'] ?? '',
-          user_role: result['data']['user_role'] ?? 0,
-          nickname: result['data']['nickname'] ?? '',
-        );
-        
+        LoginData loginData = LoginData.fromJson(result['data']);
         await FYSharedPreferenceUtils.saveLoginData(loginData);
         await FYSharedPreferenceUtils.setNotFirstLogin();
         

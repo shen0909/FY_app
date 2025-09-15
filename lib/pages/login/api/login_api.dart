@@ -17,11 +17,10 @@ class LoginApi {
           token: result['data']['token'] ?? '',
           userid: result['data']['userid'] ?? '',
           username: result['data']['username'] ?? '',
-          province: result['data']['province'] ?? '',
-          city: result['data']['city'] ?? '',
-          county_level_city: result['data']['county_level_city'] ?? '',
+          region: result['data']['region'] ?? '',
           user_role: result['data']['user_role'] ?? 0,
           nickname: result['data']['nickname'] ?? '',
+          lastLoginAt: result['data']['last_login_at'] ?? '',
         );
       } else {
         // 登录失败

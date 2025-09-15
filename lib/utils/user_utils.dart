@@ -38,18 +38,6 @@ class UserUtils {
     return userData?.nickname;
   }
   
-  /// 获取用户所在省份
-  static Future<String?> getProvince() async {
-    final userData = await getCurrentUser();
-    return userData?.province;
-  }
-  
-  /// 获取用户所在城市
-  static Future<String?> getCity() async {
-    final userData = await getCurrentUser();
-    return userData?.city;
-  }
-  
   /// 用户退出登录
   static Future<bool> logout() async {
     return await FYSharedPreferenceUtils.clearAll();

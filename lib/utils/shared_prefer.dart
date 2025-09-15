@@ -80,11 +80,10 @@ class FYSharedPreferenceUtils {
       'token': loginData.token,
       'userid': loginData.userid,
       'username': loginData.username,
-      'province': loginData.province,
-      'city': loginData.city,
-      'county_level_city': loginData.county_level_city,
+      'region': loginData.region,
       'user_role': loginData.user_role,
       'nickname': loginData.nickname,
+      'lastLoginAt': loginData.lastLoginAt,
     });
 
     // 同时存储token便于快速访问

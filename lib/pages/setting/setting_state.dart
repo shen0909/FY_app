@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/models/login_data.dart';
+import '../../utils/area_data_manager.dart';
 
 class SettingState {
   // 用户信息
@@ -51,9 +52,10 @@ class SettingState {
         
         // 构建用户信息
         userInfo.addAll({
-          'username': loginData.userid,  // 使用userid作为显示的用户名
-          'name': loginData.nickname.isNotEmpty ? loginData.nickname : loginData.username,  // 优先使用昵称
-          'role': roleText,
+          'username': loginData.username,  // 使用userid作为显示的用户名
+          'nickname': loginData.nickname.isNotEmpty ? loginData.nickname : loginData.username,  // 优先使用昵称
+          'roleText': roleText,
+          'role': loginData.user_role,
           'version': 'v2.5.1',  // 版本号保持不变或从其他地方获取
           'department': _buildLocationText(loginData),  // 构建地区信息
           'avatar': 'assets/images/default_avatar.png'  // 默认头像路径
@@ -103,15 +105,9 @@ class SettingState {
   
   // 构建位置信息文本
   String _buildLocationText(LoginData loginData) {
-    List<String> locationParts = [];
-    
-    if (loginData.province.isNotEmpty) {
-      locationParts.add(loginData.province);
-    }
-    if (loginData.city.isNotEmpty && loginData.city != loginData.province) {
-      locationParts.add(loginData.city);
-    }
-    return locationParts.isNotEmpty ? locationParts.join('') : '未知地区';
+    String? locationParts;
+    locationParts = AreaDataManager.instance.cityNameByCode(loginData.region);
+    return locationParts ?? '未知地区';
   }
   
   // 初始化默认数据
