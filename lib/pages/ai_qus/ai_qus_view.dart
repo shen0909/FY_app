@@ -402,7 +402,7 @@ class AiQusPage extends StatelessWidget {
             TextField(
               controller: state.messageController,
               decoration: InputDecoration.collapsed(
-                hintText: '输入您的问题...',
+                hintText: '有问题，尽管问',
                 hintStyle: TextStyle(
                   fontSize: 14.sp,
                   color: FYColors.color_A6A6A6,
@@ -423,12 +423,12 @@ class AiQusPage extends StatelessWidget {
                 GestureDetector(
                     onTap: () => logic.switchKnowledge(),
                     child: Image.asset(state.isOpenKnowledge.value ? FYImages.checkKnowledge : FYImages.uncheckKnowledge,
-                        width: 55.w, height: 22.w, fit: BoxFit.contain)),
+                        width: 65.w, height: 30.w, fit: BoxFit.contain)),
                 const Spacer(),
                 GestureDetector(
                     onTap: () => logic.sendMessage(),
                     child: Image.asset(FYImages.sendIcon,
-                        width: 21.w, height: 21.w, fit: BoxFit.contain)),
+                        width: 30.w, height: 30.w, fit: BoxFit.contain)),
               ],
             ),
           ],
