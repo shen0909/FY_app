@@ -562,9 +562,13 @@ class SettingPage extends StatelessWidget {
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: _buildRegionCard(
-                      '区域统计', state.statistics['region'] ?? '未知地区'),
+                  child: Container()
                 ),
+                // 隐藏区域统计
+                // Expanded(
+                //   child: _buildRegionCard(
+                //       '区域统计', state.statistics['region'] ?? '未知地区'),
+                // ),
               ],
             ),
             SizedBox(height: 16.h),
