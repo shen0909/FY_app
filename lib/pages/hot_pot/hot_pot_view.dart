@@ -113,13 +113,7 @@ class HotPotPage extends StatelessWidget {
               fontSize: 14,
               color: Color(0xFFA6A6A6),
             ),
-            prefixIcon: GestureDetector(
-              onTap: () {
-                // 显示建设中提示
-                DialogUtils.showUnderConstructionDialog();
-              },
-              child: Icon(Icons.search, size: 20, color: Color(0xFF3A3A3A)),
-            ),
+            prefixIcon: Icon(Icons.search, size: 20, color: Color(0xFF3A3A3A)),
             border: InputBorder.none,
             contentPadding: EdgeInsets.symmetric(vertical: 9.h),
           ),
