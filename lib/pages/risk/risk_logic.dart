@@ -12,6 +12,7 @@ import 'package:safe_app/routers/routers.dart';
 import '../../models/risk_data_new.dart';
 import '../../models/region_data.dart';
 import '../../cache/business_cache_service.dart';
+import '../../utils/area_data_manager.dart';
 import '../../utils/datetime_utils.dart';
 import 'risk_state.dart';
 import 'package:flutter/foundation.dart';
@@ -30,6 +31,9 @@ class RiskLogic extends GetxController {
     super.onInit();
     scrollController = ScrollController();
     state.loginData = await FYSharedPreferenceUtils.getLoginData();
+    if(state.loginData!.user_role == 0) {
+      state.location.value = '广东省${AreaDataManager.instance.cityNameByCode(state.loginData!.region)}';
+    }
     // 设置初始加载状态
     state.isLoading.value = true;
     // 初始化滚动控制器
