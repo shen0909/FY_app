@@ -470,13 +470,11 @@ class HotPotPage extends StatelessWidget {
                                       fontSize: 12.sp, color: FYColors.color_A6A6A6),
                                 ),
                                 Expanded(
-                                  child: Flexible(
-                                    child: Text(
-                                      news.newsMedium,
-                                      style: TextStyle(
-                                          fontSize: 12.sp, color: FYColors.color_A6A6A6),
-                                      textAlign: TextAlign.right, // 让文本靠右对齐
-                                    ),
+                                  child: Text(
+                                    news.newsMedium,
+                                    style: TextStyle(
+                                        fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                    textAlign: TextAlign.right, // 让文本靠右对齐
                                   ),
                                 ),
                               ],
