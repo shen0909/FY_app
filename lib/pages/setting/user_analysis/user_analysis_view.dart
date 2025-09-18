@@ -203,7 +203,7 @@ class UserAnalysisPage extends StatelessWidget {
           SizedBox(height: 16.h),
           Container(
             height: 240.h,
-            padding: EdgeInsets.all(8.w),
+            // padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: FYColors.whiteColor,
               borderRadius: BorderRadius.circular(8.r),
@@ -239,108 +239,117 @@ class UserAnalysisPage extends StatelessWidget {
 
   // 趋势图表
   Widget _buildChart() {
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: false,
-          horizontalInterval: 20,
-          verticalInterval: 1,
-          getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: FYColors.color_F9F9F9,
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: FYColors.color_F9F9F9,
-              strokeWidth: 1,
-            );
-          },
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 30,
-              interval: 1,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  space: 8.0,
-                  child: Text(
-                    state.visitTrendData[value.toInt()].time,
-                    style: TextStyle(
-                      color: FYColors.color_A6A6A6,
-                      fontSize: 12.sp,
-                    ),
+    return SingleChildScrollView(
+      scrollDirection : Axis.horizontal,
+      child: SizedBox(
+        width: state.visitTrendData.length * 50.0,
+        child: Padding(
+          padding: EdgeInsets.only(top: 8.w,right: 8.w),
+          child: LineChart(
+            LineChartData(
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: 20,
+                verticalInterval: 1,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: FYColors.color_F9F9F9,
+                    strokeWidth: 1,
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: FYColors.color_F9F9F9,
+                    strokeWidth: 1,
+                  );
+                },
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false, reservedSize: 50.w),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 30,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      return SideTitleWidget(
+                        axisSide: meta.axisSide,
+                        space: 8.0,
+                        child: Text(
+                          state.visitTrendData[value.toInt()].time,
+                          style: TextStyle(
+                            color: FYColors.color_A6A6A6,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 20,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  '${value.toInt()}%',
-                  style: TextStyle(
-                    color: FYColors.color_A6A6A6,
-                    fontSize: 12.sp,
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 20,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        '${value.toInt()}%',
+                        style: TextStyle(
+                          color: FYColors.color_A6A6A6,
+                          fontSize: 12.sp,
+                        ),
+                      );
+                    },
+                    reservedSize: 42,
                   ),
-                );
-              },
-              reservedSize: 42,
-            ),
-          ),
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: FYColors.color_F9F9F9),
-        ),
-        minX: 0,
-        maxX: state.visitTrendData.length - 1.0,
-        minY: 0,
-        maxY: 100,
-        lineBarsData: [
-          LineChartBarData(
-            spots: state.visitTrendData
-                .asMap()
-                .entries
-                .map((entry) {
-              return FlSpot(entry.key.toDouble(), entry.value.value);
-            }).toList(),
-            isCurved: true,
-            color: FYColors.color_07CC89,
-            barWidth: 2,
-            isStrokeCapRound: true,
-            dotData: FlDotData(
-              show: true,
-              getDotPainter: (spot, percent, barData, index) {
-                return FlDotCirclePainter(
-                  radius: 4,
+                ),
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(color: FYColors.color_F9F9F9),
+              ),
+              minX: 0,
+              maxX: state.visitTrendData.length - 1.0,
+              minY: 0,
+              maxY: 100,
+              lineBarsData: [
+                LineChartBarData(
+                  spots: state.visitTrendData
+                      .asMap()
+                      .entries
+                      .map((entry) {
+                    return FlSpot(entry.key.toDouble(), entry.value.value);
+                  }).toList(),
+                  isCurved: true,
                   color: FYColors.color_07CC89,
-                  strokeWidth: 2,
-                  strokeColor: FYColors.color_07CC89,
-                );
-              },
+                  barWidth: 2,
+                  isStrokeCapRound: true,
+                  dotData: FlDotData(
+                    show: true,
+                    getDotPainter: (spot, percent, barData, index) {
+                      return FlDotCirclePainter(
+                        radius: 4,
+                        color: FYColors.color_07CC89,
+                        strokeWidth: 2,
+                        strokeColor: FYColors.color_07CC89,
+                      );
+                    },
+                  ),
+                  /*belowBarData: BarAreaData(
+                    show: true,
+                    color: FYColors.color_07CC89.withOpacity(0.1),
+                  ),*/
+                ),
+              ],
             ),
-            /*belowBarData: BarAreaData(
-              show: true,
-              color: FYColors.color_07CC89.withOpacity(0.1),
-            ),*/
           ),
-        ],
+        ),
       ),
     );
   }
