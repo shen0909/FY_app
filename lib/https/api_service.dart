@@ -1713,6 +1713,8 @@ class ApiService {
         if (kDebugMode) {
           print('$_tag Token保活ping成功');
         }
+        Map<String, dynamic> innerResult = json.decode(result['result_string']);
+        await FYSharedPreferenceUtils.saveInnerAccessToken(innerResult['返回数据']['access_token']);
         return true;
       } else {
         if (kDebugMode) {

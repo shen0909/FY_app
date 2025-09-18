@@ -29,22 +29,72 @@ class TokenInterceptor extends Interceptor {
   void setDio(Dio dio) {
     _dio = dio;
   }
-  
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
-    // 检查是否是登录已过期（状态码30001），如果是则直接跳转登录页
-    if (err.response?.data is Map) {
-      final data = err.response?.data as Map;
+
+  /// 统一处理特殊状态码，如登录过期或异地登录
+  void _handleSpecialStatusCode(Response? response) {
+    if (response?.data is Map) {
+      final data = response?.data as Map;
+      // 检查外层状态码 30001 (登录已过期)
       if (data.containsKey('状态码') && data['状态码'] == 30001) {
         if (kDebugMode) {
-          print('$_tag onError检测到登录已过期（状态码30001），直接跳转登录页');
+          print('$_tag 检测到登录已过期（状态码30001），直接跳转登录页');
         }
         _navigateToLogin();
-        handler.next(err);
         return;
       }
+      // 新增：检查外层状态码 30004 (已在别处登录)
+      if (data.containsKey('状态码') && data['状态码'] == 30004) {
+        if (kDebugMode) {
+          print('$_tag 检测到已在别处登录（状态码30004），直接跳转登录页');
+        }
+        // 显示提示
+        ToastUtil.showShort('已在别处登录');
+        _navigateToLogin();
+        return;
+      }
+
+      // 检查内层状态码
+      if (data.containsKey('is_success') && data.containsKey('result_string') && data['result_string'] is String) {
+        try {
+          Map<String, dynamic> resultData = jsonDecode(data['result_string']);
+          if (resultData.containsKey('状态码')) {
+            // 检查内层状态码 30001 (登录已过期)
+            if (resultData['状态码'] == 30001) {
+              if (kDebugMode) {
+                print('$_tag 检测到内层登录已过期（状态码30001），直接跳转登录页');
+              }
+              _navigateToLogin();
+              return;
+            }
+            // 新增：检查内层状态码 30004 (已在别处登录)
+            if (resultData['状态码'] == 30004) {
+              if (kDebugMode) {
+                print('$_tag 检测到内层已在别处登录（状态码30004），直接跳转登录页');
+              }
+              // 显示提示
+              ToastUtil.showShort('已在别处登录');
+              _navigateToLogin();
+              return;
+            }
+          }
+        } catch (e) {
+          // 解析错误，不处理
+        }
+      }
     }
-    
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // 检查并处理特殊状态码，如30001和30004
+    _handleSpecialStatusCode(err.response);
+
+    // 如果上面已经处理并跳转，则不再执行后续逻辑
+    if (Get.currentRoute == Routers.login) {
+      handler.next(err);
+      return;
+    }
+
     // 检查是否是token过期错误
     if (_isTokenExpiredError(err)) {
       _handleTokenExpiredResponse(err, handler);
@@ -55,83 +105,77 @@ class TokenInterceptor extends Interceptor {
   
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    // 检查并处理特殊状态码，如30001和30004
+    _handleSpecialStatusCode(response);
+
+    // 如果上面已经处理并跳转，则不再执行后续逻辑
+    if (Get.currentRoute == Routers.login) {
+      handler.next(response);
+      return;
+    }
+
     // 检查业务层面的token失效（HTTP 200但业务失败）
+    bool isTokenExpired = _isTokenExpiredInBusinessResponse(response);
+
+    if (isTokenExpired) {
+      // 创建一个DioException来触发错误处理流程
+      final dioError = DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        type: DioExceptionType.badResponse,
+        message: 'Token expired in business response',
+      );
+
+      // 手动调用错误处理
+      _handleTokenExpiredResponse(dioError, handler);
+    } else {
+      // 正常响应处理
+      handler.next(response);
+    }
+  }
+
+  /// 判断业务响应中是否token失效
+  bool _isTokenExpiredInBusinessResponse(Response response) {
     if (response.statusCode == 200 && response.data is Map) {
       final data = response.data as Map;
-      
-      // 检查是否是token失效的业务错误
-      bool isTokenExpired = false;
-      
+
       // 外层token失效检测
       if (data.containsKey('error_code') && data['error_code'] == 401) {
-        isTokenExpired = true;
         if (kDebugMode) {
           print('$_tag 响应中检测到外层token失效: ${data['error_message']}');
         }
+        return true;
       }
       
       // 应用内token失效检测
-      if (data.containsKey('is_success') && 
+      if (data.containsKey('is_success') &&
           data['is_success'] == false &&
           data.containsKey('error_message') &&
           data['error_message'].toString().contains('Token已失效')) {
-        isTokenExpired = true;
         if (kDebugMode) {
           print('$_tag 响应中检测到应用内token失效: ${data['error_message']}');
         }
+        return true;
       }
       
       // 内层token失效检测
-      if (data.containsKey('is_success') && 
-          data.containsKey('result_string') && 
+      if (data.containsKey('is_success') &&
+          data.containsKey('result_string') &&
           data['result_string'] is String) {
         try {
           Map<String, dynamic> resultData = jsonDecode(data['result_string']);
           if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
-            isTokenExpired = true;
             if (kDebugMode) {
               print('$_tag 响应中检测到内层token失效，状态码: ${resultData['状态码']}');
             }
+            return true;
           }
         } catch (e) {
           // 解析错误，不处理
         }
       }
-      
-      // 直接检测外层状态码30001（登录已过期）
-      if (data.containsKey('状态码') && data['状态码'] == 30001) {
-        isTokenExpired = true;
-        if (kDebugMode) {
-          print('$_tag 响应中检测到登录已过期，状态码: ${data['状态码']}，消息: ${data['返回消息']}');
-        }
-      }
-      
-      if (isTokenExpired) {
-        // 检查是否是登录已过期（状态码30001），如果是则直接跳转登录页
-        if (data.containsKey('状态码') && data['状态码'] == 30001) {
-          if (kDebugMode) {
-            print('$_tag 检测到登录已过期（状态码30001），直接跳转登录页');
-          }
-          _navigateToLogin();
-          return;
-        }
-        
-        // 创建一个DioException来触发错误处理流程
-        final dioError = DioException(
-          requestOptions: response.requestOptions,
-          response: response,
-          type: DioExceptionType.badResponse,
-          message: 'Token expired in business response',
-        );
-        
-        // 手动调用错误处理
-        _handleTokenExpiredResponse(dioError, handler);
-        return;
-      }
     }
-    
-    // 正常响应处理
-    handler.next(response);
+    return false;
   }
   
   /// 刷新外层token
@@ -152,11 +196,6 @@ class TokenInterceptor extends Interceptor {
   
   // 判断是否是token过期错误
   bool _isTokenExpiredError(DioException err) {
-    // 这里根据实际后端返回的错误码判断
-    // 通常有以下几种情况:
-    // 1. HTTP状态码 401
-    // 2. 后端自定义错误码，如 {"code": 401, "message": "token过期"}
-    
     if (err.response?.statusCode == 401) {
       return true;
     }
@@ -174,7 +213,7 @@ class TokenInterceptor extends Interceptor {
       }
       
       // 应用内token失效检测 - 直接在外层响应中检查
-      if (data.containsKey('is_success') && 
+      if (data.containsKey('is_success') &&
           data['is_success'] == false &&
           data.containsKey('error_message') &&
           data['error_message'].toString().contains('Token已失效')) {
@@ -183,10 +222,10 @@ class TokenInterceptor extends Interceptor {
         }
         return true;
       }
-      
+
       // 内层token过期 - 解析result_string中的状态码
-      if (data.containsKey('is_success') && 
-          data.containsKey('result_string') && 
+      if (data.containsKey('is_success') &&
+          data.containsKey('result_string') &&
           data['result_string'] is String) {
         try {
           Map<String, dynamic> resultData = jsonDecode(data['result_string']);
@@ -200,15 +239,7 @@ class TokenInterceptor extends Interceptor {
           // 解析错误，不处理
         }
       }
-      
-      // 直接检测外层状态码30001（登录已过期）
-      if (data.containsKey('状态码') && data['状态码'] == 30001) {
-        if (kDebugMode) {
-          print('$_tag 检测到登录已过期，状态码: ${data['状态码']}，消息: ${data['返回消息']}');
-        }
-        return true;
-      }
-      
+
       // 兼容旧接口
       if (data.containsKey('code') && (data['code'] == 401 || data['code'] == 10011)) {
         return true;
@@ -238,52 +269,7 @@ class TokenInterceptor extends Interceptor {
     if (kDebugMode) {
       print('$_tag Token过期，准备刷新');
     }
-    
-    // 检查是否是登录已过期（状态码30001）
-    if (err.response?.data is Map) {
-      final data = err.response?.data as Map;
-      
-      // 检查外层状态码30001
-      if (data.containsKey('状态码') && data['状态码'] == 30001) {
-        if (kDebugMode) {
-          print('$_tag 检测到登录已过期（状态码30001），直接跳转登录页');
-        }
-        _pendingRequests.clear();
-        _navigateToLogin();
-        if (handler is ErrorInterceptorHandler) {
-          handler.next(err);
-        } else if (handler is ResponseInterceptorHandler) {
-          handler.reject(err);
-        }
-        return;
-      }
-      
-      // 检查内层状态码30001
-      if (data.containsKey('is_success') && 
-          data.containsKey('result_string') && 
-          data['result_string'] is String) {
-        try {
-          Map<String, dynamic> resultData = jsonDecode(data['result_string']);
-          if (resultData.containsKey('状态码') && resultData['状态码'] == 30001) {
-            // ToastUtil.showShort('token已过期，请重新登录');
-            if (kDebugMode) {
-              print('$_tag 检测到内层登录已过期（状态码30001），直接跳转登录页');
-            }
-            _pendingRequests.clear();
-            _navigateToLogin();
-            if (handler is ErrorInterceptorHandler) {
-              handler.next(err);
-            } else if (handler is ResponseInterceptorHandler) {
-              handler.reject(err);
-            }
-            return;
-          }
-        } catch (e) {
-          // 解析错误，继续正常的token刷新流程
-        }
-      }
-    }
-    
+
     // 保存原始请求
     RequestOptions options = err.requestOptions;
     
