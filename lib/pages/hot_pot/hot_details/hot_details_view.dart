@@ -750,41 +750,32 @@ class HotDetailsView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 8.w),
-                      state.effectCompanyList
-                              .where((company) => company.effectType == '1')
-                              .toList()
-                              .isEmpty
-                          ? Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20.w),
-                                child: Text(
-                                  '暂无受直接影响企业数据',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: FYColors.color_666666,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ... state.effectCompanyList
-                                    .where((company) => company.effectType == '1')
-                                    .map((company) => Padding(
-                                          padding: EdgeInsets.only(bottom: 8.w),
-                                          child: Text(
-                                            company.zhName.isNotEmpty
-                                                ? company.zhName
-                                                : company.enName,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: FYColors.color_666666,
-                                            ),
-                                          ),
-                                        ))
-                              ],
+                      effect.effectCompany.isEmpty ?
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          child: Text(
+                            '暂无受直接影响企业数据',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: FYColors.color_666666,
                             ),
+                          ),
+                        ),
+                      ):
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 4.w,
+                        children: effect.effectCompany.map<Widget>((element) {
+                          return Text(
+                            element,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: FYColors.color_666666,
+                            ),
+                          );
+                        }).toList(),
+                      ),
                       SizedBox(height: 20.w),
                       Text(
                         "受间接影响企业",
