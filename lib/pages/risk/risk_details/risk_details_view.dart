@@ -29,56 +29,7 @@ class RiskDetailsPage extends StatelessWidget {
         fontWeight: FontWeight.bold,
         fontSize: 18,
         titleColor: Colors.black,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              // 显示建设中提示
-              DialogUtils.showUnderConstructionDialog();
-            },
-            child: Image.asset(
-              FYImages.download_icon,
-              width: 24.w,
-              height: 24.w,
-              fit: BoxFit.contain,
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            child: Obx(() {
-              return
-                state.isLoading.value ||
-                      state.riskCompanyDetail.value == null
-                  ? Container()
-                  : GestureDetector(
-                      onTap: () => logic.showRiskScoreDetails(),
-                      child: Container(
-                        height: 32.w,
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                            colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
-                            stops: [0.0, 1.0],
-                          ),
-                          borderRadius: BorderRadius.circular(8.w),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
-                            style: TextStyle(
-                                color: FYColors.whiteColor,
-                                fontWeight: FontWeight.w500,
-                                height: 0.6,
-                                fontSize: 18.sp),
-                          ),
-                        ),
-                      ),
-                    );
-            }),
-          ),
-        ],
+        // todo: 隐藏风险预警详情页面的下载按钮
       ),
       body: Obx(() {
         if (state.isLoading.value) {
