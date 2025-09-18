@@ -65,7 +65,7 @@ class RiskDetailsPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: FYColors.whiteColor,
-      padding: EdgeInsets.only(left: 16.w, top: 13.w),
+      padding: EdgeInsets.only(left: 16.w, top: 13.w, right: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

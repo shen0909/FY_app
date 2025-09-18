@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class VisitTrendData {
   final String time;
@@ -29,7 +30,7 @@ class UserAnalysisState {
   final RxList<VisitTrendData> visitTrendData = <VisitTrendData>[].obs;
 
   // 用户活跃度分布日期
-  final String distributionDate = '2024/5/11';
+  final String distributionDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   // 城市分布数据
   final RxMap<String, double> cityDistribution = <String, double>{}.obs; // active_region_count
