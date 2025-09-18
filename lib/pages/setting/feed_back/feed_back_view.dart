@@ -188,7 +188,7 @@ class FeedBackPage extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  '我们会认真阅读每一条反馈，并优先解决用户普遍反映\n的问题。对于紧急问题，我们会尽快处理。感谢您的宝\n贵意见！',
+                  '我们会认真阅读每一条反馈，并优先解决用户普遍反映的问题。对于紧急问题，我们会尽快处理。感谢您的宝贵意见！',
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: FYColors.color_A6A6A6,
