@@ -402,7 +402,7 @@ class AiQusPage extends StatelessWidget {
             TextField(
               controller: state.messageController,
               decoration: InputDecoration.collapsed(
-                hintText: '有问题，尽管问',
+                hintText: '请输入问题，勿含敏感内容',
                 hintStyle: TextStyle(
                   fontSize: 14.sp,
                   color: FYColors.color_A6A6A6,
