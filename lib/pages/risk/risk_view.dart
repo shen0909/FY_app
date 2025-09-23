@@ -283,7 +283,7 @@ class _RiskPageState extends State<RiskPage> {
             ],
           ),
           SizedBox(height: 4.h),
-          isTotal ? Container() : RichText(
+          isTotal || change <= 0 ? Container() : RichText(
               text: TextSpan(
                   style: TextStyle(
                     color: FYColors.color_A6A6A6,
