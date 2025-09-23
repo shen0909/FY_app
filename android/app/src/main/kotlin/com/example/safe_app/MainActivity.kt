@@ -12,17 +12,32 @@ import android.os.Environment
 import java.io.File
 import java.io.FileInputStream
 import java.io.OutputStream
+import android.view.WindowManager
+import android.database.ContentObserver
+import android.os.Handler
+import android.net.Uri
+import android.util.Log
 
 class MainActivity: FlutterFragmentActivity() {
     private val CHANNEL_MEDIA = "com.example.safe_app/media"
+    private var screenshotObserver: ContentObserver? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // 设置防截屏标志
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
         
         // 防止系统字体缩放影响应用
         val configuration = Configuration(resources.configuration)
         configuration.fontScale = 1.0f // 固定字体缩放为1.0
         resources.updateConfiguration(configuration, resources.displayMetrics)
+        
+        // 初始化截屏监听
+        initScreenshotObserver()
     }
     
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -100,5 +115,45 @@ class MainActivity: FlutterFragmentActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+    
+    /**
+     * 初始化截屏监听器
+     */
+    private fun initScreenshotObserver() {
+        screenshotObserver = object : ContentObserver(Handler()) {
+            override fun onChange(selfChange: Boolean, uri: Uri?) {
+                super.onChange(selfChange, uri)
+                if (uri != null && uri.toString().contains("screenshot")) {
+                    Log.w("MainActivity", "检测到截屏尝试")
+                    // 这里可以添加截屏后的处理逻辑，比如显示警告
+                    // 由于FLAG_SECURE已经阻止了截屏，这里主要是记录日志
+                }
+            }
+        }
+        
+        // 注册截屏监听器
+        contentResolver.registerContentObserver(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            true,
+            screenshotObserver!!
+        )
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        // 注销截屏监听器
+        screenshotObserver?.let {
+            contentResolver.unregisterContentObserver(it)
+        }
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // 确保防截屏标志在应用恢复时仍然有效
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
     }
 }
