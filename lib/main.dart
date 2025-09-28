@@ -31,12 +31,15 @@ void main() async {
   
   // 检查并确保锁屏方式不会冲突
   await _checkLockMethodConflicts();
-  String idiom = MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.shortestSide >= 600
-      ? 'pad'
-      : 'phone';
+  // 改进的设备类型检测逻辑
+  String idiom = await _detectDeviceTypeReliably();
+
   if (idiom == 'pad') {
     isPad = true;
+    print('✅ 设备确认为平板，启用平板适配模式');
   } else {
+    isPad = false;
+    print('✅ 设备确认为手机，启用手机适配模式并锁定竖屏');
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -79,6 +82,68 @@ Future<void> _checkLockMethodConflicts() async {
     }
   } catch (e) {
     print('检查锁屏方式时发生错误: $e');
+  }
+}
+
+// 可靠的设备类型检测函数
+Future<String> _detectDeviceTypeReliably() async {
+  try {
+    // 1. 首先尝试从缓存获取设备类型
+    String? cachedDeviceType = await FYSharedPreferenceUtils.getUserDevice();
+
+    // 2. 获取当前屏幕尺寸
+    final view = WidgetsBinding.instance.platformDispatcher.views.first;
+    final size = MediaQueryData.fromView(view).size;
+    final shortestSide = size.shortestSide;
+    final longestSide = size.longestSide;
+
+    print('📱 设备屏幕尺寸检测: ${size.width}x${size.height}, 最短边: $shortestSide, 最长边: $longestSide');
+
+    // 3. 如果获取到的尺寸为0，说明还未初始化完成
+    if (shortestSide == 0.0 || longestSide == 0.0) {
+      print('⚠️ 屏幕尺寸未初始化(0x0)，使用缓存设备类型或等待初始化');
+
+      if (cachedDeviceType != null && cachedDeviceType.isNotEmpty) {
+        print('📱 使用缓存的设备类型: $cachedDeviceType');
+        return cachedDeviceType;
+      }
+
+      // 如果没有缓存，等待一小段时间再次尝试
+      print('🔄 等待屏幕初始化...');
+      await Future.delayed(Duration(milliseconds: 100));
+
+      // 再次尝试获取屏幕尺寸
+      final retryView = WidgetsBinding.instance.platformDispatcher.views.first;
+      final retrySize = MediaQueryData.fromView(retryView).size;
+      final retryShortestSide = retrySize.shortestSide;
+
+      print('📱 重试后屏幕尺寸: ${retrySize.width}x${retrySize.height}, 最短边: $retryShortestSide');
+
+      if (retryShortestSide > 0) {
+        String detectedType = retryShortestSide >= 600 ? 'pad' : 'phone';
+        print('📱 重试后设备类型判定: $detectedType');
+        return detectedType;
+      }
+
+      // 如果还是获取不到，默认返回手机类型（更安全）
+      print('❌ 无法获取屏幕尺寸，默认为手机设备');
+      return 'phone';
+    }
+
+    // 4. 正常情况下的设备类型判定
+    String detectedType = shortestSide >= 600 ? 'pad' : 'phone';
+    print('📱 设备类型判定: $detectedType');
+
+    // 5. 如果缓存类型与检测类型不一致，更新缓存
+    if (cachedDeviceType != null && cachedDeviceType != detectedType) {
+      print('🔄 设备类型变化: $cachedDeviceType -> $detectedType，更新缓存');
+    }
+
+    return detectedType;
+
+  } catch (e) {
+    print('❌ 设备类型检测失败: $e，默认为手机设备');
+    return 'phone';
   }
 }
 
@@ -134,21 +199,27 @@ class MyApp extends StatelessWidget {
   
   // 动态计算设计尺寸的方法
   Size _getDesignSize(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final actualSize = mediaQuery.size;
+
     if (!isPad) {
       // 手机设备固定使用竖屏尺寸
-      return const Size(375, 812);
+      final designSize = const Size(375, 812);
+      print('📱 手机设计尺寸: $designSize, 实际屏幕尺寸: $actualSize');
+      return designSize;
     } else {
       // 平板设备根据当前屏幕方向动态选择
-      final orientation = MediaQuery.of(context).orientation;
+      final orientation = mediaQuery.orientation;
       final isLandscape = orientation == Orientation.landscape;
-      
-      print('🔄 屏幕方向变化: ${isLandscape ? "横屏" : "竖屏"}');
-      
+
+      Size designSize;
       if (isLandscape) {
-        return const Size(960, 600); // 横屏尺寸
+        designSize = const Size(960, 600); // 横屏尺寸
       } else {
-        return const Size(600, 960); // 竖屏尺寸
+        designSize = const Size(600, 960); // 竖屏尺寸
       }
+      print('📱 平板设计尺寸: $designSize (${isLandscape ? "横屏" : "竖屏"}), 实际屏幕尺寸: $actualSize');
+      return designSize;
     }
   }
 }

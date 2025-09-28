@@ -30,23 +30,14 @@ class MainActivity: FlutterFragmentActivity() {
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-        
-        // 防止系统字体缩放影响应用
-        val configuration = Configuration(resources.configuration)
-        configuration.fontScale = 1.0f // 固定字体缩放为1.0
-        resources.updateConfiguration(configuration, resources.displayMetrics)
-        
+
         // 初始化截屏监听
         initScreenshotObserver()
     }
     
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        
-        // 屏幕配置变化时也保持字体缩放固定
-        val configuration = Configuration(newConfig)
-        configuration.fontScale = 1.0f
-        resources.updateConfiguration(configuration, resources.displayMetrics)
+        // 移除强制字体缩放设置，让Flutter自己处理屏幕适配
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
