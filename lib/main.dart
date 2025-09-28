@@ -31,6 +31,8 @@ void main() async {
   
   // 检查并确保锁屏方式不会冲突
   await _checkLockMethodConflicts();
+  await _waitForScreenInitialization();
+  
   // 改进的设备类型检测逻辑
   String idiom = await _detectDeviceTypeReliably();
 
@@ -45,11 +47,53 @@ void main() async {
       DeviceOrientation.portraitDown,
     ]);
   }
-  FYSharedPreferenceUtils.saveUserDevice(idiom);
   userDeviceInfo = UserDeviceInfo(idiom: idiom);
   await ScreenUtil.ensureScreenSize();
   await _initializeCacheService();
   runApp(const MyApp());
+}
+
+/// 等待屏幕完全初始化
+Future<void> _waitForScreenInitialization() async {
+  try {
+    final binding = WidgetsFlutterBinding.ensureInitialized();
+    final view = binding.platformDispatcher.views.first;
+    
+    int retryCount = 0;
+    const maxRetries = 50; // 最多等待500ms
+    const retryDelay = Duration(milliseconds: 10);
+    
+    print('🔄 开始等待屏幕初始化...');
+    
+    while (retryCount < maxRetries) {
+      // 检查屏幕尺寸和设备像素比是否就绪
+      if (view.physicalSize.width > 0 && 
+          view.physicalSize.height > 0 && 
+          view.devicePixelRatio > 0) {
+        
+        final logicalSize = view.physicalSize / view.devicePixelRatio;
+        print('✅ 屏幕完全初始化成功:');
+        print('   物理尺寸: ${view.physicalSize}');
+        print('   逻辑尺寸: ${logicalSize}');
+        print('   像素密度: ${view.devicePixelRatio}');
+        print('   初始化耗时: ${retryCount * 10}ms');
+        return;
+      }
+      
+      await Future.delayed(retryDelay);
+      retryCount++;
+      
+      // 每100ms输出一次进度
+      if (retryCount % 10 == 0) {
+        print('🔄 屏幕初始化进度: ${retryCount}/${maxRetries}');
+      }
+    }
+    
+    print('⚠️ 屏幕初始化超时，但继续执行应用初始化');
+    
+  } catch (e) {
+    print('❌ 等待屏幕初始化时发生错误: $e');
+  }
 }
 
 /// 确保缓存服务可用
@@ -85,13 +129,11 @@ Future<void> _checkLockMethodConflicts() async {
   }
 }
 
-// 可靠的设备类型检测函数
+
 Future<String> _detectDeviceTypeReliably() async {
   try {
     // 1. 首先尝试从缓存获取设备类型
     String? cachedDeviceType = await FYSharedPreferenceUtils.getUserDevice();
-
-    // 2. 获取当前屏幕尺寸
     final view = WidgetsBinding.instance.platformDispatcher.views.first;
     final size = MediaQueryData.fromView(view).size;
     final shortestSide = size.shortestSide;
@@ -99,51 +141,31 @@ Future<String> _detectDeviceTypeReliably() async {
 
     print('📱 设备屏幕尺寸检测: ${size.width}x${size.height}, 最短边: $shortestSide, 最长边: $longestSide');
 
-    // 3. 如果获取到的尺寸为0，说明还未初始化完成
+    // 3. 屏幕初始化检查
     if (shortestSide == 0.0 || longestSide == 0.0) {
-      print('⚠️ 屏幕尺寸未初始化(0x0)，使用缓存设备类型或等待初始化');
-
+      print('⚠️ 屏幕尺寸仍为0，使用缓存或默认值');
+      
       if (cachedDeviceType != null && cachedDeviceType.isNotEmpty) {
         print('📱 使用缓存的设备类型: $cachedDeviceType');
         return cachedDeviceType;
       }
-
-      // 如果没有缓存，等待一小段时间再次尝试
-      print('🔄 等待屏幕初始化...');
-      await Future.delayed(Duration(milliseconds: 100));
-
-      // 再次尝试获取屏幕尺寸
-      final retryView = WidgetsBinding.instance.platformDispatcher.views.first;
-      final retrySize = MediaQueryData.fromView(retryView).size;
-      final retryShortestSide = retrySize.shortestSide;
-
-      print('📱 重试后屏幕尺寸: ${retrySize.width}x${retrySize.height}, 最短边: $retryShortestSide');
-
-      if (retryShortestSide > 0) {
-        String detectedType = retryShortestSide >= 600 ? 'pad' : 'phone';
-        print('📱 重试后设备类型判定: $detectedType');
-        return detectedType;
-      }
-
-      // 如果还是获取不到，默认返回手机类型（更安全）
-      print('❌ 无法获取屏幕尺寸，默认为手机设备');
+      print('❌ 无法获取屏幕尺寸且无缓存，默认为手机设备');
       return 'phone';
     }
-
-    // 4. 正常情况下的设备类型判定
     String detectedType = shortestSide >= 600 ? 'pad' : 'phone';
-    print('📱 设备类型判定: $detectedType');
-
-    // 5. 如果缓存类型与检测类型不一致，更新缓存
-    if (cachedDeviceType != null && cachedDeviceType != detectedType) {
-      print('🔄 设备类型变化: $cachedDeviceType -> $detectedType，更新缓存');
+    print('📱 设备类型判定: $detectedType (基于最短边: ${shortestSide.toStringAsFixed(1)}dp)');
+    if (cachedDeviceType != detectedType) {
+      print('🔄 设备类型${cachedDeviceType != null ? "变化" : "首次检测"}: ${cachedDeviceType ?? "无"} -> $detectedType，更新缓存');
+      await FYSharedPreferenceUtils.saveUserDevice(detectedType);
     }
 
     return detectedType;
 
   } catch (e) {
     print('❌ 设备类型检测失败: $e，默认为手机设备');
-    return 'phone';
+    // 尝试从缓存获取，如果没有则默认为phone
+    String? cachedType = await FYSharedPreferenceUtils.getUserDevice();
+    return cachedType ?? 'phone';
   }
 }
 
@@ -205,12 +227,16 @@ class MyApp extends StatelessWidget {
     if (!isPad) {
       // 手机设备固定使用竖屏尺寸
       final designSize = const Size(375, 812);
-      print('📱 手机设计尺寸: $designSize, 实际屏幕尺寸: $actualSize');
+      if (kDebugMode) {
+        print('📱 手机设计尺寸: $designSize, 实际屏幕尺寸: $actualSize');
+      }
       return designSize;
     } else {
       // 平板设备根据当前屏幕方向动态选择
-      final orientation = mediaQuery.orientation;
-      final isLandscape = orientation == Orientation.landscape;
+      // 使用更稳定的方向检测方式
+      final view = View.of(context);
+      final size = view.physicalSize / view.devicePixelRatio;
+      final isLandscape = size.width > size.height;
 
       Size designSize;
       if (isLandscape) {
@@ -218,7 +244,10 @@ class MyApp extends StatelessWidget {
       } else {
         designSize = const Size(600, 960); // 竖屏尺寸
       }
-      print('📱 平板设计尺寸: $designSize (${isLandscape ? "横屏" : "竖屏"}), 实际屏幕尺寸: $actualSize');
+      
+      if (kDebugMode) {
+        print('📱 平板设计尺寸: $designSize (${isLandscape ? "横屏" : "竖屏"}), 实际屏幕尺寸: $actualSize');
+      }
       return designSize;
     }
   }
