@@ -634,6 +634,50 @@ class ApiService {
     return null;
   }
 
+  /// 获取联网检索和知识库内容
+  Future<Map<String, dynamic>?> getSearchAndKnowledgeContent(String chatUuid) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 获取联网检索和知识库内容失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "流任务-获取联网检索和知识库内容",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "对话UUID": chatUuid,
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
+          final returnData = resultData['返回数据'];
+
+          return {
+            'search_results': returnData['search_results'] ?? [],
+            'knowledge_base': returnData['knowledge_base'] ?? [],
+          };
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析联网检索和知识库内容响应失败: $e');
+        }
+      }
+    }
+
+    return null;
+  }
+
   /// 保存聊天记录到Realm数据库
   Future<bool> saveChatHistoryToRealm(String title,
       List<Map<String, dynamic>> messages, String? chatUuid) async {
@@ -1630,6 +1674,8 @@ class ApiService {
     String factoryName = "OpenAI",
     String model = "ChatGPT4",
     int tokenCount = 0,
+    List<Map<String, dynamic>>? searchResults,
+    List<Map<String, dynamic>>? knowledgeBase,
   }) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
@@ -1640,18 +1686,29 @@ class ApiService {
       return null;
     }
 
+    // 构造基础请求参数
+    Map<String, dynamic> commandContent = {
+      "session_uuid": sessionUuid,
+      "role": role,
+      "content": content,
+      "factory_name": factoryName,
+      "model": model,
+      "token_count": tokenCount
+    };
+
+    // 可选参数：只有非空时才添加
+    if (searchResults != null && searchResults.isNotEmpty) {
+      commandContent["search_results"] = searchResults;
+    }
+    if (knowledgeBase != null && knowledgeBase.isNotEmpty) {
+      commandContent["knowledge_base"] = knowledgeBase;
+    }
+
     // 构造请求参数
     Map<String, dynamic> paramData = {
       "消息类型": "ai聊天记录_新增记录",
       "当前请求用户UUID": token,
-      "命令具体内容": {
-        "session_uuid": sessionUuid,
-        "role": role,
-        "content": content,
-        "factory_name": factoryName,
-        "model": model,
-        "token_count": tokenCount
-      }
+      "命令具体内容": commandContent
     };
 
     dynamic result = await _sendChannelEvent(paramData: paramData);

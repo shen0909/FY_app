@@ -283,8 +283,19 @@ class AiQusLogic extends GetxController {
         try {
           final role = message['isUser'] == true ? 'user' : 'assistant';
           final content = message['content']?.toString() ?? '';
-          
+
           if (content.isNotEmpty) {
+            // 🆕 提取检索和知识库内容（如果有）
+            List<Map<String, dynamic>>? searchResults;
+            List<Map<String, dynamic>>? knowledgeBase;
+
+            if (message['search_results'] != null && message['search_results'] is List) {
+              searchResults = List<Map<String, dynamic>>.from(message['search_results']);
+            }
+            if (message['knowledge_base'] != null && message['knowledge_base'] is List) {
+              knowledgeBase = List<Map<String, dynamic>>.from(message['knowledge_base']);
+            }
+
             final response = await ApiService().addChatRecord(
               sessionUuid: state.currentServerSessionUuid!,
               role: role,
@@ -292,6 +303,8 @@ class AiQusLogic extends GetxController {
               factoryName: "OpenAI",
               model: state.selectedModel.value,
               tokenCount: 0,
+              searchResults: searchResults, // 🆕 传递检索结果
+              knowledgeBase: knowledgeBase, // 🆕 传递知识库内容
             );
 
             // ✅ 同步成功后标记消息
@@ -621,7 +634,7 @@ class AiQusLogic extends GetxController {
         state.messages[messageIndex] = {
           'isUser': false,
           'content': finalContent,
-          'isStreaming': false,
+          'isStreaming': true, // 🔧 保持streaming状态，等待获取检索和知识库内容
           'timestamp': DateTime.now().toIso8601String(),
           'aiModel': state.selectedModel.value,
           'isSynced': false, // 标记最终AI消息需要同步
@@ -631,6 +644,16 @@ class AiQusLogic extends GetxController {
         // 添加到对话历史
         state.addToConversationHistory('assistant', finalContent);
 
+        // 🆕 获取联网检索和知识库内容（异步完成后才取消streaming状态）
+        _fetchSearchAndKnowledgeContent(messageIndex).whenComplete(() {
+          // ✅ 检索和知识库内容获取完成（无论成功或失败），现在才取消streaming状态
+          if (messageIndex < state.messages.length) {
+            state.messages[messageIndex]['isStreaming'] = false;
+            state.messages.refresh(); // 强制刷新UI
+            print('✅ 参考来源和知识库已加载完成，取消正在回复状态');
+          }
+        });
+
         // 只有成功时才同步到数据库
         _updateChatHistoryInDB();
         print('✅ AI回复成功，消息已保存到历史记录');
@@ -639,6 +662,34 @@ class AiQusLogic extends GetxController {
 
     // 重置状态
     state.resetStreamingState();
+  }
+
+  /// 获取联网检索和知识库内容
+  Future<void> _fetchSearchAndKnowledgeContent(int messageIndex) async {
+    try {
+      if (state.currentChatUuid == null) {
+        print('⚠️ 当前对话UUID为空，跳过获取检索和知识库内容');
+        return;
+      }
+
+      print('🔍 开始获取联网检索和知识库内容...');
+      final result = await ApiService().getSearchAndKnowledgeContent(state.currentChatUuid!);
+
+      if (result != null && messageIndex < state.messages.length) {
+        // 将检索和知识库内容附加到AI消息中
+        state.messages[messageIndex]['search_results'] = result['search_results'];
+        state.messages[messageIndex]['knowledge_base'] = result['knowledge_base'];
+        state.messages.refresh(); // 触发UI更新
+
+        print('✅ 成功获取检索和知识库内容');
+        print('   - 检索结果数量: ${(result['search_results'] as List).length}');
+        print('   - 知识库数量: ${(result['knowledge_base'] as List).length}');
+      } else {
+        print('⚠️ 获取检索和知识库内容失败或消息索引越界');
+      }
+    } catch (e) {
+      print('❌ 获取联网检索和知识库内容异常: $e');
+    }
   }
 
     /// 更新聊天记录中的消息

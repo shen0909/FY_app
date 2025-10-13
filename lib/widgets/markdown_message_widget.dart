@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Markdown消息渲染组件
-class MarkdownMessageWidget extends StatelessWidget {
+class MarkdownMessageWidget extends StatefulWidget {
   final String content;
   final String title;
   final bool isUser;
   final bool isStreaming;
   final bool isShowName; //是否展示智能体名称
   final bool isAI;
+  final List<Map<String, dynamic>>? searchResults; // 参考来源
+  final List<Map<String, dynamic>>? knowledgeBase; // 本地知识库
 
   const MarkdownMessageWidget({
     Key? key,
@@ -20,12 +23,21 @@ class MarkdownMessageWidget extends StatelessWidget {
     this.isUser = true,
     this.isStreaming = false,
     this.isAI = true,
-    required this.isShowName
+    required this.isShowName,
+    this.searchResults,
+    this.knowledgeBase,
   }) : super(key: key);
 
   @override
+  State<MarkdownMessageWidget> createState() => _MarkdownMessageWidgetState();
+}
+
+class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
+  bool _isSearchResultsExpanded = false; // 参考来源展开状态
+
+  @override
   Widget build(BuildContext context) {
-    if (isUser) {
+    if (widget.isUser) {
       // 用户消息使用普通文本显示
       return _buildUserMessage();
     } else {
@@ -42,7 +54,7 @@ class MarkdownMessageWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.w),
       ),
       child: Text(
-        content,
+        widget.content,
         style: TextStyle(
           fontSize: 14.sp,
           color: Colors.white,
@@ -57,19 +69,19 @@ class MarkdownMessageWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
-        color: isAI ?  Color(0xFFF5F5F5) : Colors.white,
+        color: widget.isAI ?  Color(0xFFF5F5F5) : Colors.white,
         borderRadius: BorderRadius.circular(8.w),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if(isShowName)
+          if(widget.isShowName)
             Padding(
               padding: EdgeInsets.only(bottom: 6.w),
-              child: Text('${title}: ',style: TextStyle(fontSize: 10.sp,color: FYColors.color_3361FE,fontWeight: FontWeight.w400)),
+              child: Text('${widget.title}: ',style: TextStyle(fontSize: 10.sp,color: FYColors.color_3361FE,fontWeight: FontWeight.w400)),
             ),
           MarkdownBody(
-            data: content,
+            data: widget.content,
             fitContent: true,
             styleSheet: _buildMarkdownStyleSheet(),
             builders: {
@@ -89,7 +101,7 @@ class MarkdownMessageWidget extends StatelessWidget {
               }
             },
           ),
-          if (isStreaming)
+          if (widget.isStreaming)
             Padding(
               padding: EdgeInsets.only(top: 8.w),
               child: Row(
@@ -116,7 +128,197 @@ class MarkdownMessageWidget extends StatelessWidget {
                 ],
               ),
             ),
+          // 参考来源和知识库
+          if (widget.searchResults != null && widget.searchResults!.isNotEmpty ||
+              widget.knowledgeBase != null && widget.knowledgeBase!.isNotEmpty)
+            _buildReferenceSources(),
         ],
+      ),
+    );
+  }
+
+  // 构建参考来源和知识库区域
+  Widget _buildReferenceSources() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 12.w),
+        Divider(height: 1.w, thickness: 1.w, color: Color(0xFFE6E6E6)),
+        SizedBox(height: 12.w),
+
+        // 参考来源
+        if (widget.searchResults != null && widget.searchResults!.isNotEmpty) ...[
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isSearchResultsExpanded = !_isSearchResultsExpanded;
+              });
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/reference_icon.png',
+                  width: 16.w,
+                  height: 16.w,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.public, size: 16.w, color: Color(0xFF3361FE));
+                  },
+                ),
+                SizedBox(width: 4.w),
+                Text(
+                  '参考来源',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Color(0xFF3361FE),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Spacer(),
+                Icon(
+                  _isSearchResultsExpanded
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
+                  size: 20.w,
+                  color: Color(0xFF3361FE),
+                ),
+              ],
+            ),
+          ),
+          if (_isSearchResultsExpanded) ...[
+            SizedBox(height: 8.w),
+            ...widget.searchResults!.map((result) => _buildSearchResultItem(result)),
+          ],
+          SizedBox(height: 12.w),
+        ],
+
+        // 本地知识库
+        if (widget.knowledgeBase != null && widget.knowledgeBase!.isNotEmpty) ...[
+          Row(
+            children: [
+              Icon(Icons.library_books, size: 16.w, color: Color(0xFF3361FE)),
+              SizedBox(width: 4.w),
+              Text(
+                '本地知识库',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Color(0xFF3361FE),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.w),
+          ...widget.knowledgeBase!.map((kb) => _buildKnowledgeBaseItem(kb)),
+        ],
+      ],
+    );
+  }
+
+  // 构建单个参考来源项
+  Widget _buildSearchResultItem(Map<String, dynamic> result) {
+    final String title = result['title'] ?? '';
+    final String newsUuid = result['news_uuid'] ?? '';
+    final String source = result['source'] ?? '';
+
+    return GestureDetector(
+      onTap: () {
+        if (newsUuid.isNotEmpty) {
+          // 跳转到新闻详情页
+          Get.toNamed('/hotDetails', arguments: {'news_uuid': newsUuid});
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 8.w),
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4.r),
+          border: Border.all(color: Color(0xFFE6E6E6), width: 1.w),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Color(0xFF3361FE),
+                      fontWeight: FontWeight.w400,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (newsUuid.isNotEmpty)
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 12.w,
+                    color: Color(0xFFA6A6A6),
+                  ),
+              ],
+            ),
+            if (source.isNotEmpty) ...[
+              SizedBox(height: 4.w),
+              Text(
+                '来源:$source',
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: Color(0xFFA6A6A6),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 构建单个知识库项
+  Widget _buildKnowledgeBaseItem(Map<String, dynamic> kb) {
+    final String title = kb['title'] ?? '';
+    final String newsUuid = kb['news_uuid'] ?? '';
+    final double relevanceScore = (kb['relevance_score'] ?? 0.0).toDouble();
+
+    return GestureDetector(
+      onTap: () {
+        if (newsUuid.isNotEmpty) {
+          // 跳转到新闻详情页
+          Get.toNamed('/hotDetails', arguments: {'news_uuid': newsUuid});
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 8.w),
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4.r),
+          border: Border.all(color: Color(0xFFE6E6E6), width: 1.w),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Color(0xFF3361FE),
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (newsUuid.isNotEmpty)
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 12.w,
+                color: Color(0xFFA6A6A6),
+              ),
+          ],
+        ),
       ),
     );
   }

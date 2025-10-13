@@ -186,6 +186,13 @@ class AiQusPage extends StatelessWidget {
                         isShowName: !isUser && message['isSystem'] != true,
                         // 优先使用消息自带来源字段，其次回退当前选择
                         title: '智能体FY+AI(' + ((message['aiSource']?.toString().isNotEmpty == true ? (message['aiSource'] as String) : state.selectedModel.value).substring(0, 1)) + ')',
+                        // 传递参考来源和知识库数据
+                        searchResults: message['search_results'] != null
+                            ? List<Map<String, dynamic>>.from(message['search_results'])
+                            : null,
+                        knowledgeBase: message['knowledge_base'] != null
+                            ? List<Map<String, dynamic>>.from(message['knowledge_base'])
+                            : null,
                       )
                     : Container(
                         padding: EdgeInsets.all(12.w),
