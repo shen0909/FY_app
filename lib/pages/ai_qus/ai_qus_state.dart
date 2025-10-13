@@ -46,8 +46,8 @@ class AiQusState {
   final RxBool isBatchCheck = false.obs;
   final RxBool showTemplateForm = false.obs; // 自定义提示词模版弹窗是否关闭
 
-  // 批量选择模式下选中的消息索引
-  final RxList<int> selectedMessageIndexes = <int>[].obs;
+  // 批量选择模式下选中的消息索引--更新为uid
+  final RxList<String> selectedMessageUUid = <String>[].obs;
 
   // 导出相关状态
   final RxBool isExporting = false.obs;

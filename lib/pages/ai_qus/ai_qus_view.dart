@@ -157,11 +157,11 @@ class AiQusPage extends StatelessWidget {
           // 批量选择模式下显示选择框
           if (state.isBatchCheck.value && !isUser) // 只为AI消息添加选择框
             GestureDetector(
-              onTap: () => logic.toggleMessageSelection(index),
+              onTap: () => logic.toggleMessageSelection(index,message['history_uuid']),
               child: Container(
                 margin: EdgeInsets.only(left: 16.w, top: 8.w),
                 child: Image.asset(
-                  state.selectedMessageIndexes.contains(index)
+                  state.selectedMessageUUid.contains(message['history_uuid'])
                     ? FYImages.check_icon
                     : FYImages.uncheck_icon,
                   width: 24.w,
@@ -234,11 +234,11 @@ class AiQusPage extends StatelessWidget {
           ),
           if (state.isBatchCheck.value && isUser) // 只为AI消息添加选择框
             GestureDetector(
-              onTap: () => logic.toggleMessageSelection(index),
+              onTap: () => logic.toggleMessageSelection(index,message['history_uuid']),
               child: Container(
                 margin: EdgeInsets.only(right: 16.w, top: 8.w),
                 child: Image.asset(
-                  state.selectedMessageIndexes.contains(index)
+                  state.selectedMessageUUid.contains(message['history_uuid'])
                       ? FYImages.check_icon
                       : FYImages.uncheck_icon,
                   width: 24.w,
@@ -272,7 +272,7 @@ class AiQusPage extends StatelessWidget {
           // 选择信息
           Row(
             children: [
-              Obx(() => state.selectedMessageIndexes.isNotEmpty
+              Obx(() => state.selectedMessageUUid.isNotEmpty
                   ? Image.asset(
                       FYImages.check_icon,
                       width: 24.w,
@@ -293,7 +293,7 @@ class AiQusPage extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: state.selectedMessageIndexes.length.toString(),
+                          text: state.selectedMessageUUid.length.toString(),
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -325,7 +325,7 @@ class AiQusPage extends StatelessWidget {
                 children: [
                   // 导出按钮
                   Obx(() => GestureDetector(
-                    onTap: state.selectedMessageIndexes.isNotEmpty
+                    onTap: state.selectedMessageUUid.isNotEmpty
                         ? () => logic.exportSelectedMessages()
                         : null,
                     child: Container(
@@ -333,14 +333,14 @@ class AiQusPage extends StatelessWidget {
                       height: 40.w,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        gradient: state.selectedMessageIndexes.isNotEmpty
+                        gradient: state.selectedMessageUUid.isNotEmpty
                             ? const LinearGradient(
                           colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         )
                             : null,
-                        color: state.selectedMessageIndexes.isEmpty
+                        color: state.selectedMessageUUid.isEmpty
                             ? FYColors.color_EFEFEF
                             : null,
                         borderRadius: BorderRadius.circular(8.w),
@@ -349,7 +349,7 @@ class AiQusPage extends StatelessWidget {
                         "导出文本",
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: state.selectedMessageIndexes.isNotEmpty
+                          color: state.selectedMessageUUid.isNotEmpty
                               ? FYColors.whiteColor
                               : FYColors.color_A6A6A6,
                         ),

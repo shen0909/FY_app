@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ import 'package:safe_app/utils/toast_util.dart';
 import 'package:safe_app/widgets/widgets.dart';
 import 'package:side_sheet/side_sheet.dart';
 import 'dart:async';
+import '../../utils/file_utils.dart';
 import 'ai_qus_state.dart';
 import '../../https/api_service.dart';
 import '../../services/realm_service.dart';
@@ -313,6 +315,7 @@ class AiQusLogic extends GetxController {
               for (int j = 0; j < state.messages.length; j++) {
                 if (state.messages[j] == message) {
                   state.messages[j]['isSynced'] = true;
+                  state.messages[j]['history_uuid'] = response['返回数据']['history_uuid'];
                   break;
                 }
               }
@@ -923,7 +926,7 @@ class AiQusLogic extends GetxController {
                               onTap: () {
                                 // 加载对话
                                 state.isBatchCheck.value = false;
-                                state.selectedMessageIndexes.clear();
+                                state.selectedMessageUUid.clear();
                                 state.messageController.clear();
                                 loadConversation(history['title']);
                                 Navigator.pop(Get.context!);
@@ -1426,6 +1429,7 @@ class AiQusLogic extends GetxController {
             'aiModel': record['model'] ?? 'Unknown',
             'aiSource': record['model'] ?? 'Unknown', // 从云端记录恢复来源
             'isSynced': true, // ✅ 标记从云端加载的消息已同步
+            'history_uuid' : record['uuid']
           };
 
           // 🆕 解析参考来源（search_results）
@@ -1660,178 +1664,182 @@ class AiQusLogic extends GetxController {
     state.isBatchCheck.value = !state.isBatchCheck.value;
     // 退出批量选择模式时清空选择
     if (!state.isBatchCheck.value) {
-      state.selectedMessageIndexes.clear();
+      state.selectedMessageUUid.clear();
     }
   }
 
   /// 选择/取消选择消息
-  toggleMessageSelection(int index) {
-    if (state.selectedMessageIndexes.contains(index)) {
-      state.selectedMessageIndexes.remove(index);
+  toggleMessageSelection(int index,String? historyUid) {
+    if (state.selectedMessageUUid.contains(historyUid)) {
+      state.selectedMessageUUid.remove(historyUid);
     } else {
-      state.selectedMessageIndexes.add(index);
+      if(historyUid != null && historyUid.isNotEmpty){
+        state.selectedMessageUUid.add(historyUid);
+      }
     }
   }
 
-  /// 导出选中的消息
+  /// 导出选中的消息 -- 从接口获取链接
   exportSelectedMessages() async {
-    try {
-      // 获取选中的消息
-      List<Map<String, dynamic>> selectedMessages = [];
-      for (int index in state.selectedMessageIndexes) {
-        if (index < state.messages.length) {
-          selectedMessages.add(state.messages[index]);
-        }
-      }
-
-      if (selectedMessages.isEmpty) {
-        ToastUtil.showShort("没有选中任何消息");
-        return;
-      }
-      
-      // 先检查权限
-      final hasPermission = await PermissionService.requestStoragePermission(Get.context);
-      if (!hasPermission) {
-        // 权限被拒绝，显示对话框让用户选择重试或取消
-        if (Get.context != null) {
-          final bool? retry = await showDialog<bool>(
-            context: Get.context!,
-            builder: (context) => AlertDialog(
-              title: const Text('需要存储权限'),
-              content: const Text('导出文件需要存储权限，请授予权限后重试'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('取消'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('重试'),
-                ),
-              ],
-            ),
-          );
-          
-          if (retry == true) {
-            // 用户选择重试，再次尝试导出
-            exportSelectedMessages();
-          }
-        }
-        return;
-      }
-      
-      state.isExporting.value = true;
-      state.exportStatus.value = ExportStatus.generating;
-
-      // 格式化消息为文本
-      final String formattedText = _formatMessagesToText(selectedMessages);
-      
-      // 生成文件名
-      final String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-      final String fileName = 'AI对话_$timestamp.txt';
-      
-      String? filePath;
-      String saveLocation = '';
-      
-      if (Platform.isAndroid) {
-        // Android: 保存到Downloads文件夹
-        try {
-          // 尝试保存到外部存储的Downloads目录
-          Directory? downloadsDir;
-          
-          // 方法1：尝试获取外部存储的Downloads目录
-          if (await Permission.manageExternalStorage.isGranted) {
-            downloadsDir = Directory('/storage/emulated/0/Download');
-            if (!await downloadsDir.exists()) {
-              downloadsDir = Directory('/storage/emulated/0/Downloads');
-            }
-          }
-          
-          // 方法2：如果上面失败，使用应用的外部存储目录
-          if (downloadsDir == null || !await downloadsDir.exists()) {
-            final externalDir = await getExternalStorageDirectory();
-            if (externalDir != null) {
-              downloadsDir = Directory('${externalDir.path}/Downloads');
-              await downloadsDir.create(recursive: true);
-            }
-          }
-          
-          // 方法3：最后备选方案，使用应用文档目录
-          if (downloadsDir == null || !await downloadsDir.exists()) {
-            final appDocDir = await getApplicationDocumentsDirectory();
-            downloadsDir = Directory('${appDocDir.path}/导出文件');
-            await downloadsDir.create(recursive: true);
-          }
-          
-          final file = File('${downloadsDir.path}/$fileName');
-          await file.writeAsString(formattedText);
-          filePath = file.path;
-          
-          // 确定保存位置描述
-          if (filePath.contains('/storage/emulated/0/Download')) {
-            saveLocation = '设备存储/Downloads';
-          } else if (filePath.contains('/storage/emulated/0/Downloads')) {
-            saveLocation = '设备存储/Downloads';
-          } else if (filePath.contains('Android/data')) {
-            saveLocation = '应用外部存储/Downloads';
-          } else {
-            saveLocation = '应用文档目录/导出文件';
-          }
-          
-          print('✅ Android文件已保存至: $filePath');
-          
-        } catch (e) {
-          print('❌ Android保存失败: $e');
-          // 备选方案：保存到应用文档目录
-          final appDocDir = await getApplicationDocumentsDirectory();
-          final exportDir = Directory('${appDocDir.path}/导出文件');
-          await exportDir.create(recursive: true);
-          final file = File('${exportDir.path}/$fileName');
-          await file.writeAsString(formattedText);
-          filePath = file.path;
-          saveLocation = '应用文档目录/导出文件';
-          print('✅ 备选方案保存成功: $filePath');
-        }
-      } else {
-        // iOS或其他平台：使用文档目录
-        final directory = await getApplicationDocumentsDirectory();
-        final exportDir = Directory('${directory.path}/导出文件');
-        await exportDir.create(recursive: true);
-        final file = File('${exportDir.path}/$fileName');
-        await file.writeAsString(formattedText);
-        filePath = file.path;
-        saveLocation = '应用文档目录/导出文件';
-        print('✅ 文件已保存至: $filePath');
-      }
-      
-      if (filePath == null) {
-        throw Exception('文件保存失败');
-      }
-      
-      // 设置导出信息
-      state.exportInfo.value = {
-        'title': fileName,
-        'date': DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
-        'fileType': 'TXT文件',
-        'size': await _getFileSize(filePath),
-        'description': '包含${selectedMessages.length}条对话内容，已按时间顺序整理。',
-        'filePath': filePath,
-        'saveLocation': saveLocation,
-      };
-      
-      state.exportStatus.value = ExportStatus.success;
-      
-      // 显示成功提示
-      ToastUtil.showShort("文件已保存至: $saveLocation");
-      
-    } catch (e) {
-      print('导出消息异常: $e');
-      state.exportStatus.value = ExportStatus.failed;
-      ToastUtil.showShort("导出过程中出现错误: ${e.toString().substring(0, math.min(50, e.toString().length))}");
-      Future.delayed(Duration(seconds: 2), () {
-        state.isExporting.value = false;
-      });
+    if ( state.selectedMessageUUid.isEmpty) {
+      return;
     }
+    try {
+      // 显示加载对话框
+      DialogUtils.showLoading('正在导出报告');
+      // 调用API获取下载链接
+      final downloadUrl = await ApiService().exportAiHistory(aiChatUuidList: state.selectedMessageUUid);
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        // 导出失败
+        ToastUtil.showShort('导出失败');
+        return;
+      }
+      // 显示成功对话框
+      DialogUtils.showCustomDialog(
+        Container(
+          padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 成功图标
+              Container(
+                width: 64.w,
+                height: 64.h,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF3361FE),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 40.w,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                '报告生成成功',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF1A1A1A),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              // 操作按钮
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _downloadAndPreviewReport(downloadUrl),
+                      child: Container(
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: FYColors.loginBtn,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '下载并预览',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    } catch (e) {
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
+      print('导出报告失败: $e');
+      ToastUtil.showShort('导出失败', title: '错误');
+    }
+  }
+
+
+  /// 下载并预览报告
+  Future<void> _downloadAndPreviewReport(String link) async {
+    // 检查链接是否为空
+    if (link.isEmpty) {
+      ToastUtil.showShort('暂无下载链接', title: '提示');
+      return;
+    }
+
+    Get.back(); // 关闭前一个弹窗
+
+    try {
+      ToastUtil.showShort('开始下载报告...', title: '下载中');
+
+      final uri = Uri.parse(link);
+      String fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '报告.xlsx';
+
+      if (!fileName.toLowerCase().endsWith('.xlsx')) {
+        fileName = '$fileName.xlsx';
+      }
+
+      // 获取文件保存路径
+      final dirPath = await _getDownloadDirectory();
+      if (dirPath == null) {
+        ToastUtil.showShort('获取存储权限或路径失败', title: '下载失败');
+        return;
+      }
+
+      final savePath = '$dirPath/$fileName';
+
+      // 下载文件
+      await _downloadFile(link, savePath);
+
+      ToastUtil.showShort('报告已下载', title: '成功');
+
+      // 打开文件
+      await _openFile(savePath);
+    } catch (e) {
+      ToastUtil.showShort('下载失败', title: '错误');
+    }
+  }
+
+  /// 获取下载目录路径
+  Future<String?> _getDownloadDirectory() async {
+    try {
+      return await FileUtil.getDownloadDirectoryPath();
+    } catch (e) {
+      print('获取下载目录失败: $e');
+      return null;
+    }
+  }
+
+  /// 下载文件
+  Future<void> _downloadFile(String url, String savePath) async {
+    await Dio().download(
+      url,
+      savePath,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: true,
+      ),
+      onReceiveProgress: (count, total) {
+        if (total > 0) {
+          final percent = (count / total * 100).toStringAsFixed(0);
+          print('下载进度: $percent%');
+        }
+      },
+    );
+  }
+
+  /// 打开文件
+  Future<void> _openFile(String filePath) async {
+    await OpenFile.open(filePath);
   }
 
   /// 格式化消息为文本
@@ -1891,7 +1899,7 @@ class AiQusLogic extends GetxController {
   // 取消批量选择
   cancelBatchSelection() {
     state.isBatchCheck.value = false;
-    state.selectedMessageIndexes.clear();
+    state.selectedMessageUUid.clear();
   }
 
   // 显示提示词模板弹窗
