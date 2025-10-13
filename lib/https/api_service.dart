@@ -576,7 +576,7 @@ class ApiService {
   }
 
   /// 获取AI对话回复内容
-  Future<Map<String, dynamic>?> getAIChatReply(String chatUuid) async {
+  Future<Map<String, dynamic>?> getAIChatReply(String chatUuid, String chatRobotUID) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
     if (token == null || token.isEmpty) {
@@ -592,6 +592,7 @@ class ApiService {
       "当前请求用户UUID": token,
       "命令具体内容": {
         "对话UUID": chatUuid,
+        "对话RobotUID": chatRobotUID,
         "最多等待毫秒": 200
       }
     };

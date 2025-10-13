@@ -449,7 +449,7 @@ class AiQusLogic extends GetxController {
 
     try {
       // 发起单次请求，等待结果
-      final reply = await ApiService().getAIChatReply(state.currentChatUuid!);
+      final reply = await ApiService().getAIChatReply(state.currentChatUuid!, state.selectedModel.value);
       // 检查轮询状态（请求期间可能被取消）
       if (state.currentChatUuid == null || !state.isStreamingReply.value) {
         return;
