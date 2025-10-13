@@ -59,17 +59,27 @@ class RiskDetailsLogic extends GetxController {
     }
   }
 
-  /// 使用企业相关新闻构造“假的时序跟踪”
+  /// 使用企业相关新闻构造"假的时序跟踪"
   Future<void> _buildFakeTimelineByRelatedNews(String entUuid) async {
     try {
+      // 重置分页状态
+      state.newsCurrentPage.value = 1;
+      state.hasMoreNews.value = true;
+
       final resp = await ApiService().getEnterpriseRelatedNews(
         enterpriseUuid: entUuid,
-        currentPage: 1,
+        currentPage: state.newsCurrentPage.value,
         pageSize: 20,
       );
       if (resp['code'] != 10010) return;
 
       final List<dynamic> list = resp['data'] ?? [];
+
+      // 判断是否还有更多数据
+      if (list.isEmpty || list.length < 20) {
+        state.hasMoreNews.value = false;
+      }
+
       final events = list.map<TimelineEvent>((item) {
         final date = item['publish_time'] ?? item['created_at'] ?? '';
         final source = item['uuid'] ?? ''; // mock uuid进入 热点详情页面
@@ -91,6 +101,86 @@ class RiskDetailsLogic extends GetxController {
         val?.timelineTracking = events;
       });
     } catch (_) {}
+  }
+
+  /// 加载更多新闻(分页加载)
+  Future<void> loadMoreNews() async {
+    // 检查是否正在加载或没有更多数据
+    if (state.isLoadingMoreNews.value || !state.hasMoreNews.value) {
+      return;
+    }
+
+    // 检查是否有企业UUID
+    final entUuid = state.riskCompanyDetail.value?.uuid;
+    if (entUuid == null || entUuid.isEmpty) {
+      print('加载更多新闻失败：企业UUID为空');
+      return;
+    }
+
+    state.isLoadingMoreNews.value = true;
+
+    try {
+      // 页码+1
+      state.newsCurrentPage.value++;
+      final resp = await ApiService().getEnterpriseRelatedNews(
+        enterpriseUuid: entUuid,
+        currentPage: state.newsCurrentPage.value,
+        pageSize: 20,
+      );
+
+      if (resp['code'] != 10010) {
+        // 如果请求失败,恢复页码
+        state.newsCurrentPage.value--;
+        state.isLoadingMoreNews.value = false;
+        return;
+      }
+
+      final List<dynamic> list = resp['data'] ?? [];
+
+      // 判断是否还有更多数据
+      if (list.isEmpty || list.length < 20) {
+        state.hasMoreNews.value = false;
+      }
+
+      // 如果没有数据,直接返回
+      if (list.isEmpty) {
+        state.isLoadingMoreNews.value = false;
+        return;
+      }
+
+      // 将新数据转换为TimelineEvent
+      final newEvents = list.map<TimelineEvent>((item) {
+        final date = item['publish_time'] ?? item['created_at'] ?? '';
+        final source = item['uuid'] ?? '';
+        final url = item['reason'] ?? '';
+        return TimelineEvent(
+          date: DateTimeUtils.formatPublishTime(date),
+          content: item['title'] ?? '',
+          sources: [
+            Source(
+              title: item['title'] ?? '',
+              url: url,
+              source: source,
+            )
+          ],
+        );
+      }).toList();
+
+      // 追加新数据到现有列表
+      state.riskCompanyDetail.update((val) {
+        if (val != null && val.timelineTracking != null) {
+          val.timelineTracking.addAll(newEvents);
+        }
+      });
+
+      print('成功加载第${state.newsCurrentPage.value}页，共${list.length}条新闻');
+    } catch (e) {
+      // 如果出错,恢复页码
+      state.newsCurrentPage.value--;
+      print('加载更多新闻出错: $e');
+    } finally {
+      state.isLoadingMoreNews.value = false;
+    }
   }
 
   /// 加载企业评分详情
@@ -238,6 +328,11 @@ class RiskDetailsLogic extends GetxController {
   showNewsResource(List<Source> listSource, String newsDate) {
     final news = listSource;
     if (news.isEmpty) return;
+    Get.toNamed(Routers.hotDetails, arguments: {
+      'newsId': news.first.source,
+      'title': news..first.title,
+    });
+    return;
     FYDialogUtils.showBottomSheet(Container(
       color: Colors.transparent,
       child: Container(

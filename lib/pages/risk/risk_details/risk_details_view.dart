@@ -92,18 +92,48 @@ class RiskDetailsPage extends StatelessWidget {
           return FYWidget.buildEmptyContent();
         }
 
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCompanyHeader(),
-              SizedBox(height: 24.w),
-              _buildTimelineSection(),
-              SizedBox(height: 24.w),
-              _buildRiskFactorsSection(),
-              SizedBox(height: 24.w),
-              _buildCaseHistorySection(),
-            ],
+        return RefreshIndicator(
+          onRefresh: logic.loadMoreNews,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildCompanyHeader(),
+                SizedBox(height: 24.w),
+                _buildTimelineSection(),
+                SizedBox(height: 24.w),
+                _buildRiskFactorsSection(),
+                SizedBox(height: 24.w),
+                _buildCaseHistorySection(),
+                // 加载更多指示器
+                Obx(() => state.isLoadingMoreNews.value
+                    ? Container(
+                        padding: EdgeInsets.symmetric(vertical: 20.w),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+                          ),
+                        ),
+                      )
+                    : !state.hasMoreNews.value && state.riskCompanyDetail.value!.timelineTracking.isNotEmpty
+                        ? Container(
+                            padding: EdgeInsets.symmetric(vertical: 20.w),
+                            child: Center(
+                              child: Text(
+                                '没有更多数据了',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: FYColors.color_A6A6A6,
+                                ),
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink()),
+                SizedBox(height: 20.w),
+              ],
+            ),
           ),
         );
       }),
@@ -183,10 +213,13 @@ class RiskDetailsPage extends StatelessWidget {
     List<Widget> items = [];
     List<TimelineEvent> itemsPre =
         state.riskCompanyDetail.value!.timelineTracking;
-
+    // 如果没有数据，返回空列表
+    if (itemsPre.isEmpty) {
+      return items;
+    }
     // 判断是否展开，如果未展开，只显示第一项
     int itemsToShow = state.isExpandTimeLine.value
-        ? state.riskCompanyDetail.value!.timelineTracking.length
+        ? itemsPre.length
         : 1;
 
     for (int i = 0; i < itemsToShow; i++) {
@@ -194,35 +227,38 @@ class RiskDetailsPage extends StatelessWidget {
       items.add(_buildTimelineItem(itemsPre[i], isLastItem));
     }
 
-    items.add(InkWell(
-      onTap: () => logic.showMoreTimeline(),
-      child: Container(
-        height: 36.w,
-        margin: EdgeInsets.only(top: 10.w, bottom: 10.w, left: 15.w, right: 15.w),
-        decoration: BoxDecoration(
-            color: FYColors.whiteColor,
-            borderRadius: BorderRadius.circular(8.w)),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                state.isExpandTimeLine.value ? '收起' : '展开更多',
-                style: FYTextStyles.riskUnitTypeUnselectedStyle(),
-              ),
-              SizedBox(width: 5.w),
-              Icon(
-                state.isExpandTimeLine.value
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
-                color: FYColors.color_3361FE,
-                size: 16.sp,
-              ),
-            ],
+    // 只有当数据超过1条时才显示展开/收起按钮
+    if (itemsPre.length > 1) {
+      items.add(InkWell(
+        onTap: () => logic.showMoreTimeline(),
+        child: Container(
+          height: 36.w,
+          margin: EdgeInsets.only(top: 10.w, bottom: 10.w, left: 15.w, right: 15.w),
+          decoration: BoxDecoration(
+              color: FYColors.whiteColor,
+              borderRadius: BorderRadius.circular(8.w)),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  state.isExpandTimeLine.value ? '收起' : '展开更多',
+                  style: FYTextStyles.riskUnitTypeUnselectedStyle(),
+                ),
+                SizedBox(width: 5.w),
+                Icon(
+                  state.isExpandTimeLine.value
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: FYColors.color_3361FE,
+                  size: 16.sp,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ));
+      ));
+    }
 
     return items;
   }

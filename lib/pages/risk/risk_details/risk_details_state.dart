@@ -64,6 +64,11 @@ class RiskDetailsState {
   // 评分详情加载状态
   RxBool isLoadingScoreDetail = false.obs;
 
+  // 新闻分页相关状态
+  RxInt newsCurrentPage = 1.obs; // 当前页码
+  RxBool hasMoreNews = true.obs; // 是否还有更多新闻
+  RxBool isLoadingMoreNews = false.obs; // 是否正在加载更多新闻
+
   RiskDetailsState() {}
 
   // 外部风险详情列表
