@@ -23,7 +23,8 @@ class RiskDetailsLogic extends GetxController {
     String companyId;
     if (Get.arguments != null && Get.arguments is Map<String, dynamic>) {
       companyId = Get.arguments['id'];
-      print('接收到企业ID: $companyId');
+      state.index.value = Get.arguments['index'];
+      print('接收到企业ID: $companyId, index: ${state.index.value}');
     } else{
       companyId = '401'; // 默认使用华为的数据
     }

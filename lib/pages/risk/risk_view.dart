@@ -421,7 +421,7 @@ class _RiskPageState extends State<RiskPage> {
     }
 
     return GestureDetector(
-      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id'],'index':state.chooseUint.value}),
       child: Padding(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
         child: Container(
@@ -559,7 +559,7 @@ class _RiskPageState extends State<RiskPage> {
     }
 
     return GestureDetector(
-      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id'], 'index': state.chooseUint.value}),
       child: Padding(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
         child: Container(
@@ -696,7 +696,7 @@ class _RiskPageState extends State<RiskPage> {
     }
 
     return GestureDetector(
-      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id'], 'index': state.chooseUint.value}),
       child: Padding(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
         child: Container(

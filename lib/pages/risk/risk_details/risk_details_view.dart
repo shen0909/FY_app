@@ -43,41 +43,45 @@ class RiskDetailsPage extends StatelessWidget {
           //   ),
           // ),
           // SizedBox(width: 12.w),
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            child: Obx(() {
-              return
-                state.isLoading.value ||
-                    state.riskCompanyDetail.value == null
-                    ? Container()
-                    : GestureDetector(
-                  onTap: () => logic.showRiskScoreDetails(),
-                  child: Container(
-                    height: 32.w,
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                        colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
-                        stops: [0.0, 1.0],
-                      ),
-                      borderRadius: BorderRadius.circular(8.w),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
-                        style: TextStyle(
-                            color: FYColors.whiteColor,
-                            fontWeight: FontWeight.w500,
-                            height: 0.6,
-                            fontSize: 18.sp),
-                      ),
-                    ),
-                  ),
-                );
-            }),
-          ),
+          // 只在 index != 2 时显示单位评分
+          Obx(() {
+            return state.index.value != 2
+                ? Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    child: Obx(() {
+                      return state.isLoading.value ||
+                              state.riskCompanyDetail.value == null
+                          ? Container()
+                          : GestureDetector(
+                              onTap: () => logic.showRiskScoreDetails(),
+                              child: Container(
+                                height: 32.w,
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
+                                    colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
+                                    stops: [0.0, 1.0],
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.w),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
+                                    style: TextStyle(
+                                        color: FYColors.whiteColor,
+                                        fontWeight: FontWeight.w500,
+                                        height: 0.6,
+                                        fontSize: 18.sp),
+                                  ),
+                                ),
+                              ),
+                            );
+                    }),
+                  )
+                : const SizedBox.shrink();
+          }),
         ],
       ),
       body: Obx(() {

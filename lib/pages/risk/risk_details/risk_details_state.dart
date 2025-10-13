@@ -4,6 +4,8 @@ import '../../../models/risk_company_details.dart';
 import '../../../models/enterprise_score_detail.dart';
 
 class RiskDetailsState {
+  RxInt index = 0.obs; // 当前详情归属的风险类别,默认为0(烽云一号)
+
   // 企业详情数据
   Rx<RiskCompanyNew?> riskCompanyDetail = Rx<RiskCompanyNew?>(null);
 
