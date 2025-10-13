@@ -1,13 +1,17 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:safe_app/https/api_service.dart';
 import 'package:safe_app/models/news_detail_data.dart';
 import 'package:safe_app/models/news_effect_company.dart';
 import 'package:safe_app/pages/hot_pot/hot_details/hot_details_state.dart';
 import 'package:safe_app/utils/dialog_utils.dart';
 import 'package:safe_app/utils/toast_util.dart';
-import 'package:safe_app/utils/docx_export_util.dart';
+import 'package:safe_app/utils/file_utils.dart';
+import 'package:dio/dio.dart';
+import 'package:open_file/open_file.dart';
+import 'package:safe_app/styles/colors.dart';
 
 class HotDetailsLogic extends GetxController {
   final HotDetailsState state = HotDetailsState();
@@ -172,72 +176,169 @@ class HotDetailsLogic extends GetxController {
     await fetchEffectCompanyData(isRefresh: true);
   }
 
-  // 下载相关文件
+  /// 导出舆情热点新闻报告
   Future<void> downloadFile() async {
-    // 检查是否有详情数据
-    if (state.newsDetailData.value == null) {
-      ToastUtil.showShort('暂无可导出的数据');
+    // 检查是否有新闻UUID
+    final uuid = state.newsId.value;
+    if (uuid.isEmpty) {
+      print('导出失败：新闻UUID为空');
       return;
     }
-    // 显示加载对话框
-    DialogUtils.showLoading('正在导出DOCX文件');
-
     try {
-      // 执行导出 - 传递新的影响企业数据
-      final filePath = await DocxExportUtil.exportNewsDetailToDocx(
-        state.newsDetailData.value!,
-        effectCompanyList: state.effectCompanyList.toList(),
-      );
-      // 关闭加载对话框
+      // 显示加载对话框
+      DialogUtils.showLoading('正在导出报告');
+      // 调用API获取下载链接
+      final downloadUrl = await ApiService().exportNewsReport(uuid: uuid);
+      // 隐藏加载对话框
       DialogUtils.hideLoading();
-
-      if (filePath != null) {
-        // 导出成功，显示确认对话框
-        Get.dialog(
-          AlertDialog(
-            title: const Text('导出成功'),
-            content: Text('文件已保存到：\n$filePath'),
-            actions: [
-              TextButton(
-                onPressed: () => Get.back(),
-                child: const Text('确定'),
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        // 导出失败
+        ToastUtil.showShort('导出失败');
+        return;
+      }
+      // 显示成功对话框
+      DialogUtils.showCustomDialog(
+        Container(
+          padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 成功图标
+              Container(
+                width: 64.w,
+                height: 64.h,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF3361FE),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 40.w,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                '报告生成成功',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF1A1A1A),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              // 操作按钮
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _downloadAndPreviewReport(downloadUrl),
+                      child: Container(
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: FYColors.loginBtn,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '下载并预览',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        );
-      } else {
-        // 导出失败（包括权限被拒绝），显示错误提示
-        // Get.dialog(
-        //   AlertDialog(
-        //     title: const Text('导出失败'),
-        //     content: const Text('导出失败，请检查存储权限或重试'),
-        //     actions: [
-        //       TextButton(
-        //         onPressed: () => Get.back(),
-        //         child: const Text('确定'),
-        //       ),
-        //     ],
-        //   ),
-        // );
-      }
-    } catch (e) {
-      // 关闭加载对话框
-      DialogUtils.hideLoading();
-      
-      // 显示错误信息
-      Get.dialog(
-        AlertDialog(
-          title: const Text('导出失败'),
-          content: Text('导出过程中出现错误：\n$e'),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(),
-              child: const Text('确定'),
-            ),
-          ],
         ),
       );
+    } catch (e) {
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
+      print('导出报告失败: $e');
+      ToastUtil.showShort('导出失败');
     }
+  }
+
+  /// 下载并预览报告
+  Future<void> _downloadAndPreviewReport(String link) async {
+    // 检查链接是否为空
+    if (link.isEmpty) {
+      ToastUtil.showShort('暂无下载链接', title: '提示');
+      return;
+    }
+
+    Get.back(); // 关闭前一个弹窗
+
+    try {
+      ToastUtil.showShort('开始下载报告...', title: '下载中');
+
+      final uri = Uri.parse(link);
+      String fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '报告.xlsx';
+
+      if (!fileName.toLowerCase().endsWith('.xlsx')) {
+        fileName = '$fileName.xlsx';
+      }
+
+      // 获取文件保存路径
+      final dirPath = await _getDownloadDirectory();
+      if (dirPath == null) {
+        ToastUtil.showShort('获取存储权限或路径失败', title: '下载失败');
+        return;
+      }
+
+      final savePath = '$dirPath/$fileName';
+
+      // 下载文件
+      await _downloadFile(link, savePath);
+
+      ToastUtil.showShort('报告已下载', title: '成功');
+
+      // 打开文件
+      await _openFile(savePath);
+    } catch (e) {
+      ToastUtil.showShort('下载失败', title: '错误');
+    }
+  }
+
+  /// 获取下载目录路径
+  Future<String?> _getDownloadDirectory() async {
+    try {
+      return await FileUtil.getDownloadDirectoryPath();
+    } catch (e) {
+      print('获取下载目录失败: $e');
+      return null;
+    }
+  }
+
+  /// 下载文件
+  Future<void> _downloadFile(String url, String savePath) async {
+    await Dio().download(
+      url,
+      savePath,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: true,
+      ),
+      onReceiveProgress: (count, total) {
+        if (total > 0) {
+          final percent = (count / total * 100).toStringAsFixed(0);
+          print('下载进度: $percent%');
+        }
+      },
+    );
+  }
+
+  /// 打开文件
+  Future<void> _openFile(String filePath) async {
+    await OpenFile.open(filePath);
   }
 
   // 复制内容
