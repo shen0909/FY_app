@@ -2857,5 +2857,46 @@ class ApiService {
     return null;
   }
 
+  /// 导出风险预警企业报告
+  Future<String?> exportRiskWarningReport({required String uuid}) async {
+    // 获取内层token
+    String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
+    if (token == null || token.isEmpty) {
+      if (kDebugMode) {
+        print('$_tag 导出风险预警报告失败：内层token为空');
+      }
+      return null;
+    }
+
+    // 构造请求参数
+    Map<String, dynamic> paramData = {
+      "消息类型": "预警企业_导出数据报告",
+      "当前请求用户UUID": token,
+      "命令具体内容": {
+        "uuid": uuid
+      }
+    };
+
+    dynamic result = await _sendChannelEvent(paramData: paramData);
+    if (result != null && result['is_success'] == true &&
+        result['result_string'] != null) {
+      try {
+        // 解析result_string
+        Map<String, dynamic> resultData = jsonDecode(result['result_string']);
+        if (resultData['执行结果'] == true && resultData['返回数据'] != null) {
+          String? downloadUrl = resultData['返回数据']['download_url'];
+          if (kDebugMode) {
+            print('$_tag 导出风险预警报告成功，下载链接: $downloadUrl');
+          }
+          return downloadUrl;
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('$_tag 解析导出风险预警报告响应失败: $e');
+        }
+      }
+    }
+    return null;
+  }
 
 }

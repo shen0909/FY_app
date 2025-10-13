@@ -10,8 +10,13 @@ import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/datetime_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:dio/dio.dart';
+import 'package:open_file/open_file.dart';
+import 'package:safe_app/utils/file_utils.dart';
+import 'package:safe_app/utils/toast_util.dart';
 import 'dart:async';
 import '../../../models/risk_company_details.dart';
+import '../../../utils/dialog_utils.dart';
 import 'risk_details_state.dart';
 
 class RiskDetailsLogic extends GetxController {
@@ -497,5 +502,170 @@ class RiskDetailsLogic extends GetxController {
         enableDomStorage: true,
       ),
     );
+  }
+
+  /// 导出风险预警报告
+  Future<void> exportRiskWarningReport() async {
+    // 检查是否有企业UUID
+    final uuid = state.riskCompanyDetail.value?.uuid;
+    if (uuid == null || uuid.isEmpty) {
+      print('导出失败：企业UUID为空');
+      return;
+    }
+    try {
+      // 显示加载对话框
+      DialogUtils.showLoading('正在导出报告');
+      // 调用API获取下载链接
+      final downloadUrl = await ApiService().exportRiskWarningReport(uuid: uuid);
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        // 导出失败
+        ToastUtil.showShort('导出失败');
+        return;
+      }
+      // 显示成功对话框
+      DialogUtils.showCustomDialog(
+        Container(
+          padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 成功图标
+              Container(
+                width: 64.w,
+                height: 64.h,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF3361FE),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 40.w,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                '报告生成成功',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF1A1A1A),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              // 操作按钮
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _downloadAndPreviewReport(downloadUrl),
+                      child: Container(
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: FYColors.loginBtn,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '下载并预览',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    } catch (e) {
+      // 隐藏加载对话框
+      DialogUtils.hideLoading();
+      print('导出报告失败: $e');
+      ToastUtil.showShort('导出失败', title: '错误');
+    }
+  }
+
+  /// 下载并预览报告
+  Future<void> _downloadAndPreviewReport(String link) async {
+    // 检查链接是否为空
+    if (link.isEmpty) {
+      ToastUtil.showShort('暂无下载链接', title: '提示');
+      return;
+    }
+
+    Get.back(); // 关闭前一个弹窗
+
+    try {
+      ToastUtil.showShort('开始下载报告...', title: '下载中');
+
+      final uri = Uri.parse(link);
+      String fileName = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '报告.xlsx';
+
+      if (!fileName.toLowerCase().endsWith('.xlsx')) {
+        fileName = '$fileName.xlsx';
+      }
+
+      // 获取文件保存路径
+      final dirPath = await _getDownloadDirectory();
+      if (dirPath == null) {
+        ToastUtil.showShort('获取存储权限或路径失败', title: '下载失败');
+        return;
+      }
+
+      final savePath = '$dirPath/$fileName';
+
+      // 下载文件
+      await _downloadFile(link, savePath);
+
+      ToastUtil.showShort('报告已下载', title: '成功');
+
+      // 打开文件
+      await _openFile(savePath);
+    } catch (e) {
+      ToastUtil.showShort('下载失败', title: '错误');
+    }
+  }
+
+  /// 获取下载目录路径
+  Future<String?> _getDownloadDirectory() async {
+    try {
+      return await FileUtil.getDownloadDirectoryPath();
+    } catch (e) {
+      print('获取下载目录失败: $e');
+      return null;
+    }
+  }
+
+  /// 下载文件
+  Future<void> _downloadFile(String url, String savePath) async {
+    await Dio().download(
+      url,
+      savePath,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: true,
+      ),
+      onReceiveProgress: (count, total) {
+        if (total > 0) {
+          final percent = (count / total * 100).toStringAsFixed(0);
+          print('下载进度: $percent%');
+        }
+      },
+    );
+  }
+
+  /// 打开文件
+  Future<void> _openFile(String filePath) async {
+    await OpenFile.open(filePath);
   }
 }
