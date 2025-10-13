@@ -1419,14 +1419,45 @@ class AiQusLogic extends GetxController {
         final List<dynamic> records = serverResponse['返回数据'];
         List<Map<String, dynamic>> messages = [];
         for (var record in records) {
-          messages.add({
+          final messageData = {
             'isUser': record['role'] == 'user',
             'content': record['content'] ?? '',
             'timestamp': record['created_at'] ?? DateTime.now().toIso8601String(),
             'aiModel': record['model'] ?? 'Unknown',
             'aiSource': record['model'] ?? 'Unknown', // 从云端记录恢复来源
             'isSynced': true, // ✅ 标记从云端加载的消息已同步
-          });
+          };
+
+          // 🆕 解析参考来源（search_results）
+          if (record['search_results'] != null && record['search_results'] is List) {
+            final searchResults = record['search_results'] as List;
+            messageData['search_results'] = searchResults.map((item) {
+              return {
+                'index': item['index'] ?? 0,
+                'title': item['title'] ?? '',
+                'link_url': item['link_url'] ?? '',
+                'publish_time': item['publish_time'] ?? '',
+                'snippet': item['snippet'] ?? '',
+              };
+            }).toList();
+          }
+
+          // 🆕 解析知识库（knowledge_base）
+          if (record['knowledge_base'] != null && record['knowledge_base'] is List) {
+            final knowledgeBase = record['knowledge_base'] as List;
+            messageData['knowledge_base'] = knowledgeBase.map((item) {
+              return {
+                'index': item['index'] ?? 0,
+                'news_uuid': item['news_uuid'] ?? '',
+                'title': item['title'] ?? '',
+                'content': item['content'] ?? '',
+                'publish_time': item['publish_time'] ?? '',
+                'link_url': item['link_url'] ?? '',
+              };
+            }).toList();
+          }
+
+          messages.add(messageData);
         }
         
         // 如果没有消息，添加欢迎消息

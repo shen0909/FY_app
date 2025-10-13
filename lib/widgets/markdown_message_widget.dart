@@ -148,7 +148,7 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
         Divider(height: 1.w, thickness: 1.w, color: Color(0xFFE6E6E6)),
         SizedBox(height: 12.w),
         // 参考来源
-        if (widget.searchResults != null && widget.searchResults!.isNotEmpty) ...[
+        if ((widget.searchResults != null && widget.searchResults!.isNotEmpty) || (widget.knowledgeBase != null && widget.knowledgeBase!.isNotEmpty)) ...[
           GestureDetector(
             onTap: () {
               setState(() {
@@ -177,8 +177,8 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
                 // Spacer(),
                 Icon(
                   _isSearchResultsExpanded
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
                   size: 20.w,
                 ),
               ],
@@ -186,16 +186,18 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
           ),
           if (_isSearchResultsExpanded) ...[
             SizedBox(height: 8.w),
-            Text(
-              '联网检索:',
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
+            if(widget.searchResults != null && widget.searchResults!.isNotEmpty) ... [
+              Text(
+                '联网检索:',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            SizedBox(height: 8.w),
-            ...widget.searchResults!.map((result) => _buildSearchResultItem(result)),
-            SizedBox(height: 12.w),
+              SizedBox(height: 8.w),
+              ...widget.searchResults!.map((result) => _buildSearchResultItem(result)),
+              SizedBox(height: 12.w),
+            ],
             // 本地知识库
             if (widget.knowledgeBase != null && widget.knowledgeBase!.isNotEmpty) ...[
               Text(
@@ -278,7 +280,7 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
       onTap: () {
         if (newsUuid.isNotEmpty) {
           // 跳转到新闻详情页
-          Get.toNamed(Routers.hotDetails, arguments: {'news_uuid': newsUuid});
+          Get.toNamed(Routers.hotDetails, arguments: {'newsId': newsUuid});
         }
       },
       child: Container(
