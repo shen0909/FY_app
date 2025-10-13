@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../routers/routers.dart';
+
 /// Markdown消息渲染组件
 class MarkdownMessageWidget extends StatefulWidget {
   final String content;
@@ -145,7 +147,6 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
         SizedBox(height: 12.w),
         Divider(height: 1.w, thickness: 1.w, color: Color(0xFFE6E6E6)),
         SizedBox(height: 12.w),
-
         // 参考来源
         if (widget.searchResults != null && widget.searchResults!.isNotEmpty) ...[
           GestureDetector(
@@ -156,59 +157,58 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
             },
             child: Row(
               children: [
-                Image.asset(
-                  'assets/images/reference_icon.png',
-                  width: 16.w,
-                  height: 16.w,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.public, size: 16.w, color: Color(0xFF3361FE));
-                  },
-                ),
-                SizedBox(width: 4.w),
+                // Image.asset(
+                //   'assets/images/reference_icon.png',
+                //   width: 16.w,
+                //   height: 16.w,
+                //   errorBuilder: (context, error, stackTrace) {
+                //     return Icon(Icons.public, size: 16.w, color: Color(0xFF3361FE));
+                //   },
+                // ),
+                // SizedBox(width: 4.w),
                 Text(
                   '参考来源',
                   style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Color(0xFF3361FE),
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Spacer(),
+                SizedBox(width: 4.w),
+                // Spacer(),
                 Icon(
                   _isSearchResultsExpanded
                     ? Icons.keyboard_arrow_up
                     : Icons.keyboard_arrow_down,
                   size: 20.w,
-                  color: Color(0xFF3361FE),
                 ),
               ],
             ),
           ),
           if (_isSearchResultsExpanded) ...[
             SizedBox(height: 8.w),
+            Text(
+              '联网检索:',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 8.w),
             ...widget.searchResults!.map((result) => _buildSearchResultItem(result)),
-          ],
-          SizedBox(height: 12.w),
-        ],
-
-        // 本地知识库
-        if (widget.knowledgeBase != null && widget.knowledgeBase!.isNotEmpty) ...[
-          Row(
-            children: [
-              Icon(Icons.library_books, size: 16.w, color: Color(0xFF3361FE)),
-              SizedBox(width: 4.w),
+            SizedBox(height: 12.w),
+            // 本地知识库
+            if (widget.knowledgeBase != null && widget.knowledgeBase!.isNotEmpty) ...[
               Text(
-                '本地知识库',
+                '本地知识库+:',
                 style: TextStyle(
                   fontSize: 12.sp,
-                  color: Color(0xFF3361FE),
                   fontWeight: FontWeight.w500,
                 ),
               ),
+              SizedBox(height: 8.w),
+              ...widget.knowledgeBase!.map((kb) => _buildKnowledgeBaseItem(kb)),
             ],
-          ),
-          SizedBox(height: 8.w),
-          ...widget.knowledgeBase!.map((kb) => _buildKnowledgeBaseItem(kb)),
+          ],
         ],
       ],
     );
@@ -217,61 +217,52 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
   // 构建单个参考来源项
   Widget _buildSearchResultItem(Map<String, dynamic> result) {
     final String title = result['title'] ?? '';
+    final int index = result['index'] ?? '';
     final String newsUuid = result['news_uuid'] ?? '';
     final String source = result['source'] ?? '';
 
-    return GestureDetector(
-      onTap: () {
-        if (newsUuid.isNotEmpty) {
-          // 跳转到新闻详情页
-          Get.toNamed('/hotDetails', arguments: {'news_uuid': newsUuid});
-        }
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 8.w),
-        padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4.r),
-          border: Border.all(color: Color(0xFFE6E6E6), width: 1.w),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color(0xFF3361FE),
-                      fontWeight: FontWeight.w400,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (newsUuid.isNotEmpty)
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12.w,
-                    color: Color(0xFFA6A6A6),
-                  ),
-              ],
-            ),
-            if (source.isNotEmpty) ...[
-              SizedBox(height: 4.w),
+    return Container(
+      padding: EdgeInsets.only(bottom: 8.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
-                '来源:$source',
+                '[$index]',
                 style: TextStyle(
-                  fontSize: 10.sp,
-                  color: Color(0xFFA6A6A6),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(width: 4.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
-          ],
-        ),
+          ),
+          // if (source.isNotEmpty) ...[
+          //   SizedBox(height: 4.w),
+          //   Text(
+          //     '-:$source',
+          //     style: TextStyle(
+          //       fontSize: 10.sp,
+          //       color: Color(0xFFA6A6A6),
+          //     ),
+          //   ),
+          // ],
+        ],
       ),
     );
   }
@@ -279,6 +270,7 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
   // 构建单个知识库项
   Widget _buildKnowledgeBaseItem(Map<String, dynamic> kb) {
     final String title = kb['title'] ?? '';
+    final int index = kb['index'] ?? '';
     final String newsUuid = kb['news_uuid'] ?? '';
     final double relevanceScore = (kb['relevance_score'] ?? 0.0).toDouble();
 
@@ -286,19 +278,25 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
       onTap: () {
         if (newsUuid.isNotEmpty) {
           // 跳转到新闻详情页
-          Get.toNamed('/hotDetails', arguments: {'news_uuid': newsUuid});
+          Get.toNamed(Routers.hotDetails, arguments: {'news_uuid': newsUuid});
         }
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 8.w),
-        padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4.r),
-          border: Border.all(color: Color(0xFFE6E6E6), width: 1.w),
-        ),
+        padding: EdgeInsets.only(bottom: 8.w),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              '<$index>',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Color(0xFF3361FE),
+                fontWeight: FontWeight.w400,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(width: 4.w),
             Expanded(
               child: Text(
                 title,
@@ -311,12 +309,6 @@ class _MarkdownMessageWidgetState extends State<MarkdownMessageWidget> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            if (newsUuid.isNotEmpty)
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 12.w,
-                color: Color(0xFFA6A6A6),
-              ),
           ],
         ),
       ),
