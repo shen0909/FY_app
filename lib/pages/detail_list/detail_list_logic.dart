@@ -123,7 +123,7 @@ class DetailListLogic extends GetxController {
   }
 
   // 加载清单数据
-  Future<void> loadData({bool isRefresh = false}) async {
+  Future<void> loadData({bool isRefresh = false, bool isGetRemoveList = false}) async {
     // 如果是刷新，重置分页状态
     if (isRefresh) {
       state.isRefreshing.value = true;
@@ -148,6 +148,7 @@ class DetailListLogic extends GetxController {
         province: provinceParam,
         city: cityParam,
         zhName: searchParam,
+        isGetRemoveList: isGetRemoveList
       );
 
       if (response != null && response.success && response.data != null) {

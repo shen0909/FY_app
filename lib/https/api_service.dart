@@ -476,6 +476,7 @@ class ApiService {
     String province = "",
     String city = "",
     String zhName = "",
+    required  bool isGetRemoveList,
   }) async {
     // 获取内层token
     String? token = await FYSharedPreferenceUtils.getInnerAccessToken();
@@ -496,7 +497,8 @@ class ApiService {
         "zh_name": zhName,
         "sanction_type": sanctionType != '全部' ? sanctionType : '',
         "province": province != '全部' ? province : '',
-        "city": city != '全部' ? city : ''
+        "city": city != '全部' ? city : '',
+        'is_remove' : isGetRemoveList
       }
     };
 

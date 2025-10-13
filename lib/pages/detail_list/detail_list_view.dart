@@ -93,12 +93,15 @@ class DetailListPage extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                 ),
-                Text(
-                  "，移出数${state.removeNum.value}条",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_A6A6A6,
-                    fontWeight: FontWeight.normal,
+                GestureDetector(
+                  onTap: () => logic.loadData(isGetRemoveList: true),
+                  child: Text(
+                    "，移出数${state.removeNum.value}条",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_A6A6A6,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
                 )
               ],
