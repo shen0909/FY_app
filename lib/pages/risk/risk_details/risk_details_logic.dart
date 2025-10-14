@@ -505,8 +505,20 @@ class RiskDetailsLogic extends GetxController {
     );
   }
 
-  void showMoreTimeline() {
-    state.isExpandTimeLine.value = !state.isExpandTimeLine.value;
+  Future<void> showMoreTimeline() async {
+    // 有更多数据
+    if(state.hasMoreNews.value) {
+      DialogUtils.showLoading();
+      await loadMoreNews();
+      DialogUtils.hideLoading();
+      if(!state.isExpandTimeLine.value) {
+        state.isExpandTimeLine.value = true;
+      }
+    }
+    // 没有更多数据直接切换展开
+    else{
+      state.isExpandTimeLine.value = !state.isExpandTimeLine.value;
+    }
   }
 
   Widget companyItem(String title, String content) {

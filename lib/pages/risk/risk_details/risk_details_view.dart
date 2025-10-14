@@ -92,48 +92,45 @@ class RiskDetailsPage extends StatelessWidget {
           return FYWidget.buildEmptyContent();
         }
 
-        return RefreshIndicator(
-          onRefresh: logic.loadMoreNews,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildCompanyHeader(),
-                SizedBox(height: 24.w),
-                _buildTimelineSection(),
-                SizedBox(height: 24.w),
-                _buildRiskFactorsSection(),
-                SizedBox(height: 24.w),
-                _buildCaseHistorySection(),
-                // 加载更多指示器
-                Obx(() => state.isLoadingMoreNews.value
-                    ? Container(
-                        padding: EdgeInsets.symmetric(vertical: 20.w),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
-                          ),
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCompanyHeader(),
+              SizedBox(height: 24.w),
+              _buildTimelineSection(),
+              SizedBox(height: 24.w),
+              _buildRiskFactorsSection(),
+              SizedBox(height: 24.w),
+              _buildCaseHistorySection(),
+              // 加载更多指示器
+              Obx(() => state.isLoadingMoreNews.value
+                  ? Container(
+                      padding: EdgeInsets.symmetric(vertical: 20.w),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
                         ),
-                      )
-                    : !state.hasMoreNews.value && state.riskCompanyDetail.value!.timelineTracking.isNotEmpty
-                        ? Container(
-                            padding: EdgeInsets.symmetric(vertical: 20.w),
-                            child: Center(
-                              child: Text(
-                                '没有更多数据了',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: FYColors.color_A6A6A6,
-                                ),
+                      ),
+                    )
+                  : !state.hasMoreNews.value && state.riskCompanyDetail.value!.timelineTracking.isNotEmpty
+                      ? Container(
+                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          child: Center(
+                            child: Text(
+                              '没有更多数据了',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: FYColors.color_A6A6A6,
                               ),
                             ),
-                          )
-                        : SizedBox.shrink()),
-                SizedBox(height: 20.w),
-              ],
-            ),
+                          ),
+                        )
+                      : SizedBox.shrink()),
+              SizedBox(height: 20.w),
+            ],
           ),
         );
       }),
@@ -242,7 +239,11 @@ class RiskDetailsPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  state.isExpandTimeLine.value ? '收起' : '展开更多',
+                  state.isExpandTimeLine.value
+                      ? state.hasMoreNews.value
+                          ? '加载更多'
+                          : '收起'
+                      : '展开更多',
                   style: FYTextStyles.riskUnitTypeUnselectedStyle(),
                 ),
                 SizedBox(width: 5.w),
