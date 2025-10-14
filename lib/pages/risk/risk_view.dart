@@ -691,8 +691,8 @@ class _RiskPageState extends State<RiskPage> {
       attentionColor = Color(0xFFFF9719);
       backgroundColor = Color(0xFFFFF7E6);
       borderColor = Color(0xFFF6D500);
-      textBg = FYColors.color_CEFFEE;
-      textColor = Color(0xFF07CC89);
+      textBg = Colors.white;
+      textColor = Color(0xFFF6D500);
     }
 
     return GestureDetector(
