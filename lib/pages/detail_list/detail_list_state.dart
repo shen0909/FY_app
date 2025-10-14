@@ -344,6 +344,8 @@ class DetailListState {
   var searchCount = 0.obs;
   // 移除数
   RxInt removeNum = 0.obs;
+  // 是否打开移除数表格
+  RxBool openRemoveTable = false.obs;
 
   var updateTime = "".obs;
   RxDouble totalTableWidth = 0.0.obs;

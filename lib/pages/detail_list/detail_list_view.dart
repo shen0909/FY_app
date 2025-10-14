@@ -94,7 +94,7 @@ class DetailListPage extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => logic.loadData(isGetRemoveList: true),
+                  onTap: () => logic.switchRemove(),
                   child: Text(
                     "，移出数${state.removeNum.value}条",
                     style: TextStyle(

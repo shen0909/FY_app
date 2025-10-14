@@ -123,7 +123,7 @@ class DetailListLogic extends GetxController {
   }
 
   // 加载清单数据
-  Future<void> loadData({bool isRefresh = false, bool isGetRemoveList = false}) async {
+  Future<void> loadData({bool isRefresh = false}) async {
     // 如果是刷新，重置分页状态
     if (isRefresh) {
       state.isRefreshing.value = true;
@@ -148,7 +148,7 @@ class DetailListLogic extends GetxController {
         province: provinceParam,
         city: cityParam,
         zhName: searchParam,
-        isGetRemoveList: isGetRemoveList
+        isGetRemoveList: state.openRemoveTable.value
       );
 
       if (response != null && response.success && response.data != null) {
@@ -748,6 +748,12 @@ class DetailListLogic extends GetxController {
     } catch (e) {
       ToastUtil.showShort('下载失败');
     }
+  }
+
+  /// 切换打开移除数表格开关
+  switchRemove() async {
+    state.openRemoveTable.value = !state.openRemoveTable.value;
+    await loadData();
   }
 }
 
