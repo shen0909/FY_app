@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 import '../../widgets/custom_app_bar.dart';
+import '../../utils/datetime_utils.dart';
 import 'hot_pot_logic.dart';
 import 'hot_pot_state.dart';
 import 'package:safe_app/models/newslist_data.dart';
@@ -21,23 +23,26 @@ class HotPotPage extends StatelessWidget {
       appBar: FYAppBar(title: '舆情热点'),
       body: Stack(
         children: [
-          Column(
-            children: [
-              _buildFilterBar(),
-              _buildSearchBar(),
-              Expanded(
-                child: _buildHotNewsList(),
-              ),
-            ],
+          SafeArea(
+            bottom: true,
+            child: Column(
+              children: [
+                _buildFilterBar(),
+                _buildSearchBar(),
+                Expanded(
+                  child: _buildHotNewsList(),
+                ),
+              ],
+            ),
           ),
           // 筛选选项浮层
           Positioned(
             top: 36.h,
             left: 0,
             right: 0,
-            child: Obx(() => 
-              state.showFilterOptions.value 
-                ? _buildFilterOptionsOverlay() 
+            child: Obx(() =>
+            state.showFilterOptions.value
+                ? _buildFilterOptionsOverlay()
                 : const SizedBox.shrink()
             ),
           ),
@@ -48,33 +53,38 @@ class HotPotPage extends StatelessWidget {
 
   // 构建筛选工具栏
   Widget _buildFilterBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, ),
-      color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildFilterOption("类型", state.selectedNewsType.value),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: _buildFilterOption("地区", state.selectedRegion.value),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: _buildFilterOption("时间", state.timeRangeNames[state.selectedTimeRange.value] ?? state.selectedTimeRange.value),
-          ),
-          SizedBox(width: 9.w),
-          GestureDetector(
-            onTap: () {
-              state.activeTabIndex.value = 3; // 设置为日期选择模式
-              state.toggleFilterOptions();
-            },
-            child: Image.asset(FYImages.calendar_black, width: 24.w, height: 24.w),
-          )
-        ],
-      ),
-    );
+    return Obx(() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w,),
+        color: Colors.white,
+        child: Row(
+          children: [
+            Expanded(
+              child: _buildFilterOption("类型", state.selectedNewsType.value),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: _buildFilterOption("地区", state.selectedRegion.value),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: _buildFilterOption("时间",
+                  state.timeRangeNames[state.selectedTimeRange.value] ??
+                      state.selectedTimeRange.value),
+            ),
+            SizedBox(width: 9.w),
+            GestureDetector(
+              onTap: () {
+                state.activeTabIndex.value = 3; // 设置为日期选择模式
+                state.toggleFilterOptions();
+              },
+              child: Image.asset(
+                  FYImages.calendar_black, width: 24.w, height: 24.w),
+            )
+          ],
+        ),
+      );
+    });
   }
 
   // 构建搜索栏
@@ -86,13 +96,15 @@ class HotPotPage extends StatelessWidget {
         height: 36.h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(color: const Color(0xFFE6E6E6)),
         ),
         child: TextField(
           onChanged: (value) => logic.setSearchKeyword(value),
           onSubmitted: (value) {
-            // 当用户按下回车键时应用筛选
+            // 显示建设中提示
+            // DialogUtils.showUnderConstructionDialog();
+            // 注释掉原有逻辑
             logic.applyFilters();
           },
           decoration: InputDecoration(
@@ -116,6 +128,20 @@ class HotPotPage extends StatelessWidget {
 
   // 构建单个筛选选项
   Widget _buildFilterOption(String title, String selectedValue) {
+    // 根据标题判断使用哪个状态变量
+    bool isSelected = false;
+    switch (title) {
+      case "类型":
+        isSelected = state.isSelectedNewsType.value;
+        break;
+      case "地区":
+        isSelected = state.isSelectedRegion.value;
+        break;
+      case "时间":
+        isSelected = state.isSelectedTimeRange.value;
+        break;
+    }
+    
     return InkWell(
       onTap: () {
         switch (title) {
@@ -142,19 +168,22 @@ class HotPotPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF1A1A1A),
+            Expanded(
+              child: Text(
+                isSelected ? selectedValue : title,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF1A1A1A),
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Transform.rotate(
               angle: 90 * 3.14159 / 180,
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_right,
-                color: Color(0xFF1A1A1A),
-                size: 20,
+                color: const Color(0xFF1A1A1A),
+                size: 20.sp,
               ),
             ),
           ],
@@ -249,184 +278,248 @@ class HotPotPage extends StatelessWidget {
   
   // 构建日期范围选择器
   Widget _buildDateRangeSelector() {
-    return Obx(() => Container(
-      padding: EdgeInsets.all(10.w),
-      width: double.infinity,
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => logic.selectDate(Get.context!, true),
-              child: Container(
-                height: 32.h,
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        logic.formatDate(state.startDate.value),
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF1A1A1A),
-                        ),
+    return Obx(() =>
+        Container(
+          padding: EdgeInsets.all(10.w),
+          width: double.infinity,
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.selectDate(Get.context!, true),
+                  child: Container(
+                    height: 32.h,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            logic.formatDate(state.startDate.value),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                          ),
+                          const Spacer(),
+                          Image.asset(
+                            FYImages.calendar_black,
+                            width: 24.w,
+                            height: 24.w,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
                       ),
-                      const Spacer(),
-                      Image.asset(
-                        FYImages.calendar_black,
-                        width: 24.w,
-                        height: 24.w,
-                        fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                "至",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.selectDate(Get.context!, false),
+                  child: Container(
+                    height: 32.h,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          logic.formatDate(state.endDate.value),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        const Spacer(),
+                        Image.asset(
+                          FYImages.calendar_black,
+                          width: 24.w,
+                          height: 24.w,
+                          fit: BoxFit.contain,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 11.w),
+              GestureDetector(
+                onTap: () {
+                  state.isSelectedTimeRange.value = true; // 标记已选择时间范围
+                  logic.applyFilters();
+                },
+                child: Container(
+                  width: 56.w,
+                  height: 32.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4.r),
+                    color: Color(0xFF3361FE),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "应用",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+
+  // 构建单个新闻卡片
+  Widget _buildNewsCard(NewsItem news, int index) {
+    return Obx(() {
+      // 检查当前新闻是否已读
+      bool isRead = state.isNewsRead(news.newsId);
+      
+      return Container(
+        margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
+        decoration: BoxDecoration(
+          // 已读状态使用灰色背景，未读状态使用白色背景
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => logic.navigateToDetails(index),
+                borderRadius: BorderRadius.circular(8.r),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16.0.w, left: 6.w, bottom: 12.w, right: 16.w),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 热点排名图标
+                      news.isHot && index < 5
+                          ? Padding(
+                            padding: EdgeInsets.only(right: 4.w),
+                            child: Image.asset(
+                              _getHotRankImage(index),
+                              width: 16.w,
+                              height: 21.w,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                          : Container(
+                              width: 16.w,
+                              height: 21.w,
+                            ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 标题行，包含热点排名图标
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // 标题和已读标记
+                                Expanded(
+                                  child: Text(
+                                    news.newsTitle,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      // 已读状态使用较浅的颜色
+                                      color: isRead
+                                          ? FYColors.color_A6A6A6
+                                          : FYColors.color_1A1A1A,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8.w),
+                            Row(
+                              children: [
+                                Text(
+                                  DateTimeUtils.formatPublishTime(news.publishTime),
+                                  style: TextStyle(
+                                      fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    news.newsMedium,
+                                    style: TextStyle(
+                                        fontSize: 12.sp, color: FYColors.color_A6A6A6),
+                                    textAlign: TextAlign.right, // 让文本靠右对齐
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(width: 12.w),
-          Text(
-            "至",
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => logic.selectDate(Get.context!, false),
-              child: Container(
-                height: 32.h,
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(4.r),
+            // 已读图标
+            if(isRead)
+              Positioned(
+                right: 0,
+                child: Image.asset(
+                  FYImages.hotIsRead,
+                  width: 64.w,
+                  height: 64.w,
+                  fit: BoxFit.fitWidth,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      logic.formatDate(state.endDate.value),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                    ),
-                    const Spacer(),
-                    Image.asset(
-                      FYImages.calendar_black,
-                      width: 24.w,
-                      height: 24.w,
-                      fit: BoxFit.contain,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 11.w),
-          GestureDetector(
-            onTap: () => logic.applyFilters(),
-            child: Container(
-              width: 56.w,
-              height: 32.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-                color: Color(0xFF3361FE),
-              ),
-              child: Center(
-                child: Text(
-                  "应用",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ));
+              )
+          ],
+        ),
+      );
+    });
   }
 
-  // 构建单个新闻卡片
-  Widget _buildNewsCard(NewsItem news, int index) {
-    return Container(
-      margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => logic.navigateToDetails(index),
-          borderRadius: BorderRadius.circular(8.r),
-          child: Padding(
-            padding: EdgeInsets.only(top: 16.0.w,bottom: 12.w,left: 16.w,right: 16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  news.newsTitle,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                    color: FYColors.color_1A1A1A,
-                  ),
-                ),
-                SizedBox(height: 12.w),
-                Text(
-                  news.newsSummary,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_1A1A1A,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 8.w),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      news.publishTime,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: FYColors.color_A6A6A6
-                      ),
-                    ),
-                    Text(
-                      news.newsMedium,
-                      style: TextStyle(
-                          fontSize: 12.sp,
-                          color: FYColors.color_A6A6A6
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  // 获取热点排名图标
+  String _getHotRankImage(int index) {
+    switch (index) {
+      case 0:
+        return FYImages.hot1;
+      case 1:
+        return FYImages.hot2;
+      case 2:
+        return FYImages.hot3;
+      case 3:
+        return FYImages.hot4;
+      case 4:
+        return FYImages.hot5;
+      default:
+        return FYImages.hot1;
+    }
   }
 
   // 构建单个类型选项
@@ -440,21 +533,25 @@ class HotPotPage extends StatelessWidget {
         switch (state.activeTabIndex.value) {
           case 0: // 新闻类型
             logic.selectNewsType(type);
+            state.isSelectedNewsType.value = true; // 标记已选择
             logic.showFilterOptions(); // 选择后自动关闭弹窗
             logic.applyFilters(); // 选择后立即应用筛选
             break;
           case 1: // 地区
             logic.selectRegion(type);
+            state.isSelectedRegion.value = true; // 标记已选择
             logic.showFilterOptions(); // 选择后自动关闭弹窗
             logic.applyFilters(); // 选择后立即应用筛选
             break;
           case 2: // 时间
-            // 对于时间，需要将显示名称转回实际值
+          // 对于时间，需要将显示名称转回实际值
             final actualTimeValue = state.timeRanges.firstWhere(
-              (timeRange) => (state.timeRangeNames[timeRange] ?? timeRange) == type,
-              orElse: () => type
+                    (timeRange) =>
+                (state.timeRangeNames[timeRange] ?? timeRange) == type,
+                orElse: () => type
             );
             logic.selectTimeRange(actualTimeValue);
+            state.isSelectedTimeRange.value = true; // 标记已选择
             logic.showFilterOptions(); // 选择后自动关闭弹窗
             logic.applyFilters(); // 选择后立即应用筛选
             break;
@@ -510,82 +607,112 @@ class HotPotPage extends StatelessWidget {
   Widget _buildHotNewsList() {
     return Obx(() {
       // 加载中
-      if (state.isLoading.value) {
+      if (state.isLoading.value && state.newsList.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
-      
-      // 发生错误
-      if (state.errorMessage.value.isNotEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+
+      // 数据为空
+      if (state.newsList.isEmpty) {
+        return RefreshIndicator(
+          onRefresh: () => logic.refreshNewsList(),
+          child: ListView(
             children: [
-              Text('获取数据失败：${state.errorMessage.value}'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => logic.getNewsList(),
-                child: const Text('重试'),
+              SizedBox(height: 120.w),
+              Image.asset(
+                FYImages.blank_page,
+                width: 120.w,
+                height: 120.w,
+                fit: BoxFit.contain,
               ),
+              SizedBox(height: 16.w),
+              const Center(child: Text('暂无数据')),
+              SizedBox(height: 200.w),
             ],
           ),
         );
       }
-      
-      // 数据为空
-      if (state.newsList.isEmpty) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              FYImages.blank_page,
-              width: 120.w,
-              height: 120.w,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: 16.w),
-            Text('暂无数据'),
-          ],
-        );
-      }
-      
+
       // 显示列表
-      return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          // 检测是否滚动到底部
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            // 触发加载更多
-            if (state.hasMoreData.value && !state.isLoadingMore.value) {
-              logic.loadMore();
-            }
-          }
-          return true;
-        },
+      return RefreshIndicator(
+        onRefresh: () => logic.refreshNewsList(),
         child: ListView.builder(
+          controller: logic.scrollController, // 使用logic中的scrollController
           padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
-          itemCount: state.newsList.length + (state.hasMoreData.value ? 1 : 0),
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: state.newsList.length + 1, // +1 为了显示底部加载指示器
           itemBuilder: (context, index) {
-            // 如果是最后一项且还有更多数据，显示加载中
+            // 如果是最后一项，显示加载指示器
             if (index == state.newsList.length) {
-              return Obx(() => state.isLoadingMore.value
-                ? Container(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator(),
-                  )
-                : Container(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    alignment: Alignment.center,
-                    child: Text('上拉加载更多', style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey,
-                    )),
-                  )
-              );
+              return _buildLoadMoreIndicator();
             }
             return _buildNewsCard(state.newsList[index], index);
           },
         ),
       );
+    });
+  }
+
+  // 底部加载指示器
+  Widget _buildLoadMoreIndicator() {
+    return Obx(() {
+      // 下拉刷新时不显示底部指示器
+      if (state.isRefreshing.value) {
+        return SizedBox(height: 20.h);
+      }
+      if (state.isLoadingMore.value) {
+        // 正在加载更多
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              SizedBox(width: 8),
+              Text(
+                '加载中...',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (!state.hasMoreData.value && state.newsList.isNotEmpty) {
+        // 没有更多数据（但有数据时才显示）
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          alignment: Alignment.center,
+          child: Text(
+            '没有更多数据了',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        );
+      } else if (state.hasMoreData.value && state.newsList.isNotEmpty) {
+        // 还有更多数据但当前未加载
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          alignment: Alignment.center,
+          child: Text(
+            '上拉加载更多',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        );
+      } else {
+        // 没有数据时不显示指示器
+        return SizedBox.shrink();
+      }
     });
   }
 }

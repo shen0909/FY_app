@@ -4,8 +4,12 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
+import 'package:safe_app/widgets/widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:math' as math;
 
+import '../../widgets/scroller_widget.dart';
+import '../../utils/datetime_utils.dart';
 import 'detail_list_logic.dart';
 import 'detail_list_state.dart';
 
@@ -18,22 +22,46 @@ class DetailListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FYColors.whiteColor,
-      appBar: FYAppBar(title: '实体清单'),
-      body: SingleChildScrollView(
-        controller: logic.yearlyStatsController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildYearlyStatsTable(),
-            _buildDivider(),
-            _buildInfoSection(),
-            _buildFilterSection(),
-            _buildFilterChips(context),
-            _buildResultCount(),
-            _buildTable(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => logic.canPopFunction(didPop),
+      child: Scaffold(
+        backgroundColor: FYColors.whiteColor,
+        appBar:  FYAppBar(title: '实体清单',
+          actions: [
+            GestureDetector(
+              onTap: () => logic.downloadExcel(),
+              child: Container(
+                margin: EdgeInsets.only(right: 16.w),
+                child: Image.asset(FYImages.download_icon,width: 24.w,height: 24.w,fit: BoxFit.contain,),
+
+              ),
+            ),
           ],
+        ),
+        body: SafeArea(
+          bottom: true,
+          child: SingleChildScrollView(
+            controller: logic.yearlyStatsController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildYearlyStatsTable(),
+                _buildDivider(),
+                _buildInfoSection(),
+                _buildFilterSection(),
+                _buildFilterChips(context),
+                _buildResultCount(),
+                Obx(() =>
+                    DynamicScrollbarWrapper(
+                        scrollDirection: Axis.horizontal,
+                        scrollController: logic.horizontalScrollController,
+                        overallContentExtent: state.totalTableWidth.value,
+                        child: _buildTable())),
+                _buildPagination(),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -43,41 +71,52 @@ class DetailListPage extends StatelessWidget {
   Widget _buildInfoSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(
-                "当前总数：",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                  fontWeight: FontWeight.normal,
+      child: Obx(() {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "当前总数：",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-              ),
-              Obx(() {
-                return Text(
+                Text(
                   "${state.totalCount}",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: FYColors.color_3361FE,
                     fontWeight: FontWeight.normal,
                   ),
-                );
-              }),
-            ],
-          ),
-          Text(
-            "更新时间：2025-05-15",
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: FYColors.color_A6A6A6,
-              fontWeight: FontWeight.normal,
+                ),
+                GestureDetector(
+                  onTap: () => logic.switchRemove(),
+                  child: Text(
+                    "，移出数${state.removeNum.value}条",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: FYColors.color_A6A6A6,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                )
+              ],
             ),
-          ),
-        ],
-      ),
+            Text(
+              "更新时间：${state.updateTime.value}",
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: FYColors.color_A6A6A6,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 
@@ -90,7 +129,7 @@ class DetailListPage extends StatelessWidget {
           Text(
             "筛选条件",
             style: TextStyle(
-              fontSize: 18.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w500,
               color: FYColors.color_1A1A1A,
             ),
@@ -142,7 +181,7 @@ class DetailListPage extends StatelessWidget {
   // 筛选标签区域
   Widget _buildFilterChips(BuildContext context) {
     return Container(
-      height: 56,
+      height: 56.w,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -151,55 +190,72 @@ class DetailListPage extends StatelessWidget {
           Expanded(
               child: _buildFilterChip(
                   context, "类型", state.typeFilter, logic.typeKey)),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
               child: _buildFilterChip(
                   context, "省份", state.provinceFilter, logic.provinceKey)),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
-              child: _buildFilterChip(
-                  context, "城市", state.cityFilter, logic.cityKey)),
+              child: Obx(() {
+                // 检查是否禁用城市选择
+                final isDisabled = state.provinceFilter.value.isEmpty || 
+                                   state.provinceFilter.value == '全部';
+                return _buildFilterChip(
+                  context, "城市", state.cityFilter, logic.cityKey, 
+                  isDisabled: isDisabled
+                );
+              })),
         ],
       ),
     );
   }
 
   // 筛选按钮
-  Widget _buildFilterChip(
-      BuildContext context, String title, Rx<String> filter, GlobalKey key) {
+  Widget _buildFilterChip(BuildContext context, String title, Rx<String> filter,
+      GlobalKey key, {bool isDisabled = false}) {
     return Obx(() {
       final bool hasValue = filter.value.isNotEmpty;
 
       return InkWell(
         key: key,
-        onTap: () {
+        onTap: isDisabled ? null : () {
           logic.showFilterOverlay(context, title, key);
         },
         child: Container(
-          height: 36,
+          height: 36.h,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: hasValue ? Color(0xFFF0F5FF) : Color(0xFFF9F9F9),
-            borderRadius: BorderRadius.circular(8),
-            border: hasValue
+            color: isDisabled 
+                ? Color(0xFFF0F0F0) 
+                : (hasValue ? Color(0xFFF0F5FF) : Color(0xFFF9F9F9)),
+            borderRadius: BorderRadius.circular(8.r),
+            border: hasValue && !isDisabled
                 ? Border.all(color: Color(0xFF3361FE), width: 1)
                 : null,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                hasValue ? filter.value : title,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+              Expanded(
+                child: Text(
+                  isDisabled 
+                      ? "请先选择省份" 
+                      : (hasValue ? filter.value : title),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: isDisabled 
+                        ? Color(0xFFA6A6A6) 
+                        : (hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A)),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
               Icon(
-                hasValue ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                size: 16,
-                color: hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A),
+                hasValue && !isDisabled ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                size: 16.w,
+                color: isDisabled 
+                    ? Color(0xFFA6A6A6) 
+                    : (hasValue ? Color(0xFF3361FE) : Color(0xFF1A1A1A)),
               ),
             ],
           ),
@@ -212,10 +268,11 @@ class DetailListPage extends StatelessWidget {
   Widget _buildResultCount() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Obx(() => Text(
-            "${state.companyList.length} 条结果",
+      child: Obx(() =>
+          Text(
+            "总数${state.searchCount}条",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 12.sp,
               color: Color(0xFF3361FE),
               fontWeight: FontWeight.normal,
             ),
@@ -225,128 +282,139 @@ class DetailListPage extends StatelessWidget {
 
   // 表格实现
   Widget _buildTable() {
-    return Container(
-      height: 400.h, // 设置一个固定高度
-      child: Obx(() {
-        if (state.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        // 计算每列需要的最大宽度
-        double maxNameWidth = 150.w; // 名称列最小宽度
-        double maxSanctionTypeWidth = 0; // 制裁类型列，需要计算最大宽度
-        double maxRegionWidth = 100.w; // 地区列最小宽度
-        double timeWidth = 80.w; // 时间列
-        double removalTimeWidth = 80.w; // 移除时间列
-
-        // 测量每个制裁类型的宽度
-        TextStyle sanctionTextStyle =
-            TextStyle(fontSize: 12.sp, color: Colors.black);
-        TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
-
-        // 为每个制裁类型计算所需宽度
-        for (var item in state.companyList) {
-          // 计算每个制裁类型标签所需的总宽度
-          // 文本宽度 + 图标宽度(14.w) + 图标与文本间距(4.w) + 内边距(8.w * 2)
-
-          // 计算文本宽度
-          textPainter.text = TextSpan(text: item.sanctionType.name, style: sanctionTextStyle);
-          textPainter.layout();
-          double totalWidth =
-              textPainter.width + 14.w + 4.w + 16.w + 20.w; // 额外添加10.w作为缓冲
-
-          if (totalWidth > maxSanctionTypeWidth) {
-            maxSanctionTypeWidth = totalWidth;
+    return Obx(() {
+      return Container(
+        constraints: BoxConstraints(
+          maxHeight: math.max(
+            300.h,
+            state.sanctionList.length * 44.h + 28.h,
+          ),
+        ),
+        child: Obx(() {
+          if (state.isLoading.value || state.isRefreshing.value) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3361FE)),
+              ),
+            );
           }
-        }
 
-        // 确保制裁类型宽度至少有一个最小值
-        maxSanctionTypeWidth =
-            maxSanctionTypeWidth < 150.w ? 150.w : maxSanctionTypeWidth;
+          // 数据为空时显示暂无数据
+          if (state.sanctionList.isEmpty && !state.isLoading.value &&
+              !state.isRefreshing.value) {
+            return FYWidget.buildEmptyContent();
+          }
 
-        // 保留动态计算的宽度，不再强制设置固定值
-        // maxSanctionTypeWidth = 240.w;
+          // 使用从logic中计算好的宽度值
+          double maxNameWidth = 150.w; // 名称列最小宽度
+          double maxRegionWidth = 100.w; // 地区列最小宽度
+          double timeWidth = 80.w; // 时间列
+          double removalTimeWidth = 80.w; // 移除时间列
+          
+          // 从state中获取计算好的制裁类型宽度
+          double maxSanctionTypeWidth = state.maxSanctionTypeWidth.value > 0 ? state.maxSanctionTypeWidth.value : 150.w;
 
-        // 计算总宽度
-        double totalTableWidth = maxNameWidth +
-            maxSanctionTypeWidth +
-            maxRegionWidth +
-            timeWidth +
-            removalTimeWidth;
-
-        return Row(
-          children: [
-            // 固定的首列（序号列）
-            Container(
-              width: 50.w,
-              child: Column(
-                children: [
-                  // 首列表头
-                  Container(
-                    height: 28.h,
-                    color: Color(0xFFF0F5FF),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "序号",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Color(0xFF3361FE),
-                        fontWeight: FontWeight.normal,
+          return Row(
+            children: [
+              // 固定的首列（序号列）
+              Container(
+                width: 50.w,
+                child: Column(
+                  children: [
+                    // 首列表头
+                    Container(
+                      height: 28.h,
+                      color: Color(0xFFF0F5FF),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "序号",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Color(0xFF3361FE),
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // 首列数据
-                  Expanded(
-                    child: ListView.builder(
-                      controller: logic.leftVerticalController,
-                      itemCount: state.companyList.length,
-                      itemBuilder: (context, index) {
-                        final isOdd = index % 2 == 1;
-                        return Container(
-                          height: 44.h,
-                          color: isOdd ? Colors.white : Color(0xFFF9F9F9),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "${state.companyList[index].id}",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xFF1A1A1A),
+                    // 首列数据
+                    Expanded(
+                      child: ListView.builder(
+                        controller: logic.leftVerticalController,
+                        itemCount: state.sanctionList.length,
+                        itemBuilder: (context, index) {
+                          final isOdd = index % 2 == 1;
+                          return Container(
+                            height: 44.h,
+                            color: isOdd ? Colors.white : Color(0xFFF9F9F9),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "${(state.currentPage.value - 1) *
+                                  state.pageSize.value + index + 1}",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Color(0xFF1A1A1A),
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // 右侧可滚动部分
-            Expanded(
-              child: Stack(
-                children: [
-                  // 滚动内容
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller: logic.horizontalScrollController,
-                    child: SizedBox(
-                      // 设置足够的宽度让内容可以滚动
-                      width: totalTableWidth,
-                      child: Column(
-                        children: [
-                          // 表头行
-                          Container(
-                            height: 28.h,
-                            color: Color(0xFFF0F5FF),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: maxNameWidth,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 8.w),
+              // 右侧可滚动部分
+              Expanded(
+                child: Stack(
+                  children: [
+                    // 滚动内容
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      controller: logic.horizontalScrollController,
+                      child: SizedBox(
+                        // 设置足够的宽度让内容可以滚动
+                        width: state.totalTableWidth.value,
+                        child: Column(
+                          children: [
+                            // 表头行
+                            Container(
+                              height: 28.h,
+                              color: Color(0xFFF0F5FF),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: maxNameWidth,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 8.w),
+                                      child: Text(
+                                        "名称",
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Color(0xFF3361FE),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: maxSanctionTypeWidth,
+                                    child: Padding(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 8.w),
+                                      child: Text(
+                                        "制裁类型",
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Color(0xFF3361FE),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: maxRegionWidth,
                                     child: Text(
-                                      "名称",
+                                      "地区",
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Color(0xFF3361FE),
@@ -354,14 +422,10 @@ class DetailListPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: maxSanctionTypeWidth,
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.w),
+                                  SizedBox(
+                                    width: timeWidth,
                                     child: Text(
-                                      "制裁类型",
+                                      "时间",
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Color(0xFF3361FE),
@@ -369,156 +433,138 @@ class DetailListPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: maxRegionWidth,
-                                  child: Text(
-                                    "地区",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
+                                  SizedBox(
+                                    width: removalTimeWidth,
+                                    child: Text(
+                                      "移出时间",
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Color(0xFF3361FE),
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: timeWidth,
-                                  child: Text(
-                                    "时间",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: removalTimeWidth,
-                                  child: Text(
-                                    "移除时间",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF3361FE),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
 
-                          // 表格数据行
-                          Expanded(
-                            child: ListView.builder(
-                              controller: logic.rightVerticalController,
-                              itemCount: state.companyList.length,
-                              itemBuilder: (context, index) {
-                                final item = state.companyList[index];
-                                final isOdd = index % 2 == 1;
-                                return Container(
-                                  height: 44.h,
-                                  color:
-                                      isOdd ? Colors.white : Color(0xFFF9F9F9),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: maxNameWidth,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 8.w),
+                            // 表格数据行
+                            Expanded(
+                              child: ListView.builder(
+                                controller: logic.rightVerticalController,
+                                itemCount: state.sanctionList.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  final item = state.sanctionList[index];
+                                  final isOdd = index % 2 == 1;
+                                  final sanctionType = item.getSanctionType(state.sanctionTypes);
+
+                                  return Container(
+                                    height: 44.h,
+                                    color:
+                                    isOdd ? Colors.white : Color(0xFFF9F9F9),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: maxNameWidth,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 8.w),
+                                            child: Text(
+                                              item.displayName,
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                color: Color(0xFF1A1A1A),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: maxSanctionTypeWidth,
+                                          alignment: Alignment.centerLeft,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.w),
+                                          child: IntrinsicWidth(
+                                            child: _buildSanctionTypeTag(
+                                                sanctionType),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: maxRegionWidth,
                                           child: Text(
-                                            item.name,
-                                            textAlign: TextAlign.start,
+                                            item.displayRegion,
                                             style: TextStyle(
                                               fontSize: 12.sp,
                                               color: Color(0xFF1A1A1A),
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
                                           ),
                                         ),
-                                      ),
-                                      Container(
-                                        width: maxSanctionTypeWidth,
-                                        alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8.w),
-                                        child: IntrinsicWidth(
-                                          child: _buildSanctionTypeTag(
-                                              item.sanctionType),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: maxRegionWidth,
-                                        child: Text(
-                                          item.region,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Color(0xFF1A1A1A),
+                                        SizedBox(
+                                          width: timeWidth,
+                                          child: Text(
+                                            item.displaySanctionTime,
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: Color(0xFF1A1A1A),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: timeWidth,
-                                        child: Text(
-                                          item.time,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Color(0xFF1A1A1A),
+                                        SizedBox(
+                                          width: removalTimeWidth,
+                                          child: Text(
+                                            item.displayRemoveTime,
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: Color(0xFF1A1A1A),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: removalTimeWidth,
-                                        child: Text(
-                                          item.removalTime,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Color(0xFF1A1A1A),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  // 右侧滑动指示阴影
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Obx(() {
-                      // 当没有数据时不显示指示器
-                      if (state.companyList.isEmpty) {
-                        return SizedBox();
-                      }
-                      return Container(
-                        width: 16.w,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.1),
-                            ],
+                    // 右侧滑动指示阴影
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Obx(() {
+                        // 当没有数据时不显示指示器
+                        if (state.sanctionList.isEmpty) {
+                          return SizedBox();
+                        }
+                        return Container(
+                          width: 16.w,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.1),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
+                        );
+                      }),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      }),
-    );
+            ],
+          );
+        }),
+      );
+    });
   }
 
   // 构建制裁类型标签
@@ -542,7 +588,7 @@ class DetailListPage extends StatelessWidget {
               Text(
                 sanctionType.name,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   color: Color(sanctionType.color),
                 ),
               ),
@@ -584,42 +630,6 @@ class DetailListPage extends StatelessWidget {
                   color: Color(0xFF1A1A1A),
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  // 添加位置选择功能
-                },
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF9F9F9),
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16.sp,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        "广东省",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 12.sp,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
 
@@ -636,17 +646,48 @@ class DetailListPage extends StatelessWidget {
           Container(
             height: 200.h,
             child: Obx(() {
-              // 如果没有数据，显示空视图
-              if (state.yearlyStats.isEmpty) {
+              // 优先使用接口趋势数据，如果为空则使用年度统计数据
+              final displayData = state.trendData.isNotEmpty ? state.trendData : null;
+              final fallbackData = state.yearlyStats;
+              
+              // 显示加载状态
+              if (state.isTrendLoading.value) {
+                return Center(child: CircularProgressIndicator());
+              }
+              
+              // 如果没有任何数据，显示空视图
+              if (displayData == null && fallbackData.isEmpty) {
                 return Center(child: Text("暂无数据"));
               }
+              
+              // 计算Y轴最大值
+              double maxValue = 0;
+              if (displayData != null) {
+                // 使用接口趋势数据
+                for (var trend in displayData) {
+                  if (trend.count > maxValue) {
+                    maxValue = trend.count.toDouble();
+                  }
+                }
+              } else {
+                // 使用年度统计数据作为后备
+                for (var stat in fallbackData) {
+                  if (stat.newCount > maxValue) {
+                    maxValue = stat.newCount.toDouble();
+                  }
+                }
+              }
+              // 向上取整到最接近的50的倍数，确保图表美观
+              double yMaxValue = ((maxValue / 50).ceil() * 50).toDouble();
+              if (yMaxValue == 0) yMaxValue = 250; // 最小值保证
+              
               return LineChart(
                 LineChartData(
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    horizontalInterval: 30.w,
-                    // horizontalInterval: 38,
+                    // 使用固定间距，避免响应式单位造成的平板适配问题
+                    horizontalInterval: yMaxValue / 5, // 固定显示5条水平网格线
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
                         color: Color(0xFFEEEEEE),
@@ -659,26 +700,48 @@ class DetailListPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 30,
+                        reservedSize: 35.h,
+                        interval: 1, // 固定间隔，确保每个年份都显示
                         getTitlesWidget: (value, meta) {
                           // 年份标签
-                          if (value.toInt() >= 0 &&
-                              value.toInt() < state.yearlyStats.length) {
-                            final year = state.yearlyStats[value.toInt()].year;
-                            return Padding(
-                              padding: EdgeInsets.only(top: 8.h),
-                              child: Transform.rotate(
-                                angle: -0.785398, // 45度角
-                                child: Text(
-                                  year,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 10.sp,
+                          if (displayData != null) {
+                            // 使用接口趋势数据
+                            if (value.toInt() >= 0 && value.toInt() < displayData.length) {
+                              final year = displayData[value.toInt()].year.toString();
+                              return Padding(
+                                padding: EdgeInsets.only(top: 8.h),
+                                child: Transform.rotate(
+                                  angle: -0.785398, // 45度角
+                                  child: Text(
+                                    year,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xFF808080),
+                                      fontSize: 9.sp,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
+                          } else {
+                            // 使用年度统计数据作为后备
+                            if (value.toInt() >= 0 && value.toInt() < fallbackData.length) {
+                              final year = fallbackData[value.toInt()].year;
+                              return Padding(
+                                padding: EdgeInsets.only(top: 8.h),
+                                child: Transform.rotate(
+                                  angle: -0.785398, // 45度角
+                                  child: Text(
+                                    year,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xFF808080),
+                                      fontSize: 9.sp,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           }
                           return const SizedBox();
                         },
@@ -687,7 +750,7 @@ class DetailListPage extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: 40,
+                        interval: yMaxValue / 5, // 固定间隔，与网格线对应
                         getTitlesWidget: (value, meta) {
                           if (value == 0) return const SizedBox();
                           return Padding(
@@ -701,32 +764,39 @@ class DetailListPage extends StatelessWidget {
                             ),
                           );
                         },
-                        reservedSize: 30,
+                        reservedSize: 35.w,
                       ),
                     ),
                     rightTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                     topTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                   ),
                   borderData: FlBorderData(show: false),
                   minX: 0,
-                  maxX: state.yearlyStats.length - 1.0,
+                  maxX: displayData != null 
+                      ? (displayData.length - 1).toDouble() 
+                      : (fallbackData.length - 1).toDouble(),
                   minY: 0,
-                  maxY: _getMaxYValue(),
+                  maxY: yMaxValue,
                   lineBarsData: [
-                    // 累计总数曲线
+                    // 新增数量曲线
                     LineChartBarData(
-                      spots: List.generate(state.yearlyStats.length, (index) {
-                        return FlSpot(index.toDouble(),
-                            state.yearlyStats[index].newCount.toDouble());
-                      }),
+                      spots: displayData != null
+                          ? List.generate(displayData.length, (index) {
+                              return FlSpot(
+                                index.toDouble(),
+                                displayData[index].count.toDouble(),
+                              );
+                            })
+                          : List.generate(fallbackData.length, (index) {
+                              return FlSpot(
+                                index.toDouble(),
+                                fallbackData[index].newCount.toDouble(),
+                              );
+                            }),
                       isCurved: true,
                       color: Color(0xFF3361FE),
                       barWidth: 2,
@@ -735,16 +805,14 @@ class DetailListPage extends StatelessWidget {
                         show: true,
                         getDotPainter: (spot, percent, barData, index) {
                           return FlDotCirclePainter(
-                            radius: 4,
+                            radius: 4.r,
                             color: Color(0xFF3361FE),
-                            strokeWidth: 2,
+                            strokeWidth: 2.w,
                             strokeColor: Colors.white,
                           );
                         },
                       ),
-                      belowBarData: BarAreaData(
-                        show: false,
-                      ),
+                      belowBarData: BarAreaData(show: false),
                     ),
                   ],
                 ),
@@ -777,28 +845,7 @@ class DetailListPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              SizedBox(width: 24.w),
-              Row(
-                children: [
-                  Container(
-                    width: 16.w,
-                    height: 3.h,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF3361FE),
-                      borderRadius: BorderRadius.circular(1.5.r),
-                    ),
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    "累计总数",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                  ),
-                ],
-              ),
+              )
             ],
           ),
         ],
@@ -806,23 +853,207 @@ class DetailListPage extends StatelessWidget {
     );
   }
 
-  // 获取图表Y轴最大值
+  // 获取图表Y轴最大值（已废弃，逻辑移至_buildYearlyStatsTable内部）
   double _getMaxYValue() {
-    if (state.yearlyStats.isEmpty) return 240;
+    if (state.yearlyStats.isEmpty) return 250;
 
-    double maxTotal = 0;
     double maxNew = 0;
-
     for (var stat in state.yearlyStats) {
-      // if (stat.totalCount > maxTotal) {
-      //   maxTotal = stat.totalCount.toDouble();
-      // }
       if (stat.newCount > maxNew) {
         maxNew = stat.newCount.toDouble();
       }
     }
 
-    // 向上取整到最接近的40的倍数
-    return (((maxTotal > maxNew ? maxTotal : maxNew) ~/ 40) + 1) * 40.0;
+    // 向上取整到最接近的50的倍数
+    return ((maxNew / 50).ceil() * 50).toDouble();
+  }
+
+  // 添加分页按钮组件
+  Widget _buildPagination() {
+    return Obx(() {
+      if (state.sanctionList.isEmpty) {
+        return Container();
+      }
+      // 计算总页数
+      int totalPages = (state.searchCount / state.pageSize.value).ceil();
+      if (totalPages == 0) totalPages = 1;
+
+      // 当前页码
+      int currentPage = state.currentPage.value;
+
+      // 构建页码按钮列表
+      List<Widget> pageButtons = [];
+
+      // 上一页按钮
+      pageButtons.add(
+        _buildPageButton(
+          icon: Icons.chevron_left,
+          onTap: currentPage > 1 ? () => logic.goToPage(currentPage - 1) : null,
+          isDisabled: currentPage <= 1,
+        ),
+      );
+
+      // 根据屏幕宽度调整显示的页码数量
+      int maxVisiblePages = 5;
+      double screenWidth = MediaQuery.of(Get.context!).size.width;
+      if (screenWidth < 360) {
+        maxVisiblePages = 3; // 小屏幕设备显示更少的页码
+      }
+
+      // 显示的页码范围
+      int startPage = 1;
+      int endPage = totalPages;
+
+      // 如果总页数大于最大可见页码数，则显示部分页码
+      if (totalPages > maxVisiblePages) {
+        int halfVisible = maxVisiblePages ~/ 2;
+        
+        if (currentPage <= halfVisible + 1) {
+          // 当前页靠前，显示前几页
+          endPage = maxVisiblePages;
+        } else if (currentPage >= totalPages - halfVisible) {
+          // 当前页靠后，显示后几页
+          startPage = totalPages - maxVisiblePages + 1;
+        } else {
+          // 当前页在中间，显示当前页及其前后各halfVisible页
+          startPage = currentPage - halfVisible;
+          endPage = currentPage + halfVisible;
+          
+          // 确保不超出有效范围
+          if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = totalPages - maxVisiblePages + 1;
+          }
+        }
+      }
+
+      // 添加第一页按钮（如果不在显示范围内）
+      if (startPage > 1) {
+        pageButtons.add(_buildPageButton(
+          text: "1",
+          onTap: () => logic.goToPage(1),
+          isActive: currentPage == 1,
+        ));
+
+        // 添加省略号（如果第一页和起始页之间有间隔）
+        if (startPage > 2) {
+          pageButtons.add(_buildEllipsis());
+        }
+      }
+
+      // 添加页码按钮
+      for (int i = startPage; i <= endPage; i++) {
+        pageButtons.add(_buildPageButton(
+          text: "$i",
+          onTap: () => logic.goToPage(i),
+          isActive: currentPage == i,
+        ));
+      }
+
+      // 添加最后一页按钮（如果不在显示范围内）
+      if (endPage < totalPages) {
+        // 添加省略号（如果结束页和最后一页之间有间隔）
+        if (endPage < totalPages - 1) {
+          pageButtons.add(_buildEllipsis());
+        }
+
+        pageButtons.add(_buildPageButton(
+          text: "$totalPages",
+          onTap: () => logic.goToPage(totalPages),
+          isActive: currentPage == totalPages,
+        ));
+      }
+
+      // 下一页按钮
+      pageButtons.add(
+        _buildPageButton(
+          icon: Icons.chevron_right,
+          onTap: currentPage < totalPages ? () =>
+              logic.goToPage(currentPage + 1) : null,
+          isDisabled: currentPage >= totalPages,
+        ),
+      );
+
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 10.w),
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: pageButtons,
+          ),
+        ),
+      );
+    });
+  }
+
+  // 构建页码按钮
+  Widget _buildPageButton({
+    String? text,
+    IconData? icon,
+    VoidCallback? onTap,
+    bool isActive = false,
+    bool isDisabled = false,
+  }) {
+    final Color activeColor = Color(0xFF3361FE);
+    final Color inactiveColor = Color(0xFF1A1A1A);
+    final Color disabledColor = Color(0xFFA6A6A6);
+
+    return GestureDetector(
+      onTap: isDisabled ? null : onTap,
+      child: Container(
+        width: 32.w,
+        height: 32.w,
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
+        decoration: BoxDecoration(
+          color: isActive ? activeColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(4.r),
+          border: isActive
+              ? null
+              : Border.all(
+            color: isDisabled ? disabledColor : inactiveColor,
+            width: 1,
+          ),
+        ),
+        child: Center(
+          child: icon != null
+              ? Icon(
+            icon,
+            size: 16.sp,
+            color: isDisabled
+                ? disabledColor
+                : (isActive ? Colors.white : inactiveColor),
+          )
+              : Text(
+            text!,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: isDisabled
+                  ? disabledColor
+                  : (isActive ? Colors.white : inactiveColor),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 构建省略号
+  Widget _buildEllipsis() {
+    return Container(
+      width: 32.w,
+      height: 32.w,
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      child: Center(
+        child: Text(
+          "...",
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+      ),
+    );
   }
 }

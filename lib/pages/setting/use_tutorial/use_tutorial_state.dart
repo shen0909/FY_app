@@ -3,6 +3,9 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import '../../../styles/image_resource.dart';
 
 class UseTutorialState {
+  // 使用教程内容
+  RxString tutorialContent = ''.obs;
+
   // 当前选中的标签索引
   final RxInt selectedTabIndex = 0.obs;
   

@@ -21,7 +21,7 @@ class OrderEventDetialPage extends StatelessWidget {
           Scaffold(
             backgroundColor: FYColors.whiteColor,
             appBar: FYAppBar(
-              title: '事件详情',
+              title: logic.getPageTitle(), // 使用动态标题
               actions: [
                 batchCheckWidget()
               ],
@@ -48,11 +48,12 @@ class OrderEventDetialPage extends StatelessWidget {
       );
     });
   }
-  
+
   // 事件头部信息
   Widget _buildEventHeader() {
-    return Padding(
+    return Container(
       padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -63,52 +64,6 @@ class OrderEventDetialPage extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: FYColors.color_1A1A1A,
             ),
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                state.eventDate.value,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Icon(
-                Icons.remove_red_eye_outlined,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                '已查看数: ${state.viewCount.value}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Icon(
-                Icons.person_add_alt_1_outlined,
-                size: 14.sp,
-                color: FYColors.color_A6A6A6,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                '已关注数: ${state.followCount.value}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -160,7 +115,7 @@ class OrderEventDetialPage extends StatelessWidget {
     return Container(
       height: 8.h,
       color: FYColors.color_F9F9F9,
-      margin: EdgeInsets.symmetric(vertical: 10.h),
+      margin: EdgeInsets.symmetric(vertical: 1.h),
     );
   }
   
@@ -195,7 +150,7 @@ class OrderEventDetialPage extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: '${state.latestUpdates.length} ',
+                        text: '${state.totalCount.value} ',
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
@@ -226,32 +181,69 @@ class OrderEventDetialPage extends StatelessWidget {
           ),
           
           // 查看更多
-          GestureDetector(
-            onTap: () => logic.viewMoreUpdates(),
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '查看更多',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color(0xFF3361FE),
-                    ),
-                  ),
-                  Icon(
-                    Icons.keyboard_arrow_right,
-                    size: 14.sp,
-                    color: Color(0xFF3361FE),
-                  ),
-                ],
+          if (state.hasMoreData.value || state.isLoadingMore.value)
+            GestureDetector(
+              onTap: () => logic.loadMoreUpdates(),
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: state.isLoadingMore.value
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 14.w,
+                            height: 14.h,
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF3361FE),
+                              strokeWidth: 2.w,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            '加载中...',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Color(0xFF3361FE),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '查看更多',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Color(0xFF3361FE),
+                            ),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 14.sp,
+                            color: Color(0xFF3361FE),
+                          ),
+                        ],
+                      ),
               ),
             ),
-          ),
+          
+          // 没有更多数据提示
+          if (!state.hasMoreData.value && !state.isLoadingMore.value && state.latestUpdates.isNotEmpty)
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Text(
+                '没有更多数据了',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: FYColors.color_A6A6A6,
+                ),
+              ),
+            ),
           // 底部留白，防止底部操作栏遮挡内容
-          state.isBatchCheck.value ? SizedBox(height: 80.h) : SizedBox(height: 20.h),
+          SizedBox(height: 80.h),
         ],
       ),
     );
@@ -298,6 +290,7 @@ class OrderEventDetialPage extends StatelessWidget {
                       fontSize: 14.sp,
                       color: Color(0xFF666666),
                     ),
+                    maxLines: 2,
                   ),
                   SizedBox(height: 10.h),
                   Row(
@@ -330,11 +323,11 @@ class OrderEventDetialPage extends StatelessWidget {
                         ),
                     ],
                   ),
-                  Divider(
-                    height: 20.h,
-                    thickness: 1,
-                    color: FYColors.color_F9F9F9,
-                  ),
+                  // Divider(
+                  //   height: 1.h,
+                  //   thickness: 1,
+                  //   color: FYColors.color_F9F9F9,
+                  // ),
                 ],
               ),
             ),
@@ -404,7 +397,7 @@ class OrderEventDetialPage extends StatelessWidget {
   // 底部操作栏
   Widget _buildBottomActionBar() {
     return Container(
-      // height: 71.w,
+      height: 71.w,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -450,7 +443,7 @@ class OrderEventDetialPage extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    '可生成事件报告',
+                    logic.isEvent ? '可生成事件报告' : '可生成专题报告',
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Color(0xFFA6A6A6),
@@ -463,7 +456,6 @@ class OrderEventDetialPage extends StatelessWidget {
               GestureDetector(
                 onTap: () => logic.generateReport(),
                 child: Container(
-                  // padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                   width: 80.w,
                   height: 40.w,
                   decoration: BoxDecoration(
@@ -478,7 +470,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     child: Text(
                       '生成报告',
                       style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         color: Colors.white,
                       ),
                     ),
@@ -486,6 +478,33 @@ class OrderEventDetialPage extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8.w),
+              /*// 生成报告按钮
+              GestureDetector(
+                onTap: () => logic.generateReport(),
+                child: Container(
+                  // padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  width: 80.w,
+                  height: 40.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                      color: FYColors.color_3361FE,
+                      width: 1.w,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '生成报告',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),*/
               // 取消按钮
               GestureDetector(
                 onTap: () => logic.cancelSelection(),
@@ -564,7 +583,7 @@ class OrderEventDetialPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '生成事件报告',
+                            logic.isEvent ? '生成事件报告' : '生成专题报告',
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -586,7 +605,9 @@ class OrderEventDetialPage extends StatelessWidget {
                     if (state.reportGenerationStatus.value == ReportGenerationStatus.generating)
                       _buildGeneratingContent()
                     else if (state.reportGenerationStatus.value == ReportGenerationStatus.success)
-                      _buildSuccessContent(),
+                      _buildSuccessContent()
+                      else if (state.reportGenerationStatus.value == ReportGenerationStatus.failed)
+                      _buildFailedContent(),
                     SizedBox(height: MediaQuery.of(Get.context!).padding.bottom),
                   ],
                 ),
@@ -624,7 +645,7 @@ class OrderEventDetialPage extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            '正在处理所选事件并整合为分析报告',
+            logic.isEvent ? '正在处理所选事件并整合为分析报告' : '正在处理所选专题并整合为分析报告',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),
@@ -667,7 +688,7 @@ class OrderEventDetialPage extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            '事件分析报告已生成，可立即下载查看',
+            logic.isEvent ? '事件分析报告已生成，可立即下载查看' : '专题分析报告已生成，可立即下载查看',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),
@@ -690,7 +711,7 @@ class OrderEventDetialPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  state.reportInfo.value['title'] ?? '',
+                  state.reportInfo['title'] ?? '',
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -707,7 +728,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      state.reportInfo.value['date'] ?? '',
+                      state.reportInfo['date'] ?? '',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Color(0xFFA6A6A6),
@@ -721,7 +742,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      state.reportInfo.value['fileType'] ?? '',
+                      state.reportInfo['fileType'] ?? '',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Color(0xFFA6A6A6),
@@ -729,7 +750,7 @@ class OrderEventDetialPage extends StatelessWidget {
                     ),
                     Spacer(),
                     Text(
-                      state.reportInfo.value['size'] ?? '',
+                      state.reportInfo['size'] ?? '',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Color(0xFFA6A6A6),
@@ -739,7 +760,7 @@ class OrderEventDetialPage extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  state.reportInfo.value['description'] ?? '',
+                  state.reportInfo['description'] ?? '',
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Color(0xFF666666),
@@ -804,6 +825,101 @@ class OrderEventDetialPage extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  // 生成失败的内容
+  Widget _buildFailedContent() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 40.h, 16.w, 20.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64.w,
+            height: 64.h,
+            decoration: BoxDecoration(
+              color: Colors.redAccent,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.close,
+              color: Colors.white,
+              size: 40.w,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            '报告生成失败',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            '请稍后重试，或减少选择的内容后再次尝试',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Color(0xFF666666),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.closeReportDialog(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1.w,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '关闭',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => logic.generateReport(),
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: FYColors.loginBtn,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '重试',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

@@ -1,14 +1,23 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:safe_app/models/setting/permission_list.dart';
 
 class PermissionRequestState {
-  // 当前选中的标签索引：0-已批准申请，1-待审核，2-已驳回
-  int selectedTabIndex = 1;
+
+  // 使用两个同步滚动控制器，确保左右两侧列表同步滚动
+  final ScrollController verticalControllerLeft = ScrollController();
+  final ScrollController verticalControllerRight = ScrollController();
+
+  RxList<PermissionListElement> permissionRequests = <PermissionListElement>[].obs;
+
+  // 当前选中的标签索引：0-待审核，1-已批准申请，2-已驳回
+  RxInt selectedTabIndex = 0.obs;
   
-  // 权限申请列表
-  List<PermissionRequest> permissionRequests = [];
+  // // 权限申请列表
+  // List<PermissionRequest> permissionRequests = [];
   
   // 搜索关键词
-  String searchKeyword = '';
+  RxString searchKeyword = ''.obs;
 
   TextEditingController  searchController = TextEditingController();
 

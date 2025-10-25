@@ -23,7 +23,6 @@ class CustomInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 311.w,
       height: 56.w,
       decoration: BoxDecoration(
         color: Colors.white,

@@ -9,13 +9,16 @@ class HotPotState {
   final RxBool isLoading = false.obs;
   
   // 添加错误信息
-  final RxString errorMessage = ''.obs;
+  // final RxString errorMessage = ''.obs;
 
   // 当前活跃标签页索引
   final RxInt activeTabIndex = 0.obs;
   
   // 筛选参数
   final RxString selectedRegion = "全部".obs;
+  final RxBool isSelectedRegion = false.obs;
+  final RxBool isSelectedNewsType = false.obs;
+  final RxBool isSelectedTimeRange = false.obs;
   final RxString selectedNewsType = "全部".obs;
   final RxString selectedTimeRange = "全部".obs;
   final RxBool showFilterOptions = false.obs;
@@ -26,7 +29,7 @@ class HotPotState {
   // 日期范围选择
   final Rx<DateTime> startDate = DateTime.now().obs;
   final Rx<DateTime> endDate = DateTime.now().obs;
-  final RxBool useCustomDateRange = false.obs;
+  final RxBool useCustomDateRange = false.obs; //使用自定义的时间范围
   
   // 区域选项 - 将从接口获取
   final RxList<Map<String, dynamic>> regionList = <Map<String, dynamic>>[].obs;
@@ -39,7 +42,8 @@ class HotPotState {
     "出口管制",
     "外资渗透",
     "专家人才",
-    "负面舆情"
+    "负面舆情",
+    "涉疆制裁",
   ];
   
   // 时间范围选项 - 根据接口文档固定值
@@ -63,6 +67,10 @@ class HotPotState {
   final RxInt pageSize = 10.obs; // 每页条数
   final RxBool hasMoreData = true.obs; // 是否还有更多数据
   final RxBool isLoadingMore = false.obs; // 是否正在加载更多
+  final RxBool isRefreshing = false.obs; // 是否正在下拉刷新
+
+  // 本地已读新闻ID集合 - 用于即时UI反馈，结合服务器数据
+  final RxSet<String> localReadNewsIds = <String>{}.obs;
 
   HotPotState() {
     ///Initialize variables
@@ -97,5 +105,32 @@ class HotPotState {
   void resetPagination() {
     currentPage.value = 1;
     hasMoreData.value = true;
+  }
+
+  // 标记新闻为已读（本地即时更新）
+  void markNewsAsRead(String newsId) {
+    localReadNewsIds.add(newsId);
+  }
+
+  // 检查新闻是否已读（结合服务器数据和本地状态）
+  bool isNewsRead(String newsId) {
+    // 首先查找新闻在列表中的服务器状态
+    final newsItem = newsList.firstWhereOrNull((item) => item.newsId == newsId);
+    if (newsItem != null) {
+      // 如果服务器标记为已读，或者本地标记为已读，都认为是已读
+      return newsItem.isRead || localReadNewsIds.contains(newsId);
+    }
+    // 如果新闻不在当前列表中，只检查本地状态
+    return localReadNewsIds.contains(newsId);
+  }
+
+  // 清理本地已读状态（当服务器数据更新时）
+  void syncServerReadStatus() {
+    // 移除已经被服务器标记为已读的本地状态
+    final serverReadIds = newsList
+        .where((item) => item.isRead)
+        .map((item) => item.newsId)
+        .toSet();
+    localReadNewsIds.removeWhere((id) => serverReadIds.contains(id));
   }
 }

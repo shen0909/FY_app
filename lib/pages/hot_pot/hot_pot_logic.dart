@@ -1,42 +1,83 @@
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:safe_app/https/api_service.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:safe_app/cache/business_cache_service.dart';
 import 'package:safe_app/models/newslist_data.dart';
+import 'package:safe_app/routers/routers.dart';
+import 'package:safe_app/utils/shared_prefer.dart';
+import 'package:safe_app/utils/toast_util.dart';
 
+import '../../https/api_service.dart';
 import 'hot_pot_state.dart';
 
 class HotPotLogic extends GetxController {
   final HotPotState state = HotPotState();
+  static const String _readNewsKey = 'local_read_news_ids';
+  
+  // 添加滚动控制器
+  late ScrollController scrollController;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     
+    // 初始化滚动控制器
+    scrollController = ScrollController();
+    _addScrollListener();
+    
     // 设置默认日期范围为最近30天
     final now = DateTime.now();
     state.endDate.value = now;
-    state.startDate.value = now.subtract(Duration(days: 30));
-    
-    // 获取地区列表
-    await getRegionList();
-    // 获取热点列表
+    state.startDate.value = now.subtract(const Duration(days: 30));
+    // 加载本地已读状态
+    await _loadLocalReadNewsIds();
     await getNewsList();
+    await getRegionList();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    // 获取传入的热点数据
-    if (Get.arguments != null) {
-      // 在实际应用中，这里会根据传入的ID或其他参数加载对应的热点数据
-      // 例如: loadHotNewsDetails(Get.arguments['id']);
-    }
+  // 添加滚动监听器
+  void _addScrollListener() {
+    scrollController.addListener(() {
+      // 当滚动到距离底部200像素时触发加载更多
+      if (scrollController.position.pixels >= 
+          scrollController.position.maxScrollExtent - 200) {
+        loadMore();
+      }
+    });
   }
 
   @override
   void onClose() {
+    scrollController.dispose();
     super.onClose();
+  }
+  
+  // 加载本地已读新闻ID
+  Future<void> _loadLocalReadNewsIds() async {
+    try {
+      final readNewsString = FYSharedPreferenceUtils.getString(_readNewsKey);
+      if (readNewsString.isNotEmpty) {
+        final List<dynamic> readNewsList = json.decode(readNewsString);
+        final Set<String> readNewsIds = readNewsList.map((id) => id.toString()).toSet();
+        state.localReadNewsIds.addAll(readNewsIds);
+        print('从本地存储加载已读新闻ID: ${readNewsIds.length}条');
+      }
+    } catch (e) {
+      print('加载已读新闻状态失败: $e');
+    }
+  }
+
+  // 保存本地已读新闻ID到本地存储
+  Future<void> _saveLocalReadNewsIds() async {
+    try {
+      final readNewsList = state.localReadNewsIds.toList();
+      await FYSharedPreferenceUtils.setString(_readNewsKey, json.encode(readNewsList));
+      print('保存本地已读新闻ID: ${readNewsList.length}条');
+    } catch (e) {
+      print('保存已读新闻状态失败: $e');
+    }
   }
   
   // 切换标签页
@@ -47,41 +88,25 @@ class HotPotLogic extends GetxController {
   // 下载相关文件
   void downloadFile() {
     // 实际应用中这里会实现文件下载功能
-    Get.snackbar(
-      '下载提示', 
-      '文件下载功能已触发',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('文件下载功能已触发', title: '下载提示');
   }
   
   // 复制内容
   void copyContent(String content) {
     Clipboard.setData(ClipboardData(text: content));
-    Get.snackbar(
-      '复制成功', 
-      '内容已复制到剪贴板',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('内容已复制到剪贴板', title: '复制成功');
   }
   
   // 分享内容
   void shareContent() {
     // 实际应用中这里会调用分享API
-    Get.snackbar(
-      '分享提示', 
-      '分享功能已触发',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('分享功能已触发', title: '分享提示');
   }
   
   // 添加到收藏
   void addToFavorites() {
     // 实际应用中这里会实现收藏功能
-    Get.snackbar(
-      '收藏提示', 
-      '已添加到收藏',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('已添加到收藏', title: '收藏提示');
   }
   
   // 显示筛选选项
@@ -111,11 +136,7 @@ class HotPotLogic extends GetxController {
   // 自定义时间范围
   void customTimeRange() {
     // 实际应用中这里会打开日期选择器
-    Get.snackbar(
-      '自定义时间', 
-      '打开自定义时间选择器',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    ToastUtil.showShort('打开自定义时间选择器', title: '自定义时间');
   }
   
   // 设置搜索关键词
@@ -178,14 +199,9 @@ class HotPotLogic extends GetxController {
     String? startDate = state.useCustomDateRange.value ? formatDate(state.startDate.value) : null;
     String? endDate = state.useCustomDateRange.value ? formatDate(state.endDate.value) : null;
     
-    // 打印日志，便于调试
-    print('应用筛选: 类型=${state.selectedNewsType.value}, 地区=${state.selectedRegion.value}, ' +
-          '时间=${dateFilter ?? "自定义"}, ' +
-          '开始日期=$startDate, 结束日期=$endDate, ' +
-          '搜索关键词=${state.searchKeyword.value}');
-    
-    // 重置分页状态
+    // 重置分页状态和清空数据
     state.resetPagination();
+    state.newsList.clear();
     
     // 根据筛选条件获取数据
     getNewsList(
@@ -193,7 +209,7 @@ class HotPotLogic extends GetxController {
       pageSize: state.pageSize.value,
       newsType: state.selectedNewsType.value,
       region: state.selectedRegion.value,
-      dateFilter: dateFilter!,
+      dateFilter: dateFilter ?? '全部',
       startDate: startDate,
       endDate: endDate,
       search: state.searchKeyword.value.isNotEmpty ? state.searchKeyword.value : null,
@@ -209,27 +225,29 @@ class HotPotLogic extends GetxController {
   void navigateToDetails(int index) {
     // 获取对应的新闻项
     NewsItem newsItem = state.newsList[index];
+    
+    // 立即标记为已读（本地状态，用于即时UI反馈）
+    state.markNewsAsRead(newsItem.newsId);
+    
+    // 保存到本地存储
+    _saveLocalReadNewsIds();
+    
+    print('标记新闻为已读并导航: ${newsItem.newsId} - ${newsItem.newsTitle}');
+    
     // 导航到详情页面并传递newsId
-    Get.toNamed('/hot_details', arguments: {
+    Get.toNamed(Routers.hotDetails, arguments: {
       'newsId': newsItem.newsId,
       'title': newsItem.newsTitle
     });
   }
 
-  // 获取地区列表
+  // 获取地区列表（带缓存）
   Future<void> getRegionList() async {
     try {
-      var result = await ApiService().getRegion();
-      
-      if (result != null && result['code'] == 10010 && result['data'] != null) {
-        // 将结果转换为地区列表
-        List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(result['data']);
-        
-        // 确保"全部"选项在列表的第一位
-        state.regionList.value = [{"id": "0", "region": "全部"}, ...regions];
+      final regions = await BusinessCacheService.instance.getRegionListWithCache();
+      if (regions != null && regions.isNotEmpty) {
+        state.regionList.value = regions;
       } else {
-        print('获取地区列表失败: ${result['message'] ?? '未知错误'}');
-        // 添加默认地区，以防API调用失败
         state.regionList.value = [{"id": "0", "region": "全部"}];
       }
     } catch (e) {
@@ -239,6 +257,7 @@ class HotPotLogic extends GetxController {
     }
   }
 
+  // 先从缓存中获取数据
   Future<void> getNewsList({
     int? currentPage,
     int? pageSize,
@@ -250,13 +269,10 @@ class HotPotLogic extends GetxController {
     String? search,
     bool isLoadMore = false,
   }) async {
-    // 如果是加载更多，设置isLoadingMore为true
-    // 否则设置isLoading为true
     if (isLoadMore) {
       state.isLoadingMore.value = true;
     } else {
       state.isLoading.value = true;
-      state.errorMessage.value = '';
     }
     
     try {
@@ -264,7 +280,7 @@ class HotPotLogic extends GetxController {
       int page = currentPage ?? state.currentPage.value;
       int size = pageSize ?? state.pageSize.value;
       
-      var result = await ApiService().getNewsList(
+      final items = await BusinessCacheService.instance.getHotPotListWithCache(
         currentPage: page,
         pageSize: size,
         newsType: newsType,
@@ -273,14 +289,10 @@ class HotPotLogic extends GetxController {
         startDate: startDate,
         endDate: endDate,
         search: search,
+        forceUpdate: false,
       );
-      
-      if (result != null && result['code'] == 10010 && result['data'] != null) {
-        // 将JSON数据转换为NewsItem列表
-        List<NewsItem> items = (result['data'] as List)
-            .map((item) => NewsItem.fromJson(item))
-            .toList();
-        
+
+      if (items != null) {
         // 如果是加载更多，则将新数据添加到已有数据后面
         // 否则替换原有数据
         if (isLoadMore) {
@@ -288,6 +300,9 @@ class HotPotLogic extends GetxController {
         } else {
           state.newsList.value = items;
         }
+        
+        // 同步服务器已读状态，清理重复的本地状态
+        state.syncServerReadStatus();
         
         // 更新页码
         state.currentPage.value = page;
@@ -298,31 +313,18 @@ class HotPotLogic extends GetxController {
         } else {
           state.hasMoreData.value = true;
         }
-      } else if (result != null && result['code'] == 10016) {
-        // 已经是最后一页
-        state.hasMoreData.value = false;
-        
-        if (!isLoadMore) {
-          state.newsList.value = [];
-        }
       } else {
-        state.errorMessage.value = result['message'] ?? '获取数据失败';
-        
+        // 网络失败或解析失败：保持当前数据不清空，给出友好提示
         if (isLoadMore) {
           // 加载更多失败，页码回退
           state.currentPage.value = page - 1;
-        } else {
-          state.newsList.value = [];
         }
       }
     } catch (e) {
-      state.errorMessage.value = e.toString();
-      
+      // 失败时保持已有数据，避免白屏
       if (isLoadMore) {
         // 加载更多失败，页码回退
         state.currentPage.value = (currentPage ?? state.currentPage.value) - 1;
-      } else {
-        state.newsList.value = [];
       }
     } finally {
       if (isLoadMore) {
@@ -332,11 +334,67 @@ class HotPotLogic extends GetxController {
       }
     }
   }
+
+  /// 下拉刷新：强制更新第一页数据并重置分页
+  Future<void> refreshNewsList() async {
+    // 防止重复刷新
+    if (state.isLoading.value || state.isRefreshing.value) return;
+    state.isRefreshing.value = true;
+    try {
+      if (kDebugMode) {
+        print('🔽 开始下拉刷新热点数据');
+      }
+      // 重置分页状态但不清空现有数据
+      state.resetPagination();
+      String? dateFilter = state.useCustomDateRange.value ? null : state.selectedTimeRange.value;
+      String? startDate = state.useCustomDateRange.value ? formatDate(state.startDate.value) : null;
+      String? endDate = state.useCustomDateRange.value ? formatDate(state.endDate.value) : null;
+
+      final items = await BusinessCacheService.instance.getHotPotListWithCache(
+        currentPage: 1,
+        pageSize: state.pageSize.value,
+        newsType: state.selectedNewsType.value,
+        region: state.selectedRegion.value,
+        dateFilter: dateFilter ?? '全部',
+        startDate: startDate,
+        endDate: endDate,
+        search: state.searchKeyword.value.isNotEmpty ? state.searchKeyword.value : null,
+        forceUpdate: true, // 强制刷新
+      );
+      
+      if (items != null) {
+        state.newsList.value = items;
+        
+        // 同步服务器已读状态
+        state.syncServerReadStatus();
+        
+        state.currentPage.value = 1;
+        state.hasMoreData.value = items.length >= state.pageSize.value;
+        if (kDebugMode) {
+          print('✅ 下拉刷新完成 - 获取到 ${items.length} 条数据');
+        }
+      } else {
+        // 刷新失败时保持现有数据，给出友好提示
+        ToastUtil.showShort('刷新失败，请检查网络后重试');
+        if (kDebugMode) {
+          print('❌ 下拉刷新失败 - 保持现有数据');
+        }
+      }
+    } catch (e) {
+      // 异常处理：保持现有数据，给出友好提示
+      ToastUtil.showShort('刷新失败，请稍后重试');
+      if (kDebugMode) {
+        print('❌ 下拉刷新异常: $e');
+      }
+    } finally {
+      state.isRefreshing.value = false;
+    }
+  }
   
   // 加载更多数据
   Future<void> loadMore() async {
     // 如果没有更多数据或正在加载，则不执行任何操作
-    if (!state.hasMoreData.value || state.isLoadingMore.value || state.isLoading.value) {
+    if (!state.hasMoreData.value || state.isLoadingMore.value || state.isLoading.value || state.isRefreshing.value) {
       return;
     }
     
@@ -351,7 +409,7 @@ class HotPotLogic extends GetxController {
       pageSize: state.pageSize.value,
       newsType: state.selectedNewsType.value,
       region: state.selectedRegion.value,
-      dateFilter: dateFilter!,
+      dateFilter: dateFilter ?? '全部', // 修复null异常风险
       startDate: startDate,
       endDate: endDate,
       search: state.searchKeyword.value.isNotEmpty ? state.searchKeyword.value : null,

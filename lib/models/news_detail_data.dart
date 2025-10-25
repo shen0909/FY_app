@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class NewsDetail {
   final String newsId;
   final String newsTitle;
@@ -38,63 +40,88 @@ class NewsDetail {
   });
 
   factory NewsDetail.fromJson(Map<String, dynamic> json) {
-    // 安全地处理effect字段，处理空字符串或其他非Map类型
     Effect effectObj;
-    if (json['effect'] is Map) {
-      effectObj = Effect.fromJson(json['effect']);
-    } else {
-      effectObj = Effect(
-        directEffect: [],
-        indirectEffect: [],
-        effectCompany: [],
-      );
-    }
+    Map<String, dynamic> effectMap = jsonDecode(json['effect']);
+    effectObj = Effect.fromJson(effectMap);
 
-    // 安全地处理relevant_news字段，处理空字符串或其他非List类型
     List<RelevantNews> relevantNewsList = [];
     if (json['relevant_news'] is List) {
       relevantNewsList = (json['relevant_news'] as List)
           .map((e) => RelevantNews.fromJson(e))
           .toList();
+    } else if (json['relevant_news'] is String && json['relevant_news'].isNotEmpty) {
+      try {
+        // 尝试解析JSON字符串
+        List<dynamic> relevantNewsData = jsonDecode(json['relevant_news']);
+        relevantNewsList = relevantNewsData
+            .map((e) => RelevantNews.fromJson(e))
+            .toList();
+      } catch (e) {
+        relevantNewsList = [];
+      }
     }
 
-    // 安全地处理future_progression字段，处理空字符串或其他非List类型
+    // 安全地处理future_progression字段
     List<FutureProgression> futureProgressionList = [];
     if (json['future_progression'] is List) {
       futureProgressionList = (json['future_progression'] as List)
           .map((e) => FutureProgression.fromJson(e))
           .toList();
+    } else if (json['future_progression'] is String && json['future_progression'].isNotEmpty) {
+      try {
+        // 尝试解析JSON字符串
+        List<dynamic> futureProgressionData = jsonDecode(json['future_progression']);
+        futureProgressionList = futureProgressionData
+            .map((e) => FutureProgression.fromJson(e))
+            .toList();
+      } catch (e) {
+        // 解析失败，使用空列表
+        futureProgressionList = [];
+      }
     }
 
-    // 安全地处理decision_suggestion字段，处理字符串情况
+    // 安全地处理decision_suggestion字段，新接口可能返回JSON字符串
     DecisionSuggestion decisionSuggestionObj;
     if (json['decision_suggestion'] is Map) {
       decisionSuggestionObj = DecisionSuggestion.fromJson(json['decision_suggestion']);
-    } else if (json['decision_suggestion'] is String) {
-      // 如果是字符串，把整个字符串作为整体策略
-      String suggestionText = json['decision_suggestion'] ?? '';
-      decisionSuggestionObj = DecisionSuggestion(
-        overallStrategy: suggestionText,
-        shortTermMeasures: '',
-        midTermMeasures: '',
-        longTermMeasures: '',
-      );
+    } else if (json['decision_suggestion'] is String && json['decision_suggestion'].isNotEmpty) {
+      try {
+        Map<String, dynamic> suggestionMap = jsonDecode(json['decision_suggestion']);
+        decisionSuggestionObj = DecisionSuggestion.fromJson(suggestionMap);
+      } catch (e) {
+        // 如果解析失败，把整个字符串作为整体策略
+        decisionSuggestionObj = DecisionSuggestion(
+          overallStrategy: json['decision_suggestion'],
+          shortTermMeasures: [],
+          midTermMeasures: [],
+          longTermMeasures: [],
+        );
+      }
     } else {
-      // 为null或其他类型时使用默认值
       decisionSuggestionObj = DecisionSuggestion(
         overallStrategy: '',
-        shortTermMeasures: '',
-        midTermMeasures: '',
-        longTermMeasures: '',
+        shortTermMeasures: [],
+        midTermMeasures: [],
+        longTermMeasures: [],
       );
     }
 
-    // 安全地处理risk_measure字段，处理空字符串或其他非List类型
     List<RiskMeasure> riskMeasureList = [];
     if (json['risk_measure'] is List) {
       riskMeasureList = (json['risk_measure'] as List)
           .map((e) => RiskMeasure.fromJson(e))
           .toList();
+    } else if (json['risk_measure'] is String && json['risk_measure'].isNotEmpty) {
+      try {
+        // 尝试解析JSON字符串
+        List<dynamic> riskMeasureData = jsonDecode(json['risk_measure']);
+        riskMeasureList = riskMeasureData
+            .map((e) => RiskMeasure.fromJson(e))
+            .toList();
+      } catch (e) {
+        // 解析失败，使用空列表
+        riskMeasureList = [];
+      }
     }
 
     return NewsDetail(
@@ -186,9 +213,9 @@ class FutureProgression {
 /// 决策建议
 class DecisionSuggestion {
   final String overallStrategy;
-  final String shortTermMeasures;
-  final String midTermMeasures;
-  final String longTermMeasures;
+  final List<String> shortTermMeasures; // 修改为 List<String>
+  final List<String> midTermMeasures;    // 修改为 List<String>
+  final List<String> longTermMeasures;   // 修改为 List<String>
 
   DecisionSuggestion({
     required this.overallStrategy,
@@ -198,11 +225,42 @@ class DecisionSuggestion {
   });
 
   factory DecisionSuggestion.fromJson(Map<String, dynamic> json) {
+    String overallStrategy = json['overall_strategy']?.toString() ?? '';
+    List<String> shortTermMeasures = [];
+    List<String> midTermMeasures = [];
+    List<String> longTermMeasures = [];
+
+    // 处理措施字段，使其能正确解析为 List<String>
+    if (json['short_term_measures'] is List) {
+      shortTermMeasures = (json['short_term_measures'] as List)
+          .map((e) => e.toString())
+          .toList();
+    } else if (json['short_term_measures'] is String && (json['short_term_measures'] as String).isNotEmpty) {
+      // 如果是字符串，尝试按换行符分割
+      shortTermMeasures = (json['short_term_measures'] as String).split('\n').where((s) => s.isNotEmpty).toList();
+    }
+
+    if (json['mid_term_measures'] is List) {
+      midTermMeasures = (json['mid_term_measures'] as List)
+          .map((e) => e.toString())
+          .toList();
+    } else if (json['mid_term_measures'] is String && (json['mid_term_measures'] as String).isNotEmpty) {
+      midTermMeasures = (json['mid_term_measures'] as String).split('\n').where((s) => s.isNotEmpty).toList();
+    }
+
+    if (json['long_term_measures'] is List) {
+      longTermMeasures = (json['long_term_measures'] as List)
+          .map((e) => e.toString())
+          .toList();
+    } else if (json['long_term_measures'] is String && (json['long_term_measures'] as String).isNotEmpty) {
+      longTermMeasures = (json['long_term_measures'] as String).split('\n').where((s) => s.isNotEmpty).toList();
+    }
+
     return DecisionSuggestion(
-      overallStrategy: json['overall_strategy']?.toString() ?? '',
-      shortTermMeasures: json['short_term_measures']?.toString() ?? '',
-      midTermMeasures: json['mid_term_measures']?.toString() ?? '',
-      longTermMeasures: json['long_term_measures']?.toString() ?? '',
+      overallStrategy: overallStrategy,
+      shortTermMeasures: shortTermMeasures,
+      midTermMeasures: midTermMeasures,
+      longTermMeasures: longTermMeasures,
     );
   }
 }

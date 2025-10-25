@@ -18,13 +18,17 @@ import 'package:safe_app/pages/setting/privacy_safe/privacy_safe_view.dart';
 import 'package:safe_app/pages/setting/pattern_setup/pattern_setup_view.dart';
 import 'package:safe_app/pages/pattern_lock/pattern_lock_view.dart';
 import 'package:safe_app/pages/setting/user_analysis/user_analysis_view.dart';
+import 'package:safe_app/pages/banner_content/banner_content_view.dart';
 import '../pages/login/lock_method_selection/lock_method_selection_view.dart';
 import '../pages/setting/permission_request/permission_request_view.dart';
 import '../pages/setting/role_manager/role_manager_view.dart';
+import '../pages/setting/update_page/update_page_view.dart';
+import '../pages/home/webview.dart';
 
 class Routers {
   static const String splash = '/splash';
   static const String login = '/login';
+  static const String update = '/update';
   static const String home = '/home';
   static const String risk = '/risk';
   static const String riskDetails = '/risk/details';
@@ -48,11 +52,14 @@ class Routers {
   static const String patternLock = '/pattern_lock';
   static const String lockMethodSelection = '/lock_method_selection';
   static const String fingerprintAuth = '/fingerprint_auth';
+  static const String webView = '/webview';
+  static const String bannerContent = '/banner_content';
 
   static final List<GetPage> pages = [
     // GetPage(name: splash, page: () => SplashPage()),
     GetPage(name: login, page: () => LoginPage()),
     GetPage(name: home, page: () => HomePage()),
+    GetPage(name: update, page: () => UpdatePagePage()),
     GetPage(name: risk, page: () => RiskPage()),
     GetPage(name: riskDetails, page: () => RiskDetailsPage()),
     GetPage(name: hotPot, page: () => HotPotPage()),
@@ -73,5 +80,7 @@ class Routers {
     GetPage(name: lockMethodSelection, page: () => LockMethodSelectionPage()),
     GetPage(name: fingerprintAuth, page: () => FingerprintAuthPage()),
     GetPage(name: userAnalysis, page: () => UserAnalysisPage()),
+    GetPage(name: webView, page: () => FYWebView()),
+    GetPage(name: bannerContent, page: () => BannerContentPage()),
   ];
 }

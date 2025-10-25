@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:safe_app/models/setting/permission_list.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 
 import 'permission_request_logic.dart';
@@ -12,23 +14,15 @@ class PermissionRequestPage extends StatelessWidget {
   PermissionRequestPage({Key? key}) : super(key: key);
 
   final PermissionRequestLogic logic = Get.put(PermissionRequestLogic());
-  final PermissionRequestState state = Get.find<PermissionRequestLogic>().state;
+  final PermissionRequestState state = Get
+      .find<PermissionRequestLogic>()
+      .state;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: FYAppBar(
-        title: '权限申请审核',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: FYColors.color_1A1A1A),
-            onPressed: () {
-              _showPermissionDetailDialog(context);
-            },
-          ),
-        ],
-      ),
+      appBar: const FYAppBar(title: '权限申请审核'),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +68,7 @@ class PermissionRequestPage extends StatelessWidget {
                                 border: InputBorder.none,
                                 isDense: true,
                                 contentPadding:
-                                    EdgeInsets.symmetric(vertical: 8.h),
+                                EdgeInsets.symmetric(vertical: 8.h),
                               ),
                             ),
                           ),
@@ -85,35 +79,22 @@ class PermissionRequestPage extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 16.w, top: 20.h, bottom: 10.h),
-              child: Text(
-                '权限申请列表',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
             Expanded(
-              child: GetBuilder<PermissionRequestLogic>(
-                builder: (logic) {
-                  final requests = logic.currentRequests;
-                  if (requests.isEmpty) {
-                    return Center(
-                      child: Text(
-                        '暂无数据',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_A6A6A6,
-                        ),
+              child: Obx(() {
+                final requests = logic.currentRequests;
+                if (requests.isEmpty) {
+                  return Center(
+                    child: Text(
+                      '暂无数据',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: FYColors.color_A6A6A6,
                       ),
-                    );
-                  }
-                  return _buildScrollableTable(requests);
-                },
-              ),
+                    ),
+                  );
+                }
+                return _buildScrollableTable(requests);
+              }),
             ),
           ],
         ),
@@ -122,194 +103,194 @@ class PermissionRequestPage extends StatelessWidget {
   }
 
   // 申请详情弹窗
-  void _showPermissionDetailDialog(BuildContext context) {
-    final approvedRequest = state.permissionRequests.firstWhere(
-      (request) => request.status == 0,
-      orElse: () => state.permissionRequests.first,
-    );
-    
+  void _showPermissionDetailDialog(BuildContext context,
+      PermissionListElement approvedRequest) {
     // 获取屏幕高度的80%
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     final dialogHeight = screenHeight * 0.8;
-    
-    Get.bottomSheet(
-      Container(
-        width: 375.w,
-        height: dialogHeight,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.r),
-            topRight: Radius.circular(16.r),
-          ),
-        ),
-        child: Column(
-          children: [
-            // 弹窗标题栏
-            Container(
-              height: 48.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  topRight: Radius.circular(16.r),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '申请详情',
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: FYColors.color_1A1A1A,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 24.w,
-                      height: 24.h,
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.close,
-                        size: 20.sp,
-                        color: FYColors.color_1A1A1A,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+
+    FYDialogUtils.showBottomSheet(
+        Container(
+          height: dialogHeight,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
             ),
-            // 用户信息
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              child: Row(
-                children: [
-                  // 用户头像
-                  Container(
-                    width: 48.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      size: 30.sp,
-                      color: Colors.blue,
+          ),
+          child: SafeArea(
+            bottom: true,
+            child: Column(
+              children: [
+                // 弹窗标题栏
+                Container(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.r),
+                      topRight: Radius.circular(16.r),
                     ),
                   ),
-                  SizedBox(width: 16.w),
-                  // 用户信息
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '刘晓龙',
+                        '申请详情',
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
                           color: FYColors.color_1A1A1A,
                         ),
                       ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        '用户名：ZQP001',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: FYColors.color_1A1A1A,
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          width: 24.w,
+                          height: 24.h,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.close,
+                            size: 20.sp,
+                            color: FYColors.color_1A1A1A,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  Spacer(),
-                  // 批准状态
-                  Container(
-                    padding:
+                ),
+                // 用户信息
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  child: Row(
+                    children: [
+                      // 用户头像
+                      Container(
+                        width: 48.w,
+                        height: 48.h,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset(FYImages.default_avatar, width: 48.w, height: 48.w, fit: BoxFit.cover),
+                      ),
+                      SizedBox(width: 16.w),
+                      // 用户信息
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            approvedRequest.applicant.username,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: FYColors.color_1A1A1A,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            '用户名：${approvedRequest.applicant.username}',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: FYColors.color_1A1A1A,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      // 批准状态
+                      Container(
+                        padding:
                         EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE7FEF8),
-                      borderRadius: BorderRadius.circular(12.5.r),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE7FEF8),
+                          borderRadius: BorderRadius.circular(12.5.r),
+                        ),
+                        child: Text(
+                          '${approvedRequest.status == 0
+                              ? '待审核'
+                              : approvedRequest.status == 1
+                              ? '已批准'
+                              : '拒绝'} ',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: const Color(0xFF07CC89),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 申请信息
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Column(
+                      children: [
+                        // 申请编号
+                        _buildInfoItem('申请编号', 'REO-2024-0301'),
+
+                        // 申请时间
+                        _buildInfoItem('申请时间', approvedRequest.createdAt),
+
+                        // 申请权限
+                        _buildInfoItem('申请权限', approvedRequest.type == 1
+                            ? '新增用户'
+                            : '删除用户'),
+
+                        // 批准时间
+                        _buildInfoItem(
+                            '批准时间', approvedRequest.processAt ?? ''),
+
+                        // 申请原因
+                        _buildReasonItem(
+                            '申请原因', approvedRequest.applicationReason ?? ''),
+
+                        // 批准备注
+                        // todo:批准备注取哪个字段
+                        _buildReasonItem(
+                            '批准备注', approvedRequest.processReason ?? ''),
+
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // 底部按钮
+                Container(
+                  height: 72.h,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3361FE),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      elevation: 0,
+                      minimumSize: Size(double.infinity, 48.h),
                     ),
                     child: Text(
-                      '已批准',
+                      '关闭',
                       style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF07CC89),
+                        fontSize: 16.sp,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            // 申请信息
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  children: [
-                    // 申请编号
-                    _buildInfoItem('申请编号', 'REO-2024-0301'),
-
-                    // 申请时间
-                    _buildInfoItem('申请时间', '2024-05-03 09:15'),
-
-                    // 申请权限
-                    _buildInfoItem('申请权限', approvedRequest.permissionType),
-
-                    // 批准时间
-                    _buildInfoItem('批准时间', approvedRequest.approveTime ?? ''),
-
-                    // 申请原因
-                    _buildReasonItem(
-                      '申请原因',
-                      '部门新增员工，需要创建新的普通用户账号用于系统访问和日常工作。',
-                    ),
-
-                    // 批准备注
-                    _buildReasonItem(
-                      '批准备注',
-                      '用户已完成相关培训，符合权限授予条件。已向用户发送权限使用指南。',
-                    ),
-
-                    SizedBox(height: 20.h),
-                  ],
                 ),
-              ),
+              ],
             ),
-
-            // 底部按钮
-            Container(
-              height: 72.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3361FE),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  elevation: 0,
-                  minimumSize: Size(double.infinity, 48.h),
-                ),
-                child: Text(
-                  '关闭',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true, // 允许弹窗内容滚动
+          ),
+        )
     );
   }
 
@@ -348,6 +329,7 @@ class PermissionRequestPage extends StatelessWidget {
   // 构建多行文本项
   Widget _buildReasonItem(String label, String content) {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 14.h),
       margin: EdgeInsets.only(bottom: 8.h),
       decoration: BoxDecoration(
@@ -359,8 +341,11 @@ class PermissionRequestPage extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.only(left: 16.w),
-            child: Text(
-              label,
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: label,
+                border: InputBorder.none
+              ),
               style: TextStyle(
                 fontSize: 14.sp,
                 color: const Color(0xFF666666),
@@ -385,10 +370,7 @@ class PermissionRequestPage extends StatelessWidget {
   }
 
   // 可滚动表格
-  Widget _buildScrollableTable(List<PermissionRequest> requests) {
-    // 使用两个同步滚动控制器，确保左右两侧列表同步滚动
-    final ScrollController verticalController = ScrollController();
-
+  Widget _buildScrollableTable(List<PermissionListElement> requests) {
     return Row(
       children: [
         // 固定的第一列（账户ID）
@@ -414,7 +396,7 @@ class PermissionRequestPage extends StatelessWidget {
               // 数据行
               Expanded(
                 child: ListView.builder(
-                  controller: verticalController, // 使用同一个滚动控制器
+                  controller: state.verticalControllerLeft, // 使用同一个滚动控制器
                   itemCount: requests.length,
                   itemBuilder: (context, index) {
                     final item = requests[index];
@@ -425,7 +407,7 @@ class PermissionRequestPage extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.only(left: 8.w),
                       child: Text(
-                        item.userId,
+                        item.uuid,
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_1A1A1A,
@@ -463,24 +445,31 @@ class PermissionRequestPage extends StatelessWidget {
                   // 数据行
                   Expanded(
                     child: ListView.builder(
-                      controller: verticalController, // 使用同一个滚动控制器，保持左右同步
+                      controller: state.verticalControllerRight, // 使用同一个滚动控制器，保持左右同步
                       itemCount: requests.length,
                       itemBuilder: (context, index) {
                         final item = requests[index];
                         final isEven = index % 2 == 0;
-                        return Container(
-                          height: 44.h,
-                          color:
-                              isEven ? Colors.white : const Color(0xFFF9F9F9),
-                          child: Row(
-                            children: [
-                              _buildDataCell(item.permissionType, width: 120.w),
-                              _buildDataCell(item.applyTime, width: 120.w),
-                              _buildActionOrTimeCell(item, width: 140.w),
-                              _buildDataCell(item.remark ?? '',
-                                  width: 140.w,
-                                  color: _getRemarkColor(item.status)),
-                            ],
+                        return GestureDetector(
+                          onTap: () {
+                            _showPermissionDetailDialog(context, item);
+                          },
+                          child: Container(
+                            height: 44.h,
+                            color: isEven ? Colors.white : const Color(
+                                0xFFF9F9F9),
+                            child: Row(
+                              children: [
+                                _buildDataCell(item.type == 1
+                                    ? '新增用户'
+                                    : '删除用户', width: 120.w),
+                                _buildDataCell(item.createdAt, width: 120.w),
+                                _buildActionOrTimeCell(item, width: 140.w),
+                                _buildDataCell(item.applicationReason ?? '',
+                                    width: 140.w,
+                                    color: _getRemarkColor(item.status)),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -531,23 +520,23 @@ class PermissionRequestPage extends StatelessWidget {
   }
 
   // 操作按钮或时间单元格（右侧滚动部分使用）
-  Widget _buildActionOrTimeCell(PermissionRequest item,
+  Widget _buildActionOrTimeCell(PermissionListElement item,
       {required double width}) {
     return Container(
       width: width,
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       alignment: Alignment.centerLeft,
-      child: item.status == 1
+      child: item.status == 0
           ? _buildActionButtons(item)
           : Text(
-              item.approveTime ?? '',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: FYColors.color_1A1A1A,
-                overflow: TextOverflow.ellipsis,
-              ),
-              maxLines: 1,
-            ),
+        item.processAt ?? '',
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: FYColors.color_1A1A1A,
+          overflow: TextOverflow.ellipsis,
+        ),
+        maxLines: 1,
+      ),
     );
   }
 
@@ -566,7 +555,7 @@ class PermissionRequestPage extends StatelessWidget {
   }
 
   // 操作按钮（批准/驳回）
-  Widget _buildActionButtons(PermissionRequest item) {
+  Widget _buildActionButtons(PermissionListElement item) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -626,28 +615,27 @@ class PermissionRequestPage extends StatelessWidget {
   // 标签栏
   Widget _buildTabBar() {
     return Container(
-      // height: 56.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      child: GetBuilder<PermissionRequestLogic>(builder: (logic) {
+      child: Obx(() {
         return Row(
           children: [
             _buildTabItem(
-                title: '已批准申请',
+                title: '待审核',
                 count: logic.getTabCount(0),
                 index: 0,
-                bgColor: const Color(0xFFE7FEF8),
-                countColor: const Color(0xFF07CC89),
-                isSelected: state.selectedTabIndex == 0,
-                iconPath: FYImages.check_gree),
-            SizedBox(width: 12.w),
-            _buildTabItem(
-                title: '待审核',
-                count: logic.getTabCount(1),
-                index: 1,
                 bgColor: const Color(0xFFF9F9F9),
                 countColor: Colors.black,
                 isSelected: state.selectedTabIndex == 1,
                 iconPath: FYImages.uncheck),
+            SizedBox(width: 12.w),
+            _buildTabItem(
+                title: '已批准申请',
+                count: logic.getTabCount(1),
+                index: 1,
+                bgColor: const Color(0xFFE7FEF8),
+                countColor: const Color(0xFF07CC89),
+                isSelected: state.selectedTabIndex == 0,
+                iconPath: FYImages.check_gree),
             SizedBox(width: 12.w),
             _buildTabItem(
                 title: '已驳回',

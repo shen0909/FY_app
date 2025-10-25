@@ -1,98 +1,78 @@
 import 'package:get/get.dart';
+import '../../../models/login_log_list.dart';
 
 class UserLoginDataState {
-  // 登录日志列表
-  final RxList<Map<String, dynamic>> loginLogs = <Map<String, dynamic>>[].obs;
+  // 登录日志列表 - 使用真实的数据模型
+  final RxList<ListElement> loginLogs = <ListElement>[].obs;
+  
+  // 分页状态
+  final RxInt currentPage = 1.obs;
+  final RxInt pageSize = 10.obs;
+  final RxInt totalCount = 0.obs;
+  final RxBool hasMore = true.obs;
+  
+  // 加载状态
+  final RxBool isLoading = false.obs;
+  final RxBool isRefreshing = false.obs;
+  final RxBool isLoadingMore = false.obs;
 
   UserLoginDataState() {
-    ///初始化数据
-    _initDemoData();
+    // 不再初始化演示数据，等待从接口获取真实数据
   }
 
-  // 初始化演示数据
-  void _initDemoData() {
-    // 今天的数据
-    loginLogs.addAll([
-      {
-        'date': '今天',
-        'time': '09:35',
-        'status': '登录成功',
-        'isSuccess': true,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1'
-      },
-      {
-        'date': '今天',
-        'time': '09:35',
-        'status': '登录成功',
-        'isSuccess': true,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1'
-      }
-    ]);
+  /// 重置到第一页
+  void resetPagination() {
+    currentPage.value = 1;
+    hasMore.value = true;
+    loginLogs.clear();
+  }
 
-    // 昨天的数据
-    loginLogs.addAll([
-      {
-        'date': '昨天',
-        'time': '09:35',
-        'status': '登录成功',
-        'isSuccess': true,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1'
-      },
-      {
-        'date': '昨天',
-        'time': '09:35',
-        'status': '登录失败',
-        'isSuccess': false,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1',
-        'reason': '密码错误'
-      }
-    ]);
+  /// 添加登录日志数据
+  void addLoginLogs(List<ListElement> newLogs, int totalCount) {
+    this.totalCount.value = totalCount;
+    loginLogs.addAll(newLogs);
+    
+    // 检查是否还有更多数据
+    hasMore.value = loginLogs.length < totalCount;
+  }
 
-    // 05月05日
-    loginLogs.addAll([
-      {
-        'date': '05月05日',
-        'time': '09:35',
-        'status': '登录成功',
-        'isSuccess': true,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1'
-      }
-    ]);
+  /// 刷新登录日志数据（替换现有数据）
+  void refreshLoginLogs(List<ListElement> newLogs, int totalCount) {
+    this.totalCount.value = totalCount;
+    loginLogs.assignAll(newLogs);
+    
+    // 检查是否还有更多数据
+    hasMore.value = loginLogs.length < totalCount;
+  }
 
-    // 05月04日
-    loginLogs.addAll([
-      {
-        'date': '05月04日',
-        'time': '09:35',
-        'status': '登录成功',
-        'isSuccess': true,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1'
-      }
-    ]);
+  /// 格式化时间显示
+  String formatDate(String dateTimeString) {
+    try {
+      DateTime dateTime = DateTime.parse(dateTimeString);
+      DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
+      DateTime yesterday = today.subtract(const Duration(days: 1));
+      DateTime logDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
 
-    // 05月03日
-    loginLogs.addAll([
-      {
-        'date': '05月03日',
-        'time': '09:35',
-        'status': '登录成功',
-        'isSuccess': true,
-        'device': 'iPhone 13 Pro',
-        'location': '广东省深圳市',
-        'ip': '192.168.1.1'
+      if (logDate == today) {
+        return '今天';
+      } else if (logDate == yesterday) {
+        return '昨天';
+      } else {
+        return '${dateTime.month.toString().padLeft(2, '0')}月${dateTime.day.toString().padLeft(2, '0')}日';
       }
-    ]);
+    } catch (e) {
+      return dateTimeString;
+    }
+  }
+
+  /// 格式化时间为HH:mm
+  String formatTime(String dateTimeString) {
+    try {
+      DateTime dateTime = DateTime.parse(dateTimeString);
+      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return dateTimeString;
+    }
   }
 }

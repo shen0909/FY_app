@@ -70,7 +70,9 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               )),
-          SizedBox(height: 40.w),
+          SizedBox(height: 16.w),
+          _buildRememberPasswordOption(),
+          SizedBox(height: 24.w),
           _buildLoginButton(),
         ],
       ),
@@ -78,121 +80,199 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget _buildPatternLoginForm() {
-    return Expanded(
-      child: Column(
-        children: [
-          SizedBox(height: 13.h),
-          // 用户头像
-          ClipOval(
-            child: Image.asset(
-              FYImages.user_avatar,
-              width: 88.w,
-              height: 88.h,
-              fit: BoxFit.cover,
-            ),
+    return Column(
+      children: [
+        SizedBox(height: 13.h),
+        // 用户头像
+        ClipOval(
+          child: Image.asset(
+            FYImages.user_avatar,
+            width: 88.w,
+            height: 88.h,
+            fit: BoxFit.cover,
           ),
-          SizedBox(height: 42.h),
-          // 用户信息和问候语
-          Obx(() {
-            String displayName =
-            state.userName.value.isNotEmpty ? state.userName.value : '用户';
-            String greeting = state.greetingMessage.value.isNotEmpty
-                ? state.greetingMessage.value
-                : '你好';
-            return Text(
-              '$displayName,$greeting',
-              style: TextStyle(
-                fontSize: 24.sp,
-                color: FYColors.color_1A1A1A,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'AlibabaPuHuiTi',
+        ),
+        SizedBox(height: 42.h),
+        // 用户信息和问候语
+        Obx(() {
+          String displayName = state.userName.value.isNotEmpty ? state.userName.value : '用户';
+          String greeting = state.greetingMessage.value.isNotEmpty
+              ? state.greetingMessage.value
+              : '你好';
+          return Text(
+            '$displayName,$greeting',
+            style: TextStyle(
+              fontSize: 24.sp,
+              color: FYColors.color_1A1A1A,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'AlibabaPuHuiTi',
+            ),
+          );
+        }),
+        SizedBox(height: 32.h),
+        // 错误信息显示 - 固定高度的容器
+        Container(
+          height: 20.h,
+          alignment: Alignment.center,
+          child: Obx(() =>
+          state.errorMessage.isNotEmpty
+              ? Text(
+            state.errorMessage.value,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_FF3B30,
+            ),
+            textAlign: TextAlign.center,
+          )
+              : Container()),
+        ),
+        // 图案锁控件
+        Obx(() {
+          // 使用一个状态标志来确保只在布局准备好后渲染PatternLockWidget
+          if (!state.isPatternReady.value) {
+            // 如果图案锁未准备好，先显示一个占位符容器
+            Future.delayed(Duration.zero, () {
+              // 延迟标记为就绪，让页面先完成布局
+              state.isPatternReady.value = true;
+            });
+            return Container(
+              width: 300.w,
+              height: 300.w,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                shape: BoxShape.circle,
               ),
             );
-          }),
-          SizedBox(height: 32.h),
-          // 错误信息显示 - 固定高度的容器
-          Container(
-            height: 20.h,
-            alignment: Alignment.center,
-            child: Obx(() =>
-            state.errorMessage.isNotEmpty
-                ? Text(
-              state.errorMessage.value,
+          }
+
+          // 如果正在进行划线登录验证，显示loading状态
+          if (state.isPatternAuthenticating.value) {
+            return Container(
+              width: 300.w,
+              height: 300.w,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 40.w,
+                    height: 40.w,
+                    child: CircularProgressIndicator(
+                      color: FYColors.color_3361FE,
+                      strokeWidth: 3.w,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    '正在验证...',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: FYColors.color_1A1A1A,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // 布局准备好后，显示图案锁
+          return PatternLockWidget(
+            size: 300.w,
+            dotSize: 59.w,
+            lineWidth: 4.w,
+            selectedColor: FYColors.color_1A1A1A,
+            notSelectedColor: FYColors.color_D8D8D8,
+            errorColor: FYColors.color_FF3B30,
+            isError: state.isError.value,
+            onCompleted: (pattern) {
+              logic.handlePatternLogin(pattern);
+            },
+            showInput: false,
+          );
+        }),
+        // 锁定信息显示
+        Obx(() =>
+            Visibility(
+              visible: state.isLocked.value,
+              child: Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                child: Text(
+                  '尝试次数过多，请${state.lockTimeMinutes.value}分钟后再试',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: FYColors.color_FF3B30,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )),
+        // 使用密码登录选项
+        Padding(
+          padding: EdgeInsets.only(top: 24.h),
+          child: Obx(() => GestureDetector(
+            onTap: state.isPatternAuthenticating.value ? null : () => logic.switchToPasswordLogin(),
+            child: Text(
+              '使用密码登录',
               style: TextStyle(
                 fontSize: 14.sp,
-                color: FYColors.color_FF3B30,
-              ),
-              textAlign: TextAlign.center,
-            )
-                : Container()),
-          ),
-          // 图案锁控件
-          Obx(() {
-            // 使用一个状态标志来确保只在布局准备好后渲染PatternLockWidget
-            if (!state.isPatternReady.value) {
-              // 如果图案锁未准备好，先显示一个占位符容器
-              Future.delayed(Duration.zero, () {
-                // 延迟标记为就绪，让页面先完成布局
-                state.isPatternReady.value = true;
-              });
-              return Container(
-                width: 300.w,
-                height: 300.w,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                ),
-              );
-            }
-            // 布局准备好后，显示图案锁
-            return PatternLockWidget(
-              size: 300.w,
-              dotSize: 59.w,
-              lineWidth: 4.w,
-              selectedColor: FYColors.color_1A1A1A,
-              notSelectedColor: FYColors.color_D8D8D8,
-              errorColor: FYColors.color_FF3B30,
-              isError: state.isError.value,
-              onCompleted: (pattern) {
-                logic.handlePatternLogin(pattern);
-              },
-              showInput: false,
-            );
-          }),
-          // 锁定信息显示
-          Obx(() =>
-              Visibility(
-                visible: state.isLocked.value,
-                child: Padding(
-                  padding:
-                  EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                  child: Text(
-                    '尝试次数过多，请${state.lockTimeMinutes.value}分钟后再试',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: FYColors.color_FF3B30,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )),
-          // 使用密码登录选项
-          Padding(
-            padding: EdgeInsets.only(top: 24.h),
-            child: GestureDetector(
-              onTap: () => logic.switchToPasswordLogin(),
-              child: Text(
-                '使用密码登录',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: FYColors.text1Color,
-                ),
+                color: state.isPatternAuthenticating.value
+                    ? FYColors.color_A6A6A6
+                    : FYColors.text1Color,
               ),
             ),
-          ),
-        ],
-      ),
+          )),
+        ),
+      ],
     );
+  }
+
+  // 🔑 新增：记住密码选项
+  Widget _buildRememberPasswordOption() {
+    return Obx(() => Row(
+      children: [
+        GestureDetector(
+          onTap: () => logic.toggleRememberPassword(),
+          child: Container(
+            width: 20.w,
+            height: 20.w,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: state.rememberPassword.value 
+                    ? FYColors.color_3361FE 
+                    : FYColors.color_A6A6A6,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(4.w),
+              color: state.rememberPassword.value 
+                  ? FYColors.color_3361FE 
+                  : Colors.transparent,
+            ),
+            child: state.rememberPassword.value
+                ? Icon(
+                    Icons.check,
+                    size: 14.w,
+                    color: Colors.white,
+                  )
+                : null,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        GestureDetector(
+          onTap: () => logic.toggleRememberPassword(),
+          child: Text(
+            '记住账号密码',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.text1Color,
+            ),
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _buildLoginButton() {
@@ -260,21 +340,23 @@ class LoginPage extends StatelessWidget {
                           fit: BoxFit.fill)
                       : null),
               padding: EdgeInsets.only(top: 58.w),
-              child: Column(
-                children: [
-                  // 根据登录方式显示对应的表单
-                  Obx(() {
-                    switch (state.loginMethod.value) {
-                      case 1: // 划线登录
-                        return _buildPatternLoginForm();
-                      case 2: // 指纹登录
-                        return _buildPasswordLoginForm();
-                      case 0: // 密码登录
-                      default:
-                        return _buildPasswordLoginForm();
-                    }
-                  })
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // 根据登录方式显示对应的表单
+                    Obx(() {
+                      switch (state.loginMethod.value) {
+                        case 1: // 划线登录
+                          return _buildPatternLoginForm();
+                        case 2: // 指纹登录
+                          return _buildPasswordLoginForm();
+                        case 0: // 密码登录
+                        default:
+                          return _buildPasswordLoginForm();
+                      }
+                    })
+                  ],
+                ),
               ),
             ),
           );

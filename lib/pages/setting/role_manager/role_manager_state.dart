@@ -1,33 +1,15 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+
+import '../../../models/setting/user_list.dart';
+
 class RoleManagerState {
   List<UserRole> userList = [];
-  String? selectedRole;
-
-  RoleManagerState() {
-    ///初始化数据
-    userList = [
-      UserRole(
-        id: 'ZQP001',
-        name: '张三',
-        role: '管理员',
-        status: '在线',
-        lastLoginTime: '2024-05-11 09:45',
-      ),
-      UserRole(
-        id: 'ZQP002',
-        name: '李四',
-        role: '审核员',
-        status: '离线',
-        lastLoginTime: '2024-05-11 09:45',
-      ),
-      UserRole(
-        id: 'ZQP003',
-        name: '王五',
-        role: '普通用户',
-        status: '申请中',
-        lastLoginTime: '2024-05-11 09:45',
-      ),
-    ];
-  }
+  RxList<UserListElement> filteredUserList = <UserListElement>[].obs;
+  RxInt currentPage = 1.obs;
+  RxString searchUserName = ''.obs;
+  final RxBool hasMoreData = true.obs; // 是否还有更多数据
+  final RxBool isLoadingMore = false.obs; // 是否正在加载更多（用于显示底部加载指示器）
+  RoleManagerState() {}
 }
 
 class UserRole {

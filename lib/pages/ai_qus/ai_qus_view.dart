@@ -3,12 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
-import 'package:safe_app/styles/text_styles.dart';
-import 'package:safe_app/widgets/widgets.dart';
-
 import '../../widgets/custom_app_bar.dart';
+import '../../widgets/markdown_message_widget.dart';
 import 'ai_qus_logic.dart';
 import 'ai_qus_state.dart';
+import 'dart:async';
 
 class AiQusPage extends StatelessWidget {
   AiQusPage({Key? key}) : super(key: key);
@@ -18,85 +17,135 @@ class AiQusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: FYColors.whiteColor,
-        appBar: FYAppBar(
-          title: 'AI智能问答',
-          actions: [
-            GestureDetector(
-              onTap: () => logic.createNewConversation(),
-              child: Container(
-                margin: EdgeInsets.only(right: 8.w),
-                child: Image.asset(FYImages.addAI,
-                    width: 24.w, height: 24.w, fit: BoxFit.contain),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => logic.showChatHistory(),
-              child: Container(
-                margin: EdgeInsets.only(right: 16.w),
-                child: Image.asset(FYImages.history_icon,
-                    width: 24.w, height: 24.w, fit: BoxFit.contain),
-              ),
-            ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                // 新增的顶部操作区域
-                _buildTopActionBar(context),
-                // 提示信息区域
-                _buildNotificationBar(),
-                SizedBox(height: 10.w),
-                // 聊天内容区域
-                Expanded(
-                  child: Obx(() => ListView.builder(
-                        padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 0),
-                        itemCount: state.messages.length,
-                        itemBuilder: (context, index) {
-                          final message = state.messages[index];
-                          return _buildMessageItem(message, index);
-                        },
-                      )),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => logic.canPopFunction(didPop),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: FYColors.whiteColor,
+          appBar: FYAppBar(
+            title: 'AI智能问答',
+            actions: [
+              GestureDetector(
+                onTap: () => logic.createNewConversation(),
+                child: Container(
+                  margin: EdgeInsets.only(right: 8.w),
+                  child: Image.asset(FYImages.addAI,
+                      width: 24.w, height: 24.w, fit: BoxFit.contain),
                 ),
-                Obx(() => state.isBatchCheck.value ? SizedBox() : _buildInputArea()),
-              ],
-            ),
-            // 底部操作栏 - 批量选择模式
-            Obx(() => state.isBatchCheck.value 
-                ? Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: _buildBatchSelectionBar(),
-                  )
-                : const SizedBox()),
-            // 导出弹窗
-            _buildExportDialog(),
-          ],
-        ),
-        floatingActionButton: Obx(() => !state.isBatchCheck.value ? Container(
-          margin: EdgeInsets.only(bottom: 80.w),
-          child: GestureDetector(
-            onTap: () => logic.showTipTemplateDialog(context),
-            child: Image.asset(
-              FYImages.addTip,
-              width: 57.w,
-              height: 57.w,
-              fit: BoxFit.contain,
+              ),
+              GestureDetector(
+                onTap: () => logic.showChatHistory(),
+                child: Container(
+                  margin: EdgeInsets.only(right: 16.w),
+                  child: Image.asset(FYImages.history_icon,
+                      width: 24.w, height: 24.w, fit: BoxFit.contain),
+                ),
+              ),
+            ],
+          ),
+          body: NotificationListener<SizeChangedLayoutNotification>(
+            onNotification: (notification) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                logic.updateInputBoxHeightOptimized();
+              });
+              return false;
+            },
+            child: SafeArea(
+              bottom: true,
+              child: SizeChangedLayoutNotifier(
+                child: Obx(() {
+                  // 显示初始化加载状态
+                  if (state.isInitializing.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return Stack(
+                  children: [
+                    Column(
+                      children: [
+                        // 新增的顶部操作区域
+                        _buildTopActionBar(context),
+                        // 提示信息区域
+                        _buildNotificationBar(),
+                        SizedBox(height: 10.w),
+                        // 聊天内容区域
+                        Expanded(
+                            child: Stack(
+                              children: [
+                                Obx(() => ListView.builder(
+                                controller: state.scrollController,
+                                padding: EdgeInsets.only(bottom: state.isBatchCheck.value ? 105.w : 16.w),
+                                itemCount: state.messages.length,
+                                itemBuilder: (context, index) {
+                                  final message = state.messages[index];
+                                  return _buildMessageItem(message, index);
+                                },
+                              )),
+                                // 显示历史消息加载状态
+                                if (state.isLoadingHistory.value)
+                                  Container(
+                                    color: Colors.white.withOpacity(0.7),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                        ),
+                        Obx(() => state.isBatchCheck.value
+                            ? const SizedBox()
+                            : _buildInputArea()),
+                      ],
+                    ),
+                    // 提示词按钮 - 浮动在聊天内容上方
+                    Obx(() => state.isBatchCheck.value
+                        ? const SizedBox()
+                        : Positioned(
+                            bottom: state.inputBoxHeight.value + 20.w,
+                            right: 16.w,
+                            child: GestureDetector(
+                              onTap: () => logic.showTipTemplateDialog(context),
+                              child: Image.asset(
+                                FYImages.addTip,
+                                width: 57.w,
+                                height: 57.w,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          )),
+                    // 底部操作栏 - 批量选择模式
+                    Obx(() => state.isBatchCheck.value
+                        ? Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: _buildBatchSelectionBar(),
+                          )
+                        : const SizedBox()),
+                    // 导出弹窗
+                    _buildExportDialog(),
+                  ],
+                  );
+                }),
+              ),
             ),
           ),
-        ) : const SizedBox()),
+        ),
       ),
     );
   }
 
   Widget _buildMessageItem(Map<String, dynamic> message, int index) {
     final bool isUser = message['isUser'] ?? false;
+    final bool isLoading = message['isLoading'] ?? false;
+    final bool isStreaming = message['isStreaming'] ?? false;
+    final bool isError = message['isError'] ?? false;
+    final String content = message['content']?.toString() ?? '';
+    final bool isMarkdown = message['isMarkdown'] ?? !isUser; // AI消息默认使用Markdown
 
     return Obx(() => Container(
       margin: EdgeInsets.only(bottom: 16.w),
@@ -108,11 +157,11 @@ class AiQusPage extends StatelessWidget {
           // 批量选择模式下显示选择框
           if (state.isBatchCheck.value && !isUser) // 只为AI消息添加选择框
             GestureDetector(
-              onTap: () => logic.toggleMessageSelection(index),
+              onTap: () => logic.toggleMessageSelection(index,message['history_uuid']),
               child: Container(
                 margin: EdgeInsets.only(left: 16.w, top: 8.w),
                 child: Image.asset(
-                  state.selectedMessageIndexes.contains(index)
+                  state.selectedMessageUUid.contains(message['history_uuid'])
                     ? FYImages.check_icon
                     : FYImages.uncheck_icon,
                   width: 24.w,
@@ -122,27 +171,82 @@ class AiQusPage extends StatelessWidget {
               ),
             ),
           Flexible(
-            child: Container(
-              padding: EdgeInsets.all(12.w),
-              margin: EdgeInsets.only(
-                  right: isUser ? 17.w : 57.w, 
-                  left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
-              decoration: BoxDecoration(
-                gradient: !isUser
-                    ? null
-                    : const LinearGradient(colors: FYColors.loginBtn),
-                color: isUser ? null : FYColors.color_F9F9F9,
-                borderRadius: BorderRadius.circular(8.w),
-              ),
-              child: Text(
-                message['content'],
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isUser ? FYColors.whiteColor : FYColors.color_1A1A1A,
-                    fontWeight: FontWeight.w400),
+            child: GestureDetector(
+              onTap: () => logic.copyContent(content),
+              child: Container(
+                margin: EdgeInsets.only(
+                    right: isUser ? 8.w : 57.w,
+                    left: !isUser ? (state.isBatchCheck.value ? 8.w : 17.w) : 57.w),
+                child: isMarkdown && !isUser
+                    ? MarkdownMessageWidget(
+                        content: message['content']?.toString() ?? '',
+                        isUser: isUser,
+                        isStreaming: isStreaming,
+                        // 仅非系统AI消息展示名称
+                        isShowName: !isUser && message['isSystem'] != true,
+                        // 优先使用消息自带来源字段，其次回退当前选择
+                        title: '智能体FY+AI(' + ((message['aiSource']?.toString().isNotEmpty == true ? (message['aiSource'] as String) : state.selectedModel.value).substring(0, 1)) + ')',
+                        // 传递参考来源和知识库数据
+                        searchResults: message['search_results'] != null
+                            ? List<Map<String, dynamic>>.from(message['search_results'])
+                            : null,
+                        knowledgeBase: message['knowledge_base'] != null
+                            ? List<Map<String, dynamic>>.from(message['knowledge_base'])
+                            : null,
+                      )
+                    : Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          gradient: !isUser
+                              ? null
+                              : const LinearGradient(colors: FYColors.loginBtn),
+                          color: isUser ? null : (isError ? const Color(0xFFFFECE9) : FYColors.color_F9F9F9),
+                          borderRadius: BorderRadius.circular(8.w),
+                          border: isError ? Border.all(color: const Color(0xFFFF6850), width: 1) : null,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 消息内容
+                            if (message['content'].toString().isNotEmpty)
+                              Text(
+                                message['content'],
+                                style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: isUser ? FYColors.whiteColor : (isError ? const Color(0xFFFF3B30) : FYColors.color_1A1A1A),
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            // Loading状态指示器
+                            if (isLoading && !isUser)
+                              SizedBox(
+                                width: 16.w,
+                                height: 16.w,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
               ),
             ),
-          )
+          ),
+          if (state.isBatchCheck.value && isUser) // 只为AI消息添加选择框
+            GestureDetector(
+              onTap: () => logic.toggleMessageSelection(index,message['history_uuid']),
+              child: Container(
+                margin: EdgeInsets.only(right: 16.w, top: 8.w),
+                child: Image.asset(
+                  state.selectedMessageUUid.contains(message['history_uuid'])
+                      ? FYImages.check_icon
+                      : FYImages.uncheck_icon,
+                  width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
         ],
       ),
     ));
@@ -168,7 +272,7 @@ class AiQusPage extends StatelessWidget {
           // 选择信息
           Row(
             children: [
-              Obx(() => state.selectedMessageIndexes.isNotEmpty
+              Obx(() => state.selectedMessageUUid.isNotEmpty
                   ? Image.asset(
                       FYImages.check_icon,
                       width: 24.w,
@@ -189,7 +293,7 @@ class AiQusPage extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: state.selectedMessageIndexes.length.toString(),
+                          text: state.selectedMessageUUid.length.toString(),
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -221,7 +325,7 @@ class AiQusPage extends StatelessWidget {
                 children: [
                   // 导出按钮
                   Obx(() => GestureDetector(
-                    onTap: state.selectedMessageIndexes.isNotEmpty
+                    onTap: state.selectedMessageUUid.isNotEmpty
                         ? () => logic.exportSelectedMessages()
                         : null,
                     child: Container(
@@ -229,23 +333,23 @@ class AiQusPage extends StatelessWidget {
                       height: 40.w,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        gradient: state.selectedMessageIndexes.isNotEmpty
+                        gradient: state.selectedMessageUUid.isNotEmpty
                             ? const LinearGradient(
                           colors: [Color(0xFF345DFF), Color(0xFF2F89F8)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         )
                             : null,
-                        color: state.selectedMessageIndexes.isEmpty
+                        color: state.selectedMessageUUid.isEmpty
                             ? FYColors.color_EFEFEF
                             : null,
                         borderRadius: BorderRadius.circular(8.w),
                       ),
                       child: Text(
-                        "导出为文本",
+                        "导出文本",
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: state.selectedMessageIndexes.isNotEmpty
+                          color: state.selectedMessageUUid.isNotEmpty
                               ? FYColors.whiteColor
                               : FYColors.color_A6A6A6,
                         ),
@@ -284,6 +388,7 @@ class AiQusPage extends StatelessWidget {
 
   Widget _buildInputArea() {
     return Container(
+      key: state.inputBoxKey,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
       decoration: BoxDecoration(
         color: FYColors.whiteColor,
@@ -291,42 +396,50 @@ class AiQusPage extends StatelessWidget {
           top: BorderSide(color: FYColors.color_E6E6E6, width: 1.w),
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              constraints: BoxConstraints(minHeight: 36.w),
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
-              decoration: BoxDecoration(
-                color: FYColors.color_F5F5F5,
-                borderRadius: BorderRadius.circular(4.w),
-              ),
-              alignment: Alignment.center,
-              child: TextField(
-                controller: state.messageController,
-                decoration: InputDecoration.collapsed(
-                  hintText: '输入您的问题...',
-                  hintStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: FYColors.color_A6A6A6,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                style: TextStyle(
+      child: Container(
+        constraints: BoxConstraints(minHeight: 36.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+        decoration: BoxDecoration(
+          color: FYColors.color_F5F5F5,
+          borderRadius: BorderRadius.circular(4.w),
+        ),
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            TextField(
+              controller: state.messageController,
+              decoration: InputDecoration.collapsed(
+                hintText: '请输入问题，勿含敏感内容',
+                hintStyle: TextStyle(
                   fontSize: 14.sp,
-                  color: FYColors.color_1A1A1A,
+                  color: FYColors.color_A6A6A6,
+                  fontWeight: FontWeight.w400,
                 ),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
               ),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: FYColors.color_1A1A1A,
+              ),
+              maxLines: 4,
+              minLines: 1,
+              keyboardType: TextInputType.multiline,
             ),
-          ),
-          SizedBox(width: 16.w),
-          GestureDetector(
-              onTap: () => logic.sendMessage(),
-              child: Image.asset(FYImages.sendIcon,
-                  width: 36.w, height: 36.w, fit: BoxFit.contain)),
-        ],
+            SizedBox(height: 11.w),
+            Row(
+              children: [
+                GestureDetector(
+                    onTap: () => logic.switchKnowledge(),
+                    child: Image.asset(state.isOpenKnowledge.value ? FYImages.checkKnowledge : FYImages.uncheckKnowledge,
+                        width: 65.w, height: 30.w, fit: BoxFit.contain)),
+                const Spacer(),
+                GestureDetector(
+                    onTap: () => logic.sendMessage(),
+                    child: Image.asset(FYImages.sendIcon,
+                        width: 30.w, height: 30.w, fit: BoxFit.contain)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -383,7 +496,7 @@ class AiQusPage extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       Obx(() => Text(
-                        state.selectedModel.value,
+                        "FY+AI(${state.selectedModel.value.substring(0, 1)})",
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_1A1A1A,
@@ -652,89 +765,89 @@ class AiQusPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(
-            '文件名:AI问答导出_2025-05-23T02-40-25.txt',
+          Obx(() => Text(
+            '文件已保存至: ${state.exportInfo['saveLocation'] ?? '应用文档目录'}',
             style: TextStyle(
               fontSize: 12.sp,
               color: Color(0xFF666666),
             ),
+          )),
+          SizedBox(height: 24.h),
+
+          // 文件信息卡片
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: Color(0xFFF9F9F9),
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.1),
+                width: 1.w,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  state.exportInfo.value['title'] ?? '导出文件',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 14.sp,
+                      color: Color(0xFF666666),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      state.exportInfo.value['date'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Icon(
+                      Icons.description,
+                      size: 14.sp,
+                      color: Color(0xFF666666),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      state.exportInfo.value['fileType'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      state.exportInfo.value['size'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Color(0xFFA6A6A6),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  state.exportInfo.value['description'] ?? '',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Color(0xFF666666),
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 37.h),
-          //
-          // // 文件信息卡片
-          // Container(
-          //   padding: EdgeInsets.all(12.w),
-          //   decoration: BoxDecoration(
-          //     color: Color(0xFFF9F9F9),
-          //     borderRadius: BorderRadius.circular(8.r),
-          //     border: Border.all(
-          //       color: Colors.grey.withOpacity(0.1),
-          //       width: 1.w,
-          //     ),
-          //   ),
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       Text(
-          //         state.exportInfo.value['title'] ?? '',
-          //         style: TextStyle(
-          //           fontSize: 14.sp,
-          //           fontWeight: FontWeight.w500,
-          //           color: Color(0xFF1A1A1A),
-          //         ),
-          //       ),
-          //       SizedBox(height: 8.h),
-          //       Row(
-          //         children: [
-          //           Icon(
-          //             Icons.calendar_today,
-          //             size: 14.sp,
-          //             color: Color(0xFF666666),
-          //           ),
-          //           SizedBox(width: 4.w),
-          //           Text(
-          //             state.exportInfo.value['date'] ?? '',
-          //             style: TextStyle(
-          //               fontSize: 12.sp,
-          //               color: Color(0xFFA6A6A6),
-          //             ),
-          //           ),
-          //           SizedBox(width: 10.w),
-          //           Icon(
-          //             Icons.description,
-          //             size: 14.sp,
-          //             color: Color(0xFF666666),
-          //           ),
-          //           SizedBox(width: 4.w),
-          //           Text(
-          //             state.exportInfo.value['fileType'] ?? '',
-          //             style: TextStyle(
-          //               fontSize: 12.sp,
-          //               color: Color(0xFFA6A6A6),
-          //             ),
-          //           ),
-          //           Spacer(),
-          //           Text(
-          //             state.exportInfo.value['size'] ?? '',
-          //             style: TextStyle(
-          //               fontSize: 12.sp,
-          //               color: Color(0xFFA6A6A6),
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //       SizedBox(height: 8.h),
-          //       Text(
-          //         state.exportInfo.value['description'] ?? '',
-          //         style: TextStyle(
-          //           fontSize: 14.sp,
-          //           color: Color(0xFF666666),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(height: 20.h),
+          SizedBox(height: 20.h),
           
           // 操作按钮
           Row(
@@ -779,7 +892,7 @@ class AiQusPage extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      '下载文件',
+                      '分享/保存',
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Color(0xFF1A1A1A),

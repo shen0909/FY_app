@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.0.1+000001231
+version: 0.1.7+000107412
 
 environment:
   sdk: ^3.5.4
@@ -30,19 +30,40 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  get: ^4.6.5
-  dio: ^5.4.3+1
+  flutter_localizations:
+    sdk: flutter
+  get: ^4.6.6
+  dio: ^5.6.0
   badges: ^3.1.2
-  flutter_screenutil: ^5.7.0
+  flutter_screenutil: ^5.9.3
   fl_chart: ^0.65.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.3.2
   side_sheet: ^1.0.4
   local_auth: ^2.3.0
   url_launcher: ^6.2.5
+  flutter_launcher_icons: ^0.14.4
+
+  realm: ^3.4.0
+  flutter_markdown: ^0.7.3  # Markdown 渲染支持
+  path_provider: ^2.1.5
+  package_info_plus: ^8.3.0
+  flutter_archive: ^6.0.3
+  version: ^3.0.2
+  open_file: ^3.5.9
+  permission_handler: ^11.3.1
+  flutter_local_notifications: ^19.3.0
+  webview_flutter: ^4.10.0
+  share_plus: ^10.1.2
+  intl: ^0.19.0
+  device_info_plus: ^11.3.0
+  cached_network_image: ^3.3.1  # 网络图片缓存
+  # DOCX 文件导出相关依赖
+  archive: ^3.6.1  # 处理压缩文件（DOCX是压缩格式）
+  xml: ^6.5.0     # XML处理
 
 dev_dependencies:
   flutter_test:
@@ -68,8 +89,11 @@ flutter:
   assets:
      - assets/images/
      - assets/complete-risk-alerts-data.json
+     - assets/area-data.json
+     - assets/risk_region.json
      - assets/company-details/
-
+     - assets/html/
+     - assets/loadImage.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
@@ -84,12 +108,6 @@ flutter:
   fonts:
     - family: AlibabaPuHuiTi
       fonts:
-        - asset: assets/fonts/AlibabaPuHuiTi-3-115-Black.ttf
-          weight: 900
-        - asset: assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf
-          weight: 800
-        - asset: assets/fonts/AlibabaPuHuiTi-3-95-ExtraBold.ttf
-          weight: 800
         - asset: assets/fonts/AlibabaPuHuiTi-3-85-Bold.ttf
           weight: 700
         - asset: assets/fonts/AlibabaPuHuiTi-3-75-SemiBold.ttf
@@ -98,9 +116,15 @@ flutter:
           weight: 500
         - asset: assets/fonts/AlibabaPuHuiTi-3-55-Regular.ttf
           weight: 400
-        - asset: assets/fonts/AlibabaPuHuiTi-3-45-Light.ttf
-          weight: 300
-        - asset: assets/fonts/AlibabaPuHuiTi-3-35-Thin.ttf
-          weight: 200
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21
+  # Adaptive icons configuration
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.png"
+  # 生成传统图标作为fallback
+  generate: true

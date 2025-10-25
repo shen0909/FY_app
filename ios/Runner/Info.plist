@@ -45,5 +45,15 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>需要访问相册权限以保存导出的文件</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>需要访问相册权限以保存导出的文件</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>需要访问文档文件夹以保存导出的对话记录</string>
 </dict>
 </plist>

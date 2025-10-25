@@ -1,16 +1,11 @@
 import 'package:get/get.dart';
 
 class PrivacySafeState {
-  // 隐私数据保护开关状态
-  final RxBool isDataEncryptionEnabled = true.obs;
-  final RxBool isAutoDeleteEnabled = false.obs;
-  final RxBool isThirdPartyShareDisabled = true.obs;
-  final RxBool isPrivacyModeEnabled = false.obs;
-  
-  // 隐私政策版本
-  final String privacyPolicyVersion = "v3.0.0";
-  final String lastUpdated = "2024-05-10";
-  
+  RxString lastUpdated = "2024-05-10".obs; // 更新时间
+  // 隐私内容
+  RxString privacyContent = ''.obs;
+
+
   // 隐私政策内容
   final String privacyVideoDescription = "本视频全面介绍系统的核心功能和使用流程，帮助新用户快速上手。";
 

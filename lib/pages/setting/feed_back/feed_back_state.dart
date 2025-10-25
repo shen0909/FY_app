@@ -5,10 +5,9 @@ class FeedBackState {
   final List<String> feedbackTypes = [
     '关键词反馈',
     '网站来源反馈',
-    '选项一',
+    '功能异常反馈',
     '功能建议',
     '其它反馈',
-    '功能异常',
   ];
   
   // 选中的反馈类型

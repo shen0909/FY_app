@@ -4,10 +4,13 @@ import 'package:safe_app/routers/routers.dart';
 import 'package:safe_app/utils/pattern_lock_util.dart';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:safe_app/utils/toast_util.dart';
-import 'package:safe_app/models/login_data.dart';
 import 'package:safe_app/pages/login/api/login_api.dart';
 import 'package:local_auth/local_auth.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:safe_app/https/api_service.dart';
+import 'package:safe_app/models/login_data.dart';
+import '../../services/biometric_service.dart';
+import '../../utils/area_data_manager.dart';
 import 'login_state.dart';
 
 class LoginLogic extends GetxController {
@@ -19,6 +22,13 @@ class LoginLogic extends GetxController {
   void onInit() {
     super.onInit();
     _loadUserInfo();
+    // 初始化省市数据
+    try {
+      AreaDataManager.instance.loadAreaData();
+      print('省市数据初始化完成');
+    } catch (e) {
+      print('省市数据初始化失败: $e');
+    }
   }
 
   @override
@@ -41,11 +51,36 @@ class LoginLogic extends GetxController {
       final loginData = await FYSharedPreferenceUtils.getLoginData();
       if (loginData != null) {
         state.userName.value = loginData.username ?? '';
+        state.userUid.value = loginData.userid ?? '';
         _setGreetingMessage();
       }
+      await _loadSavedCredentials();
     } catch (e) {
       print('加载用户信息错误: $e');
     }
+  }
+
+  // 🔑 新增：加载保存的用户凭据
+  Future<void> _loadSavedCredentials() async {
+    try {
+      bool hasCredentials = await FYSharedPreferenceUtils.hasUserCredentials();
+      if (hasCredentials) {
+        Map<String, String>? credentials = await FYSharedPreferenceUtils.getUserCredentials();
+        if (credentials != null) {
+          state.accountController.text = credentials['username'] ?? '';
+          state.passwordController.text = credentials['password'] ?? '';
+          state.rememberPassword.value = true;
+          print('已自动填充保存的用户凭据');
+        }
+      }
+    } catch (e) {
+      print('加载保存的用户凭据失败: $e');
+    }
+  }
+
+  // 🔑 新增：切换记住密码状态
+  void toggleRememberPassword() {
+    state.rememberPassword.value = !state.rememberPassword.value;
   }
 
   // 设置问候语
@@ -102,6 +137,7 @@ class LoginLogic extends GetxController {
 
     try {
       state.isBiometricAuthenticating.value = true;
+      state.isLogging.value = true;
 
       bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
       if (!canCheckBiometrics) {
@@ -110,26 +146,85 @@ class LoginLogic extends GetxController {
         return;
       }
 
-      bool didAuthenticate = await _localAuth.authenticate(
-        localizedReason: '请验证指纹以登录',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
-      );
+      bool didAuthenticate = await BiometricService.authenticateWithBiometrics(reason: '请验证指纹以登录');
 
       if (didAuthenticate) {
-        Get.offAllNamed(Routers.home);
+        // 指纹验证成功，执行真正的登录流程
+        await _performServerLogin();
       } else {
         // 指纹验证失败后切换到密码登录
         state.loginMethod.value = 0;
       }
     } catch (e) {
       print('指纹认证错误: $e');
-      ToastUtil.showError('指纹认证出错，请使用密码登录');
+      String errorMessage = '指纹认证失败，请使用密码登录';
+      if (e.toString().contains('FragmentActivity')) {
+        errorMessage = '系统兼容性问题，请重启应用后重试';
+      } else if (e.toString().contains('设备不支持')) {
+        errorMessage = '当前设备不支持指纹登录';
+      } else if (e.toString().contains('未设置指纹')) {
+        errorMessage = '请先在系统设置中添加指纹';
+      } else if (e.toString().contains('次数过多')) {
+        errorMessage = '验证次数过多，请稍后再试';
+      } else if (e.toString().contains('已被锁定')) {
+        errorMessage = '指纹功能已锁定，请使用密码登录';
+      } else if (e.toString().contains('用户取消')) {
+        errorMessage = '已取消指纹验证';
+      }
+      ToastUtil.showError(errorMessage);
       state.loginMethod.value = 0;
     } finally {
       state.isBiometricAuthenticating.value = false;
+      state.isLogging.value = false;
+    }
+  }
+
+  /// 执行服务器端登录（用于指纹和划线登录）
+  /// 注意：loading状态由调用方管理，这个方法只执行登录逻辑
+  Future<void> _performServerLogin() async {
+    try {
+      Map<String, String>? credentials = await FYSharedPreferenceUtils.getUserCredentials();
+      
+      if (credentials == null) {
+        ToastUtil.showError('请先使用账号密码登录一次');
+        state.loginMethod.value = 0;
+        return;
+      }
+      String username = credentials['username']!;
+      String password = credentials['password']!;
+      
+      if (kDebugMode) {
+        print('生物认证成功，使用存储的凭据进行服务器登录，用户: $username');
+      }
+      
+      var result = await ApiService().login(
+        username: username,
+        password: password,
+      );
+      
+      if (result['code'] == 10010) {
+        LoginData loginData = LoginData.fromJson(result['data']);
+        await FYSharedPreferenceUtils.saveLoginData(loginData);
+        await FYSharedPreferenceUtils.setNotFirstLogin();
+        
+        if (kDebugMode) {
+          print('生物认证登录成功');
+        }
+        
+        Get.offAllNamed(Routers.home);
+      } else {
+        // 登录失败，可能是凭据已过期
+        ToastUtil.showError(result['msg'] ?? '登录失败，请重新使用账号密码登录');
+        // 清除可能已过期的凭据
+        // await FYSharedPreferenceUtils.clearUserCredentials();
+        // 登录失败时切换到密码登录
+        state.loginMethod.value = 0;
+      }
+    } catch (e) {
+      print('服务器登录失败: $e');
+      ToastUtil.showError('登录失败，请重试');
+      // 出错时切换到密码登录
+      state.loginMethod.value = 0;
     }
   }
 
@@ -181,7 +276,6 @@ class LoginLogic extends GetxController {
   Future<void> doLogin() async {
     String account = state.accountController.text;
     String password = state.passwordController.text;
-    
     if (account.isEmpty) {
       ToastUtil.showError('请输入账号');
       return;
@@ -190,16 +284,24 @@ class LoginLogic extends GetxController {
       ToastUtil.showError('请输入密码');
       return;
     }
-
     state.isLogging.value = true;
 
     try {
       LoginData? loginData = await LoginApi.login(account, password);
-
       if (loginData != null) {
         await FYSharedPreferenceUtils.saveLoginData(loginData);
-        state.isLogging.value = false;
+        // 🔑 修改：根据用户选择决定是否保存凭据
+        if (state.rememberPassword.value) {
+          await FYSharedPreferenceUtils.saveUserCredentials(account, password);
+          print('用户选择记住密码，已保存凭据');
+        } else {
+          // 如果用户取消记住密码，清除之前保存的凭据
+          await FYSharedPreferenceUtils.clearUserCredentials();
+          print('用户取消记住密码，已清除保存的凭据');
+        }
         
+        state.isLogging.value = false;
+
         bool isFirstLogin = await FYSharedPreferenceUtils.isFirstLogin();
         if (isFirstLogin) {
           // 首次登录，需要设置安全锁屏方式
@@ -233,13 +335,18 @@ class LoginLogic extends GetxController {
       return;
     }
 
+    // 设置划线登录专用的loading状态，并清除之前的错误信息
+    state.isPatternAuthenticating.value = true;
     state.isLogging.value = true;
+    state.isError.value = false;
+    state.errorMessage.value = '';
+    
     try {
       bool isValid = await PatternLockUtil.verifyPattern(pattern);
       if (isValid) {
         await FYSharedPreferenceUtils.resetPatternLockFailedAttempts();
-        state.isLogging.value = false;
-        Get.offAllNamed(Routers.home);
+        // 划线验证成功，执行真正的登录流程
+        await _performServerLogin();
       } else {
         final failedAttempts =
             await FYSharedPreferenceUtils.getPatternLockFailedAttempts();
@@ -258,6 +365,8 @@ class LoginLogic extends GetxController {
       print('划线登录失败: $e');
       ToastUtil.showError('划线登录失败，请重试');
     } finally {
+      // 确保loading状态被正确清除
+      state.isPatternAuthenticating.value = false;
       state.isLogging.value = false;
     }
   }
@@ -277,7 +386,7 @@ class LoginLogic extends GetxController {
   // 切换到密码登录
   Future<void> switchToPasswordLogin() async {
     state.loginMethod.value = 0;
-    ToastUtil.showShort('请使用账号密码登录');
+    // ToastUtil.showShort('请使用账号密码登录');
   }
 
   // 检查是否已设置过锁屏方式

@@ -2,21 +2,19 @@ class LoginData {
   final String token;
   final String userid;
   final String username;
-  final String province;
-  final String city;
-  final String county_level_city;
+  final String region; //地区码
   final int user_role;
   final String nickname;
+  final String lastLoginAt;
 
   LoginData({
     required this.token,
     required this.userid,
     required this.username,
-    required this.province,
-    required this.city,
-    required this.county_level_city,
+    required this.region,
     required this.user_role,
     required this.nickname,
+    required this.lastLoginAt,
   });
 
   factory LoginData.fromJson(Map<String, dynamic> json) {
@@ -24,11 +22,10 @@ class LoginData {
       token: json['token'],
       userid: json['userid'],
       username: json['username'],
-      province: json['province'],
-      city: json['city'],
-      county_level_city: json['county_level_city'] ?? '',
+      region: json['region'],
       user_role: json['user_role'],
       nickname: json['nickname'] ?? json['username'],
+      lastLoginAt: json['last_login_at'] ?? '',
     );
   }
 }

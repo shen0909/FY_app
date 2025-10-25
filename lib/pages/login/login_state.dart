@@ -11,6 +11,9 @@ class LoginState {
   // 是否正在使用生物识别
   final RxBool isBiometricAuthenticating = false.obs;
   
+  // 是否正在进行划线登录验证
+  final RxBool isPatternAuthenticating = false.obs;
+  
   // 是否显示密码
   final RxBool showPassword = false.obs;
   
@@ -27,14 +30,13 @@ class LoginState {
   final RxBool isLocked = false.obs;
   final RxInt lockTimeMinutes = 0.obs;
   final RxString userName = ''.obs;
+  final RxString userUid = ''.obs;
   final RxString greetingMessage = ''.obs;
   
   // 图案锁是否准备好渲染
   final RxBool isPatternReady = false.obs;
 
-  // 清理控制器
-  void dispose() {
-    accountController.dispose();
-    passwordController.dispose();
-  }
+  // 是否记住密码
+  final RxBool rememberPassword = false.obs;
+
 }

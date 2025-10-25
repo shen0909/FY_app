@@ -51,7 +51,7 @@ class FYAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       leading: leading ?? (automaticallyImplyLeading
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: FYColors.color_1A1A1A, size: 24.w),
+              icon: Icon(Icons.arrow_back_ios, color: FYColors.color_1A1A1A, size: 20.w),
               onPressed: onBackPressed ?? () => Get.back(),
             )
           : null),

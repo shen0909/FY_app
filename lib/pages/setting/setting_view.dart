@@ -5,6 +5,7 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
 import 'package:safe_app/widgets/custom_switch.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 
 import 'setting_logic.dart';
 import 'setting_state.dart';
@@ -13,101 +14,109 @@ class SettingPage extends StatelessWidget {
   SettingPage({Key? key}) : super(key: key);
 
   final SettingLogic logic = Get.put(SettingLogic());
-  final SettingState state = Get.find<SettingLogic>().state;
+  final SettingState state = Get
+      .find<SettingLogic>()
+      .state;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FYColors.whiteColor,
       appBar: FYAppBar(title: '安全设置'),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildUserInfoCard(),
-            _buildDivider(),
-            _buildTitleSection('账户与安全', FYImages.setting_person),
-            _buildSecuritySection(),
-            _buildDivider(),
-            _buildTitleSection('系统设置', FYImages.setting_phone),
-            _buildSystemSettingSection(),
-            _buildDivider(),
-            _buildTitleSection('消息推送设置', FYImages.setting_message),
-            _buildNotificationSection(),
-            _buildDivider(),
-            _buildTitleSection('数据管理', FYImages.setting_data),
-            _buildDataSection(),
-            _buildDivider(),
-            _buildTitleSection('权限管理', FYImages.setting_permission),
-            _buildPermissionCard(),
-            _buildDivider(),
-            _buildTitleSection('统计信息', FYImages.setting_tongji),
-            _buildStatisticsSection(),
-            SizedBox(height: 20.h),
-          ],
-        ),
+      body: SafeArea(
+        bottom: true,
+        child: Obx(() {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildUserInfoCard(),
+                _buildDivider(),
+                _buildTitleSection('账户与安全', FYImages.setting_person),
+                _buildSecuritySection(),
+                _buildDivider(),
+                _buildTitleSection('系统设置', FYImages.setting_phone),
+                _buildSystemSettingSection(),
+                _buildDivider(),
+                _buildTitleSection('消息推送设置', FYImages.setting_message),
+                _buildNotificationSection(),
+                _buildDivider(),
+                _buildTitleSection('数据管理', FYImages.setting_data),
+                _buildDataSection(),
+                _buildDivider(),
+                // 普通用户没有权限管理功能
+                if(state.userInfo['role'] != 0)
+                  ...[
+                    _buildTitleSection('权限管理', FYImages.setting_permission),
+                    _buildPermissionCard(),
+                    _buildDivider(),
+                  ],
+                // 只有管理员可以看到统计信息
+                if(state.userInfo['role'] == 1)
+                  ...[
+                    _buildTitleSection('统计信息', FYImages.setting_tongji),
+                    _buildStatisticsSection(),
+                  ],
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
 
   Widget _buildUserInfoCard() {
-    return Container(
-      width: double.infinity,
-      height: 110.h,
-      color: FYColors.whiteColor,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Row(
-        children: [
-          Image.asset(state.userInfo['avatar'] ?? FYImages.default_avatar,
-              width: 48.w, height: 48.w, fit: BoxFit.cover),
-          SizedBox(width: 16.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Obx(() =>
+        Container(
+          width: double.infinity,
+          height: 110.h,
+          color: FYColors.whiteColor,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Row(
             children: [
-              Text(
-                state.userInfo['name'] ?? '',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
+              Image.asset(state.userInfo['avatar'] ?? FYImages.default_avatar,
+                  width: 48.w, height: 48.w, fit: BoxFit.cover),
+              SizedBox(width: 16.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '用户名：${state.userInfo['username'] ?? '未知用户'}',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: FYColors.color_1A1A1A,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 8.w, vertical: 5.h),
+                    decoration: BoxDecoration(
+                      color: FYColors.color_F0F5FF,
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Text(
+                      state.userInfo['department'] ?? '未知地区',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 8.h),
+              Spacer(),
               Text(
-                '用户名：${state.userInfo['username']}',
+                '版本号：${state.packageInfo.value?.version ?? "未知"}',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: FYColors.color_1A1A1A,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-                decoration: BoxDecoration(
-                  color: FYColors.color_F0F5FF,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: Text(
-                  state.userInfo['department'] ?? '',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: FYColors.color_3361FE,
-                  ),
+                  color: FYColors.color_666666,
                 ),
               ),
             ],
           ),
-          Spacer(),
-          Text(
-            '版本号：v.0.0.1',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: FYColors.color_666666,
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buildAvatar() {
@@ -177,7 +186,8 @@ class SettingPage extends StatelessWidget {
   Widget _buildSecuritySection() {
     return Column(
       children: [
-        Obx(() => Container(
+        Obx(() =>
+            Container(
               height: 48.h,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
@@ -200,7 +210,8 @@ class SettingPage extends StatelessWidget {
               ),
             )),
         SizedBox(height: 8.h),
-        Obx(() => Container(
+        Obx(() =>
+            Container(
               height: 48.h,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
@@ -223,7 +234,8 @@ class SettingPage extends StatelessWidget {
               ),
             )),
         SizedBox(height: 8.h),
-        _buildNavigationItem('用户日志', '查看您的登录日志', logic.goToUserLogs),
+        _buildNavigationItem(
+            '用户日志', '查看您的登录日志', logic.goToUserLogs),
       ],
     );
   }
@@ -234,6 +246,7 @@ class SettingPage extends StatelessWidget {
         _buildNavigationItem('隐私保护', null, logic.goToPrivacySafe),
         _buildNavigationItem('使用教程', null, logic.goToUseTutorial),
         _buildNavigationItem('用户反馈', '提交问题或建议', logic.goToFeedback),
+        _buildNavigationItem('退出登录', null, logic.logOut),
       ],
     );
   }
@@ -253,12 +266,17 @@ class SettingPage extends StatelessWidget {
     return Column(
       children: [
         _buildNavigationItem('清除缓存', null, logic.clearCache),
+        Obx(() {
+          return _buildNavigationItem(
+              '版本更新', state.hasUpdate.value ? '新版' : null, logic.goToUpdate,
+              withWidget: state.hasUpdate.value);
+        }),
       ],
     );
   }
 
-  Widget _buildSwitchItem(
-      String title, RxBool value, Function(bool) onChanged) {
+  Widget _buildSwitchItem(String title, RxBool value,
+      Function(bool) onChanged) {
     return Container(
       height: 48.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -272,7 +290,8 @@ class SettingPage extends StatelessWidget {
             ),
           ),
           Spacer(),
-          Obx(() => CustomSwitch(
+          Obx(() =>
+              CustomSwitch(
                 value: value.value,
                 onChanged: onChanged,
                 width: 48.w,
@@ -283,8 +302,8 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationItem(
-      String title, String? subtitle, VoidCallback onTap) {
+  Widget _buildNavigationItem(String title, String? subtitle,
+      VoidCallback onTap, {bool withWidget = false}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -301,7 +320,7 @@ class SettingPage extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            if (subtitle != null)
+            if (subtitle != null && !withWidget)
               Text(
                 subtitle,
                 style: TextStyle(
@@ -309,12 +328,29 @@ class SettingPage extends StatelessWidget {
                   color: FYColors.color_666666,
                 ),
               ),
-            SizedBox(width: 8.w),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16.sp,
-              color: FYColors.color_1A1A1A,
-            ),
+            if(withWidget)
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(12.r))
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.w),
+                child: Text(
+                  subtitle!,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: FYColors.whiteColor,
+                  ),
+                ),
+              ),
+            if(!withWidget)
+              SizedBox(width: 8.w),
+            if(!withWidget)
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+                color: FYColors.color_1A1A1A,
+              ),
           ],
         ),
       ),
@@ -355,7 +391,11 @@ class SettingPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '管理员',
+                        state.userInfo['role'] == 0
+                            ? '普通用户'
+                            : state.userInfo['role'] == 1
+                                ? '管理员'
+                                : '审核员',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -363,7 +403,11 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '系统最高权限，操作需审核员审核',
+                        state.userInfo['role'] == 0
+                            ? '基本浏览和使用权限'
+                            : state.userInfo['role'] == 1
+                            ? '负责审核管理员的操作，确保系统安全'
+                            : '负责审核管理员的操作，确保系统安全',
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: FYColors.color_A6A6A6,
@@ -445,109 +489,120 @@ class SettingPage extends StatelessWidget {
             ],
           ),
         ),
-        _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
-        _buildNavigationItem('权限申请审核', null, logic.goToPermissionRequests),
+        if(state.userInfo['role'] == 1 )
+          _buildNavigationItem('角色管理', null, logic.goToRoleManagement),
+
+        if(state.userInfo['role'] == 2 )
+          _buildNavigationItem(
+              '权限申请审核', null, logic.goToPermissionRequests),
       ],
     );
   }
 
   Widget _buildStatisticsSection() {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '统计信息',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: FYColors.color_1A1A1A,
+    return Obx(() {
+      return Container(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '统计信息',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: FYColors.color_1A1A1A,
+                  ),
                 ),
-              ),
-              Text(
-                '(仅管理员可见)',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: FYColors.color_A6A6A6,
+                Text(
+                  '(仅管理员可见)',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: FYColors.color_A6A6A6,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  '今日访问',
-                  '${state.statistics['todayVisits']}',
-                  state.statistics['visitTrend'],
-                  true,
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    '今日访问',
+                    '${state.statistics['todayVisits'] ?? 0}',
+                    (state.statistics['visitTrend'] as int?) ?? 0,
+                    // 大于等于0 视为上升（红向上），小于0 视为下降（绿向下）。
+                    (state.statistics['visitTrend'] as int? ?? 0) >= 0,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: _buildStatCard(
-                  '预警数量',
-                  '${state.statistics['predictionCount']}',
-                  state.statistics['predictionTrend'].abs(),
-                  false,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: _buildStatCard(
+                    '预警数量',
+                    '${state.statistics['predictionCount'] ?? 0}',
+                    (state.statistics['predictionTrend'] as int?) ?? 0,
+                    (state.statistics['predictionTrend'] as int? ?? 0) >= 0,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  '订阅数量',
-                  '${state.statistics['subscriptionCount']}',
-                  state.statistics['subscriptionTrend'],
-                  true,
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    '订阅数量',
+                    '${state.statistics['subscriptionCount'] ?? 0}',
+                    (state.statistics['subscriptionTrend'] as int?) ?? 0,
+                    true,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: _buildRegionCard('区域统计', state.statistics['region']),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          GestureDetector(
-            onTap: logic.goToUserAnalysis,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 10.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '查看完整用户行为分析',
-                    style: TextStyle(
-                      fontSize: 12.sp,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Container()
+                ),
+                // 隐藏区域统计
+                // Expanded(
+                //   child: _buildRegionCard(
+                //       '区域统计', state.statistics['region'] ?? '未知地区'),
+                // ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            GestureDetector(
+              onTap: logic.goToUserAnalysis,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '查看完整用户行为分析',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: FYColors.color_3361FE,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12.sp,
                       color: FYColors.color_3361FE,
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12.sp,
-                    color: FYColors.color_3361FE,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
-  Widget _buildStatCard(
-      String title, String value, int trendValue, bool isPositive) {
+  Widget _buildStatCard(String title, String value, int trendValue, bool isPositive) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -579,15 +634,15 @@ class SettingPage extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+                    isPositive ? Icons.arrow_upward : Icons.arrow_downward,
                     size: 12.sp,
-                    color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                    color: isPositive ? Colors.red : FYColors.color_07CC89,
                   ),
                   Text(
-                    '$trendValue%',
+                    '${trendValue.abs()}%',
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: isPositive ? FYColors.color_07CC89 : Colors.red,
+                      color: isPositive ? Colors.red : FYColors.color_07CC89,
                     ),
                   ),
                 ],
@@ -629,7 +684,10 @@ class SettingPage extends StatelessWidget {
               ),
               Spacer(),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  // 显示建设中提示
+                  DialogUtils.showUnderConstructionDialog();
+                },
                 child: Row(
                   children: [
                     Text(

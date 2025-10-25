@@ -5,7 +5,10 @@ import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/styles/text_styles.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:safe_app/utils/diolag_utils.dart';
+import 'package:safe_app/utils/dialog_utils.dart';
 import '../../../models/risk_company_details.dart';
+import '../../../models/risk_factor_new.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/widgets.dart';
 import 'risk_details_logic.dart';
@@ -27,48 +30,55 @@ class RiskDetailsPage extends StatelessWidget {
         fontSize: 18,
         titleColor: Colors.black,
         actions: [
-          Image.asset(
-            FYImages.download_icon,
-            width: 24.w,
-            height: 24.w,
-            fit: BoxFit.contain,
+          GestureDetector(
+            onTap: () => logic.exportRiskWarningReport(),
+            child: Image.asset(
+              FYImages.download_icon,
+              width: 24.w,
+              height: 24.w,
+              fit: BoxFit.contain,
+            ),
           ),
           SizedBox(width: 12.w),
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            child: Obx(() {
-              return
-                state.isLoading.value ||
-                      state.riskCompanyDetail.value == null
-                  ? Container()
-                  : GestureDetector(
-                      onTap: () => logic.showRiskScoreDetails(),
-                      child: Container(
-                        height: 32.w,
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                            colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
-                            stops: [0.0, 1.0],
-                          ),
-                          borderRadius: BorderRadius.circular(8.w),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
-                            style: TextStyle(
-                                color: FYColors.whiteColor,
-                                fontWeight: FontWeight.w500,
-                                height: 0.6,
-                                fontSize: 18.sp),
-                          ),
-                        ),
-                      ),
-                    );
-            }),
-          ),
+          // 只在 index != 2 时显示单位评分
+          Obx(() {
+            return state.index.value != 2
+                ? Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    child: Obx(() {
+                      return state.isLoading.value ||
+                              state.riskCompanyDetail.value == null
+                          ? Container()
+                          : GestureDetector(
+                              onTap: () => logic.showRiskScoreDetails(),
+                              child: Container(
+                                height: 32.w,
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
+                                    colors: [Color(0xFFFF2A08), Color(0xFFFF4629)],
+                                    stops: [0.0, 1.0],
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.w),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${state.riskCompanyDetail.value!.riskScore.totalScore}分',
+                                    style: TextStyle(
+                                        color: FYColors.whiteColor,
+                                        fontWeight: FontWeight.w500,
+                                        height: 0.6,
+                                        fontSize: 18.sp),
+                                  ),
+                                ),
+                              ),
+                            );
+                    }),
+                  )
+                : const SizedBox.shrink();
+          }),
         ],
       ),
       body: Obx(() {
@@ -83,6 +93,7 @@ class RiskDetailsPage extends StatelessWidget {
         }
 
         return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -93,6 +104,32 @@ class RiskDetailsPage extends StatelessWidget {
               _buildRiskFactorsSection(),
               SizedBox(height: 24.w),
               _buildCaseHistorySection(),
+              // 加载更多指示器
+              Obx(() => state.isLoadingMoreNews.value
+                  ? Container(
+                      padding: EdgeInsets.symmetric(vertical: 20.w),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(FYColors.color_3361FE),
+                        ),
+                      ),
+                    )
+                  : !state.hasMoreNews.value && state.riskCompanyDetail.value!.timelineTracking.isNotEmpty
+                      ? Container(
+                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          child: Center(
+                            child: Text(
+                              '没有更多数据了',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: FYColors.color_A6A6A6,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink()),
+              SizedBox(height: 20.w),
             ],
           ),
         );
@@ -105,17 +142,19 @@ class RiskDetailsPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: FYColors.whiteColor,
-      padding: EdgeInsets.only(left: 16.w, top: 13.w),
+      padding: EdgeInsets.only(left: 16.w, top: 13.w, right: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Obx(() => Text(
-                    state.riskCompanyDetail.value!.companyInfo.name!,
-                    style: FYTextStyles.riskLocationTitleStyle()
-                        .copyWith(fontSize: 20.sp),
-                  )),
+              Expanded(
+                child: Obx(() => Text(
+                      state.riskCompanyDetail.value!.zhName,
+                      style: FYTextStyles.riskLocationTitleStyle()
+                          .copyWith(fontSize: 20.sp),
+                    )),
+              ),
               SizedBox(width: 8.w),
               GestureDetector(
                 onTap: () => logic.companyDetail(),
@@ -129,7 +168,7 @@ class RiskDetailsPage extends StatelessWidget {
           ),
           SizedBox(height: 8.w),
           Obx(() => Text(
-                state.riskCompanyDetail.value!.companyInfo.englishName!,
+                state.riskCompanyDetail.value!.enName,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
@@ -150,6 +189,8 @@ class RiskDetailsPage extends StatelessWidget {
         children: [
           Text('时序跟踪', style: FYTextStyles.mediumBodyTextStyle()),
           SizedBox(height: 10.w),
+          // todo:风险预警详情接口未返回，暂时隐藏
+          state.riskCompanyDetail.value!.timelineTracking.isEmpty ? Container():
           Container(
             decoration: BoxDecoration(
                 color: FYColors.color_F9F9F9,
@@ -169,10 +210,13 @@ class RiskDetailsPage extends StatelessWidget {
     List<Widget> items = [];
     List<TimelineEvent> itemsPre =
         state.riskCompanyDetail.value!.timelineTracking;
-
+    // 如果没有数据，返回空列表
+    if (itemsPre.isEmpty) {
+      return items;
+    }
     // 判断是否展开，如果未展开，只显示第一项
     int itemsToShow = state.isExpandTimeLine.value
-        ? state.riskCompanyDetail.value!.timelineTracking.length
+        ? itemsPre.length
         : 1;
 
     for (int i = 0; i < itemsToShow; i++) {
@@ -180,37 +224,42 @@ class RiskDetailsPage extends StatelessWidget {
       items.add(_buildTimelineItem(itemsPre[i], isLastItem));
     }
 
-    items.add(InkWell(
-      onTap: () => logic.showMoreTimeline(),
-      child: Container(
-        width: 297.w,
-        height: 36.w,
-        padding: EdgeInsets.symmetric(vertical: 10.w),
-        decoration: BoxDecoration(
-          color: FYColors.whiteColor,
-          borderRadius: BorderRadius.circular(8.w),
-        ),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                state.isExpandTimeLine.value ? '收起' : '展开更多',
-                style: FYTextStyles.riskUnitTypeUnselectedStyle(),
-              ),
-              SizedBox(width: 5.w),
-              Icon(
-                state.isExpandTimeLine.value
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
-                color: FYColors.color_3361FE,
-                size: 16.sp,
-              ),
-            ],
+    // 只有当数据超过1条时才显示展开/收起按钮
+    if (itemsPre.length > 1) {
+      items.add(InkWell(
+        onTap: () => logic.showMoreTimeline(),
+        child: Container(
+          height: 36.w,
+          margin: EdgeInsets.only(top: 10.w, bottom: 10.w, left: 15.w, right: 15.w),
+          decoration: BoxDecoration(
+              color: FYColors.whiteColor,
+              borderRadius: BorderRadius.circular(8.w)),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  state.isExpandTimeLine.value
+                      ? state.hasMoreNews.value
+                          ? '加载更多'
+                          : '收起'
+                      : '展开更多',
+                  style: FYTextStyles.riskUnitTypeUnselectedStyle(),
+                ),
+                SizedBox(width: 5.w),
+                Icon(
+                  state.isExpandTimeLine.value
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: FYColors.color_3361FE,
+                  size: 16.sp,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ));
+      ));
+    }
 
     return items;
   }
@@ -309,15 +358,32 @@ class RiskDetailsPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 15.w),
-                Obx(() => Wrap(
-                      spacing: 8.w,
-                      runSpacing: 10.w,
-                      children: List.generate(
-                        state.riskCompanyDetail.value!.riskFactors.length,
-                        (index) => _buildRiskTag(
-                            state.riskCompanyDetail.value!.riskFactors[index]),
+                Obx(() {
+                  final riskFactors = state.riskCompanyDetail.value!.riskFactors;
+                  if (riskFactors.isEmpty) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 20.w),
+                      child: Center(
+                        child: Text(
+                          '暂无风险因素数据',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: FYColors.color_A6A6A6,
+                          ),
+                        ),
                       ),
-                    )),
+                    );
+                  }
+                  
+                  return Wrap(
+                    spacing: 8.w,
+                    runSpacing: 10.w,
+                    children: List.generate(
+                      riskFactors.length,
+                      (index) => _buildRiskTag(riskFactors[index]),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -327,9 +393,9 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 风险标签
-  Widget _buildRiskTag(RiskFactor riskFactor) {
+  Widget _buildRiskTag(RiskFactorNew riskFactor) {
     return GestureDetector(
-      onTap: () => _showRiskFactorDetails(riskFactor.details!, riskFactor.title!),
+      onTap: () => _showRiskFactorDetails(riskFactor.factorItems, riskFactor.factorName),
       child: Container(
         height: 36.w,
         constraints: BoxConstraints(minWidth: 124.w),
@@ -343,7 +409,7 @@ class RiskDetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              riskFactor.title!,
+              riskFactor.factorName,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: FYColors.color_3361FE,
@@ -363,79 +429,151 @@ class RiskDetailsPage extends StatelessWidget {
   }
 
   // 显示风险因素详情弹窗
-  void _showRiskFactorDetails(
-      List<RiskFactorDetail> riskFactorDetailList, String title) {
-    Get.bottomSheet(
-      Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: FYColors.whiteColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.r),
-            topRight: Radius.circular(16.r),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 标题栏
-            Container(
-              padding: EdgeInsets.only(
-                top: 17.w,
-                left: 16.w,
-                right: 16.w,
-                bottom: 13.w,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF333333),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      width: 24.w,
-                      height: 24.w,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFF0F0F0),
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        color: const Color(0xFF666666),
-                        size: 16.w,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // 详情列表
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Column(
-                children: (riskFactorDetailList)
-                    .map((item) => _buildRiskFactorItem(
-                          item.title!,
-                          item.description!,
-                        ))
-                    .toList(),
-              ),
-            ),
-            SizedBox(height: 24.w),
-          ],
+  void _showRiskFactorDetails(List<RiskFactorItem> riskFactorItems, String title) {
+    FYDialogUtils.showBottomSheet(Container(
+      decoration: BoxDecoration(
+        color: FYColors.whiteColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.r),
+          topRight: Radius.circular(16.r),
         ),
       ),
-      isScrollControlled: true,
-      backgroundColor: Colors.black54,
-    );
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题栏
+          Container(
+            padding: EdgeInsets.only(
+              top: 17.w,
+              left: 16.w,
+              right: 16.w,
+              bottom: 13.w,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF333333),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    width: 24.w,
+                    height: 24.w,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFF0F0F0),
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      color: const Color(0xFF666666),
+                      size: 16.w,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 详情列表
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Column(
+              children: riskFactorItems
+                  .map((item) => _buildRiskFactorItem(
+                item.factorItemName,
+                item.factorItemContent,
+              ))
+                  .toList(),
+            ),
+          ),
+          SizedBox(height: 24.w),
+        ],
+      ),
+    ),hasMinHeightConstraint: true,heightMinFactor: 0.6);
+    // showModalBottomSheet(
+    //   context: Get.context!,
+    //   constraints: BoxConstraints(
+    //     maxWidth: MediaQuery.of(Get.context!).size.width, // 强制宽度为屏幕宽度
+    //     minWidth: MediaQuery.of(Get.context!).size.width, // 防止最小宽度限制
+    //   ),
+    //   builder: (context) {
+    //     return Container(
+    //       width: double.infinity,
+    //       decoration: BoxDecoration(
+    //         color: FYColors.whiteColor,
+    //         borderRadius: BorderRadius.only(
+    //           topLeft: Radius.circular(16.r),
+    //           topRight: Radius.circular(16.r),
+    //         ),
+    //       ),
+    //       child: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           // 标题栏
+    //           Container(
+    //             padding: EdgeInsets.only(
+    //               top: 17.w,
+    //               left: 16.w,
+    //               right: 16.w,
+    //               bottom: 13.w,
+    //             ),
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Text(
+    //                   title,
+    //                   style: TextStyle(
+    //                     fontSize: 18.sp,
+    //                     fontWeight: FontWeight.bold,
+    //                     color: const Color(0xFF333333),
+    //                   ),
+    //                 ),
+    //                 GestureDetector(
+    //                   onTap: () => Get.back(),
+    //                   child: Container(
+    //                     width: 24.w,
+    //                     height: 24.w,
+    //                     decoration: const BoxDecoration(
+    //                       shape: BoxShape.circle,
+    //                       color: Color(0xFFF0F0F0),
+    //                     ),
+    //                     child: Icon(
+    //                       Icons.close,
+    //                       color: const Color(0xFF666666),
+    //                       size: 16.w,
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //           // 详情列表
+    //           Container(
+    //             padding: EdgeInsets.symmetric(horizontal: 16.w),
+    //             child: Column(
+    //               children: (riskFactorDetailList)
+    //                   .map((item) => _buildRiskFactorItem(
+    //                 item.title!,
+    //                 item.description!,
+    //               ))
+    //                   .toList(),
+    //             ),
+    //           ),
+    //           SizedBox(height: 24.w),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    //   isScrollControlled: true,
+    //   backgroundColor: Colors.black54,
+    // );
   }
 
   // 风险因素详情项
@@ -446,22 +584,28 @@ class RiskDetailsPage extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 16.w),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 8.w,
                 height: 8.w,
+                margin: EdgeInsets.only(top: 6.w), // 调整圆点位置，与标题对齐
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.w),
                   color: FYColors.color_3361FE,
                 ),
               ),
               SizedBox(width: 8.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF333333),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF333333),
+                  ),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
                 ),
               ),
             ],
@@ -476,6 +620,9 @@ class RiskDetailsPage extends StatelessWidget {
               color: const Color(0xFFA6A6A6),
               height: 1.5,
             ),
+            softWrap: true,
+            overflow: TextOverflow.visible,
+            textAlign: TextAlign.justify, // 两端对齐，更美观
           ),
         ),
       ],
@@ -516,6 +663,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ? cases
                       : cases.take(1).toList();
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ...displayCases
                           .asMap()
@@ -782,7 +930,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value!.riskScore.components!.operationalImpact['score']}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components?.operationalImpact['score']}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -804,7 +952,7 @@ class RiskDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Obx(() => Text(
-                          '${state.riskCompanyDetail.value!.riskScore.components!.securityImpact['score']}分',
+                          '${state.riskCompanyDetail.value!.riskScore.components?.securityImpact['score']}分',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -848,30 +996,31 @@ class RiskDetailsPage extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16.w),
-          // 风险趋势图
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '风险分数趋势图',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF333333),
-                  ),
-                ),
-                SizedBox(height: 16.w),
-                Container(
-                  height: 200.w,
-                  child: _buildRiskTrendChart(),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 24.w),
+          // todo: 暂时隐藏风险趋势图
+          // SizedBox(height: 16.w),
+          // // 风险趋势图
+          // Container(
+          //   padding: EdgeInsets.symmetric(horizontal: 16.w),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         '风险分数趋势图',
+          //         style: TextStyle(
+          //           fontSize: 18.sp,
+          //           fontWeight: FontWeight.w500,
+          //           color: const Color(0xFF333333),
+          //         ),
+          //       ),
+          //       SizedBox(height: 16.w),
+          //       Container(
+          //         height: 200.w,
+          //         child: _buildRiskTrendChart(),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          SizedBox(height: 40.w),
         ],
       ),
     );

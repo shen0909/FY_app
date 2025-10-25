@@ -6,6 +6,7 @@ import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/widgets.dart';
 
 import '../../widgets/custom_app_bar.dart';
+import '../../utils/datetime_utils.dart';
 import 'risk_logic.dart';
 import 'risk_state.dart';
 import 'package:safe_app/styles/text_styles.dart';
@@ -23,20 +24,36 @@ class _RiskPageState extends State<RiskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FYColors.whiteColor,
-      appBar: FYAppBar(
-        title: '风险预警',
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildLocationSection(),
-          _buildUnitTypeSelector(),
-          _buildRiskStatCards(),
-          SizedBox(height: 14.w),
-          _buildRiskList(),
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => logic.canPopFunction(didPop),
+      child: Scaffold(
+        backgroundColor: FYColors.whiteColor,
+        appBar: FYAppBar(title: '风险预警'),
+        body: SafeArea(
+          bottom: true,
+          child: Obx(() => state.isLoading.value && state.currentRiskList.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  onRefresh: logic.onRefresh,
+                  child: SingleChildScrollView(
+                    controller: logic.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLocationSection(),
+                        _buildUnitTypeSelector(),
+                        _buildRiskStatCards(),
+                        SizedBox(height: 14.w),
+                        _buildRiskList(),
+                        _buildLoadMoreIndicator(),
+                      ],
+                    ),
+                  ),
+                ),
+          ),
+        ),
       ),
     );
   }
@@ -59,7 +76,9 @@ class _RiskPageState extends State<RiskPage> {
           const SizedBox(width: 8),
           GestureDetector(
             key: logic.locationKey,
-            onTap: () => logic.showCitySelector(context),
+            onTap: () => state.loginData?.user_role != 0
+                ? logic.showCitySelector(context)
+                : null,
             child: Row(
               children: [
                 Obx(() => Text(
@@ -67,12 +86,13 @@ class _RiskPageState extends State<RiskPage> {
                       style: FYTextStyles.riskLocationTitleStyle(),
                     )),
                 const SizedBox(width: 8),
+                state.loginData?.user_role != 0 ?
                 Image.asset(
                   FYImages.down_icon,
                   width: 8.w,
                   height: 8.w,
                   fit: BoxFit.contain,
-                ),
+                ) : Container(),
               ],
             ),
           ),
@@ -109,8 +129,12 @@ class _RiskPageState extends State<RiskPage> {
                       contentPadding: EdgeInsets.zero,
                       border: InputBorder.none,
                     ),
-                    onChanged: (value) {
-                      print("风险预警--value ${value}");
+                    // onChanged: (value) {
+                    //   logic.searchCompany(value);
+                    // },
+                    onSubmitted: (value) {
+                      state.searchKeyword.value = value;
+                      logic.refreshData();
                     },
                   ),
                 ),
@@ -193,7 +217,7 @@ class _RiskPageState extends State<RiskPage> {
           runSpacing: 8.0.w, // 纵向间距
           children: [
             ...currentData.entries
-                .where((entry) => entry.key != 'total')
+                // .where((entry) => entry.key != 'total')
                 .map((entry) {
               final item = entry.value;
               return _buildRiskStatCard(
@@ -201,13 +225,9 @@ class _RiskPageState extends State<RiskPage> {
                 count: item['count'] as int? ?? 0,
                 change: item['change'] as int? ?? 0,
                 color: Color(item['color'] as int? ?? 0xFF000000),
+                isTotal: entry.key == 'total',
               );
             }),
-            // 总数卡片单独处理
-            _buildTotalStatCard(
-              total: currentData['total']['count'] as int? ?? 0,
-              color: Color(currentData['total']['color'] as int? ?? 0xFF000000),
-            ),
           ],
         );
       }),
@@ -216,6 +236,7 @@ class _RiskPageState extends State<RiskPage> {
 
   // 风险统计卡片
   Widget _buildRiskStatCard({
+    required bool isTotal,
     required String title,
     required int count,
     required int change,
@@ -226,11 +247,9 @@ class _RiskPageState extends State<RiskPage> {
         color: const Color(0xffF4F4F4),
         borderRadius: BorderRadius.circular(8.w),
       ),
-      // elevation: 0,
+      width: MediaQuery.of(Get.context!).size.width / 2 - 24.w,
       padding: EdgeInsets.all(10.w),
-      // color: Colors.red,
-      width: 168.w,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      height: 64.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -238,7 +257,7 @@ class _RiskPageState extends State<RiskPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                isTotal ? '总数' : title,
                 style: FYTextStyles.riskStatHighRiskStyle(),
               ),
               Row(
@@ -264,7 +283,7 @@ class _RiskPageState extends State<RiskPage> {
             ],
           ),
           SizedBox(height: 4.h),
-          RichText(
+          isTotal || change <= 0 ? Container() : RichText(
               text: TextSpan(
                   style: TextStyle(
                     color: FYColors.color_A6A6A6,
@@ -286,75 +305,96 @@ class _RiskPageState extends State<RiskPage> {
     );
   }
 
-  // 总数统计卡片
-  Widget _buildTotalStatCard({required int total, required Color color}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xffF4F4F4),
-        borderRadius: BorderRadius.circular(8.w),
-      ),
-      // elevation: 0,
-      padding: EdgeInsets.all(10.r),
-      // color: Colors.red,
-      height: 64.w,
-      width: 168.w,
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '总数',
-              style: FYTextStyles.riskStatHighRiskStyle(),
-            ),
-            Row(
-              children: [
-                Text(
-                  '$total',
-                  style: TextStyle(
-                    color: FYColors.color_1A1A1A,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                    height: 1.5,
-                    leadingDistribution: TextLeadingDistribution.even,
-                  ),
-                ),
-                Text('家',
-                    style: FYTextStyles.riskStatHighRiskStyle().copyWith(
-                        color: FYColors.color_1A1A1A,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12.sp)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+  Widget _buildRiskList() {
+    return Obx(() {
+      final currentList = state.currentRiskList;
+      
+      if (currentList.isEmpty) {
+        return FYWidget.buildEmptyContent();
+      }
+      
+      return ListView.builder(
+        itemCount: currentList.length,
+        physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
+        shrinkWrap: true, // 让ListView适应内容高度
+        itemBuilder: (context, index) {
+          return state.chooseUint.value == 0
+              ? _buildRiskItem1(currentList[index]) // 一类单位
+              : state.chooseUint.value == 1
+                  ? _buildRiskItem2(currentList[index])
+                  : _buildRiskItem3(currentList[index]);
+        },
+      );
+    });
   }
 
-  // 风险单位列表
-  Widget _buildRiskList() {
-    return Expanded(
-      child: Obx(() {
-        final currentList = state.currentRiskList;
-        return state.currentRiskList.isEmpty
-            ? FYWidget.buildEmptyContent()
-            : ListView.builder(
-                itemCount: currentList.length,
-                itemBuilder: (context, index) {
-                  return state.chooseUint.value == 0
-                      ? _buildRiskItem1(currentList[index]) // 一类单位
-                      : state.chooseUint.value == 1
-                          ? _buildRiskItem2(currentList[index])
-                          : _buildRiskItem3(currentList[index]);
-                },
-              );
-      }),
-    );
+  // 底部加载指示器
+  Widget _buildLoadMoreIndicator() {
+    return Obx(() {
+      // 下拉刷新时不显示底部指示器
+      if (state.isRefreshing.value) {
+        return SizedBox(height: 20.h);
+      }
+      if (state.isLoadingMore.value) {
+        // 正在加载更多
+        return Container(
+          padding: EdgeInsets.all(16.w),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 16.w,
+                height: 16.w,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                '加载中...',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: FYColors.color_999999,
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (!state.hasMoreData.value && state.currentRiskList.isNotEmpty) {
+        // 没有更多数据（但有数据时才显示）
+        return Container(
+          padding: EdgeInsets.all(16.w),
+          alignment: Alignment.center,
+          child: Text(
+            '已显示全部 ${state.currentRiskList.length} 条数据',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_999999,
+            ),
+          ),
+        );
+      } else if (state.hasMoreData.value && state.currentRiskList.isNotEmpty) {
+        // 还有更多数据但当前未加载
+        return Container(
+          padding: EdgeInsets.all(16.w),
+          alignment: Alignment.center,
+          child: Text(
+            '上拉加载更多',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: FYColors.color_999999,
+            ),
+          ),
+        );
+      } else {
+        // 其他情况
+        return SizedBox(height: 20.h);
+      }
+    });
   }
 
   // 一类单位风险项
   Widget _buildRiskItem1(Map<String, dynamic> item) {
-    final String riskLevel = item['riskLevel'] as String? ?? '';
+    final String riskLevel = item['riskLevel'] == 1 ? "low" : item['riskLevel']== 2 ? "medium" : "high";
     final Color riskColor = Color(item['riskColor'] as int? ?? 0xFF07CC89);
     final bool isRead = item['isRead'] as bool? ?? false;
 
@@ -381,7 +421,7 @@ class _RiskPageState extends State<RiskPage> {
     }
 
     return GestureDetector(
-      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id'],'index':state.chooseUint.value}),
       child: Padding(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
         child: Container(
@@ -450,7 +490,7 @@ class _RiskPageState extends State<RiskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '更新: ${item['updateTime']}',
+                    '更新: ${DateTimeUtils.formatUpdateTime(item['updateTime'])}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
@@ -492,7 +532,7 @@ class _RiskPageState extends State<RiskPage> {
 
   // 二类单位风险项
   Widget _buildRiskItem2(Map<String, dynamic> item) {
-    final String riskLevel = item['riskLevel'];
+    final String riskLevel = item['riskLevel'] == 1 ? "low" : item['riskLevel']== 2 ? "medium" : "high";
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
 
@@ -519,7 +559,7 @@ class _RiskPageState extends State<RiskPage> {
     }
 
     return GestureDetector(
-      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id'], 'index': state.chooseUint.value}),
       child: Padding(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
         child: Container(
@@ -548,19 +588,19 @@ class _RiskPageState extends State<RiskPage> {
                         ? null
                         : () => logic.showMessageDialog(item['id']),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color:
-                            isRead ? FYColors.color_CEFFEE : Colors.transparent,
+                        color: isRead
+                            ? FYColors.color_CEFFEE
+                            : FYColors.color_FFD8D2,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        isRead ? '全部已读' : '',
+                        isRead ? '全部已读' : '${item['unreadCount']}条未读',
                         style: TextStyle(
                           color: isRead
                               ? FYColors.color_07CC89
-                              : Colors.transparent,
+                              : FYColors.color_FF2A08,
                           fontSize: 12,
                         ),
                       ),
@@ -587,7 +627,7 @@ class _RiskPageState extends State<RiskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '更新: ${item['updateTime']}',
+                    '更新: ${DateTimeUtils.formatUpdateTime(item['updateTime'])}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
@@ -607,7 +647,7 @@ class _RiskPageState extends State<RiskPage> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 6.w),
                         child: Text(
-                          item['riskLevel'],
+                          item['riskLevelText'],
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: riskColor,
@@ -629,12 +669,10 @@ class _RiskPageState extends State<RiskPage> {
 
   // 星云
   Widget _buildRiskItem3(Map<String, dynamic> item) {
-    final String? riskLevel = item['riskLevel'];
+    final String attentionLevel = item['xyRiskType'] == 1 ? "general_focus" : "key_focus";
     final Color riskColor = Color(item['riskColor']);
     final bool isRead = item['isRead'] as bool;
-    // 获取关注度数据
-    final String? attentionLevel = item['attentionLevel'] as String?;
-    final String? attentionLevelText = item['attentionLevelText'] as String?;
+    Color textColor = Colors.black;
 
     // 关注度级别颜色
     Color attentionColor = Colors.grey;
@@ -648,15 +686,17 @@ class _RiskPageState extends State<RiskPage> {
       backgroundColor = Color(0xFFFEE2E2).withOpacity(0.6);
       borderColor = Color(0xFFF87171).withOpacity(0.4);
       textBg = FYColors.color_FFD8D2;
+      textColor = Color(0xFFFF6850);
     } else if (attentionLevel == 'general_focus') {
       attentionColor = Color(0xFFFF9719);
       backgroundColor = Color(0xFFFFF7E6);
       borderColor = Color(0xFFF6D500);
-      textBg = FYColors.color_CEFFEE;
+      textBg = Colors.white;
+      textColor = Color(0xFFF6D500);
     }
 
     return GestureDetector(
-      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id']}),
+      onTap: () => Get.toNamed('/risk/details', arguments: {'id': item['id'], 'index': state.chooseUint.value}),
       child: Padding(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.w),
         child: Container(
@@ -724,17 +764,17 @@ class _RiskPageState extends State<RiskPage> {
               Row(
                 children: [
                   Text(
-                    '更新: ${item['updateTime']}',
+                    '更新: ${DateTimeUtils.formatUpdateTime(item['updateTime'])}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
                     ),
                   ),
                   const Spacer(),
-                  Text(
-                    '风险等级 ',
-                    style: FYTextStyles.commonTextStyle(),
-                  ),
+                  // Text(
+                  //   '风险等级 ',
+                  //   style: FYTextStyles.commonTextStyle(),
+                  // ),
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(12.w)),
@@ -742,10 +782,10 @@ class _RiskPageState extends State<RiskPage> {
                     padding:
                         EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.w),
                     child: Text(
-                      item['attentionLevelText'],
+                      item['xyRiskTypeText'],
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: riskColor,
+                        color: textColor,
                         height: 1,
                         fontWeight: FontWeight.w400,
                       ),

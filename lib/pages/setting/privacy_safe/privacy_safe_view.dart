@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:safe_app/styles/colors.dart';
 import 'package:safe_app/styles/image_resource.dart';
 import 'package:safe_app/widgets/custom_app_bar.dart';
-
+import '../../../widgets/markdown_message_widget.dart';
 import 'privacy_safe_logic.dart';
 import 'privacy_safe_state.dart';
 
@@ -20,27 +20,25 @@ class PrivacySafePage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: FYAppBar(title: '隐私保护'),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPrivacyHeader(),
-            SizedBox(height: 24.h),
-            _buildPrivacyDescription(),
-            SizedBox(height: 20.h),
-            _buildInfoCollectionSection(),
-            SizedBox(height: 16.h),
-            _buildInfoUsageSection(),
-            SizedBox(height: 16.h),
-            _buildInfoProtectionSection(),
-            SizedBox(height: 16.h),
-            _buildInfoStorageSection(),
-            SizedBox(height: 20.h),
-          ],
-        ),
+        child: Obx(() {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPrivacyHeader(),
+              SizedBox(height: 24.h),
+              MarkdownMessageWidget(
+                content: state.privacyContent.value,
+                isUser: false,
+                isShowName: false,
+                isAI: false
+              )
+            ],
+          );
+        }),
       ),
     );
   }
-  
+
   // 隐私保护头部
   Widget _buildPrivacyHeader() {
     return Container(
@@ -50,7 +48,7 @@ class PrivacySafePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 24.h),
-          Image.asset(FYImages.privacy_safe,width: 56.w,height: 56.w,fit: BoxFit.contain),
+          Image.asset(FYImages.privacy_safe, width: 56.w, height: 56.w, fit: BoxFit.contain),
           SizedBox(height: 8.h),
           Text(
             '隐私政策声明',
@@ -143,7 +141,8 @@ class PrivacySafePage extends StatelessWidget {
   }
 
   // 通用信息部分构建
-  Widget _buildInfoSection({required String title, required List<String> items}) {
+  Widget _buildInfoSection(
+      {required String title, required List<String> items}) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -159,7 +158,10 @@ class PrivacySafePage extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            '我们${title == '信息收集' ? '收集的信息包括但不限于：' : title == '信息使用' ? '使用收集的信息用于：' : '采取严格的技术和管理措施保护您的信息安全：'}',
+            '我们${title == '信息收集' ? '收集的信息包括但不限于：' : title ==
+                '信息使用'
+                ? '使用收集的信息用于：'
+                : '采取严格的技术和管理措施保护您的信息安全：'}',
             style: TextStyle(
               fontSize: 14.sp,
               color: FYColors.color_A6A6A6,

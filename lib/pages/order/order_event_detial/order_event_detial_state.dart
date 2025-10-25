@@ -15,11 +15,17 @@ class OrderEventDetialState {
   // 事件日期
   final RxString eventDate = ''.obs;
   
+  // 事件UUID
+  final RxString eventUuid = ''.obs;
+  
   // 事件查看数
   final RxInt viewCount = 0.obs;
   
   // 事件关注数
   final RxInt followCount = 0.obs;
+  
+  // 是否已关注
+  final RxBool isFollowed = false.obs;
   
   // 事件描述
   final RxString eventDescription = ''.obs;
@@ -47,6 +53,18 @@ class OrderEventDetialState {
   
   // 报告信息
   RxMap<String, dynamic> reportInfo = <String, dynamic>{}.obs;
+
+  // ===== 分页相关状态 =====
+  // 当前页码
+  final RxInt currentPage = 1.obs;
+  // 每页数据量
+  final int pageSize = 10;
+  // 是否正在加载更多
+  final RxBool isLoadingMore = false.obs;
+  // 是否还有更多数据
+  final RxBool hasMoreData = true.obs;
+  // 总数据量
+  final RxInt totalCount = 0.obs;
 
   OrderEventDetialState() {
     ///初始化变量

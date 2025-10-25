@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:io';
 import 'package:safe_app/utils/shared_prefer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:safe_app/https/token_interceptor.dart';
@@ -6,10 +7,14 @@ import 'package:safe_app/https/token_interceptor.dart';
 class HttpService {
   static final HttpService _instance = HttpService._internal();
   static const String _tag = 'FYHttp';
-  static const String baseUrl = 'http://180.97.221.196:2032';
-  
+  // static const String baseUrl = 'http://180.97.221.196:2033';
+  static const String baseUrl = 'https://api2.fyclouds.com:2053';
+  // static const String baseUrl1 = 'http://180.97.221.196:2032';
+
   factory HttpService() => _instance;
   late Dio dio;
+  late Dio preDio; // 之前的dio
+  late Dio innerDio; // 用于应用内统一请求的Dio实例
 
   /// 基础请求头
   static Map<String, dynamic> _baseHeaders() {
@@ -20,6 +25,22 @@ class HttpService {
   }
 
   HttpService._internal() {
+    BaseOptions preOptions = BaseOptions(
+      baseUrl: baseUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        "X-API-KEY": "sk-asdg21324tdfhbgh4-2sfg21fsdgsefhg2fsgh2dfh4-tcg34df24cg45d23rFGWT23sd-gsgwerJDSFwqesdR-WDD43224dfgergdy"
+      },
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
+      contentType: 'application/json',
+      responseType: ResponseType.json,
+    );
+    preDio = Dio(preOptions);
+
+    // 外层请求的Dio配置
     BaseOptions options = BaseOptions(
       baseUrl: baseUrl,
       headers: _baseHeaders(),
@@ -34,7 +55,7 @@ class HttpService {
     
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        String? token = await FYSharedPreferenceUtils.getToken();
+        String? token = await FYSharedPreferenceUtils.getOuterAccessToken();
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
@@ -62,14 +83,81 @@ class HttpService {
       },
     ));
     
+    // 内层请求的Dio配置（与外层使用相同baseUrl，但有不同的拦截器逻辑）
+    BaseOptions innerOptions = BaseOptions(
+      baseUrl: baseUrl,
+      headers: _baseHeaders(),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 15),
+      contentType: 'application/json',
+      responseType: ResponseType.json,
+    );
+    
+    innerDio = Dio(innerOptions);
+    
+    innerDio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        String? outerToken = await FYSharedPreferenceUtils.getOuterAccessToken();
+        if (outerToken != null && outerToken.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $outerToken';
+        }
+         
+        if (kDebugMode) {
+          print('$_tag 内层请求: ${options.uri}');
+          print('$_tag 内层请求头: ${options.headers}');
+          print('$_tag 内层请求参数: ${options.data}');
+        }
+         
+        return handler.next(options);
+      },
+      onResponse: (response, handler) {
+        if (kDebugMode) {
+          print('$_tag 内层响应: ${response.statusCode}');
+          print('$_tag 内层响应数据: ${response.data}');
+        }
+        return handler.next(response);
+      },
+      onError: (DioException e, handler) {
+        if (kDebugMode) {
+          print('$_tag 内层错误: ${formatError(e)}');
+        }
+        return handler.next(e);
+      },
+    ));
+    
+    // 为外层请求添加Token拦截器
     final tokenInterceptor = TokenInterceptor();
-    tokenInterceptor.setDio(dio);
-    dio.interceptors.add(tokenInterceptor);
+    // tokenInterceptor.setDio(dio);
+    // dio.interceptors.add(tokenInterceptor);
+    tokenInterceptor.setDio(innerDio);
+    innerDio.interceptors.add(tokenInterceptor);
   }
 
-  /// 格式化错误信息
+  /// 格式化错误信息（面向用户的友好提示）
   String formatError(DioException e) {
-    return 'uri: ${e.requestOptions.uri}, ${e.toString()}';
+    // 日志中保留原始错误，用户界面给出友好提示
+    final DioExceptionType type = e.type;
+    switch (type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return '网络超时，请检查网络后重试';
+      case DioExceptionType.badResponse:
+        final status = e.response?.statusCode;
+        return status != null ? '服务异常($status)，请稍后再试' : '服务异常，请稍后再试';
+      case DioExceptionType.cancel:
+        return '请求已取消';
+      case DioExceptionType.unknown:
+      case DioExceptionType.connectionError:
+        // host lookup、离线等
+        if (e.error is SocketException) {
+          return '网络异常，请检查网络后重试';
+        }
+        return '请求失败，请稍后再试';
+      case DioExceptionType.badCertificate:
+        return '证书异常，请稍后再试';
+    }
   }
 
   /// 统一错误处理
@@ -82,7 +170,7 @@ class HttpService {
     }
   }
 
-  /// POST请求
+  /// POST请求 - 外层接口
   Future post<T>(
     String path, {
     Map<String, dynamic>? data,
@@ -127,6 +215,97 @@ class HttpService {
         }
       }
     } on DioException catch (e) {
+      _handleError(errorCallback, formatError(e));
+    }
+  }
+
+  Future prePost<T>(
+    String path, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+    bool isForm = false,
+  }) async {
+    try {
+      Response response;
+      if (isForm) {
+        // 如果是表单提交
+        response = await preDio.post(
+          path,
+          data: data,
+          options: options,
+          cancelToken: cancelToken,
+        );
+      } else {
+        // 默认是URL参数提交
+        response = await preDio.post(
+          path,
+          queryParameters: data ?? queryParameters,
+          options: options,
+          cancelToken: cancelToken,
+        );
+      }
+
+      if (response.statusCode != 200) {
+        _handleError(errorCallback, '网络请求错误,状态码:${response.statusCode}');
+        return;
+      }
+
+      // 返回结果处理
+      if (successCallback != null) {
+        if (response.data != null) {
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '$path, 数据请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      _handleError(errorCallback, formatError(e));
+    }
+  }
+  
+  /// 应用内统一请求接口
+  Future sendChannelEvent<T>(
+    Map<String, dynamic> data, {
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('$_tag 发起应用内统一请求');
+      }
+      
+      Response response = await innerDio.post(
+        '/send_channel_event',
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      
+      if (response.statusCode != 200) {
+        _handleError(errorCallback, '网络请求错误,状态码:${response.statusCode}');
+        return;
+      }
+      
+      if (successCallback != null) {
+        if (response.data != null) {
+          if (kDebugMode) {
+            print('$_tag 应用内统一请求结果: $response');
+          }
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '应用内统一请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('$_tag 应用内统一请求失败: ${formatError(e)}');
+      }
       _handleError(errorCallback, formatError(e));
     }
   }
@@ -196,6 +375,44 @@ class HttpService {
         cancelToken: cancelToken,
       );
       
+      if (successCallback != null) {
+        if (response.data != null) {
+          if (kDebugMode) {
+            print('$_tag $path, GET请求结果: $response');
+          }
+          successCallback(response.data);
+        } else {
+          _handleError(errorCallback, '$path, GET数据请求失败');
+        }
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('$_tag GET请求失败: ${formatError(e)}');
+      }
+      _handleError(errorCallback, formatError(e));
+    }
+  }
+
+  Future preGet<T>(
+    String path, {
+    Map<String, dynamic>? params,
+    Options? options,
+    CancelToken? cancelToken,
+    Function? successCallback,
+    Function? errorCallback,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('$_tag 发起GET请求: $path');
+      }
+
+      Response response = await preDio.get(
+        path,
+        queryParameters: params,
+        options: options,
+        cancelToken: cancelToken,
+      );
+
       if (successCallback != null) {
         if (response.data != null) {
           if (kDebugMode) {
